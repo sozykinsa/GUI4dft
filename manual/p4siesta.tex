@@ -1,0 +1,238 @@
+\documentclass[a4paper,
+               fontsize=14pt, 
+               DIV=calc,
+               twoside=false,
+               headings=small,
+               numbers=endperiod,
+               bibliography=totoc,
+               %draft,
+              ]{scrbook}
+\usepackage[utf8]{inputenc}    % кодовая страница документа
+\usepackage[T2A]{fontenc}
+\usepackage[russian]{babel}    % локализация и переносы
+\usepackage{scrhack}           % remove warnings on float@addtolists
+\IfFileExists{pscyr.sty}{\usepackage{pscyr}}{}
+\usepackage{cmap}              % русский поиск в pdf
+\renewcommand{\rmdefault}{ftm} % Times New Roman
+\usepackage{amsfonts}          % шрифты AMS
+\usepackage{amsmath}       
+\usepackage{amssymb}
+\usepackage{amsthm}
+%-synctex=1 -interaction=nonstopmode  --shell-escape %.tex
+\usepackage{mathrsfs}
+         
+\usepackage[top=2.4cm, 
+            bottom=2.8cm, 
+            right=2.5cm,
+            left=2.5cm,
+            footskip=0.8cm]{geometry}
+\usepackage{indentfirst}   % русский стиль: отступ первого абзаца раздела
+%\usepackage{misccorr}     % точка в номерах заголовков
+\usepackage{graphicx}      % Работа с графикой \includegraphics{}
+\usepackage{wrapfig}
+%\usepackage{soul}          % Разряженный текст \so{} и подчеркивание \ul{}
+%\usepackage{soulutf8}      % Поддержка UTF8 в soul
+%\usepackage{fancyhdr}      % Для работы с колонтитулами
+\usepackage{multirow}      % Аналог multicolumn для строк
+\usepackage{ltxtable}      % Микс tabularx и longtable
+\usepackage{tabulary}      % таблицы с фиксированной шириной
+\usepackage{threeparttable} % таблицы со ссылками
+\usepackage{paralist}      % Списки с отступом только в первой строчке
+\usepackage[perpage]{footmisc} % Нумерация сносок на каждой странице с 1
+\usepackage{hyperref}      % ссылки
+\hypersetup{pdftitle={p4siesta},
+            pdfauthor={Sergey Sozykin}
+           }
+       
+\title{p4siesta}
+%\setcounter{page}{3}
+           
+\usepackage{enumitem}
+
+\setlist{topsep=2pt,
+         partopsep=0pt,         
+         parsep=0pt,
+         itemsep=0pt,
+         leftmargin=0.7cm}
+\setlist[enumerate]{widest=0}
+\usepackage{import}        % include с относительными путями
+
+\usepackage[cachedir=cache]{minted}        % подсветка синтаксиса
+%\usemintedstyle{bw}                        % черно-белый стиль
+ 
+\usepackage[os=win]{menukeys}      % клавиатерные клавиши
+\changemenucolortheme{menus}{blacknwhite}
+\pagestyle{plain}    % включить только номера страниц
+% Getting title pages to the resultant pdfauthor
+\usepackage{pdfpages}
+
+%\setcounter{secnumdepth}{\sectionnumdepth} % выключаем номера подсекций
+\addtocounter{tocdepth}{-1} % убираем подсекции из содержания
+%\addtocounter{tocdepth}{1} % добавляем в содержание вплоть до subsubsections, DEBUG only!
+
+\setlength{\parindent}{0.7cm}    % красная строка
+
+% уменьшение расстояния до кода
+\newlength{\fancyvrbtopsep}
+\newlength{\fancyvrbpartopsep}
+\makeatletter
+\FV@AddToHook{\FV@ListParameterHook}{\topsep=\fancyvrbtopsep\partopsep=\fancyvrbpartopsep}
+\makeatother
+
+\setlength{\fancyvrbtopsep}{3pt}
+\setlength{\fancyvrbpartopsep}{3pt}
+
+\makeatletter
+\renewenvironment{quote}
+               {\list{}{\listparindent=0pt   % whatever you need
+                        \itemindent    \listparindent
+                        \leftmargin=25pt     % whatever you need
+                        \rightmargin=30pt    % whatever you need
+                        \topsep=0pt      %%%%% whatever you need
+                        \parsep        \z@ \@plus\p@}%
+                \item\relax}
+               {\endlist}
+\makeatother
+
+% line breaks in tables
+\newcommand{\specialcell}[2][t]{%
+  \begin{tabular}[#1]{@{}l@{}}#2\end{tabular}}
+
+\newtheoremstyle{examplestyle}      % <name>
+        {3pt}                       % <space above>
+        {3pt}                       % <space below>
+        {\small}                    % <body font>
+        {}                          % <indent amount}
+        {\bfseries}                 % <theorem head font>
+        {\bfseries.}                % <punctuation after theorem head>
+        {.5em}                      % <space after theorem head>
+        {}                          % <theorem head spec (can be left empty, meaning `normal')>
+\theoremstyle{examplestyle}
+\newtheorem{example}{Пример}[chapter]
+\theoremstyle{remark}
+\newtheorem{problem}{}[section]
+
+% Chapter page numbers in TOC
+\setkomafont{chapterentrypagenumber}{\nullfont}
+\setkomafont{paragraph}{\normalfont\rmfamily\bfseries}
+
+\renewcommand\addchaptertocentry[2]{%
+  \IfArgIsEmpty{#1}
+    {\addtocontents{toc}
+        {\protect\begingroup
+          \protect\setkomafont{chapterentrypagenumber}{\normalfont}%
+          \protect\KOMAoptions{chapterentrydots}%
+        }%
+      \addtocentrydefault{chapter}{}{#2}%
+      \addtocontents{toc}{\protect\endgroup}%
+    }
+    {\addtocentrydefault{chapter}{#1}{#2}}
+}
+
+%\usepackage{hhline}
+\usepackage[labelsep=space]{caption}
+%
+\DeclareCaptionFormat{GOSTtable}{#2#1\\#3}
+\DeclareCaptionLabelSeparator{fill}{\hfill}
+\DeclareCaptionLabelFormat{fullparents}{\bothIfFirst{#1}{~}#2}
+\captionsetup[table]{
+     format=GOSTtable,
+     labelformat=fullparents,
+     labelsep=fill,
+%      labelfont=it,
+%      textfont=bf,
+     justification=centering,
+     singlelinecheck=false
+     }
+
+% центрирование колонок в таблицах
+\usepackage{array}
+\newcolumntype{M}[1]{>{\centering\arraybackslash}m{#1}}     
+
+%
+\pdfmapfile{=pscyr.map}
+
+\sloppy % переносы
+% висячие строки
+\usepackage[all]{nowidow}
+
+\clubpenalty=9996
+\widowpenalty=9999
+\brokenpenalty=9991
+\predisplaypenalty=10000
+\postdisplaypenalty=1549
+\displaywidowpenalty=1602
+
+\begin{document}
+	
+\renewcommand\bibname{Библиографический список}	
+%\addto\captionsrussian{\def\refname{Список используемой литературы}}
+\makeatletter
+\renewcommand\@biblabel[1]{#1.}
+\makeatother
+
+\let\oldthebibliography\thebibliography
+\let\endoldthebibliography\endthebibliography
+\renewenvironment{thebibliography}[1]{
+  \begin{oldthebibliography}{#1}
+    \setlength{\itemsep}{3pt}
+    \setlength{\parskip}{0em}
+}
+{
+  \end{oldthebibliography}
+}
+%
+
+% определим окружения minted
+\newminted[fdffile]{text}{linenos,
+                          frame=single,
+                          fontsize=\small} 
+\newminted[fdfcode]{text}{frame=none,
+                          fontsize=\small} 
+\newmintinline[files]{text}{breaklines,
+                           fontsize=\small}
+\newmintinline[param]{text}{breaklines,
+                           fontsize=\small}
+\newminted[console]{console}{frame=none,
+                          fontsize=\small} 
+\newminted[python]{python}{frame=none,
+	fontsize=\small}
+                        
+\graphicspath{{./figure/}}
+%-------------------------------------------------------------------------------
+% Include title pages
+%\includepdf[pages=1-2]{_titul/oblozhka2_sozykin.pdf}
+\maketitle
+
+\tableofcontents
+
+% Введение
+%\addchap{Введение}
+\include{00_intro/intro}
+
+
+\chapter{INSTALLATION}
+
+The p4siesta program is written in python 3. It has some dependences:
+\begin{enumerate}
+	\item PyQt5
+	\item numpy
+	\item scipy
+\end{enumerate} 
+
+
+\chapter{Quick start}
+
+The first example
+
+
+%\addcontentsline{toc}{chapter}{Литература}
+\bibliographystyle{ugost2008}
+%\inputencoding{cp1251}
+\bibliography{./lib/lib_sas}
+%\inputencoding{utf8}
+%\thispagestyle{empty}
+%\chapter*{Литература}
+
+
+\end{document}
