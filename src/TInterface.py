@@ -45,13 +45,6 @@ class Calculator(object):
         return TCalculators.ApproxBirchMurnaghan(ListN2)
 
     @staticmethod
-    def Bonds(atoms, dx, dy, dz):
-        """atoms: """
-        model = TAtomicModel(atoms)
-        model.SetBox(dx, dy, dz)
-        return model.Bonds()
-
-    @staticmethod
     def FillTube(radTube, length, nAtoms, radAtom, delta, nPrompts, let, charge):
         return TCalculators.FillTube(radTube, length, nAtoms, radAtom, delta, nPrompts, let, charge)
 

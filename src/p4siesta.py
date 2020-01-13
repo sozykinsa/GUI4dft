@@ -490,7 +490,7 @@ class mainWindow(qWidget.QMainWindow):
                 minv, maxv = self.xsf_data_range()
                 self.FormActionsPostLabelSurfaceMax.setText("Max: " + str(maxv))
                 self.FormActionsPostLabelSurfaceMin.setText("Min: " + str(minv))
-                self.FormActionsPostLabelSurfaceValue.setText(str(round(0.5 * (maxv + minv), 5)))
+                self.FormActionsPostLabelSurfaceValue.setValue(round(0.5 * (maxv + minv), 5))
 
                 self.FormActionsPostSliderContourXY.setMaximum(self.XSFfile.Nz)
                 self.FormActionsPostSliderContourXZ.setMaximum(self.XSFfile.Ny)
@@ -715,11 +715,7 @@ class mainWindow(qWidget.QMainWindow):
         self.FormActionsPostTreeSurface.show()
 
     def fill_bonds(self):
-        x = self.FormActionsPostTableCellParam.item(0, 2).text()
-        y = self.FormActionsPostTableCellParam.item(0, 3).text()
-        z = self.FormActionsPostTableCellParam.item(0, 4).text()
-        bonds = Calculator.Bonds( self.MainForm.MainModel.atoms, float(x), float(y), float(z) )
-
+        bonds = self.MainForm.MainModel.Bonds()
         self.FormActionsPosTableBonds.setRowCount(len(bonds))  # и одну строку в таблице
 
         BondsType = QStandardItemModel()
@@ -769,24 +765,27 @@ class mainWindow(qWidget.QMainWindow):
 
 
         
-    def fill_gui(self):
+    def fill_gui(self, title = "" ):
         fname = self.filename
-        self.fill_file_name(fname)
+        if title == "":
+            self.fill_file_name(fname)
+        else:
+            self.fill_file_name(title)
         self.fill_models_list()
         self.fill_atoms_table()
         self.fill_priperties_table()
-        if fname.endswith(".out") or fname.endswith(".OUT"):
-            self.check_dos(fname)
         self.check_xsf(fname)
         if Importer.checkFormat(fname) == "SIESTAout":
+            self.check_dos(fname)
             self.fill_cell_info(fname)
+
+        if Importer.checkFormat(fname) == "SIESTAfdf":
+            c = self.MainForm.MainModel.get_LatVect3_norm()
+            self.FormActionsPreZSizeFillSpace.setText(str(c))
 
 
     def plot_bonds_histogram(self):
-        x = self.FormActionsPostTableCellParam.item(0, 2).text()
-        y = self.FormActionsPostTableCellParam.item(0, 3).text()
-        z = self.FormActionsPostTableCellParam.item(0, 4).text()
-        bonds = Calculator.Bonds(self.MainForm.MainModel.atoms, float(x), float(y), float(z))
+        bonds = self.MainForm.MainModel.Bonds()
         self.MplWidget.canvas.axes.clear()
         b = []
         for bond in bonds:
@@ -794,7 +793,6 @@ class mainWindow(qWidget.QMainWindow):
 
         num_bins = 5
         n, bins, patches = self.MplWidget.canvas.axes.hist(b, num_bins, facecolor='blue', alpha=0.5)
-        #self.MplWidget.canvas.axes.plot(xs, ys)
         self.MplWidget.canvas.axes.set_xlabel("Bond lenght")
         self.MplWidget.canvas.axes.set_ylabel("Number of bonds")
         self.MplWidget.canvas.draw()
@@ -954,7 +952,7 @@ class mainWindow(qWidget.QMainWindow):
             g = self.state_Color_Of_Voronoi.split()[1]
             b = self.state_Color_Of_Voronoi.split()[2]
             color = [float(r)/255, float(g)/255, float(b)/255]
-            maxDist = float(self.FormActionsPostTextVoronoiMaxDist.text())
+            maxDist = float(self.FormActionsPostTextVoronoiMaxDist.value())
             atom_index, volume = self.MainForm.add_voronoi(color, maxDist)
             if atom_index >=0:
                 self.FormActionsPostLabelVoronoiAtom.setText("Atom: " + str(atom_index))
@@ -1044,7 +1042,7 @@ class mainWindow(qWidget.QMainWindow):
     def type_of_surface(self):
         self.FormActionsPostLabelSurfaceMin.setText("")
         self.FormActionsPostLabelSurfaceMax.setText("")
-        self.FormActionsPostLabelSurfaceValue.setText("")
+        self.FormActionsPostLabelSurfaceValue.setValue(0)
         self.FormActionsPostButSurface.setEnabled(False)
         self.FormActionsPostButContour.setEnabled(False)
 
@@ -1120,14 +1118,10 @@ class mainWindow(qWidget.QMainWindow):
             leng = 0
             cells = float(self.FormActionsPreLineSWNTcells.text())
 
-        model = TSWNT(n,m,leng,cells).AtList
-        atoms = TAtomicModel()
+        model = TSWNT(n,m,leng,cells)
 
-        for at in model:
-            atoms.AddAtom(at)
-
-        self.models.append(atoms)
-        self.MainForm.MainModel = self.models[-1]
+        self.models.append(model)
+        self.plot_model(-1)
         self.MainForm.add_atoms()
         self.fill_gui("SWNT-model")
 

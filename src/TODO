@@ -7,5 +7,5 @@ add atoms
 bond width
 isosurface transparancy
 cube format parser
-drow only selected atom to get coord
+classify atom bonds
 

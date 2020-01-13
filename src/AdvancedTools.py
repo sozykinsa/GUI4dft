@@ -505,6 +505,7 @@ class TAtomicModel(object):
         Dist = 10000
         if minDist > 0:
             model = TAtomicModel(self.atoms)
+            model.set_lat_vectors(self.LatVect1, self.LatVect2, self.LatVect3)
             model.AddAtom(atom)
             for ind in range(0, len(self.atoms)):
                 r = model.atom_atom_distance(ind, len(model.atoms) - 1)
@@ -1430,11 +1431,8 @@ class TMDanalysis:
 
 class TSWNT(TAtomicModel):
     """The TSWNT class provides """
-    #AtList = []
-    #def __init__(self, atoms=[]):
-    #    self.atoms_from_fdf = copy.deepcopy(atoms)
-        
     def __init__(self, n, m, leng = 0, ncell = 1):
+        TAtomicModel.__init__(self)
         maxMol = 1000000
         pi = math.pi
         px = np.zeros(maxMol)
@@ -1457,6 +1455,10 @@ class TSWNT(TAtomicModel):
 
         if (leng == 0):
             leng = ncell*TSWNT.unitlength(n, m, a)
+
+        rad = TSWNT.radius(n, m)
+
+        self.set_lat_vectors([10*rad,0,0],[0, 10*rad, 0], [0, 0, leng])
         """ calculations """
             
         """ definition of a hexagon """
@@ -1523,7 +1525,6 @@ class TSWNT(TAtomicModel):
         np1 = j
         
         """ output """
-        self.AtList = []
         leng = vlen
         R = leng / (2 * pi)
         
@@ -1532,11 +1533,12 @@ class TSWNT(TAtomicModel):
             qx[i_par] = R * math.sin(phi_par)
             qy[i_par] = -R * math.cos(phi_par)
             qz[i_par] = py[i_par]
-        """ output """
-        for i in range(0, np1):
-            self.AtList.append(TAtom([qx[i], qy[i], qz[i], "C", 6]))
+            self.AddAtom(TAtom([qx[i_par], qy[i_par], qz[i_par], "C", 6]))
 
-                
+    @staticmethod
+    def radius(n, m):
+        return math.sqrt(n*n + n*m +m*m)
+
     @staticmethod
     def unitlength(n, m, acc): 
         a = math.sqrt(3) * acc
@@ -2979,15 +2981,21 @@ class TCalculators:
                 Molecula.AddAtom(TAtom([x,y,z,let, charge]), 2*radAtom)
                 j += 1
 
-            myDelta = 4*radTube+length
-            for newMolecula in Models:
-                myDelta2 = Molecula.Delta(newMolecula)
-                if myDelta2 < myDelta:
-                    myDelta = myDelta2
-            if myDelta > delta:
-                Models.append(Molecula)    
-            if len(Models)==0:
-                Models.append(Molecula)    
+            if len(Molecula.atoms) < nAtoms:
+                radAtom *= 0.95
+                print("Radius of atom was dicreased. New value: "+str(radAtom))
+
+            if len(Molecula.atoms) == nAtoms:
+                myDelta = 4*radTube+length
+                for newMolecula in Models:
+                    myDelta2 = Molecula.Delta(newMolecula)
+                    if myDelta2 < myDelta:
+                        myDelta = myDelta2
+                if myDelta > delta:
+                    Models.append(Molecula)
+                    print("Iter " + str(i) + "/" + str(nPrompts) + "| we found "+str(len(Models))+"structures")
+                if len(Models)==0:
+                    Models.append(Molecula)
         return Models
 
 

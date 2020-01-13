@@ -188,10 +188,10 @@ class GuiOpenGL(object):
         Fall = 180.0/math.pi*math.acos(Rel[2] / BindingLen)
         Yaw = 180.0/math.pi*math.atan2(Rel[1], Rel[0])
        
-        gl.glPushMatrix();
-        gl.glTranslated(Atom1Pos[0], Atom1Pos[1], Atom1Pos[2]); # преобразование координат № 3
-        gl.glRotated(Yaw, 0, 0, 1); # преобразование координат № 2
-        gl.glRotated(Fall, 0, 1, 0); # преобразование координат № 1
+        gl.glPushMatrix()
+        gl.glTranslated(Atom1Pos[0], Atom1Pos[1], Atom1Pos[2]) # преобразование координат № 3
+        gl.glRotated(Yaw, 0, 0, 1) # преобразование координат № 2
+        gl.glRotated(Fall, 0, 1, 0) # преобразование координат № 1
         glu.gluCylinder(glu.gluNewQuadric(),
             Radius, # /*baseRadius:*/
             Radius, # /*topRadius:*/
@@ -204,12 +204,21 @@ class GuiOpenGL(object):
         if self.active == True:
             gl.glDeleteLists(self.object, self.NLists)
         self.object = gl.glGenLists(self.NLists)
+
+    def add_selected_atom(self):
+        gl.glNewList(self.object+7, gl.GL_COMPILE)
+        for at in self.MainModel.atoms:
+            if at.isSelected() == True:
+                gl.glPushMatrix()
+                gl.glTranslatef(at.x, at.y, at.z)
+                self.QuadObjS.append(glu.gluNewQuadric())
+                gl.glColor3f(1, 0, 0)
+                glu.gluSphere(self.QuadObjS[-1], 0.35, 70, 70)
+                gl.glPopMatrix()
+        gl.glEndList()
         
     def add_atoms(self):
-        #Mendeley = TPeriodTable()
         gl.glNewList(self.object, gl.GL_COMPILE)
-        #print("Add_atoms")
-        
         for at in self.MainModel.atoms:            
             gl.glPushMatrix()
             gl.glTranslatef(at.x, at.y, at.z)
@@ -414,12 +423,10 @@ class GuiOpenGL(object):
 
                 gl.glScale(self.Scale, self.Scale, self.Scale)
 
-                gl.glCallList(self.object)   # atoms
-
-                if self.CanSearch:
-                    self.get_atom_on_screen()
-
                 if self.ProbeXYZ:
+                    self.add_selected_atom()
+                    gl.glCallList(self.object + 7)  # selected atom
+
                     point = self.get_point_in_3D(self.xScene, self.yScene)
                     if abs(self.MainModel.atoms[self.selected_atom].x - point[0]) < 0.2:
                         self.MainModel.atoms[self.selected_atom].x = point[0]
@@ -427,24 +434,34 @@ class GuiOpenGL(object):
                         self.MainModel.atoms[self.selected_atom].y = - point[1]
                     if abs(self.MainModel.atoms[self.selected_atom].z - point[2]) < 0.2:
                         self.MainModel.atoms[self.selected_atom].z = point[2]
+                    self.add_atoms()
+                    gl.glCallList(self.object)  # atoms
+                    self.add_bonds()
+                    if self.ViewBonds:
+                        gl.glCallList(self.object + 2)  # Bonds
+                else:
+                    gl.glCallList(self.object)  # atoms
 
-                if self.ViewBonds:
-                    gl.glCallList(self.object + 2)  # Bonds
+                    if self.CanSearch:
+                        self.get_atom_on_screen()
 
-                if self.ViewVoronoi:
-                    gl.glCallList(self.object + 1)  # Voronoi
+                    if self.ViewBonds:
+                        gl.glCallList(self.object + 2)  # Bonds
 
-                if self.ViewBox:
-                    gl.glCallList(self.object + 3)  # lattice_parameters_abc_angles
+                    if self.ViewVoronoi:
+                        gl.glCallList(self.object + 1)  # Voronoi
 
-                if self.ViewSurface:
-                    gl.glCallList(self.object + 4)  # Surface
+                    if self.ViewBox:
+                        gl.glCallList(self.object + 3)  # lattice_parameters_abc_angles
 
-                if self.ViewContour:
-                    gl.glCallList(self.object + 5)  # Contour
+                    if self.ViewSurface:
+                        gl.glCallList(self.object + 4)  # Surface
 
-                if self.ViewContourFill:
-                    gl.glCallList(self.object + 6)  # ContourFill
+                    if self.ViewContour:
+                        gl.glCallList(self.object + 5)  # Contour
+
+                    if self.ViewContourFill:
+                        gl.glCallList(self.object + 6)  # ContourFill
 
         except Exception as exc:
             print(exc)
