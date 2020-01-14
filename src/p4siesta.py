@@ -418,7 +418,7 @@ class mainWindow(qWidget.QMainWindow):
         """print("combobox changed", value)"""
         self.plot_model(value)
         self.fill_atoms_table()
-        self.fill_priperties_table()
+        self.fill_properties_table()
 
     def plot_model(self, value):
         ViewBox = self.FormSettingsViewCheckShowBox.isChecked()
@@ -491,6 +491,7 @@ class mainWindow(qWidget.QMainWindow):
                 minv, maxv = self.xsf_data_range()
                 self.FormActionsPostLabelSurfaceMax.setText("Max: " + str(maxv))
                 self.FormActionsPostLabelSurfaceMin.setText("Min: " + str(minv))
+                self.FormActionsPostLabelSurfaceValue.setRange(minv,maxv)
                 self.FormActionsPostLabelSurfaceValue.setValue(round(0.5 * (maxv + minv), 5))
 
                 self.FormActionsPostSliderContourXY.setMaximum(self.XSFfile.Nz)
@@ -511,11 +512,9 @@ class mainWindow(qWidget.QMainWindow):
             for i in range(0, self.IsosurfaceColorsTable.rowCount()):
                 value = float(self.IsosurfaceColorsTable.item(i, 0).text())
                 verts, faces = self.XSFfile.isosurface(value)
-                print(self.IsosurfaceColorsTable.item(i, 1))
-                transp = float(self.IsosurfaceColorsTable.item(i, 1).text())
+                transp = float(self.IsosurfaceColorsTable.cellWidget(i, 1).text())
                 color = self.get_color(cmap, minv, maxv, value, color_scale)
-                color[3] = transp
-                print(color)
+                color = (color[0], color[1], color[2], transp)
                 data.append([verts, faces, color])
             self.MainForm.add_surface(data)
 
@@ -662,7 +661,7 @@ class mainWindow(qWidget.QMainWindow):
         self.FormModelTableAtoms.resizeColumnsToContents()
   
   
-    def fill_priperties_table(self):
+    def fill_properties_table(self):
         properties = []
                 
         model = self.MainForm.MainModel.atoms          
@@ -777,7 +776,7 @@ class mainWindow(qWidget.QMainWindow):
             self.fill_file_name(title)
         self.fill_models_list()
         self.fill_atoms_table()
-        self.fill_priperties_table()
+        self.fill_properties_table()
         self.check_xsf(fname)
         if Importer.checkFormat(fname) == "SIESTAout":
             self.check_dos(fname)
