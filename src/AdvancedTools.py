@@ -346,7 +346,8 @@ class TPeriodTable:
     def __init__(self):
         self.table_size = 110
         self.Atoms = []
-        default_color = [0.6, 0.6, 1.0]
+        self.default_color = [0.6, 0.6, 1.0]
+        self.default_radius = 77
 
         self.Atoms.append(TPeriodTableAtom(0,    0, ' ',  [0.1, 1.0, 0.1]))
 
@@ -358,37 +359,37 @@ class TPeriodTable:
         self.Atoms.append(TPeriodTableAtom(6,   77,  'C', [0.2, 0.2, 0.8]))
         self.Atoms.append(TPeriodTableAtom(7,   92,  'N', [0.45, 0.3, 0.6]))
         self.Atoms.append(TPeriodTableAtom(8,   60,  'O', [1.0, 0.0, 0.5]))
-        self.Atoms.append(TPeriodTableAtom(9,   73,  'F', default_color))
-        self.Atoms.append(TPeriodTableAtom(10,  38, 'Ne', default_color))
-        self.Atoms.append(TPeriodTableAtom(11, 190, 'Na', default_color))
-        self.Atoms.append(TPeriodTableAtom(12, 160, 'Mg', default_color))
-        self.Atoms.append(TPeriodTableAtom(13, 143, 'Al', default_color))
-        self.Atoms.append(TPeriodTableAtom(14, 132, 'Si', default_color))
-        self.Atoms.append(TPeriodTableAtom(15, 128,  'P', default_color))
-        self.Atoms.append(TPeriodTableAtom(16, 127,  'S', default_color))
-        self.Atoms.append(TPeriodTableAtom(17,  99, 'Cl', default_color))
-        self.Atoms.append(TPeriodTableAtom(18,  71, 'Ar', default_color))
-        self.Atoms.append(TPeriodTableAtom(19, 235,  'K', default_color))
-        self.Atoms.append(TPeriodTableAtom(20, 197, 'Ca', default_color))
-        self.Atoms.append(TPeriodTableAtom(21, 162, 'Sc', default_color))
-        self.Atoms.append(TPeriodTableAtom(22, 147, 'Ti', default_color))
-        self.Atoms.append(TPeriodTableAtom(23, 134,  'V', default_color))
-        self.Atoms.append(TPeriodTableAtom(24, 130, 'Cr', default_color))
-        self.Atoms.append(TPeriodTableAtom(25, 127, 'Mn', default_color))
-        self.Atoms.append(TPeriodTableAtom(26, 126, 'Fe', default_color))
-        self.Atoms.append(TPeriodTableAtom(27, 125, 'Co', default_color))
-        self.Atoms.append(TPeriodTableAtom(28, 124, 'Ni', default_color))
-        self.Atoms.append(TPeriodTableAtom(29, 128, 'Cu', default_color))
-        self.Atoms.append(TPeriodTableAtom(30, 138, 'Zn', default_color))
-        self.Atoms.append(TPeriodTableAtom(31, 141, 'Ga', default_color))
-        self.Atoms.append(TPeriodTableAtom(32, 123, 'Ge', default_color))
-        self.Atoms.append(TPeriodTableAtom(33, 139, 'As', default_color))
-        self.Atoms.append(TPeriodTableAtom(34, 140, 'Se', default_color))
-        self.Atoms.append(TPeriodTableAtom(35, 114, 'Br', default_color))
-        self.Atoms.append(TPeriodTableAtom(36,  88, 'Kr', default_color))
+        self.Atoms.append(TPeriodTableAtom(9,   73,  'F', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(10,  38, 'Ne', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(11, 190, 'Na', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(12, 160, 'Mg', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(13, 143, 'Al', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(14, 132, 'Si', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(15, 128,  'P', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(16, 127,  'S', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(17,  99, 'Cl', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(18,  71, 'Ar', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(19, 235,  'K', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(20, 197, 'Ca', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(21, 162, 'Sc', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(22, 147, 'Ti', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(23, 134,  'V', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(24, 130, 'Cr', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(25, 127, 'Mn', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(26, 126, 'Fe', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(27, 125, 'Co', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(28, 124, 'Ni', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(29, 128, 'Cu', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(30, 138, 'Zn', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(31, 141, 'Ga', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(32, 123, 'Ge', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(33, 139, 'As', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(34, 140, 'Se', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(35, 114, 'Br', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(36,  88, 'Kr', self.default_color))
 
         for i in range(37,self.table_size):
-            self.Atoms.append(TPeriodTableAtom(i, 77, 'C', default_color))
+            self.Atoms.append(TPeriodTableAtom(i, self.default_radius, 'C', self.default_color))
 
         self.Bonds = []
         for i in range(0, self.table_size):
@@ -404,18 +405,29 @@ class TPeriodTable:
         self.Bonds[79][79] = 2.5
 
     def get_rad(self, charge):
-        return self.Atoms[int(charge)].radius
+        if int(charge)< self.table_size:
+            return self.Atoms[int(charge)].radius
+        else:
+            return self.default_radius
 
     def get_let(self, charge):
-        return self.Atoms[int(charge)].let
+        if int(charge) < self.table_size:
+            return self.Atoms[int(charge)].let
+        if int(charge)>=200:
+            return "Direct"
 
     def get_color(self, charge):
-        return self.Atoms[int(charge)].color
+        if int(charge) < self.table_size:
+            return self.Atoms[int(charge)].color
+        else:
+            return self.default_color
 
     def get_charge_by_letter(self, let):
         for atom in self.Atoms:
             if atom.let.lower() == let.lower():
                 return int(atom.charge)
+            if let.lower() == "Direct":
+                return 200
         return -1
 
     def get_all_colors(self):
@@ -429,8 +441,6 @@ class TPeriodTable:
         for i in range(0, self.table_size):
             lets.append(self.Atoms[i].let)
         return lets
-
-
 
     
 ##################################################################
@@ -540,6 +550,19 @@ class TAtomicModel(object):
 
     def __getitem__(self, i):
         return self.atoms[i]
+
+    def ModifyAtomsTypes(self, changes):
+        Mendeley = TPeriodTable()
+        for change in changes:
+            let = change[1]
+            charge = Mendeley.get_charge_by_letter(let)
+
+            old_charge = change[0]
+
+            for atom in self.atoms:
+                if atom.charge == old_charge:
+                    atom.charge = charge
+                    atom.let = let
 
 
     def nAtoms(self):

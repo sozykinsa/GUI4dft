@@ -735,11 +735,11 @@
                  <x>0</x>
                  <y>0</y>
                  <width>344</width>
-                 <height>554</height>
+                 <height>523</height>
                 </rect>
                </property>
                <attribute name="label">
-                <string>Add Atom</string>
+                <string>Add or Modify Atom</string>
                </attribute>
                <layout class="QVBoxLayout" name="verticalLayout_26">
                 <item>
@@ -800,19 +800,6 @@
                   </property>
                   <layout class="QHBoxLayout" name="horizontalLayout_17">
                    <item>
-                    <spacer name="horizontalSpacer_13">
-                     <property name="orientation">
-                      <enum>Qt::Horizontal</enum>
-                     </property>
-                     <property name="sizeHint" stdset="0">
-                      <size>
-                       <width>25</width>
-                       <height>20</height>
-                      </size>
-                     </property>
-                    </spacer>
-                   </item>
-                   <item>
                     <widget class="QPushButton" name="pushButton_2">
                      <property name="text">
                       <string>Cancel</string>
@@ -820,17 +807,11 @@
                     </widget>
                    </item>
                    <item>
-                    <spacer name="horizontalSpacer_11">
-                     <property name="orientation">
-                      <enum>Qt::Horizontal</enum>
+                    <widget class="QPushButton" name="pushButton_3">
+                     <property name="text">
+                      <string>Modify</string>
                      </property>
-                     <property name="sizeHint" stdset="0">
-                      <size>
-                       <width>25</width>
-                       <height>20</height>
-                      </size>
-                     </property>
-                    </spacer>
+                    </widget>
                    </item>
                    <item>
                     <widget class="QPushButton" name="pushButton">
@@ -838,19 +819,6 @@
                       <string>Add</string>
                      </property>
                     </widget>
-                   </item>
-                   <item>
-                    <spacer name="horizontalSpacer_12">
-                     <property name="orientation">
-                      <enum>Qt::Horizontal</enum>
-                     </property>
-                     <property name="sizeHint" stdset="0">
-                      <size>
-                       <width>25</width>
-                       <height>20</height>
-                      </size>
-                     </property>
-                    </spacer>
                    </item>
                   </layout>
                  </widget>
@@ -866,6 +834,11 @@
                  </widget>
                 </item>
                </layout>
+              </widget>
+              <widget class="QWidget" name="page">
+               <attribute name="label">
+                <string>...</string>
+               </attribute>
               </widget>
              </widget>
             </item>

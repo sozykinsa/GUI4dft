@@ -45,6 +45,7 @@ from TInterface import Importer
 from TInterface import Calculator
 from TInterface import TXSF
 from TInterface import Image3Dexporter
+from TInterface import AtomsIdentifier
 
 
 class MyFilter(QObject):
@@ -410,6 +411,22 @@ class mainWindow(qWidget.QMainWindow):
                 self.models, self.FDFData = Importer.Import(fname, 'opt')
             else:
                 self.models, self.FDFData = Importer.Import(fname)
+
+            problemAtoms = []
+            for structure in self.models:
+                for at in structure:
+                    if at.charge >=200:
+                        problemAtoms.append(at.charge)
+            problemAtoms = set(problemAtoms)
+
+            if len(problemAtoms)>0:
+                self.atomDialog = AtomsIdentifier(problemAtoms)
+                self.atomDialog.exec()
+                ansv = self.atomDialog.ansv
+
+                for structure in self.models:
+                    structure.ModifyAtomsTypes(ansv)
+
             if len(self.models)>0:
                 if len(self.models[-1].atoms) > 0:
                     value = -1

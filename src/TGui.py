@@ -230,7 +230,6 @@ class GuiOpenGL(object):
                 gl.glColor3f(color[0], color[1], color[2])
                 glu.gluSphere(self.QuadObjS[-1], 0.3, 70, 70)
             else:
-                #print("Add_selected")
                 gl.glColor3f(1, 0, 0)
                 glu.gluSphere(self.QuadObjS[-1], 0.35, 70, 70)
             gl.glPopMatrix()

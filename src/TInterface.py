@@ -15,9 +15,15 @@ import numpy as np
 from skimage.measure import marching_cubes_lewiner
 from skimage.measure import find_contours
 
-from PyQt5 import QtWidgets as qWidget
+from PyQt5 import QtWidgets
 from PyQt5 import uic
 from PyQt5.QtCore import QSize
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QStandardItemModel
+from PyQt5.QtGui import QStandardItem
+
+from atomsidentify import Ui_Dialog as Ui_Dialog_Atoms
+from TGui import GuiOpenGL
 
 import re
 from pathlib import Path
@@ -433,11 +439,55 @@ class TXSF:
                 data.append( [verts, faces, value] )
         return data
 
-class Image3Dexporter(qWidget.QMainWindow):
+class AtomsIdentifier(QtWidgets.QDialog):
+    def __init__(self, problemAtoms):
+        super(AtomsIdentifier, self).__init__()
+        self.ui = Ui_Dialog_Atoms()
+        self.ui.setupUi(self)
+        self.setWindowFlags(Qt.Window | Qt.WindowTitleHint | Qt.CustomizeWindowHint)
+        self.ui.okButton.clicked.connect(self.okButtonClick)
+        self.ansv = []
+
+        self.ui.TheTable.setColumnCount(2)  # Устанавливаем 2 колонки
+        # Устанавливаем заголовки таблицы
+        self.ui.TheTable.setHorizontalHeaderLabels(["Atom Type", "Species"])
+        self.ui.TheTable.setColumnWidth(0, 90)
+        self.ui.TheTable.setColumnWidth(1, 90)
+
+        model = QStandardItemModel()
+        model.appendRow(QStandardItem("select"))
+        Mendeley = TPeriodTable()
+        atoms_list = Mendeley.get_all_letters()
+        for i in range(1, len(atoms_list)):
+            model.appendRow(QStandardItem(atoms_list[i]))
+
+        problemAtoms = list(problemAtoms)
+        problemAtoms.sort()
+
+        for problem in problemAtoms:
+            self.ui.TheTable.setRowCount(self.ui.TheTable.rowCount()+1)  # и одну строку в таблице
+            data_cell = QtWidgets.QTableWidgetItem(str(problem-199))
+            data_cell.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
+            self.ui.TheTable.setItem(self.ui.TheTable.rowCount() - 1, 0, data_cell)
+            atom_cell = QtWidgets.QComboBox()
+
+            atom_cell.setModel(model)
+            atom_cell.setCurrentIndex(0)
+            self.ui.TheTable.setCellWidget(self.ui.TheTable.rowCount() - 1, 1,atom_cell )
+
+    def okButtonClick(self):
+        self.ansv = []
+        for i in range(0, self.ui.TheTable.rowCount()):
+            at_type = self.ui.TheTable.cellWidget(i, 1).currentText()
+            if at_type != "select":
+                self.ansv.append([200+i, at_type])
+        if len(self.ansv) == self.ui.TheTable.rowCount():
+            self.close()
+
+
+class Image3Dexporter(QtWidgets.QMainWindow):
     def __init__(self, windowsWidth, windowsHeight):
             super(Image3Dexporter, self).__init__()
-
-            # self.ImageWin = qWidget.QMainWindow(self)
             uim = os.path.join(os.path.dirname(__file__), 'image3D.ui')
             uic.loadUi(uim, self)
             self.setFixedSize(QSize(windowsWidth, windowsHeight))
