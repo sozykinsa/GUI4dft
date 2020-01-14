@@ -14,10 +14,10 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtCore import QSize
 from PyQt5.QtCore import QCoreApplication
 from PyQt5.QtCore import QSettings
-from PyQt5.QtCore import QItemSelection
+#from PyQt5.QtCore import QItemSelection
 from PyQt5.QtCore import QDir
-from PyQt5.QtCore import QMimeData
-import PyQt5.QtCore as QtCore
+#from PyQt5.QtCore import QMimeData
+#import PyQt5.QtCore as QtCore
 from PyQt5 import QtWidgets as qWidget
 from PyQt5.QtWidgets import QColorDialog
 from PyQt5 import uic
@@ -25,10 +25,10 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtGui import QStandardItemModel
 from PyQt5.QtGui import QStandardItem
 from PyQt5.QtGui import QImage
-from PyQt5.QtGui import QPainter
+#from PyQt5.QtGui import QPainter
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtGui import QColor
-from AdvancedTools import TAtom as Atom
+#from AdvancedTools import TAtom as Atom
 from AdvancedTools import TFDFFile
 from AdvancedTools import TPeriodTable
 from AdvancedTools import TSWNT
@@ -38,7 +38,7 @@ from AdvancedTools import Helpers
 from TGui import GuiOpenGL
 from matplotlib.backends.backend_qt5agg import (NavigationToolbar2QT as NavigationToolbar)
 import numpy as np
-import matplotlib.cm as cm
+#import matplotlib.cm as cm
 import matplotlib.pyplot as plt
 
 from TInterface import Importer
@@ -244,9 +244,10 @@ class mainWindow(qWidget.QMainWindow):
         self.FormActionsTabeDOSProperty.setColumnWidth(2, 80)
 
 
-        self.IsosurfaceColorsTable.setColumnCount(1)
-        self.IsosurfaceColorsTable.setHorizontalHeaderLabels(["Values"])
+        self.IsosurfaceColorsTable.setColumnCount(2)
+        self.IsosurfaceColorsTable.setHorizontalHeaderLabels(["Value","Transparancy"])
         self.IsosurfaceColorsTable.setColumnWidth(0, 120)
+        self.IsosurfaceColorsTable.setColumnWidth(1, 150)
 
         CellPredictionType = QStandardItemModel()
         CellPredictionType.appendRow(QStandardItem("Murnaghan"))
@@ -510,8 +511,11 @@ class mainWindow(qWidget.QMainWindow):
             for i in range(0, self.IsosurfaceColorsTable.rowCount()):
                 value = float(self.IsosurfaceColorsTable.item(i, 0).text())
                 verts, faces = self.XSFfile.isosurface(value)
-
+                print(self.IsosurfaceColorsTable.item(i, 1))
+                transp = float(self.IsosurfaceColorsTable.item(i, 1).text())
                 color = self.get_color(cmap, minv, maxv, value, color_scale)
+                color[3] = transp
+                print(color)
                 data.append([verts, faces, color])
             self.MainForm.add_surface(data)
 
@@ -1183,7 +1187,16 @@ class mainWindow(qWidget.QMainWindow):
         i = self.IsosurfaceColorsTable.rowCount() + 1
         value = self.FormActionsPostLabelSurfaceValue.text()
         self.IsosurfaceColorsTable.setRowCount(i)  # и одну строку в таблице
-        self.IsosurfaceColorsTable.setItem(i - 1, 0, qWidget.QTableWidgetItem(value))
+        color_cell = qWidget.QTableWidgetItem(value)
+        color_cell.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled )
+        self.IsosurfaceColorsTable.setItem(i - 1, 0, color_cell)
+        transp_cell = qWidget.QDoubleSpinBox()
+        transp_cell.setRange(0,1)
+        transp_cell.setValue(1)
+        transp_cell.setSingleStep(0.1)
+        transp_cell.setDecimals(2)
+        #transp_cell.show()
+        self.IsosurfaceColorsTable.setCellWidget(i - 1, 1, transp_cell)
         minv, maxv = self.xsf_data_range()
         color = self.get_color(cmap, minv, maxv, float(value), color_scale)
         #print(color)

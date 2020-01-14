@@ -2,18 +2,18 @@
 
 import OpenGL.GL as gl
 import OpenGL.GLU as glu
-import OpenGL.GLUT as glut
+#import OpenGL.GLUT as glut
 
 from PyQt5 import QtWidgets as qWidget
 
 
-from TInterface import Calculator
-from AdvancedTools import TPeriodTable
+#from TInterface import Calculator
+#from AdvancedTools import TPeriodTable
 from AdvancedTools import TAtomicModel
 from AdvancedTools import TCalculators
-from AdvancedTools import Helpers
+#from AdvancedTools import Helpers
 import math
-import matplotlib.cm as cm
+#import matplotlib.cm as cm
 import numpy as np
 
 class GuiOpenGL(object):
@@ -295,7 +295,7 @@ class GuiOpenGL(object):
             verts = surf[0]
             faces = surf[1]
             color = surf[2]
-            gl.glColor3f(color[0], color[1], color[2])
+            gl.glColor4f(color[0], color[1], color[2], color[3])
             for face in faces:
                 gl.glBegin(gl.GL_TRIANGLES)
                 for point in face:
