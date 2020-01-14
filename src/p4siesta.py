@@ -135,6 +135,10 @@ class mainWindow(qWidget.QMainWindow):
         self.FormSettingsColorsFixedMax.setText(state_FormSettingsColorsFixedMax)
         self.FormSettingsColorsFixedMax.textChanged.connect(self.save_state_FormSettingsColorsFixedMax)
 
+        state_FormSettingsViewSpinBondWidth = int(settings.value(SETTINGS_FormSettingsViewSpinBondWidth, '20'))
+        self.FormSettingsViewSpinBondWidth.setValue(state_FormSettingsViewSpinBondWidth)
+        self.FormSettingsViewSpinBondWidth.valueChanged.connect(self.save_state_FormSettingsViewSpinBondWidth)
+
         self.ColorsOfAtomsTable.setColumnCount(1)
         self.ColorsOfAtomsTable.setHorizontalHeaderLabels(["Values"])
         self.ColorsOfAtomsTable.setColumnWidth(0, 120)
@@ -423,10 +427,11 @@ class mainWindow(qWidget.QMainWindow):
     def plot_model(self, value):
         ViewBox = self.FormSettingsViewCheckShowBox.isChecked()
         ViewBonds = self.FormSettingsViewCheckShowBonds.isChecked()
+        bondWidth = 0.005*self.FormSettingsViewSpinBondWidth.value()
         bondscolor = self.get_color_from_SETTING(self.state_Color_Of_Bonds)
         boxcolor = self.get_color_from_SETTING(self.state_Color_Of_Box)
         atomscolor = self.colors_of_atoms()
-        self.MainForm.set_atomic_structure(self.models[value], atomscolor, ViewBox, boxcolor, ViewBonds, bondscolor)
+        self.MainForm.set_atomic_structure(self.models[value], atomscolor, ViewBox, boxcolor, ViewBonds, bondscolor, bondWidth)
 
     def menu_ortho(self):
         """ menu Ortho"""
@@ -1013,6 +1018,11 @@ class mainWindow(qWidget.QMainWindow):
         settings.setValue(SETTINGS_FormSettingsColorsFixedMin, self.FormSettingsColorsFixedMin.text())
         settings.sync()
 
+    def save_state_FormSettingsViewSpinBondWidth(self):
+        settings = QSettings()
+        settings.setValue(SETTINGS_FormSettingsViewSpinBondWidth, self.FormSettingsViewSpinBondWidth.text())
+        settings.sync()
+
     def save_state_FormSettingsColorsFixedMax(self):
         settings = QSettings()
         settings.setValue(SETTINGS_FormSettingsColorsFixedMax, self.FormSettingsColorsFixedMax.text())
@@ -1218,6 +1228,7 @@ SETTINGS_FormSettingsOpeningCheckOnlyOptimal = 'False'
 SETTINGS_FormSettingsViewCheckAtomSelection = 'False'
 SETTINGS_FormSettingsViewCheckShowBox = 'False'
 SETTINGS_FormSettingsViewCheckShowBonds = 'True'
+SETTINGS_FormSettingsViewSpinBondWidth = '20'
 
 SETTINGS_Color_Of_Atoms = "|1.0 0.6666666666666666 0.0|0.5000076295109483 0.0 1.0|1.0 1.0 0.14999618524452582|0.30000762951094834 1.0 1.0|0.6 0.30000762951094834 0.0|0.2 0.2 0.8|0.4500038147554742 0.30000762951094834 0.6|1.0 0.0 0.500007629\
 5109483|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0\

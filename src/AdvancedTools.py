@@ -49,6 +49,10 @@ class Helpers:
     @staticmethod
     def list_str_to_float(x):
         return [float(item) for item in x]
+
+    @staticmethod
+    def list_str_to_int(x):
+        return [int(item) for item in x]
         
     @staticmethod
     def getsubs(dir):
@@ -1895,6 +1899,47 @@ class TSIESTA:
         return molecules
 
     @staticmethod
+    def atoms_from_md_car(filename):
+        """import from MD_CAR output """
+        periodTable = TPeriodTable()
+        molecules = []
+        if os.path.exists(filename):
+            struct_file = open(filename)
+            str1 = struct_file.readline()
+            while str1.find("---")>=0:
+                newStr = TAtomicModel()
+                LatConst = float(struct_file.readline())
+                lat1 = Helpers.spacedel(struct_file.readline()).split()
+                lat1 = Helpers.list_str_to_float(lat1)
+                lat1 = LatConst*np.array(lat1)
+                lat2 = Helpers.spacedel(struct_file.readline()).split()
+                lat2 = Helpers.list_str_to_float(lat2)
+                lat2 = LatConst * np.array(lat2)
+                lat3 = Helpers.spacedel(struct_file.readline()).split()
+                lat3 = Helpers.list_str_to_float(lat3)
+                lat3 = LatConst * np.array(lat3)
+                NumbersOfAtoms = Helpers.spacedel(struct_file.readline()).split()
+                NumbersOfAtoms = Helpers.list_str_to_int(NumbersOfAtoms)
+                str1 = struct_file.readline()
+                if Helpers.spacedel(str1) == "Direct":
+                    for i in range(0,len(NumbersOfAtoms)):
+                        for j in range(0, NumbersOfAtoms[i]):
+                            row = Helpers.spacedel(struct_file.readline()).split()
+                            row = Helpers.list_str_to_float(row)
+
+                            let = "Direct"
+                            charge = 200 + i
+                            x = row[0]
+                            y = row[1]
+                            z = row[2]
+
+                            newStr.AddAtom(TAtom([x, y, z, let, charge]))
+                    newStr.set_lat_vectors(lat1, lat2, lat3)
+                    newStr.convert_from_direct_to_cart()
+                    molecules.append(newStr)
+        return molecules
+
+    @staticmethod
     def atoms_from_output_optim(filename):
         """Return the relaxed AtList from output file"""
         NumberOfAtoms = TSIESTA.number_of_atoms(filename)
@@ -1956,7 +2001,7 @@ class TSIESTA:
             lat3 = Helpers.list_str_to_float(lat3)
             NumberOfAtoms = int(struct_file.readline())
 
-            atoms = []
+            newStr = TAtomicModel()
             for i1 in range(0, NumberOfAtoms):
                 str1 = Helpers.spacedel(struct_file.readline())
                 S = str1.split(' ')
@@ -1965,9 +2010,7 @@ class TSIESTA:
                 z = float(S[4])
                 charge = int(S[1])
                 let = periodTable.get_let(charge)
-                A = [x, y, z, let, charge]
-                atoms.append(A)
-            newStr = TAtomicModel(atoms)
+                newStr.AddAtom(TAtom([x, y, z, let, charge]))
             newStr.set_lat_vectors(lat1,lat2,lat3)
             newStr.convert_from_direct_to_cart()
             molecules.append(newStr)

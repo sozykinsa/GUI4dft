@@ -68,6 +68,9 @@ class Importer(object):
         if filename.endswith(".STRUCT_OUT"):
             return "SIESTASTRUCT_OUT"
 
+        if filename.endswith(".MD_CAR"):
+            return "SIESTAMD_CAR"
+
         if filename.endswith(".XSF"):
             return "SIESTAXSF"
 
@@ -102,6 +105,10 @@ class Importer(object):
 
             if fileFormat == "SIESTASTRUCT_OUT":
                 models = TSIESTA.atoms_from_struct_out(filename)
+                fdf = "#"
+
+            if fileFormat == "SIESTAMD_CAR":
+                models = TSIESTA.atoms_from_md_car(filename)
                 fdf = "#"
 
             if fileFormat == "SIESTAXSF":

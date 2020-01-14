@@ -2,11 +2,13 @@ p4dft - first free SIESTA oriented GUI
 
 Allow work with non ortogonal cells
 MD_CAR file
-filling of parallelepiped
 add atoms
-bond width
+modify atoms
+fdf for MD_CAR
+change atom sort (for direct coords)
 cube format parser
 classify atom bonds
+View Axes
 
 convert ui to .py
 Компиляция Python приложения   https://python-scripts.com/pyqt5#qtablewidget

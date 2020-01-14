@@ -93,11 +93,12 @@ class GuiOpenGL(object):
         radius = min(width, height)*float(self.Scale)
         return (2.*x-width)/radius, -(2.*y-height)/radius
 
-    def set_atomic_structure(self, structure, atomscolors, ViewBox, boxcolor, ViewBonds, bondscolor):
+    def set_atomic_structure(self, structure, atomscolors, ViewBox, boxcolor, ViewBonds, bondscolor, bondWidth):
         self.clean()
         self.MainModel = structure
         self.ViewBox = ViewBox
         self.ViewBonds = ViewBonds
+        self.bondWidth = bondWidth
         self.ViewSurface = False
         self.ViewContour = False
         self.ViewContourFill = False
@@ -248,7 +249,7 @@ class GuiOpenGL(object):
             y2 = self.MainModel.atoms[bond[1]].y
             z2 = self.MainModel.atoms[bond[1]].z
 
-            self.add_bond([x1, y1, z1], [x2, y2, z2])
+            self.add_bond([x1, y1, z1], [x2, y2, z2], self.bondWidth)
         gl.glEndList()
 
     def add_box(self):
