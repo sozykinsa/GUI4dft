@@ -223,6 +223,15 @@ class mainWindow(qWidget.QMainWindow):
         
         self.addToolBar(NavigationToolbar(self.MplWidget.canvas, self))
 
+        model = QStandardItemModel()
+        model.appendRow(QStandardItem("select"))
+        Mendeley = TPeriodTable()
+        atoms_list = Mendeley.get_all_letters()
+        for i in range(1, len(atoms_list)):
+            model.appendRow(QStandardItem(atoms_list[i]))
+        self.FormActionsPreComboAtomsList.setModel(model)
+
+
         # sliders
         self.FormActionsPostSliderContourXY.valueChanged.connect(self.set_xsf_z_position)
         self.FormActionsPostSliderContourXZ.valueChanged.connect(self.set_xsf_y_position)
@@ -263,7 +272,7 @@ class mainWindow(qWidget.QMainWindow):
 
         FillSpaceModel = QStandardItemModel()
         FillSpaceModel.appendRow(QStandardItem("cylinder"))
-        FillSpaceModel.appendRow(QStandardItem("parallelepiped"))
+        #FillSpaceModel.appendRow(QStandardItem("parallelepiped"))
         self.FormActionsPreComboFillSpace.setModel(FillSpaceModel)
 
 
