@@ -33,6 +33,3 @@ class Ui_Dialog(object):
         _translate = QtCore.QCoreApplication.translate
         Dialog.setWindowTitle(_translate("Dialog", "Spesify atoms types"))
         self.okButton.setText(_translate("Dialog", "PushButton"))
-
-
-

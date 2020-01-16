@@ -3,12 +3,13 @@ p4dft - first free SIESTA oriented GUI
 Allow work with non ortogonal cells
 add atoms
 modify atoms
-fdf for MD_CAR
 cube format parser
 classify atom bonds
 View Axes
 BANDS
 PDOS
+seve file dialog for image3D
+menu_about() # ui
 
 convert ui to .py
 Компиляция Python приложения   https://python-scripts.com/pyqt5#qtablewidget

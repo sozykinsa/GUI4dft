@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from copy import deepcopy
-import math
 import os
-#import AdvancedTools as AT
 
 from AdvancedTools import TAtomicModel
 from AdvancedTools import TCalculators
@@ -16,17 +14,14 @@ from skimage.measure import marching_cubes_lewiner
 from skimage.measure import find_contours
 
 from PyQt5 import QtWidgets
-from PyQt5 import uic
 from PyQt5.QtCore import QSize
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QStandardItemModel
 from PyQt5.QtGui import QStandardItem
 
+from image3D import Ui_MainWindow as Ui_image3D
 from atomsidentify import Ui_Dialog as Ui_Dialog_Atoms
 from TGui import GuiOpenGL
-
-import re
-from pathlib import Path
 
 class Calculator(object):
 
@@ -448,8 +443,7 @@ class AtomsIdentifier(QtWidgets.QDialog):
         self.ui.okButton.clicked.connect(self.okButtonClick)
         self.ansv = []
 
-        self.ui.TheTable.setColumnCount(2)  # Устанавливаем 2 колонки
-        # Устанавливаем заголовки таблицы
+        self.ui.TheTable.setColumnCount(2)
         self.ui.TheTable.setHorizontalHeaderLabels(["Atom Type", "Species"])
         self.ui.TheTable.setColumnWidth(0, 90)
         self.ui.TheTable.setColumnWidth(1, 90)
@@ -488,16 +482,14 @@ class AtomsIdentifier(QtWidgets.QDialog):
 class Image3Dexporter(QtWidgets.QMainWindow):
     def __init__(self, windowsWidth, windowsHeight):
             super(Image3Dexporter, self).__init__()
-            uim = os.path.join(os.path.dirname(__file__), 'image3D.ui')
-            uic.loadUi(uim, self)
+            self.ui = Ui_image3D()
+            self.ui.setupUi(self)
             self.setFixedSize(QSize(windowsWidth, windowsHeight))
 
-            self.MainForm = GuiOpenGL(self.openGLWidget)
-            # self.MainForm.OpenGLWidet = self.ImageWin.openGLWidget
-
-            self.openGLWidget.initializeGL()
-            # self.openGLWidget.resizeGL(self.windowsWidth, self.windowsHeight)
-            self.openGLWidget.paintGL = self.MainForm.paintGL
-            self.openGLWidget.initializeGL = self.MainForm.initializeGL
+            self.MainForm = GuiOpenGL(self.ui.openGLWidget, None)
+            self.MainForm.filter = None
+            #self.ui.openGLWidget.initializeGL()
+            #self.openGLWidget.paintGL = self.MainForm.paintGL
+            #self.openGLWidget.initializeGL = self.MainForm.initializeGL
 
             self.show()

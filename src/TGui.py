@@ -5,6 +5,10 @@ import OpenGL.GLU as glu
 #import OpenGL.GLUT as glut
 
 from PyQt5 import QtWidgets as qWidget
+from PyQt5.QtCore import QEvent
+
+from PyQt5.QtCore import QObject
+from PyQt5.QtCore import Qt
 
 
 #from TInterface import Calculator
@@ -16,8 +20,37 @@ import math
 #import matplotlib.cm as cm
 import numpy as np
 
+
+class MyFilter(QObject):
+    def __init__(self, wind):
+        super(MyFilter, self).__init__()
+        self.window = wind
+
+    def eventFilter(self, obj, event):
+        if event.type() == QEvent.Wheel:
+            self.window.scale(event.angleDelta().y())
+
+        if event.type() == QEvent.MouseMove:
+            if event.buttons() == Qt.LeftButton:
+                self.window.rotat(event.x(), event.y(), self.window.openGLWidget.width(), self.window.openGLWidget.height())
+                self.window.setXY(event.x(), event.y(), self.window.openGLWidget.width(), self.window.openGLWidget.height())
+
+            elif event.buttons() == Qt.RightButton:
+                if self.window.isAtomSelected():
+                    self.window.move_atom(event.x(), event.y(), self.window.openGLWidget.width(), self.window.openGLWidget.height())
+                else:
+                    self.window.move(event.x(), event.y(), self.window.openGLWidget.width(), self.window.openGLWidget.height())
+                self.window.setXY(event.x(), event.y(), self.window.openGLWidget.width(), self.window.openGLWidget.height())
+
+        elif event.type() == QEvent.MouseButtonPress:
+            if self.window.CheckAtomSelection.isChecked() and event.buttons() == Qt.LeftButton:
+                self.window.CanSearch = True
+            self.window.setXY(event.x(), event.y(), self.window.openGLWidget.width(), self.window.openGLWidget.height())
+        return False
+
+
 class GuiOpenGL(object):
-    def __init__(self, widget):
+    def __init__(self, widget, CheckAtomSelection):
         """constructor"""
         self.openGLWidget = widget
         self.MainModel = TAtomicModel()
@@ -46,6 +79,15 @@ class GuiOpenGL(object):
         self.CanSearch = False
         self.selected_atom = -1
         self.ProbeXYZ = False
+        self.CheckAtomSelection = CheckAtomSelection
+
+        print("\033[1;101m SETU6P UI \033[0m")
+        self.openGLWidget.initializeGL()
+        self.openGLWidget.paintGL = self.paintGL
+        self.openGLWidget.initializeGL = self.initializeGL
+        self.openGLWidget.setMouseTracking(True)
+        self.filter = MyFilter(self)
+        self.openGLWidget.installEventFilter(self.filter)
 
     def isActive(self):
         return self.active
@@ -60,6 +102,7 @@ class GuiOpenGL(object):
         self.ViewOrtho = GUI.ViewOrtho
         self.ViewBox = GUI.ViewBox
         self.ViewBonds = GUI.ViewBonds
+        self.bondWidth = GUI.bondWidth
         self.ViewSurface = GUI.ViewSurface
         self.ViewContour = GUI.ViewContour
         self.ViewVoronoi = GUI.ViewVoronoi
@@ -388,41 +431,9 @@ class GuiOpenGL(object):
         gl.glEnable (gl.GL_COLOR_MATERIAL)
         gl.glLightfv(gl.GL_LIGHT0, gl.GL_POSITION, lightpos)     # Определяем положение источника света
         try:
-            gl.glClearColor(1.0, 1.0, 1.0, 1.0)
-            gl.glClear(gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT)
-            gl.glMatrixMode(gl.GL_PROJECTION)
-            gl.glLoadIdentity()
-            x, y, width, height = gl.glGetDoublev(gl.GL_VIEWPORT)
-            
-            if self.ViewOrtho == False:
-                glu.gluPerspective(
-                    45,  # field of view in degrees
-                    width / float(height or 1),  # aspect ratio
-                    .25,  # near clipping plane
-                    200)  # far clipping plane            
-            else:
-                radius = .5 * min(width, height)
-                w, h = width/radius, height/radius
-            
-                gl.glOrtho(-2*w,    # GLdouble left
-                    2*w,    # GLdouble right
-                    -2*h,    # GLdouble bottom
-                    2*h, # GLdouble top
-                    -0.25, # GLdouble near
-                    200.0)  # GLdouble far
-            
-            gl.glMatrixMode(gl.GL_MODELVIEW)
-            gl.glLoadIdentity()
-
+            self.prepere_scene()
             if self.active:
-                gl.glTranslated(self.x, self.y, self.z)
-
-                gl.glRotate(self.rotX, 1, 0, 0)
-                gl.glRotate(self.rotY, 0, 1, 0)
-                gl.glRotate(self.rotZ, 0, 0, 1)
-
-                gl.glScale(self.Scale, self.Scale, self.Scale)
-
+                self.prepare_orientation()
                 if self.ProbeXYZ:
                     self.add_selected_atom()
                     gl.glCallList(self.object + 7)  # selected atom
@@ -434,6 +445,10 @@ class GuiOpenGL(object):
                         self.MainModel.atoms[self.selected_atom].y = - point[1]
                     if abs(self.MainModel.atoms[self.selected_atom].z - point[2]) < 0.2:
                         self.MainModel.atoms[self.selected_atom].z = point[2]
+
+                    self.prepere_scene()
+                    self.prepare_orientation()
+
                     self.add_atoms()
                     gl.glCallList(self.object)  # atoms
                     self.add_bonds()
@@ -466,6 +481,40 @@ class GuiOpenGL(object):
         except Exception as exc:
             print(exc)
             pass
+
+    def prepare_orientation(self):
+        gl.glTranslated(self.x, self.y, self.z)
+
+        gl.glRotate(self.rotX, 1, 0, 0)
+        gl.glRotate(self.rotY, 0, 1, 0)
+        gl.glRotate(self.rotZ, 0, 0, 1)
+
+        gl.glScale(self.Scale, self.Scale, self.Scale)
+
+    def prepere_scene(self):
+        gl.glClearColor(1.0, 1.0, 1.0, 1.0)
+        gl.glClear(gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT)
+        gl.glMatrixMode(gl.GL_PROJECTION)
+        gl.glLoadIdentity()
+        x, y, width, height = gl.glGetDoublev(gl.GL_VIEWPORT)
+        if self.ViewOrtho == False:
+            glu.gluPerspective(
+                45,  # field of view in degrees
+                width / float(height or 1),  # aspect ratio
+                .25,  # near clipping plane
+                200)  # far clipping plane
+        else:
+            radius = .5 * min(width, height)
+            w, h = width / radius, height / radius
+
+            gl.glOrtho(-2 * w,  # GLdouble left
+                       2 * w,  # GLdouble right
+                       -2 * h,  # GLdouble bottom
+                       2 * h,  # GLdouble top
+                       -0.25,  # GLdouble near
+                       200.0)  # GLdouble far
+        gl.glMatrixMode(gl.GL_MODELVIEW)
+        gl.glLoadIdentity()
 
     def get_atom_on_screen(self):
         point = self.get_point_in_3D(self.xScene, self.yScene)
