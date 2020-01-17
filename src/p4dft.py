@@ -47,6 +47,8 @@ from TInterface import AtomsIdentifier
 from form import Ui_MainWindow as Ui_form
 from about import Ui_DialogAbout as Ui_about
 
+import xml.etree.ElementTree as ET
+
 class mainWindow(qWidget.QMainWindow):  
     def __init__(self, *args):
         super(mainWindow, self).__init__(*args)
@@ -54,7 +56,8 @@ class mainWindow(qWidget.QMainWindow):
         self.ui.setupUi(self)
 
         self.models = []
-        self.MainForm = GuiOpenGL(self.ui.openGLWidget, self.ui.FormSettingsViewCheckAtomSelection)
+        selected_atom_info = [self.ui.FormActionsPreComboAtomsList, self.ui.FormActionsPreSpinAtomsCoordX, self.ui.FormActionsPreSpinAtomsCoordY, self.ui.FormActionsPreSpinAtomsCoordZ]
+        self.MainForm = GuiOpenGL(self.ui.openGLWidget, self.ui.FormSettingsViewCheckAtomSelection, selected_atom_info)
         self.FDFData = TFDFFile()
         self.XSFfile = TXSF()
         self.filename = ""
@@ -92,6 +95,7 @@ class mainWindow(qWidget.QMainWindow):
         self.ui.ColorVoronoiDialogButton.clicked.connect(self.select_voronoi_color)
         self.ui.FormActionsPostButSurfaceAdd.clicked.connect(self.add_isosurface_color_to_table)
         self.ui.FormActionsPostButSurfaceDelete.clicked.connect(self.delete_isosurface_color_from_table)
+        self.ui.FormActionsButtonPlotPDOS.clicked.connect(self.plot_pdos)
                 
         self.ui.FormActionsButtonAddDOSFile.clicked.connect(self.add_dos_file)
         self.ui.FormActionsButtonPlotDOS.clicked.connect(self.plot_dos)
@@ -115,6 +119,14 @@ class mainWindow(qWidget.QMainWindow):
         for i in range(1, len(atoms_list)):
             model.appendRow(QStandardItem(atoms_list[i]))
         self.ui.FormActionsPreComboAtomsList.setModel(model)
+
+        model = QStandardItemModel()
+        model.appendRow(QStandardItem("All"))
+        model.appendRow(QStandardItem("Selected atom (3D View)"))
+        model.appendRow(QStandardItem("Selected in list below"))
+        self.ui.FormActionsComboPDOSIndexes.setModel(model)
+
+        self.ui.FormActionsComboPDOSspecies.setModel(model)
 
 
         # sliders
@@ -173,9 +185,7 @@ class mainWindow(qWidget.QMainWindow):
             ColorType.appendRow(QStandardItem(t))
 
         self.ui.FormSettingsColorsScale.setModel(ColorType)
-        #self.FormSettingsColorsScale.setCurrentIndex(ColorType.indexFromItem(QStandardItem(self.ColorType)).row())
         self.ui.FormSettingsColorsScale.setCurrentText(self.ColorType)
-
 
         ColorTypeScale = QStandardItemModel()
         ColorTypeScale.appendRow(QStandardItem("Linear"))
@@ -237,12 +247,10 @@ class mainWindow(qWidget.QMainWindow):
     def load_settings(self):
         # The SETTINGS
         settings = QSettings()
-        state_FormSettingsOpeningCheckOnlyOptimal = settings.value(SETTINGS_FormSettingsOpeningCheckOnlyOptimal, False,
-                                                                   type=bool)
+        state_FormSettingsOpeningCheckOnlyOptimal = settings.value(SETTINGS_FormSettingsOpeningCheckOnlyOptimal, False, type=bool)
         self.ui.FormSettingsOpeningCheckOnlyOptimal.setChecked(state_FormSettingsOpeningCheckOnlyOptimal)
         self.ui.FormSettingsOpeningCheckOnlyOptimal.clicked.connect(self.save_state_FormSettingsOpeningCheckOnlyOptimal)
-        state_FormSettingsViewCheckAtomSelection = settings.value(SETTINGS_FormSettingsViewCheckAtomSelection, False,
-                                                                  type=bool)
+        state_FormSettingsViewCheckAtomSelection = settings.value(SETTINGS_FormSettingsViewCheckAtomSelection, False, type=bool)
         self.ui.FormSettingsViewCheckAtomSelection.setChecked(state_FormSettingsViewCheckAtomSelection)
         self.ui.FormSettingsViewCheckAtomSelection.clicked.connect(self.save_state_FormSettingsViewCheckAtomSelection)
         state_FormSettingsViewCheckShowBox = settings.value(SETTINGS_FormSettingsViewCheckShowBox, False, type=bool)
@@ -651,6 +659,12 @@ class mainWindow(qWidget.QMainWindow):
             self.ui.FormModelTableProperties.setItem(i, 1, qWidget.QTableWidgetItem(properties[i][1]))
 
         self.ui.FormModelTableAtoms.resizeColumnsToContents()
+
+    def check_pdos(self, fname):
+        PDOSfile = Importer.CheckPDOSfile(fname)
+        if PDOSfile != False:
+            self.ui.FormActionsLinePDOSfile.setText(PDOSfile)
+            self.ui.FormActionsButtonPlotPDOS.setEnabled(True)
         
     def check_dos(self, fname):
         DOSfile = Importer.CheckDOSfile(fname)
@@ -758,6 +772,7 @@ class mainWindow(qWidget.QMainWindow):
         self.check_xsf(fname)
         if Importer.checkFormat(fname) == "SIESTAout":
             self.check_dos(fname)
+            self.check_pdos(fname)
             self.fill_cell_info(fname)
 
         if Importer.checkFormat(fname) == "SIESTAfdf":
@@ -777,7 +792,41 @@ class mainWindow(qWidget.QMainWindow):
         self.ui.MplWidget.canvas.axes.set_xlabel("Bond lenght")
         self.ui.MplWidget.canvas.axes.set_ylabel("Number of bonds")
         self.ui.MplWidget.canvas.draw()
-        
+
+    def plot_pdos(self):
+        file = self.ui.FormActionsLinePDOSfile.text()
+        if os.path.exists(file):
+            tree = ET.parse(file)
+            root = tree.getroot()
+
+            atom_index = range(1, 20)
+            species = ['C', 'Li']
+            number_n = [0, 1, 2, 3]
+            number_l = [0, 1, 2, 3]
+            number_m = [0, 1, 2, 3]
+            number_z = [0, 1, 2, 3]
+
+            pdos, energy = TSIESTA.calc_pdos(root, atom_index, species, number_l, number_m, number_n, number_z)
+            EF = TSIESTA.FermiEnergy(self.filename)
+            energy -=EF
+
+            self.ui.MplWidget.canvas.axes.clear()
+
+            xs = energy
+            ys = pdos[0]
+            sign = 1
+            if self.ui.FormActionsCheckPDOS_2.isChecked():
+                sign = -1
+            ys2 = sign*pdos[1]
+
+            self.ui.MplWidget.canvas.axes.plot(xs, ys)
+            if self.ui.FormActionsCheckPDOS.isChecked():
+                self.ui.MplWidget.canvas.axes.plot(xs, ys2)
+
+            self.ui.MplWidget.canvas.axes.set_xlabel("Energy, eV")
+            self.ui.MplWidget.canvas.axes.set_ylabel("PDOS, states/eV")
+
+            self.ui.MplWidget.canvas.draw()
            
     def plot_dos(self):
         items = []

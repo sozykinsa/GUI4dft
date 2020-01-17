@@ -1,3 +1,6 @@
 # Default ignored files
 .idea/
 src/__pycache__/
+dist/
+build/
+p4dft.spec

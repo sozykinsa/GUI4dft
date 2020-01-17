@@ -50,7 +50,7 @@ class MyFilter(QObject):
 
 
 class GuiOpenGL(object):
-    def __init__(self, widget, CheckAtomSelection):
+    def __init__(self, widget, CheckAtomSelection, selected_atom_info = []):
         """constructor"""
         self.openGLWidget = widget
         self.MainModel = TAtomicModel()
@@ -88,6 +88,27 @@ class GuiOpenGL(object):
         self.openGLWidget.setMouseTracking(True)
         self.filter = MyFilter(self)
         self.openGLWidget.installEventFilter(self.filter)
+
+        if len(selected_atom_info) == 4:
+            self.selected_atom_type = selected_atom_info[0]
+            self.selected_atom_X = selected_atom_info[1]
+            self.selected_atom_Y = selected_atom_info[2]
+            self.selected_atom_Z = selected_atom_info[3]
+
+    def selected_atom_changed(self):
+        if self.selected_atom >=0:
+            self.selected_atom_data_to_form(self.MainModel[self.selected_atom].charge, self.MainModel[self.selected_atom].x, self.MainModel[self.selected_atom].y, self.MainModel[self.selected_atom].z)
+        else:
+            self.selected_atom_data_to_form(0,0,0,0)
+
+    def selected_atom_data_to_form(self,a,b,c,d):
+        self.selected_atom_type.setCurrentIndex(a)
+        self.selected_atom_X.setValue(b)
+        self.selected_atom_X.update()
+        self.selected_atom_Y.setValue(c)
+        self.selected_atom_Y.update()
+        self.selected_atom_Z.setValue(d)
+        self.selected_atom_Z.update()
 
     def isActive(self):
         return self.active
@@ -445,6 +466,7 @@ class GuiOpenGL(object):
                         self.MainModel.atoms[self.selected_atom].y = - point[1]
                     if abs(self.MainModel.atoms[self.selected_atom].z - point[2]) < 0.2:
                         self.MainModel.atoms[self.selected_atom].z = point[2]
+                    self.selected_atom_changed()
 
                     self.prepere_scene()
                     self.prepare_orientation()
@@ -544,6 +566,7 @@ class GuiOpenGL(object):
             self.add_atoms()
         self.CanSearch = False
         if oldSelected != self.selected_atom:
+            self.selected_atom_changed()
             self.openGLWidget.update()
 
     def get_point_in_3D(self, x, y):

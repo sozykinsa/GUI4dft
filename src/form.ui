@@ -30,7 +30,7 @@
        </size>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>2</number>
       </property>
       <property name="elideMode">
        <enum>Qt::ElideNone</enum>
@@ -101,8 +101,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>124</width>
-                 <height>260</height>
+                 <width>153</width>
+                 <height>271</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -413,7 +413,7 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>74</width>
+                 <width>57</width>
                  <height>16</height>
                 </rect>
                </property>
@@ -466,8 +466,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>98</width>
-                 <height>166</height>
+                 <width>115</width>
+                 <height>179</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -502,8 +502,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>360</width>
-                 <height>512</height>
+                 <width>95</width>
+                 <height>198</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -734,8 +734,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>360</width>
-                 <height>512</height>
+                 <width>344</width>
+                 <height>523</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -747,13 +747,13 @@
                   <property name="minimumSize">
                    <size>
                     <width>0</width>
-                    <height>200</height>
+                    <height>150</height>
                    </size>
                   </property>
                   <property name="maximumSize">
                    <size>
                     <width>16777215</width>
-                    <height>400</height>
+                    <height>150</height>
                    </size>
                   </property>
                   <property name="frameShape">
@@ -762,172 +762,107 @@
                   <property name="frameShadow">
                    <enum>QFrame::Raised</enum>
                   </property>
-                  <layout class="QVBoxLayout" name="verticalLayout_27">
-                   <item>
-                    <widget class="QFrame" name="frame_31">
-                     <property name="minimumSize">
-                      <size>
-                       <width>0</width>
-                       <height>50</height>
-                      </size>
-                     </property>
-                     <property name="frameShape">
-                      <enum>QFrame::StyledPanel</enum>
-                     </property>
-                     <property name="frameShadow">
-                      <enum>QFrame::Raised</enum>
-                     </property>
-                     <layout class="QHBoxLayout" name="horizontalLayout_18">
-                      <item>
-                       <widget class="QLabel" name="label_8">
-                        <property name="text">
-                         <string>Element</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item>
-                       <widget class="QComboBox" name="FormActionsPreComboAtomsList"/>
-                      </item>
-                      <item>
-                       <spacer name="horizontalSpacer_12">
-                        <property name="orientation">
-                         <enum>Qt::Horizontal</enum>
-                        </property>
-                        <property name="sizeHint" stdset="0">
-                         <size>
-                          <width>40</width>
-                          <height>20</height>
-                         </size>
-                        </property>
-                       </spacer>
-                      </item>
-                     </layout>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QFrame" name="frame_32">
-                     <property name="minimumSize">
-                      <size>
-                       <width>0</width>
-                       <height>50</height>
-                      </size>
-                     </property>
-                     <property name="frameShape">
-                      <enum>QFrame::StyledPanel</enum>
-                     </property>
-                     <property name="frameShadow">
-                      <enum>QFrame::Raised</enum>
-                     </property>
-                     <layout class="QHBoxLayout" name="horizontalLayout_19">
-                      <item>
-                       <widget class="QLabel" name="label_24">
-                        <property name="text">
-                         <string>X</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item>
-                       <widget class="QDoubleSpinBox" name="doubleSpinBox_3"/>
-                      </item>
-                      <item>
-                       <spacer name="horizontalSpacer_11">
-                        <property name="orientation">
-                         <enum>Qt::Horizontal</enum>
-                        </property>
-                        <property name="sizeHint" stdset="0">
-                         <size>
-                          <width>40</width>
-                          <height>20</height>
-                         </size>
-                        </property>
-                       </spacer>
-                      </item>
-                     </layout>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QFrame" name="frame_33">
-                     <property name="minimumSize">
-                      <size>
-                       <width>0</width>
-                       <height>50</height>
-                      </size>
-                     </property>
-                     <property name="frameShape">
-                      <enum>QFrame::StyledPanel</enum>
-                     </property>
-                     <property name="frameShadow">
-                      <enum>QFrame::Raised</enum>
-                     </property>
-                     <layout class="QHBoxLayout" name="horizontalLayout_20">
-                      <item>
-                       <widget class="QLabel" name="label_25">
-                        <property name="text">
-                         <string>Y</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item>
-                       <widget class="QDoubleSpinBox" name="doubleSpinBox_2"/>
-                      </item>
-                      <item>
-                       <spacer name="horizontalSpacer_13">
-                        <property name="orientation">
-                         <enum>Qt::Horizontal</enum>
-                        </property>
-                        <property name="sizeHint" stdset="0">
-                         <size>
-                          <width>40</width>
-                          <height>20</height>
-                         </size>
-                        </property>
-                       </spacer>
-                      </item>
-                     </layout>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QFrame" name="frame_34">
-                     <property name="minimumSize">
-                      <size>
-                       <width>0</width>
-                       <height>50</height>
-                      </size>
-                     </property>
-                     <property name="frameShape">
-                      <enum>QFrame::StyledPanel</enum>
-                     </property>
-                     <property name="frameShadow">
-                      <enum>QFrame::Raised</enum>
-                     </property>
-                     <layout class="QHBoxLayout" name="horizontalLayout_21">
-                      <item>
-                       <widget class="QLabel" name="label_26">
-                        <property name="text">
-                         <string>Z</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item>
-                       <widget class="QDoubleSpinBox" name="doubleSpinBox"/>
-                      </item>
-                      <item>
-                       <spacer name="horizontalSpacer_17">
-                        <property name="orientation">
-                         <enum>Qt::Horizontal</enum>
-                        </property>
-                        <property name="sizeHint" stdset="0">
-                         <size>
-                          <width>40</width>
-                          <height>20</height>
-                         </size>
-                        </property>
-                       </spacer>
-                      </item>
-                     </layout>
-                    </widget>
-                   </item>
-                  </layout>
+                  <widget class="QLabel" name="label_8">
+                   <property name="geometry">
+                    <rect>
+                     <x>10</x>
+                     <y>10</y>
+                     <width>83</width>
+                     <height>26</height>
+                    </rect>
+                   </property>
+                   <property name="text">
+                    <string>Element</string>
+                   </property>
+                  </widget>
+                  <widget class="QComboBox" name="FormActionsPreComboAtomsList">
+                   <property name="geometry">
+                    <rect>
+                     <x>90</x>
+                     <y>10</y>
+                     <width>231</width>
+                     <height>22</height>
+                    </rect>
+                   </property>
+                  </widget>
+                  <widget class="QDoubleSpinBox" name="FormActionsPreSpinAtomsCoordX">
+                   <property name="geometry">
+                    <rect>
+                     <x>40</x>
+                     <y>50</y>
+                     <width>63</width>
+                     <height>24</height>
+                    </rect>
+                   </property>
+                   <property name="minimum">
+                    <double>-99.989999999999995</double>
+                   </property>
+                  </widget>
+                  <widget class="QLabel" name="label_24">
+                   <property name="geometry">
+                    <rect>
+                     <x>10</x>
+                     <y>50</y>
+                     <width>31</width>
+                     <height>26</height>
+                    </rect>
+                   </property>
+                   <property name="text">
+                    <string>X</string>
+                   </property>
+                  </widget>
+                  <widget class="QDoubleSpinBox" name="FormActionsPreSpinAtomsCoordY">
+                   <property name="geometry">
+                    <rect>
+                     <x>40</x>
+                     <y>80</y>
+                     <width>63</width>
+                     <height>24</height>
+                    </rect>
+                   </property>
+                   <property name="minimum">
+                    <double>-99.989999999999995</double>
+                   </property>
+                  </widget>
+                  <widget class="QLabel" name="label_25">
+                   <property name="geometry">
+                    <rect>
+                     <x>10</x>
+                     <y>80</y>
+                     <width>21</width>
+                     <height>26</height>
+                    </rect>
+                   </property>
+                   <property name="text">
+                    <string>Y</string>
+                   </property>
+                  </widget>
+                  <widget class="QLabel" name="label_26">
+                   <property name="geometry">
+                    <rect>
+                     <x>10</x>
+                     <y>110</y>
+                     <width>21</width>
+                     <height>26</height>
+                    </rect>
+                   </property>
+                   <property name="text">
+                    <string>Z</string>
+                   </property>
+                  </widget>
+                  <widget class="QDoubleSpinBox" name="FormActionsPreSpinAtomsCoordZ">
+                   <property name="geometry">
+                    <rect>
+                     <x>40</x>
+                     <y>110</y>
+                     <width>63</width>
+                     <height>24</height>
+                    </rect>
+                   </property>
+                   <property name="minimum">
+                    <double>-99.989999999999995</double>
+                   </property>
+                  </widget>
                  </widget>
                 </item>
                 <item>
@@ -1031,15 +966,15 @@
            <string notr="true"/>
           </property>
           <property name="currentIndex">
-           <number>4</number>
+           <number>3</number>
           </property>
           <widget class="QWidget" name="page_16">
            <property name="geometry">
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>86</width>
-             <height>214</height>
+             <width>109</width>
+             <height>243</height>
             </rect>
            </property>
            <attribute name="label">
@@ -1143,8 +1078,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>338</width>
-             <height>497</height>
+             <width>344</width>
+             <height>529</height>
             </rect>
            </property>
            <attribute name="label">
@@ -1464,8 +1399,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>333</width>
-             <height>250</height>
+             <width>372</width>
+             <height>481</height>
             </rect>
            </property>
            <attribute name="label">
@@ -1541,7 +1476,7 @@
               <property name="minimumSize">
                <size>
                 <width>0</width>
-                <height>40</height>
+                <height>50</height>
                </size>
               </property>
               <property name="frameShape">
@@ -1603,13 +1538,218 @@
             </item>
            </layout>
           </widget>
+          <widget class="QWidget" name="page_9">
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>0</y>
+             <width>372</width>
+             <height>481</height>
+            </rect>
+           </property>
+           <attribute name="label">
+            <string>PDOS</string>
+           </attribute>
+           <layout class="QVBoxLayout" name="verticalLayout_27">
+            <item>
+             <widget class="QLineEdit" name="FormActionsLinePDOSfile">
+              <property name="readOnly">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QGroupBox" name="groupBox_11">
+              <property name="title">
+               <string>PDOS filter</string>
+              </property>
+              <layout class="QVBoxLayout" name="verticalLayout_29">
+               <item>
+                <widget class="QGroupBox" name="groupBox_12">
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>40</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>16777215</width>
+                   <height>160</height>
+                  </size>
+                 </property>
+                 <property name="title">
+                  <string>Indexes:</string>
+                 </property>
+                 <layout class="QVBoxLayout" name="verticalLayout_28">
+                  <item>
+                   <widget class="QComboBox" name="FormActionsComboPDOSIndexes"/>
+                  </item>
+                  <item>
+                   <widget class="QListWidget" name="listWidget">
+                    <property name="minimumSize">
+                     <size>
+                      <width>0</width>
+                      <height>50</height>
+                     </size>
+                    </property>
+                    <property name="maximumSize">
+                     <size>
+                      <width>16777215</width>
+                      <height>90</height>
+                     </size>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </widget>
+               </item>
+               <item>
+                <widget class="QGroupBox" name="groupBox_13">
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>40</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>16777215</width>
+                   <height>160</height>
+                  </size>
+                 </property>
+                 <property name="title">
+                  <string>Species:</string>
+                 </property>
+                 <layout class="QVBoxLayout" name="verticalLayout_30">
+                  <item>
+                   <widget class="QComboBox" name="FormActionsComboPDOSspecies"/>
+                  </item>
+                  <item>
+                   <widget class="QListWidget" name="listWidget_2">
+                    <property name="minimumSize">
+                     <size>
+                      <width>0</width>
+                      <height>50</height>
+                     </size>
+                    </property>
+                    <property name="maximumSize">
+                     <size>
+                      <width>16777215</width>
+                      <height>90</height>
+                     </size>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </widget>
+               </item>
+               <item>
+                <widget class="QGroupBox" name="groupBox_14">
+                 <property name="title">
+                  <string>Quantum numbers</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QFrame" name="frame_34">
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>40</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>16777215</width>
+                   <height>50</height>
+                  </size>
+                 </property>
+                 <property name="frameShape">
+                  <enum>QFrame::StyledPanel</enum>
+                 </property>
+                 <property name="frameShadow">
+                  <enum>QFrame::Raised</enum>
+                 </property>
+                 <widget class="QPushButton" name="FormActionsButtonPlotPDOS">
+                  <property name="enabled">
+                   <bool>false</bool>
+                  </property>
+                  <property name="geometry">
+                   <rect>
+                    <x>220</x>
+                    <y>0</y>
+                    <width>93</width>
+                    <height>28</height>
+                   </rect>
+                  </property>
+                  <property name="text">
+                   <string>plot PDOS</string>
+                  </property>
+                 </widget>
+                 <widget class="QCheckBox" name="FormActionsCheckPDOS">
+                  <property name="geometry">
+                   <rect>
+                    <x>15</x>
+                    <y>10</y>
+                    <width>52</width>
+                    <height>16</height>
+                   </rect>
+                  </property>
+                  <property name="text">
+                   <string>Spin</string>
+                  </property>
+                 </widget>
+                 <widget class="QCheckBox" name="FormActionsCheckPDOS_2">
+                  <property name="geometry">
+                   <rect>
+                    <x>80</x>
+                    <y>10</y>
+                    <width>96</width>
+                    <height>16</height>
+                   </rect>
+                  </property>
+                  <property name="text">
+                   <string>Invert Down</string>
+                  </property>
+                 </widget>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+          <widget class="QWidget" name="page_10">
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>0</y>
+             <width>100</width>
+             <height>30</height>
+            </rect>
+           </property>
+           <attribute name="label">
+            <string>Band structure</string>
+           </attribute>
+           <widget class="QLineEdit" name="lineEdit_3">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>10</y>
+              <width>351</width>
+              <height>22</height>
+             </rect>
+            </property>
+           </widget>
+          </widget>
           <widget class="QWidget" name="page_15">
            <property name="geometry">
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>295</width>
-             <height>168</height>
+             <width>199</width>
+             <height>174</height>
             </rect>
            </property>
            <attribute name="label">
@@ -1639,20 +1779,22 @@
                 </widget>
                </item>
                <item>
-                <spacer name="horizontalSpacer_14">
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
+                <widget class="QSpinBox" name="FormActionsPostTextVoronoiMaxDist">
+                 <property name="minimumSize">
                   <size>
-                   <width>82</width>
-                   <height>20</height>
+                   <width>0</width>
+                   <height>42</height>
                   </size>
                  </property>
-                </spacer>
-               </item>
-               <item>
-                <widget class="QSpinBox" name="FormActionsPostTextVoronoiMaxDist">
+                 <property name="maximumSize">
+                  <size>
+                   <width>16777215</width>
+                   <height>42</height>
+                  </size>
+                 </property>
+                 <property name="buttonSymbols">
+                  <enum>QAbstractSpinBox::UpDownArrows</enum>
+                 </property>
                  <property name="value">
                   <number>5</number>
                  </property>
@@ -1740,8 +1882,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>380</width>
-             <height>535</height>
+             <width>372</width>
+             <height>481</height>
             </rect>
            </property>
            <attribute name="label">
@@ -1751,7 +1893,7 @@
             <item>
              <widget class="QTabWidget" name="tabWidget_2">
               <property name="currentIndex">
-               <number>1</number>
+               <number>0</number>
               </property>
               <widget class="QWidget" name="tab_2">
                <attribute name="title">
@@ -1882,38 +2024,53 @@
                      <property name="frameShadow">
                       <enum>QFrame::Raised</enum>
                      </property>
-                     <widget class="QDoubleSpinBox" name="FormActionsPostLabelSurfaceValue">
-                      <property name="geometry">
-                       <rect>
-                        <x>70</x>
-                        <y>8</y>
-                        <width>241</width>
-                        <height>42</height>
-                       </rect>
-                      </property>
-                      <property name="decimals">
-                       <number>6</number>
-                      </property>
-                      <property name="minimum">
-                       <double>-99.000000000000000</double>
-                      </property>
-                      <property name="singleStep">
-                       <double>0.010000000000000</double>
-                      </property>
-                     </widget>
-                     <widget class="QLabel" name="label_10">
-                      <property name="geometry">
-                       <rect>
-                        <x>10</x>
-                        <y>0</y>
-                        <width>38</width>
-                        <height>60</height>
-                       </rect>
-                      </property>
-                      <property name="text">
-                       <string>Value</string>
-                      </property>
-                     </widget>
+                     <layout class="QHBoxLayout" name="horizontalLayout_18">
+                      <item>
+                       <widget class="QLabel" name="label_10">
+                        <property name="text">
+                         <string>Value</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QDoubleSpinBox" name="FormActionsPostLabelSurfaceValue">
+                        <property name="minimumSize">
+                         <size>
+                          <width>0</width>
+                          <height>42</height>
+                         </size>
+                        </property>
+                        <property name="maximumSize">
+                         <size>
+                          <width>16777215</width>
+                          <height>42</height>
+                         </size>
+                        </property>
+                        <property name="decimals">
+                         <number>6</number>
+                        </property>
+                        <property name="minimum">
+                         <double>-99.000000000000000</double>
+                        </property>
+                        <property name="singleStep">
+                         <double>0.010000000000000</double>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <spacer name="horizontalSpacer_11">
+                        <property name="orientation">
+                         <enum>Qt::Horizontal</enum>
+                        </property>
+                        <property name="sizeHint" stdset="0">
+                         <size>
+                          <width>40</width>
+                          <height>20</height>
+                         </size>
+                        </property>
+                       </spacer>
+                      </item>
+                     </layout>
                     </widget>
                    </item>
                    <item>
@@ -2374,8 +2531,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>380</width>
-             <height>568</height>
+             <width>372</width>
+             <height>574</height>
             </rect>
            </property>
            <attribute name="label">
@@ -2452,8 +2609,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>252</width>
-             <height>468</height>
+             <width>233</width>
+             <height>479</height>
             </rect>
            </property>
            <attribute name="label">
@@ -2859,8 +3016,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>86</width>
-             <height>214</height>
+             <width>109</width>
+             <height>243</height>
             </rect>
            </property>
            <attribute name="label">
@@ -2988,8 +3145,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>706</width>
-         <height>690</height>
+         <width>695</width>
+         <height>687</height>
         </rect>
        </property>
        <attribute name="label">
@@ -3006,8 +3163,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>706</width>
-         <height>690</height>
+         <width>695</width>
+         <height>687</height>
         </rect>
        </property>
        <attribute name="label">
@@ -3042,7 +3199,7 @@
      <x>0</x>
      <y>0</y>
      <width>1124</width>
-     <height>29</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

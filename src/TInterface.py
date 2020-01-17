@@ -23,6 +23,8 @@ from image3D import Ui_MainWindow as Ui_image3D
 from atomsidentify import Ui_Dialog as Ui_Dialog_Atoms
 from TGui import GuiOpenGL
 
+
+
 class Calculator(object):
 
     @staticmethod
@@ -130,6 +132,17 @@ class Importer(object):
             return file
         else:
             return False
+
+    @staticmethod
+    def CheckPDOSfile(filename):
+        """Check PDOS file for fdf/out filename"""
+        SystemLabel = TSIESTA.SystemLabel(filename)
+        file = os.path.dirname(filename) + "/" + str(SystemLabel) + ".PDOS"
+        if os.path.exists(file):
+            return file
+        else:
+            return False
+
 
     @staticmethod
     def DOSSIESTA(filename, eF=0):

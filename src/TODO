@@ -9,8 +9,6 @@ View Axes
 BANDS
 PDOS
 seve file dialog for image3D
-menu_about() # ui
 
-convert ui to .py
 Компиляция Python приложения   https://python-scripts.com/pyqt5#qtablewidget
 

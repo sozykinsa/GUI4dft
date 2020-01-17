@@ -2112,6 +2112,30 @@ class TSIESTA:
             return LatConstant*lat_vect_1, LatConstant*lat_vect_2, LatConstant*lat_vect_3
         return False, False, False
 
+    @staticmethod
+    def calc_pdos(root, atom_index, species, number_l, number_m, number_n, number_z):
+        pdos = np.zeros((2, 1000))
+        energy = np.zeros((1, 10))
+        for child in root:
+            # print(child.tag)
+            if child.tag == "energy_values":
+                data = (child.text).split()
+                data = Helpers.list_str_to_float(data)
+                energy = np.array(data)
+                pdos = np.zeros((2, len(energy)))
+            if child.tag == "orbital":
+                # print(child.attrib)
+                if (int(child.attrib['atom_index']) in atom_index) and (child.attrib['species'] in species) and (
+                        int(child.attrib['n']) in number_n) and (int(child.attrib['l']) in number_l) and (
+                        int(child.attrib['m']) in number_m) and (int(child.attrib['z']) in number_z):
+                    for children in child:
+                        data = (children.text).split()
+                        data = Helpers.list_str_to_float(data)
+                        data = np.array(data)
+                        data = data.reshape((2, len(energy)), order='F')
+                        pdos += data
+        return pdos, energy
+
 
     @staticmethod
     def ChargesSIESTA3(filename):
