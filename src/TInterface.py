@@ -143,6 +143,15 @@ class Importer(object):
         else:
             return False
 
+    @staticmethod
+    def CheckBANDSfile(filename):
+        """Check PDOS file for fdf/out filename"""
+        SystemLabel = TSIESTA.SystemLabel(filename)
+        file = os.path.dirname(filename) + "/" + str(SystemLabel) + ".bands"
+        if os.path.exists(file):
+            return file
+        else:
+            return False
 
     @staticmethod
     def DOSSIESTA(filename, eF=0):

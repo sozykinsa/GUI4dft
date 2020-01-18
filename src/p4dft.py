@@ -96,6 +96,7 @@ class mainWindow(qWidget.QMainWindow):
         self.ui.FormActionsPostButSurfaceAdd.clicked.connect(self.add_isosurface_color_to_table)
         self.ui.FormActionsPostButSurfaceDelete.clicked.connect(self.delete_isosurface_color_from_table)
         self.ui.FormActionsButtonPlotPDOS.clicked.connect(self.plot_pdos)
+        self.ui.FormActionsButtonPlotBANDS.clicked.connect(self.plot_bands)
                 
         self.ui.FormActionsButtonAddDOSFile.clicked.connect(self.add_dos_file)
         self.ui.FormActionsButtonPlotDOS.clicked.connect(self.plot_dos)
@@ -665,6 +666,13 @@ class mainWindow(qWidget.QMainWindow):
         if PDOSfile != False:
             self.ui.FormActionsLinePDOSfile.setText(PDOSfile)
             self.ui.FormActionsButtonPlotPDOS.setEnabled(True)
+
+    def check_bands(self, fname):
+        BANDSfile = Importer.CheckBANDSfile(fname)
+        if BANDSfile != False:
+            self.ui.FormActionsLineBANDSfile.setText(BANDSfile)
+            self.ui.FormActionsButtonPlotBANDS.setEnabled(True)
+
         
     def check_dos(self, fname):
         DOSfile = Importer.CheckDOSfile(fname)
@@ -773,6 +781,7 @@ class mainWindow(qWidget.QMainWindow):
         if Importer.checkFormat(fname) == "SIESTAout":
             self.check_dos(fname)
             self.check_pdos(fname)
+            self.check_bands(fname)
             self.fill_cell_info(fname)
 
         if Importer.checkFormat(fname) == "SIESTAfdf":
@@ -825,6 +834,56 @@ class mainWindow(qWidget.QMainWindow):
 
             self.ui.MplWidget.canvas.axes.set_xlabel("Energy, eV")
             self.ui.MplWidget.canvas.axes.set_ylabel("PDOS, states/eV")
+
+            self.ui.MplWidget.canvas.draw()
+
+    def plot_bands(self):
+        file = self.ui.FormActionsLineBANDSfile.text()
+        if os.path.exists(file):
+            f = open(file)
+            eF = float(f.readline())
+            str1 = f.readline().split()
+            str1 = Helpers.list_str_to_float(str1)
+            kmin = str1[0]
+            kmax = str1[1]
+            str1 = f.readline().split()
+            str1 = Helpers.list_str_to_float(str1)
+            emin = str1[0]
+            emax = str1[1]
+            str1 = f.readline().split()
+            str1 = Helpers.list_str_to_int(str1)
+            kmesh = np.zeros((str1[2]))
+            bands = np.zeros((str1[0],str1[2]))
+            for i in range(0,str1[2]):
+                str2 = f.readline().split()
+                str2 = Helpers.list_str_to_float(str2)
+                kmesh[i] = str2[0]
+                for j in range(1,len(str2)):
+                    bands[j-1][i] = str2[j]
+                kol = len(str2)-1
+                while kol < str1[0]:
+                    str2 = f.readline().split()
+                    str2 = Helpers.list_str_to_float(str2)
+                    for j in range(0, len(str2)):
+                        bands[kol + j][i] = str2[j]
+                    kol += len(str2)
+            nsticks = int(f.readline())
+            xticks = []
+            xticklabels = []
+            for i in range(0,nsticks):
+                str3 = f.readline().split()
+                xticks.append(float(str3[0]))
+                xticklabels.append(str3[1])
+            f.close()
+            #print(bands)
+            #print(xticks)
+            self.ui.MplWidget.canvas.axes.clear()
+            for band in bands:
+                self.ui.MplWidget.canvas.axes.plot(kmesh, band)
+            self.ui.MplWidget.canvas.axes.set_xticks(xticks)
+            self.ui.MplWidget.canvas.axes.set_xticklabels(xticklabels)
+            self.ui.MplWidget.canvas.axes.set_xlabel("k")
+            self.ui.MplWidget.canvas.axes.set_ylabel("Energy, eV")
 
             self.ui.MplWidget.canvas.draw()
            
