@@ -10,7 +10,8 @@ from AdvancedTools import TSIESTA
 from AdvancedTools import TPeriodTable
 from AdvancedTools import Helpers
 import numpy as np
-from skimage.measure import marching_cubes_lewiner
+import math
+from skimage.measure import marching_cubes_lewiner, find_contours
 from skimage.measure import find_contours
 
 from PyQt5 import QtWidgets
@@ -66,7 +67,7 @@ class Importer(object):
             return "SIESTAANI"
 
         if filename.endswith(".xyz") or filename.endswith(".XYZ"):
-            return "SIESTAXYZ"
+            return "XMolXYZ"
 
         if filename.endswith(".STRUCT_OUT"):
             return "SIESTASTRUCT_OUT"
@@ -76,6 +77,9 @@ class Importer(object):
 
         if filename.endswith(".XSF"):
             return "SIESTAXSF"
+
+        if filename.endswith(".cube"):
+            return "GAUSSIAN_cube"
 
         return "unknown"
 
@@ -92,14 +96,16 @@ class Importer(object):
                 fdf.from_fdf_file(filename)
 
             if fileFormat == "SIESTAout":
-                if fl == 'opt':
-                    models = TSIESTA.atoms_from_output_optim(filename)
-                else:
-                    type_of_run = (TSIESTA.type_of_run(filename).split())[0].lower()
-                    if type_of_run == 'cg':
+                type_of_run = (TSIESTA.type_of_run(filename).split())[0].lower()
+                if type_of_run == 'cg':
+                    models = []
+                    if fl != 'opt':
                         models = TSIESTA.atoms_from_output_cg(filename)
-                    else:
-                        models = TSIESTA.atoms_from_output_md(filename)
+                    modelsopt = TSIESTA.atoms_from_output_optim(filename)
+                    if len(modelsopt) == 1:
+                        models.append(modelsopt[0])
+                else:
+                    models = TSIESTA.atoms_from_output_md(filename)
                 fdf.from_out_file(filename)
 
             if fileFormat == "SIESTAANI":
@@ -118,7 +124,11 @@ class Importer(object):
                 models = TXSF.get_atoms(filename)
                 fdf = "#"
 
-            if fileFormat == "SIESTAXYZ":
+            if fileFormat == "GAUSSIAN_cube":
+                models = TGaussianCube.get_atoms(filename)
+                fdf = "#"
+
+            if fileFormat == "XMolXYZ":
                 models = TSIESTA.atoms_from_xyz(filename)
                 fdf = "#"
         return models, fdf
@@ -168,7 +178,7 @@ class Importer(object):
             return EF
 
     @staticmethod
-    def Volume(filename):
+    def volume(filename):
         """Import Cell volume from file filename"""
         if os.path.exists(filename):
             EF = TSIESTA.volume(filename)
@@ -185,136 +195,24 @@ class Importer(object):
 ############################ TXSF ################################
 ##################################################################
 
-class TXSFblock:
+class TVolumericDataBlock:
     def __init__(self, title):
         self.title = title
         self.max = None
         self.min = None
 
-class TXSF:
+
+class TVolumericData:
     def __init__(self):
+        self.filename = ""
+        self.Nx = None
+        self.Ny = None
+        self.Nz = None
         self.blocks = []
         self.atoms = []
         self.data3D = np.zeros((1, 1))
-        self.filename = ""
-
-    @staticmethod
-    def get_atoms(filename):
-        periodTable = TPeriodTable()
-
-        Molecules = []
-        box = [0,0,0]
-        if os.path.exists(filename):
-            f = open(filename)
-            row = f.readline()
-            atoms = []
-            while row != '':
-                if row.find("ATOMS") > -1:
-                    while row.find("BEGIN") == -1:
-                        row = f.readline()
-                        if row.find("BEGIN") == -1:
-                            row1 = row.split()
-                            charge = int(row1[0])
-                            x = float(row1[1])
-                            y = float(row1[2])
-                            z = float(row1[3])
-                            atoms.append([x, y, z, periodTable.get_let(charge), charge])
-
-                if row.find("BEGIN_BLOCK_DATAGRID_3D") > -1:
-                    row = f.readline()
-                    while row.find("DATA_from:") > -1:
-                        row = Helpers.spacedel(f.readline())
-                        while row.find("BEGIN_DATAGRID_3D") > -1:
-                            row = f.readline()
-                            origin = f.readline()
-                            vec1 = f.readline().split()
-                            vec1 = Helpers.list_str_to_float(vec1)
-                            vec2 = f.readline().split()
-                            vec2 = Helpers.list_str_to_float(vec2)
-                            vec3 = f.readline().split()
-                            vec3 = Helpers.list_str_to_float(vec3)
-                            bx = vec1[0]
-                            by = vec2[1]
-                            bz = vec3[2]
-                            f.close()
-
-                            AllAtoms = TAtomicModel(atoms)
-                            AllAtoms.box = [bx, by, bz]
-                            AllAtoms.set_lat_vectors(vec1, vec2, vec3)
-                            Molecules.append(AllAtoms)
-                            return Molecules
-                row = f.readline()
-            f.close()
-        return Molecules
-
-    def parse(self, filename):
-        self.filename = filename
-        if os.path.exists(self.filename):
-            model = TXSF.get_atoms(self.filename)[0]
-            self.atoms = model.atoms
-            box = model.box
-            f = open(self.filename)
-            row = f.readline()
-            while row != '':
-                if row.find("BEGIN_BLOCK_DATAGRID_3D") > -1:
-                    row = f.readline()
-                    while row.find("DATA_from:") > -1:
-                        datas = []
-                        row = f.readline()
-                        while row.find("BEGIN_DATAGRID_3D") > -1:
-                            row = Helpers.spacedel(row)
-                            data3D = TXSFblock(row)
-                            while row.find("END_") == -1:  #END_DATAGRID_3D
-                                row = f.readline()
-                            datas.append(data3D)
-                            row = f.readline()
-                        self.blocks.append(datas)
-                row = f.readline()
-            f.close()
-            return True
-        return False
-
-    def load_data(self, getChildNode):
-        f = open(self.filename)
-        row = f.readline()
-        while row != '':
-                if row.find(getChildNode) > -1:
-                    row = Helpers.spacedel(f.readline()).split()
-                    self.Nx = int(row[0])
-                    self.Ny = int(row[1])
-                    self.Nz = int(row[2])
-                    self.data3D = np.zeros((1, self.Nx*self.Ny*self.Nz))
-
-                    origin = f.readline().split()
-                    origin[0] = float(origin[0])
-                    origin[1] = float(origin[1])
-                    origin[2] = float(origin[2])
-                    self.origin = np.array(origin)
-                    vec1 = float(f.readline().split()[0])
-                    vec2 = float(f.readline().split()[1])
-                    vec3 = float(f.readline().split()[2])
-                    self.spacing = (vec1 / self.Nx, vec2 / self.Ny, vec3 / self.Nz)
-                    self.box = (vec1, vec2, vec3)
-
-                    ind = 0
-                    while ind < self.Nx*self.Ny*self.Nz:
-                        row = f.readline().split()
-                        for data in row:
-                            self.data3D[0, ind] = float(data)
-                            ind += 1
-                    row = f.readline()
-                    row = Helpers.spacedel(f.readline())
-
-                    for i in range(0,len(self.blocks)):
-                        for j in range(0,len(self.blocks[i])):
-                            if self.blocks[i][j].title.find(getChildNode) > -1:
-                                self.blocks[i][j].min = np.min(self.data3D)
-                                self.blocks[i][j].max = np.max(self.data3D)
-                    self.data3D = self.data3D.reshape((self.Nx, self.Ny, self.Nz), order='F')
-                    f.close()
-                    return self.atoms, self.box
-                row = f.readline()
-        f.close()
+        self.spacing = (0, 0, 0)
+        self.origin = np.zeros((3))
 
     def isosurface(self, value):
         verts, faces, normals, values = marching_cubes_lewiner(self.data3D, level=value, spacing=self.spacing, gradient_direction='descent', step_size=1, allow_degenerate=True, use_classic=False)
@@ -325,7 +223,6 @@ class TXSF:
 
     def contours(self, values, type_of_plane = "xy", slice = 5):
         conts = []
-        #print(type_of_plane)
         spacing = self.spacing
         origin = self.origin
         if type_of_plane == "xy":
@@ -387,74 +284,227 @@ class TXSF:
             points.append(row)
         return points
 
+class TXSF(TVolumericData):
+    def __init__(self):
+        TVolumericData.__init__(self)
+
+    @staticmethod
+    def get_atoms(filename):
+        periodTable = TPeriodTable()
+
+        Molecules = []
+        if os.path.exists(filename):
+            f = open(filename)
+            row = f.readline()
+            atoms = []
+            while row != '':
+                if row.find("ATOMS") > -1:
+                    while row.find("BEGIN") == -1:
+                        row = f.readline()
+                        if row.find("BEGIN") == -1:
+                            row1 = row.split()
+                            charge = int(row1[0])
+                            x = float(row1[1])
+                            y = float(row1[2])
+                            z = float(row1[3])
+                            atoms.append([x, y, z, periodTable.get_let(charge), charge])
+
+                if row.find("BEGIN_BLOCK_DATAGRID_3D") > -1:
+                    row = f.readline()
+                    while row.find("DATA_from:") > -1:
+                        row = Helpers.spacedel(f.readline())
+                        while row.find("BEGIN_DATAGRID_3D") > -1:
+                            row = f.readline()
+                            origin = f.readline()
+                            vec1 = f.readline().split()
+                            vec1 = Helpers.list_str_to_float(vec1)
+                            vec2 = f.readline().split()
+                            vec2 = Helpers.list_str_to_float(vec2)
+                            vec3 = f.readline().split()
+                            vec3 = Helpers.list_str_to_float(vec3)
+                            bx = vec1[0]
+                            by = vec2[1]
+                            bz = vec3[2]
+                            f.close()
+
+                            AllAtoms = TAtomicModel(atoms)
+                            AllAtoms.set_lat_vectors(vec1, vec2, vec3)
+                            Molecules.append(AllAtoms)
+                            return Molecules
+                row = f.readline()
+            f.close()
+        return Molecules
+
+    def parse(self, filename):
+        self.filename = filename
+        if os.path.exists(self.filename):
+            model = TXSF.get_atoms(self.filename)[0]
+            self.atoms = model.atoms
+            f = open(self.filename)
+            row = f.readline()
+            while row != '':
+                if row.find("BEGIN_BLOCK_DATAGRID_3D") > -1:
+                    row = f.readline()
+                    while row.find("DATA_from:") > -1:
+                        datas = []
+                        row = f.readline()
+                        while row.find("BEGIN_DATAGRID_3D") > -1:
+                            row = Helpers.spacedel(row)
+                            data3D = TVolumericDataBlock(row)
+                            while row.find("END_") == -1:  #END_DATAGRID_3D
+                                row = f.readline()
+                            datas.append(data3D)
+                            row = f.readline()
+                        self.blocks.append(datas)
+                row = f.readline()
+            f.close()
+            return True
+        return False
+
+    def load_data(self, getChildNode):
+        f = open(self.filename)
+        row = f.readline()
+        while row != '':
+                if row.find(getChildNode) > -1:
+                    row = Helpers.spacedel(f.readline()).split()
+                    self.Nx = int(row[0])
+                    self.Ny = int(row[1])
+                    self.Nz = int(row[2])
+                    self.data3D = np.zeros((1, self.Nx*self.Ny*self.Nz))
+
+                    origin = f.readline().split()
+                    origin[0] = float(origin[0])
+                    origin[1] = float(origin[1])
+                    origin[2] = float(origin[2])
+                    self.origin = np.array(origin)
+                    vec1 = float(f.readline().split()[0])
+                    vec2 = float(f.readline().split()[1])
+                    vec3 = float(f.readline().split()[2])
+                    self.spacing = (vec1 / self.Nx, vec2 / self.Ny, vec3 / self.Nz)
+
+                    ind = 0
+                    while ind < self.Nx*self.Ny*self.Nz:
+                        row = f.readline().split()
+                        for data in row:
+                            self.data3D[0, ind] = float(data)
+                            ind += 1
+                    row = f.readline()
+                    row = Helpers.spacedel(f.readline())
+
+                    for i in range(0,len(self.blocks)):
+                        for j in range(0,len(self.blocks[i])):
+                            if self.blocks[i][j].title.find(getChildNode) > -1:
+                                self.blocks[i][j].min = np.min(self.data3D)
+                                self.blocks[i][j].max = np.max(self.data3D)
+                    self.data3D = self.data3D.reshape((self.Nx, self.Ny, self.Nz), order='F')
+                    f.close()
+                    return self.atoms
+                row = f.readline()
+        f.close()
 
 
+class TGaussianCube(TVolumericData):
+    def __init__(self):
+        TVolumericData.__init__(self)
 
-    def contours_fill(self, values, type_of_plane = "xy", slice = 5):
-        data = []
-        origin = deepcopy(self.origin)
+    @staticmethod
+    def get_atoms(filename):
+        periodTable = TPeriodTable()
+        Molecules = []
+        if os.path.exists(filename):
+            f = open(filename)
+            row = f.readline()
+            row = f.readline()
+            row = f.readline().split()
+            nAtoms = int(row[0])
+            origin = (float(row[1]), float(row[2]), float(row[3]))
 
-        if type_of_plane == "xy":
-            r = self.data3D[:, :, slice]
+            Nx, vec1, mult = TGaussianCube.local_get_N_vect(f.readline().split())
+            Ny, vec2, mult = TGaussianCube.local_get_N_vect(f.readline().split())
+            Nz, vec3, mult = TGaussianCube.local_get_N_vect(f.readline().split())
 
-        if type_of_plane == "xz":
-            r = self.data3D[:, slice, :]
+            atoms = []
 
-        if type_of_plane == "yz":
-            r = self.data3D[ slice,:, :]
+            for i in range(0, nAtoms):
+                row = f.readline().split()
+                charge = int(row[0])
+                atoms.append([ float(row[2]), float(row[3]), float(row[4]), periodTable.get_let(charge), charge ])
 
-        r1 = deepcopy(r)
-        Nx = len(r1)
-        Ny = len(r1[0])
-        for i in range(0, Nx):
-            for j in range(0, Ny):
-                for k in range(0,len(values)-1):
-                    if (r1[i][j] > values[k]) and (r1[i][j] <= values[k+1]):
-                        r1[i][j] = values[k]
+            f.close()
 
-        Nz = 4
-        r2 = np.zeros((Nx,Ny,Nz))
-        for i in range(0,Nx):
-                for j in range(0,Ny):
-                    for k in range(0,Nz):
-                        if (k == 0) or (k == Nz-1):
-                            r2[i][j][k] = 0
-                        else:
-                            r2[i][j][k] = r1[i][j]
+            AllAtoms = TAtomicModel(atoms)
+            AllAtoms.set_lat_vectors(vec1, vec2, vec3)
+            AllAtoms.convert_from_scaled_to_cart(mult)
 
-        r2 = np.ascontiguousarray(r2, np.float32)
+            Molecules.append(AllAtoms)
+        return Molecules
 
-        minv = np.min(r2)
-        maxv = np.max(r2)
-        vl = 0
+    @staticmethod
+    def local_get_N_vect(row):
+        Nx = int(row[0])
+        mult = 1
+        if Nx > 0:
+            mult = 0.52917720859
+        Nx = int(math.fabs(Nx))
+        vec1 = mult * Nx * np.array([float(row[1]), float(row[2]), float(row[3])])
+        return Nx, vec1, mult
 
-        for value in values:
-            vl+=1
-            if (value>=minv) and (value<=maxv):
-                if type_of_plane == "xy":
-                    spacing = (self.spacing[0], self.spacing[1], (4e-3)*(vl+1))
-                    origin[2] = self.origin[2] + slice * self.spacing[2] - 1.5 * (4e-3) * (vl + 1)
+    def parse(self, filename):
+        self.filename = filename
+        if os.path.exists(self.filename):
+            model = TGaussianCube.get_atoms(self.filename)[0]
+            self.atoms = model.atoms
+            f = open(self.filename)
+            row = f.readline()
+            data3D = TVolumericDataBlock(row)
+            self.blocks.append([data3D])
+            f.close()
+            return True
+        return False
 
-                if type_of_plane == "xz":
-                    spacing = (self.spacing[0], self.spacing[2], (4e-3) * (vl + 1))
-                    origin[1] = self.origin[1] + slice * self.spacing[1] - 1.5 * (4e-3) * (vl + 1)
 
-                if type_of_plane == "yz":
-                    spacing = (self.spacing[0], self.spacing[2], (4e-3) * (vl + 1))
-                    origin[0] = self.origin[0] + slice * self.spacing[0] - 1.5 * (4e-3) * (vl + 1)
+    def load_data(self, getChildNode):
+        # как в XSF
+        f = open(self.filename)
+        row = f.readline()
+        while row != '':
+                if row.find(getChildNode) > -1:
+                    row = Helpers.spacedel(f.readline()).split()
+                    self.Nx = int(row[0])
+                    self.Ny = int(row[1])
+                    self.Nz = int(row[2])
+                    self.data3D = np.zeros((1, self.Nx*self.Ny*self.Nz))
 
-                verts, faces, normals, values = marching_cubes_lewiner(r2, level=value, spacing=spacing,
-                                                                   gradient_direction='descent', step_size=1,
-                                                                   allow_degenerate=True, use_classic=False)
+                    origin = f.readline().split()
+                    origin[0] = float(origin[0])
+                    origin[1] = float(origin[1])
+                    origin[2] = float(origin[2])
+                    self.origin = np.array(origin)
+                    vec1 = float(f.readline().split()[0])
+                    vec2 = float(f.readline().split()[1])
+                    vec3 = float(f.readline().split()[2])
+                    self.spacing = (vec1 / self.Nx, vec2 / self.Ny, vec3 / self.Nz)
 
-                for i in range(0, len(verts)):
-                    if type_of_plane == "xz":
-                            verts[i][0], verts[i][1], verts[i][2] = verts[i][0], verts[i][2], verts[i][1]
-                    if type_of_plane == "yz":
-                        verts[i][0], verts[i][1], verts[i][2] = verts[i][2], verts[i][0],  verts[i][1]
-                    verts[i] += origin
-                data.append( [verts, faces, value] )
-        return data
+                    ind = 0
+                    while ind < self.Nx*self.Ny*self.Nz:
+                        row = f.readline().split()
+                        for data in row:
+                            self.data3D[0, ind] = float(data)
+                            ind += 1
+                    row = f.readline()
+                    row = Helpers.spacedel(f.readline())
+
+                    for i in range(0,len(self.blocks)):
+                        for j in range(0,len(self.blocks[i])):
+                            if self.blocks[i][j].title.find(getChildNode) > -1:
+                                self.blocks[i][j].min = np.min(self.data3D)
+                                self.blocks[i][j].max = np.max(self.data3D)
+                    self.data3D = self.data3D.reshape((self.Nx, self.Ny, self.Nz), order='F')
+                    f.close()
+                    return self.atoms
+                row = f.readline()
+        f.close()
+
 
 class AtomsIdentifier(QtWidgets.QDialog):
     def __init__(self, problemAtoms):

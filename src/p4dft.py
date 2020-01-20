@@ -17,6 +17,7 @@ from PyQt5.QtCore import QDir
 #import PyQt5.QtCore as QtCore
 from PyQt5 import QtWidgets as qWidget
 from PyQt5.QtWidgets import QColorDialog
+from PyQt5.QtWidgets import QTreeWidgetItemIterator
 #from PyQt5 import uic
 from PyQt5.QtGui import QIcon
 from PyQt5.QtGui import QStandardItemModel
@@ -25,6 +26,8 @@ from PyQt5.QtGui import QImage
 #from PyQt5.QtGui import QPainter
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtGui import QColor
+
+
 #from AdvancedTools import TAtom as Atom
 from AdvancedTools import TFDFFile
 from AdvancedTools import TPeriodTable
@@ -41,6 +44,7 @@ import matplotlib.pyplot as plt
 from TInterface import Importer
 from TInterface import Calculator
 from TInterface import TXSF
+from TInterface import TGaussianCube
 from TInterface import Image3Dexporter
 from TInterface import AtomsIdentifier
 
@@ -60,6 +64,7 @@ class mainWindow(qWidget.QMainWindow):
         self.MainForm = GuiOpenGL(self.ui.openGLWidget, self.ui.FormSettingsViewCheckAtomSelection, selected_atom_info)
         self.FDFData = TFDFFile()
         self.XSFfile = TXSF()
+        self.CUBEfile = TGaussianCube()
         self.filename = ""
         self.colors_cash = {}
 
@@ -86,7 +91,7 @@ class mainWindow(qWidget.QMainWindow):
         self.ui.FormActionsPreButFillSpace.clicked.connect(self.fill_space)
         self.ui.FormActionsPreButSWNTGenerate.clicked.connect(self.swnt_create)
         self.ui.FormActionsPostButSurface.clicked.connect(self.plot_surface)
-        self.ui.FormActionsPostButSurfaceParse.clicked.connect(self.parse_xsf)
+        self.ui.FormActionsPostButSurfaceParse.clicked.connect(self.parse_volumeric_data)
         self.ui.FormActionsPostButSurfaceLoadData.clicked.connect(self.load_xsf_data)
         self.ui.FormActionsPostButContour.clicked.connect(self.plot_contour)
         self.ui.ColorBondDialogButton.clicked.connect(self.select_bond_color)
@@ -135,15 +140,25 @@ class mainWindow(qWidget.QMainWindow):
         self.ui.FormActionsPostSliderContourXZ.valueChanged.connect(self.set_xsf_y_position)
         self.ui.FormActionsPostSliderContourYZ.valueChanged.connect(self.set_xsf_x_position)
 
+        table_header_stylesheet = "::section{Background-color:rgb(194,169,226)}"
+
         
         self.ui.FormModelTableAtoms.setColumnCount(4)
         self.ui.FormModelTableAtoms.setHorizontalHeaderLabels(["Atom", "x", "y","z"])
         self.ui.FormModelTableAtoms.setColumnWidth(0, 40)
-        
+        self.ui.FormModelTableAtoms.setColumnWidth(1, 80)
+        self.ui.FormModelTableAtoms.setColumnWidth(2, 80)
+        self.ui.FormModelTableAtoms.setColumnWidth(3, 80)
+        self.ui.FormModelTableAtoms.horizontalHeader().setStyleSheet(table_header_stylesheet)
+        self.ui.FormModelTableAtoms.verticalHeader().setStyleSheet(table_header_stylesheet)
+
+
         self.ui.FormModelTableProperties.setColumnCount(2)
         self.ui.FormModelTableProperties.setHorizontalHeaderLabels(["Property", "Value"])
-        self.ui.FormModelTableProperties.setColumnWidth(0, 90)
-        self.ui.FormModelTableProperties.setColumnWidth(1, 90)
+        self.ui.FormModelTableProperties.setColumnWidth(0, 85)
+        self.ui.FormModelTableProperties.setColumnWidth(1, 240)
+        self.ui.FormModelTableProperties.horizontalHeader().setStyleSheet(table_header_stylesheet)
+        self.ui.FormModelTableProperties.verticalHeader().setStyleSheet(table_header_stylesheet)
         
         
         self.ui.FormActionsTabeDOSProperty.setColumnCount(3)
@@ -465,9 +480,8 @@ class mainWindow(qWidget.QMainWindow):
         if getSelected:
             if getSelected[0].parent() != None:
                 getChildNode = getSelected[0].text(0)
-                atoms, box = self.XSFfile.load_data(getChildNode)
+                atoms = self.XSFfile.load_data(getChildNode)
                 model = TAtomicModel()
-                model.box = box
                 atoms1 = TAtomicModel(atoms)
                 for at in atoms1:
                     model.AddAtom(at)
@@ -506,6 +520,8 @@ class mainWindow(qWidget.QMainWindow):
                 color = (color[0], color[1], color[2], transp)
                 data.append([verts, faces, color])
             self.MainForm.add_surface(data)
+        else:
+            self.MainForm.update()
 
     def plot_contous_isovalues(self, n_contours, scale = "Log"):
         minv, maxv = self.xsf_data_range()
@@ -635,31 +651,35 @@ class mainWindow(qWidget.QMainWindow):
         self.ui.FormModelComboModels.setCurrentIndex(len(self.models)-1)
         
     def fill_atoms_table(self):
-        model = self.MainForm.MainModel.atoms        
+        model = self.MainForm.get_model().atoms
         self.ui.FormModelTableAtoms.setRowCount(len(model))        # и одну строку в таблице
                 
         for i in range(0, len(model)):
             self.ui.FormModelTableAtoms.setItem(i, 0, qWidget.QTableWidgetItem(model[i].let))
-            self.ui.FormModelTableAtoms.setItem(i, 1, qWidget.QTableWidgetItem(str(model[i].x)))
-            self.ui.FormModelTableAtoms.setItem(i, 2, qWidget.QTableWidgetItem(str(model[i].y)))
-            self.ui.FormModelTableAtoms.setItem(i, 3, qWidget.QTableWidgetItem(str(model[i].z)))
+            self.ui.FormModelTableAtoms.setItem(i, 1, qWidget.QTableWidgetItem(str(round(model[i].x,5))))
+            self.ui.FormModelTableAtoms.setItem(i, 2, qWidget.QTableWidgetItem(str(round(model[i].y,5))))
+            self.ui.FormModelTableAtoms.setItem(i, 3, qWidget.QTableWidgetItem(str(round(model[i].z,5))))
  
         # делаем ресайз колонок по содержимому
-        self.ui.FormModelTableAtoms.resizeColumnsToContents()
+        #self.ui.FormModelTableAtoms.resizeColumnsToContents()
   
   
     def fill_properties_table(self):
         properties = []
                 
-        model = self.MainForm.MainModel.atoms          
-        properties.append(["Natoms",str(len(model))])      
+        model = self.MainForm.get_model()
+        properties.append(["Natoms",str(len(model.atoms))])
+        properties.append(["LatVect1", str(model.LatVect1)])
+        properties.append(["LatVect2", str(model.LatVect2)])
+        properties.append(["LatVect3", str(model.LatVect3)])
+
         self.ui.FormModelTableProperties.setRowCount(len(properties))        # и одну строку в таблице
         
         for i in range(0, len(properties)):
             self.ui.FormModelTableProperties.setItem(i, 0, qWidget.QTableWidgetItem(properties[i][0]))
             self.ui.FormModelTableProperties.setItem(i, 1, qWidget.QTableWidgetItem(properties[i][1]))
 
-        self.ui.FormModelTableAtoms.resizeColumnsToContents()
+        #self.ui.FormModelTableAtoms.resizeColumnsToContents()
 
     def check_pdos(self, fname):
         PDOSfile = Importer.CheckPDOSfile(fname)
@@ -694,27 +714,63 @@ class mainWindow(qWidget.QMainWindow):
             
             self.ui.FormActionsTabeDOSProperty.update()
 
-    def check_xsf(self, fname):
+    def check_volumeric_data(self, fname):
+        files = []
         if fname.endswith(".XSF"):
-            xsf_file = fname
-        else:
-            xsf_file = os.path.dirname(fname) + "/" + str(TSIESTA.SystemLabel(fname)) + ".XSF"
-        if os.path.exists(xsf_file):
-            self.ui.FormActionsPostTreeSurface.setHeaderLabels([xsf_file])
-            self.ui.FormActionsPostEditSurface.setText(xsf_file)
+            files.append(fname)
+        if fname.endswith(".cube"):
+            files.append(fname)
+
+        if fname.endswith(".out") or fname.endswith(".OUT"):
+            label = TSIESTA.SystemLabel(fname)
+            Dir = os.path.dirname(fname)
+            dirs, content = Helpers.getsubs(Dir)
+            for posFile in content:
+                F = posFile.split("\\")
+                if len(F)>1:
+                    F = F[1]
+                    if F.startswith(label) and F.endswith(".cube"):
+                        files.append(Dir + "/" + F)
+
+            files.append(Dir + "/" + label + ".XSF")
+        for file in files:
+            if os.path.exists(file):
+                self.ui.FormActionsPostEditSurface.setText(file)
+                self.ui.FormActionsPostList3DData.addItems([file])
+            self.ui.FormActionsPostList3DData.update()
+
+    def clearQTreeWidget(self, tree):
+        iterator = QTreeWidgetItemIterator(tree, QTreeWidgetItemIterator.All)
+        while iterator.value():
+            iterator.value().takeChildren()
+            iterator += 1
+        i = tree.topLevelItemCount()
+        while i > -1:
+            tree.takeTopLevelItem(i)
+            i -= 1
 
     def fill_xsf(self, data):
+        self.clearQTreeWidget(self.ui.FormActionsPostTreeSurface)
         for dat in data:
             text = ((dat[0].title).split('_')[3]).split(':')[0]
             parent = qWidget.QTreeWidgetItem(self.ui.FormActionsPostTreeSurface)
             parent.setText(0, "{}".format(text) + "3D")
-            # parent.setFlags(parent.flags() | qt.ItemIsTristate | qt.ItemIsUserCheckable)
             for da in dat:
                 ch = text + ':' + (da.title).split(':')[1]
                 child = qWidget.QTreeWidgetItem(parent)
-                # child.setFlags(child.flags() | qt.ItemIsUserCheckable)
                 child.setText(0, "{}".format(ch))
-                # child.setCheckState(0, qt.Unchecked)
+        self.ui.FormActionsPostTreeSurface.show()
+
+    def fill_cube(self, data):
+        self.clearQTreeWidget(self.ui.FormActionsPostTreeSurface)
+        for dat in data:
+            text = dat[0].title.split(".cube")[0]
+            parent = qWidget.QTreeWidgetItem(self.ui.FormActionsPostTreeSurface)
+            parent.setText(0, "{}".format(text))
+            for da in dat:
+                ch = text
+                child = qWidget.QTreeWidgetItem(parent)
+                child.setText(0, "{}".format(ch))
         self.ui.FormActionsPostTreeSurface.show()
 
     def fill_bonds(self):
@@ -741,7 +797,6 @@ class mainWindow(qWidget.QMainWindow):
     def fill_cell_info(self, fname):
         Volume = Importer.volume(fname)
         Energy = Importer.Energy(fname)
-        self.MainForm.MainModel.LatVect1
         a = self.MainForm.MainModel.get_LatVect1_norm()
         b = self.MainForm.MainModel.get_LatVect2_norm()
         c = self.MainForm.MainModel.get_LatVect3_norm()
@@ -777,7 +832,7 @@ class mainWindow(qWidget.QMainWindow):
         self.fill_models_list()
         self.fill_atoms_table()
         self.fill_properties_table()
-        self.check_xsf(fname)
+        self.check_volumeric_data(fname)
         if Importer.checkFormat(fname) == "SIESTAout":
             self.check_dos(fname)
             self.check_pdos(fname)
@@ -1133,7 +1188,8 @@ class mainWindow(qWidget.QMainWindow):
         self.ui.FormActionsPostButContour.setEnabled(False)
 
     def fdf_data_to_form(self):
-        text = self.FDFData.get_all_data(self.MainForm.MainModel.atoms)
+        model = self.MainForm.get_model()
+        text = self.FDFData.get_all_data(model.atoms)
         self.ui.FormActionsPreTextFDF.setText(text)
 
     def fdf_data_from_form_to_file(self):
@@ -1164,7 +1220,7 @@ class mainWindow(qWidget.QMainWindow):
 
         iter = 0
         for model in models:
-            secondModel = deepcopy(self.MainForm.MainModel)
+            secondModel = deepcopy(self.MainForm.get_model())
             for at in model:
                 secondModel.AddAtom(at)
             self.models.append(secondModel)
@@ -1175,12 +1231,20 @@ class mainWindow(qWidget.QMainWindow):
             iter += 1
         self.fill_models_list()
 
-    def parse_xsf(self):
-        xsf_file = self.ui.FormActionsPostEditSurface.text()
-        if self.XSFfile.parse(xsf_file):
-            data = self.XSFfile.blocks
-            self.fill_xsf(data)
-            self.ui.FormActionsPostButSurfaceLoadData.setEnabled(True)
+    def parse_volumeric_data(self):
+        #xsf_file = self.ui.FormActionsPostEditSurface.text()
+        Selected = self.ui.FormActionsPostList3DData.selectedItems()[0].text()
+        print(Selected)
+        if Selected.endswith(".XSF"):
+            if self.XSFfile.parse(Selected):
+                data = self.XSFfile.blocks
+                self.fill_xsf(data)
+        if Selected.endswith(".cube"):
+            if self.CUBEfile.parse(Selected):
+                data = self.CUBEfile.blocks
+                self.fill_cube(data)
+
+        self.ui.FormActionsPostButSurfaceLoadData.setEnabled(True)
 
     def set_xsf_z_position(self):
         value = int(self.ui.FormActionsPostSliderContourXY.value())

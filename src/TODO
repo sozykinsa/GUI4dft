@@ -1,15 +1,15 @@
 p4dft - first free SIESTA oriented GUI
 
-Allow work with non ortogonal cells
-ZM.UnitsLength in fdf
+Allow work with non ortogonal cells (сделано для fdf)
 add atoms
 modify atoms
 cube format parser
 BANDS
 PDOS
-seve file dialog for image3D
+save file dialog for image3D
 save to xyz
 save to fdf
+проверка на кубический тип решетки в XSF и cube
 
 ####
 classify atom bonds

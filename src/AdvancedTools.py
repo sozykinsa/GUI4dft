@@ -485,7 +485,6 @@ class TAtomicModel(object):
         self.LatVect2 = np.array([0, 100, 0])
         self.LatVect3 = np.array([0, 0, 100])
 
-        # old
         for at in newatoms:
             if isinstance(at, TAtom):
                 atom = deepcopy(at)
@@ -571,7 +570,7 @@ class TAtomicModel(object):
         return len(self.atoms)
 
     
-    def CentrMass(self, charge=0):
+    def centr_mass(self, charge=0):
         """The method returns the center of mass of the molecule"""
         cx= 0
         cy= 0
@@ -920,7 +919,7 @@ class TAtomicModel(object):
         """ Function returns the average distance of atoms from the center of mass """
         length = 0
         n = 0
-        cm = self.CentrMass(charge)
+        cm = self.centr_mass(charge)
         for i in range(0, len(self.atoms)):
             if (int(self.atoms[i].charge) == int(charge)):
                 l = math.sqrt(
@@ -1827,7 +1826,9 @@ class TSIESTA:
 
         if isBlockZMatrix == True:
             AllAtoms = TAtomicModel(AtList)
-
+            units = Helpers.fromFileProperty(filename, 'ZM.UnitsLength', 1, 'string')
+            if units.lower() == "bohr":
+                AllAtoms.convert_from_scaled_to_cart(0.52917720859)
         else:
             if isBlockAtomicCoordinates == True:
                 if AtomicCoordinatesFormat == "ScaledByLatticeVectors":
@@ -2015,6 +2016,7 @@ class TSIESTA:
         AtList = []
         f1 = False
         f2 = False
+        f3 = False
         n_vec = 0
         lat_vect_1 = ""
         lat_vect_2 = ""
@@ -2042,13 +2044,26 @@ class TSIESTA:
                 f1 = True
             else:
                 if (len(AtList) < NumberOfAtoms) and (f1 == True):
-                    line = line.split()
-                    line = [float(line[0]), float(line[1]), float(line[2]), line[5], Species[int(line[3]) - 1][1]]
-                    AtList.append(line)
+                    line1 = line.split()
+                    line2 = [float(line1[0]), float(line1[1]), float(line1[2]), line1[5], Species[int(line1[3]) - 1][1]]
+                    AtList.append(line2)
                 if len(AtList) == NumberOfAtoms:
                     f1 = False
                     AllAtoms = TAtomicModel(AtList)
                     AllAtoms.set_lat_vectors(lat_vect_1, lat_vect_2, lat_vect_3)
+                    return [AllAtoms]
+            if (line.find("outcoor: Relaxed atomic coordinates (fractional)") > -1):
+                f3 = True
+            else:
+                if (len(AtList) < NumberOfAtoms) and (f3 == True):
+                    line1 = line.split()
+                    line2 = [float(line1[0]), float(line1[1]), float(line1[2]), line1[5], Species[int(line1[3]) - 1][1]]
+                    AtList.append(line2)
+                if len(AtList) == NumberOfAtoms:
+                    f3 = False
+                    AllAtoms = TAtomicModel(AtList)
+                    AllAtoms.set_lat_vectors(lat_vect_1, lat_vect_2, lat_vect_3)
+                    AllAtoms.convert_from_direct_to_cart()
                     return [AllAtoms]
         return []
 
@@ -2791,7 +2806,7 @@ class TSIESTA:
     @staticmethod
     def type_of_run(filename):
         """ MD or CG? """
-        return Helpers.fromFileProperty(filename, 'MD.type_of_run', 1, 'string')
+        return Helpers.fromFileProperty(filename, 'MD.TypeOfRun', 1, 'string')
 
     @staticmethod
     def volume(filename):

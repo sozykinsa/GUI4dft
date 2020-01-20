@@ -9,6 +9,7 @@ from PyQt5.QtCore import QEvent
 
 from PyQt5.QtCore import QObject
 from PyQt5.QtCore import Qt
+from copy import deepcopy
 
 
 #from TInterface import Calculator
@@ -94,6 +95,8 @@ class GuiOpenGL(object):
             self.selected_atom_X = selected_atom_info[1]
             self.selected_atom_Y = selected_atom_info[2]
             self.selected_atom_Z = selected_atom_info[3]
+    def update(self):
+        self.openGLWidget.update()
 
     def selected_atom_changed(self):
         if self.selected_atom >=0:
@@ -159,7 +162,11 @@ class GuiOpenGL(object):
 
     def set_atomic_structure(self, structure, atomscolors, ViewBox, boxcolor, ViewBonds, bondscolor, bondWidth):
         self.clean()
-        self.MainModel = structure
+        self.MainModel = deepcopy(structure)
+        cm = self.MainModel.centr_mass()
+        self.x0 = -cm[0]
+        self.y0 = -cm[1]
+        self.MainModel.move(self.x0, self.y0, 0)
         self.ViewBox = ViewBox
         self.ViewBonds = ViewBonds
         self.bondWidth = bondWidth
@@ -176,6 +183,10 @@ class GuiOpenGL(object):
         self.add_box()
         self.openGLWidget.update()
 
+    def get_model(self):
+        newModel = deepcopy(self.MainModel)
+        newModel.move(-self.x0, -self.y0, 0)
+        return newModel
 
     def save_to_file(self, fname):
         self.openGLWidget.grab().save(fname)
@@ -223,6 +234,7 @@ class GuiOpenGL(object):
             self.y +=ys-self.ysOld
             self.xsOld = xs
             self.ysOld = ys
+            print(str(self.x)+"   "+str(self.y))
             return True
    
     def setXY(self, x, y, width, height):
