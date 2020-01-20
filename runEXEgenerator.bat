@@ -1,0 +1,1 @@
+pyinstaller --onefile -w ./src/p4dft.py

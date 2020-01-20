@@ -30,7 +30,7 @@
        </size>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>0</number>
       </property>
       <property name="elideMode">
        <enum>Qt::ElideNone</enum>
@@ -83,8 +83,11 @@
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
          <widget class="QTabWidget" name="tabWidget_3">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
           <property name="currentIndex">
-           <number>2</number>
+           <number>1</number>
           </property>
           <widget class="QWidget" name="tab_5">
            <attribute name="title">
@@ -398,59 +401,6 @@
             </item>
            </layout>
           </widget>
-          <widget class="QWidget" name="tab_6">
-           <attribute name="title">
-            <string>Import</string>
-           </attribute>
-           <layout class="QVBoxLayout" name="verticalLayout_18">
-            <item>
-             <widget class="QToolBox" name="toolBox_5">
-              <property name="currentIndex">
-               <number>0</number>
-              </property>
-              <widget class="QWidget" name="page_24">
-               <property name="geometry">
-                <rect>
-                 <x>0</x>
-                 <y>0</y>
-                 <width>98</width>
-                 <height>28</height>
-                </rect>
-               </property>
-               <attribute name="label">
-                <string>Page 1</string>
-               </attribute>
-              </widget>
-              <widget class="QWidget" name="page_25">
-               <property name="geometry">
-                <rect>
-                 <x>0</x>
-                 <y>0</y>
-                 <width>98</width>
-                 <height>28</height>
-                </rect>
-               </property>
-               <attribute name="label">
-                <string>Page</string>
-               </attribute>
-              </widget>
-              <widget class="QWidget" name="page_26">
-               <property name="geometry">
-                <rect>
-                 <x>0</x>
-                 <y>0</y>
-                 <width>98</width>
-                 <height>28</height>
-                </rect>
-               </property>
-               <attribute name="label">
-                <string>Page 2</string>
-               </attribute>
-              </widget>
-             </widget>
-            </item>
-           </layout>
-          </widget>
           <widget class="QWidget" name="tab_7">
            <attribute name="title">
             <string>Modify</string>
@@ -459,7 +409,7 @@
             <item>
              <widget class="QToolBox" name="toolBox_6">
               <property name="currentIndex">
-               <number>2</number>
+               <number>3</number>
               </property>
               <widget class="QWidget" name="page_27">
                <property name="geometry">
@@ -734,8 +684,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>339</width>
-                 <height>246</height>
+                 <width>344</width>
+                 <height>523</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -927,12 +877,12 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>98</width>
-                 <height>28</height>
+                 <width>344</width>
+                 <height>523</height>
                 </rect>
                </property>
                <attribute name="label">
-                <string>...</string>
+                <string>Add electrodes</string>
                </attribute>
               </widget>
              </widget>
@@ -1543,8 +1493,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>372</width>
-             <height>481</height>
+             <width>172</width>
+             <height>250</height>
             </rect>
            </property>
            <attribute name="label">
@@ -2547,8 +2497,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>98</width>
-             <height>28</height>
+             <width>372</width>
+             <height>574</height>
             </rect>
            </property>
            <attribute name="label">
@@ -3179,8 +3129,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>98</width>
-         <height>122</height>
+         <width>695</width>
+         <height>687</height>
         </rect>
        </property>
        <attribute name="label">

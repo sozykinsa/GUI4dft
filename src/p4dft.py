@@ -196,7 +196,7 @@ class mainWindow(qWidget.QMainWindow):
 
 
         self.ui.FormActionsPostTableCellParam.setColumnCount(5)
-        self.ui.FormActionsPostTableCellParam.setHorizontalHeaderLabels(["Volume", "Energy","a","b","c"])
+        self.ui.FormActionsPostTableCellParam.setHorizontalHeaderLabels(["volume", "Energy","a","b","c"])
         self.ui.FormActionsPostTableCellParam.setColumnWidth(0, 60)
         self.ui.FormActionsPostTableCellParam.setColumnWidth(1, 60)
         self.ui.FormActionsPostTableCellParam.setColumnWidth(2, 50)
@@ -739,7 +739,7 @@ class mainWindow(qWidget.QMainWindow):
 
 
     def fill_cell_info(self, fname):
-        Volume = Importer.Volume(fname)
+        Volume = Importer.volume(fname)
         Energy = Importer.Energy(fname)
         self.MainForm.MainModel.LatVect1
         a = self.MainForm.MainModel.get_LatVect1_norm()
@@ -980,7 +980,7 @@ class mainWindow(qWidget.QMainWindow):
 
             self.ui.MplWidget.canvas.axes.plot(xs2, ys2)
                 
-            self.ui.MplWidget.canvas.axes.set_xlabel("Volume, A^3")
+            self.ui.MplWidget.canvas.axes.set_xlabel("volume, A^3")
             self.ui.MplWidget.canvas.axes.set_ylabel("Energy, eV")
 
             self.ui.MplWidget.canvas.draw()
@@ -1037,10 +1037,10 @@ class mainWindow(qWidget.QMainWindow):
             atom_index, volume = self.MainForm.add_voronoi(color, maxDist)
             if atom_index >=0:
                 self.ui.FormActionsPostLabelVoronoiAtom.setText("Atom: " + str(atom_index))
-                self.ui.FormActionsPostLabelVoronoiVolume.setText("Volume: "+str(volume))
+                self.ui.FormActionsPostLabelVoronoiVolume.setText("volume: "+str(volume))
             else:
                 self.ui.FormActionsPostLabelVoronoiAtom.setText("Atom: ")
-                self.ui.FormActionsPostLabelVoronoiVolume.setText("Volume: ")
+                self.ui.FormActionsPostLabelVoronoiVolume.setText("volume: ")
 
 
     def file_brouser_selection(self, selected, deselected):

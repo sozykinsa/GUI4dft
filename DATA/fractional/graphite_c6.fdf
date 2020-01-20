@@ -1,0 +1,33 @@
+SystemLabel graphite_c6
+NumberOfAtoms        4
+
+NumberOfSpecies      1
+%block ChemicalSpeciesLabel
+    1   6 C    
+%endblock ChemicalSpeciesLabel
+
+%block PS.lmax
+    C 2
+%endblock PS.lmax
+
+LatticeConstant 1.0 Ang
+%block LatticeParameters
+    2.4610    2.4610    6.7080   90.0000   90.0000  120.0000
+%endblock LatticeParameters
+
+AtomicCoordinatesFormat Fractional
+%block AtomicCoordinatesAndAtomicSpecies
+    0.000000000    0.000000000    0.000000000     1
+    0.000000000    0.000000000    0.500000000     1
+    0.333333333    0.666666667    0.000000000     1
+    0.666666667    0.333333333    0.500000000     1
+%endblock AtomicCoordinatesAndAtomicSpecies
+
+MM.Cutoff 20.0 Ang
+%block MM.Potentials
+ 1  1 C6 15.19 1.56
+%endblock MM.Potentials
+
+kgrid_cutoff 4.0 Ang
+
+ElectronicTemperature 0 K

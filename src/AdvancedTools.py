@@ -1,21 +1,21 @@
 # -*- coding: utf-8 -*-
 # Python 3
-import os
-import math
-import re
 import copy
+import math
+import os
+import random
+import re
+from copy import deepcopy
+from operator import itemgetter
+
 import numpy as np
 from numpy.linalg import inv
 from numpy.linalg import norm
-from copy import deepcopy
-import random
-from operator import itemgetter
+from pylab import polyfit
 from scipy.optimize import curve_fit
 from scipy.optimize import leastsq
-from scipy.spatial import Voronoi
 from scipy.spatial import ConvexHull
-from pylab import polyfit # * #this includes numpy as np!
-import matplotlib.pyplot as plt
+from scipy.spatial import Voronoi
 
 
 ##################################################################
@@ -201,9 +201,9 @@ class Helpers:
         return x2y / x4    
         
     @staticmethod
-    def fromFileProperty(filename,prop,count = 1,type = 'int'):
+    def fromFileProperty(filename,prop,count = 1, type = 'int'):
         """ Возвращает  значение параметра property из файла filename. Зрачене может быть целым или дробным числом с фиксированной точкой. Если в файле необходимый параметр встречается несколько раз, необходимо задать параметр count, который показывает какое по счету найденное значение должна вернуть функция. Параметр type указывает тип возвращаемого значения (int, float или string)  """
-        property = 1
+        property = None
         k = 1
         if os.path.exists(filename):
             MyFile = open(filename)
@@ -211,6 +211,8 @@ class Helpers:
             while str1!='':            
                 if (str1 != '') and (str1.find(prop)>=0):
                     str1 = str1.replace(prop,' ')
+                    if type == "unformatted":
+                        return str1
                     if (type == 'string'):
                         property = Helpers.spacedel(str1)
                     else:
@@ -633,6 +635,12 @@ class TAtomicModel(object):
                 if self.atom_atom_distance(at, atom) < R:
                     newatoms.append(at)
         return newatoms
+
+    def convert_from_scaled_to_cart(self, lat):
+        for atom in self.atoms:
+            atom.x *= lat
+            atom.y *= lat
+            atom.z *= lat
 
     def convert_from_direct_to_cart(self):
         for atom in self.atoms:
@@ -1754,11 +1762,13 @@ class TSIESTA:
                     NumberOfAtoms = 0
         return molecules
 
+
     @staticmethod
     def atoms_from_fdf(filename):
         """Return a AtList from fdf file"""
         NumberOfAtoms = TSIESTA.number_of_atoms(filename)
         NumberOfSpecies = TSIESTA.number_of_species(filename)
+        AtomicCoordinatesFormat = TSIESTA.atomic_coordinates_format(filename)
 
         lat_vect_1, lat_vect_2, lat_vect_3 = TSIESTA.lattice_vectors(filename)
         if lat_vect_1 == False:
@@ -1767,8 +1777,12 @@ class TSIESTA:
         f = open(filename)
         lines = f.readlines()
         f.close()
-        Molecules = []
+        AllAtoms = TAtomicModel()
+        AtList = []
+        AtList1 = []
         i = 0
+        isBlockAtomicCoordinates = False
+        isBlockZMatrix = False
 
         while i < len(lines):
             if (lines[i].find("%block ChemicalSpeciesLabel") >= 0):
@@ -1778,6 +1792,7 @@ class TSIESTA:
                     tmp_ar[(lines[i].split())[0]] = (lines[i].split())[1:3]
 
             if (lines[i].find("%block Zmatrix") >= 0):
+                isBlockZMatrix = True
                 i += 1
                 AtList = []
                 if (lines[i].find("cartesian") >= 0):
@@ -1786,14 +1801,42 @@ class TSIESTA:
                         Atom_full = lines[i].split()
                         AtList.append([float(Atom_full[1]), float(Atom_full[2]), float(Atom_full[3]),
                                        (tmp_ar[str(Atom_full[0])])[1], (tmp_ar[str(Atom_full[0])])[0]])
+            if (lines[i].find("%block AtomicCoordinatesAndAtomicSpecies") >= 0):
+                isBlockAtomicCoordinates = True
+                mult = 1
+                if AtomicCoordinatesFormat == "NotScaledCartesianBohr":
+                    mult = 0.52917720859
+                for j in range(0, NumberOfAtoms):
+                    i += 1
+                    Atom_full = lines[i].split()
+                    AtList1.append([mult*float(Atom_full[0]), mult*float(Atom_full[1]), mult*float(Atom_full[2]),
+                                   (tmp_ar[str(Atom_full[3])])[1], (tmp_ar[str(Atom_full[3])])[0]])
 
-                    AllAtoms = TAtomicModel(AtList)
-                    if lat_vect_1 == False:
-                        AllAtoms.set_lat_vectors_default()
-                    else:
-                        AllAtoms.set_lat_vectors(lat_vect_1, lat_vect_2, lat_vect_3)
-                    Molecules.append(AllAtoms)
             i += 1
+
+        if isBlockZMatrix == True:
+            AllAtoms = TAtomicModel(AtList)
+        else:
+            if isBlockAtomicCoordinates == True:
+                AllAtoms = TAtomicModel(AtList1)
+
+        if lat_vect_1 == False:
+            AllAtoms.set_lat_vectors_default()
+        else:
+            AllAtoms.set_lat_vectors(lat_vect_1, lat_vect_2, lat_vect_3)
+
+        if isBlockZMatrix == True:
+            AllAtoms = TAtomicModel(AtList)
+
+        else:
+            if isBlockAtomicCoordinates == True:
+                if AtomicCoordinatesFormat == "ScaledByLatticeVectors":
+                    AllAtoms.convert_from_direct_to_cart()
+                if AtomicCoordinatesFormat == "ScaledCartesian":
+                    lat = TSIESTA.lattice_constant(filename)
+                    AllAtoms.convert_from_scaled_to_cart(lat)
+
+        Molecules = [AllAtoms]
         return Molecules
 
     @staticmethod
@@ -2073,12 +2116,16 @@ class TSIESTA:
     @staticmethod
     def lattice_constant(filename):
         """ Returns the LatticeConstant from SIESTA output file """
-        return Helpers.fromFileProperty(filename,'LatticeConstant',1,'float')
+        mult = 1
+        property = (Helpers.fromFileProperty(filename,'LatticeConstant',1,'unformatted')).split()
+        if property[1].lower() == "bohr":
+            mult = 0.52917720859
+        return mult*property[0]
 
     @staticmethod
     def lattice_parameters_abc_angles(filename):
         """ returns data from LatticeParameters block of file """
-        LatticeParameters = TSIESTA.GetBlockFromSiestaFdf(filename, 'LatticeParameters')
+        LatticeParameters = TSIESTA.get_block_from_siesta_fdf(filename, 'LatticeParameters')
         LatConstant = float(TSIESTA.lattice_constant(filename))
         if len(LatticeParameters)>0:
             data = Helpers.spacedel(LatticeParameters[0]).split()
@@ -2104,7 +2151,7 @@ class TSIESTA:
     @staticmethod
     def lattice_vectors(filename):
         LatConstant = float(TSIESTA.lattice_constant(filename))
-        LatticeVectors = TSIESTA.GetBlockFromSiestaFdf(filename, 'LatticeVectors')
+        LatticeVectors = TSIESTA.get_block_from_siesta_fdf(filename, 'LatticeVectors')
         if len(LatticeVectors) > 0:
             lat_vect_1 = Helpers.spacedel(LatticeVectors[0]).split()
             lat_vect_2 = Helpers.spacedel(LatticeVectors[1]).split()
@@ -2478,13 +2525,30 @@ class TSIESTA:
     @staticmethod
     def number_of_atoms(filename):
         """ Returns the NumberOfAtomsfrom SIESTA output file """
-        return Helpers.fromFileProperty(filename,'NumberOfAtoms')
+        number = Helpers.fromFileProperty(filename,'NumberOfAtoms')
+        if number == None:
+            block = TSIESTA.get_block_from_siesta_fdf(filename, "AtomicCoordinatesAndAtomicSpecies")
+            if len(block) > 0:
+                return len(block)
+        return number
     
     @staticmethod
     def number_of_species(filename):
         """ Returns the number_of_species from SIESTA output file """
         return Helpers.fromFileProperty(filename,'NumberOfSpecies')
 
+    @staticmethod
+    def atomic_coordinates_format(filename):
+        """ Returns the AtomicCoordinatesFormat from SIESTA output file """
+        format = Helpers.fromFileProperty(filename, 'AtomicCoordinatesFormat', 1, 'string')
+        ans = "NotScaledCartesianBohr"
+        if (format.lower() == "ang") or (format.lower() == "notscaledcartesianang"):
+            ans = "NotScaledCartesianAng"
+        if (format.lower() == "fractional") or (format.lower() == "scaledbylatticevectors"):
+            ans = "ScaledByLatticeVectors"
+        if (format.lower() == "scaledcartesian"):
+            ans = "ScaledCartesian"
+        return ans
 
     @staticmethod    
     def Species(filename):
@@ -2642,7 +2706,7 @@ class TSIESTA:
         f.close()
 
     @staticmethod
-    def GetBlockFromSiestaFdf(filename,blockname):
+    def get_block_from_siesta_fdf(filename, blockname):
         """ возвращает содержимое блока входного файла """
         lines = []
         flag = 0
@@ -2715,7 +2779,7 @@ class TSIESTA:
         f1.write("%block ProjectedDensityOfStates\n")
         f1.write("   -24.00  15.00  0.100  1000  eV\n")
         f1.write("%endblock ProjectedDensityOfStates \n")
-        f1.write("MD.TypeOfRun           cg               # Type of dynamics: Conjugate gradients\n")
+        f1.write("MD.type_of_run           cg               # Type of dynamics: Conjugate gradients\n")
         f1.write("MD.NumCGsteps          320              # number of CG steps\n")
         f1.write("MD.MaxCGDispl          0.15 Ang\n")
         f1.write("MD.MaxForceTol         0.04 eV/Ang\n")
@@ -2725,12 +2789,12 @@ class TSIESTA:
 
 
     @staticmethod
-    def TypeOfRun(filename):
+    def type_of_run(filename):
         """ MD or CG? """
-        return Helpers.fromFileProperty(filename, 'MD.TypeOfRun', 1, 'string')
+        return Helpers.fromFileProperty(filename, 'MD.type_of_run', 1, 'string')
 
     @staticmethod
-    def Volume(filename):
+    def volume(filename):
         """ Returns cell volume from SIESTA output file """
         return Helpers.fromFileProperty(filename, 'siesta: Cell volume = ', 2, 'float')
 

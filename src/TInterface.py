@@ -95,7 +95,7 @@ class Importer(object):
                 if fl == 'opt':
                     models = TSIESTA.atoms_from_output_optim(filename)
                 else:
-                    type_of_run = (TSIESTA.TypeOfRun(filename).split())[0].lower()
+                    type_of_run = (TSIESTA.type_of_run(filename).split())[0].lower()
                     if type_of_run == 'cg':
                         models = TSIESTA.atoms_from_output_cg(filename)
                     else:
@@ -169,9 +169,9 @@ class Importer(object):
 
     @staticmethod
     def Volume(filename):
-        """Import Cell Volume from file filename"""
+        """Import Cell volume from file filename"""
         if os.path.exists(filename):
-            EF = TSIESTA.Volume(filename)
+            EF = TSIESTA.volume(filename)
             return EF
 
     @staticmethod

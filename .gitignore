@@ -3,4 +3,5 @@
 src/__pycache__/
 dist/
 build/
+registration/
 p4dft.spec

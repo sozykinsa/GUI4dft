@@ -21,8 +21,6 @@ MeshCutoff       200.0 Ry
 
 Spinpolarized  true
 
-
-
 MaxSCFIterations       150
 Diag.ParallelOverK   .true.
 SolutionMethod         diagon
