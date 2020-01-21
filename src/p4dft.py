@@ -44,6 +44,7 @@ import matplotlib.pyplot as plt
 from TInterface import Importer
 from TInterface import Calculator
 from TInterface import TXSF
+from TInterface import TVolumericData
 from TInterface import TGaussianCube
 from TInterface import Image3Dexporter
 from TInterface import AtomsIdentifier
@@ -63,8 +64,9 @@ class mainWindow(qWidget.QMainWindow):
         selected_atom_info = [self.ui.FormActionsPreComboAtomsList, self.ui.FormActionsPreSpinAtomsCoordX, self.ui.FormActionsPreSpinAtomsCoordY, self.ui.FormActionsPreSpinAtomsCoordZ]
         self.MainForm = GuiOpenGL(self.ui.openGLWidget, self.ui.FormSettingsViewCheckAtomSelection, selected_atom_info)
         self.FDFData = TFDFFile()
-        self.XSFfile = TXSF()
-        self.CUBEfile = TGaussianCube()
+        #self.XSFfile = TXSF()
+        self.VolumericData = TVolumericData()
+       # self.CUBEfile = TGaussianCube()
         self.filename = ""
         self.colors_cash = {}
 
@@ -92,7 +94,7 @@ class mainWindow(qWidget.QMainWindow):
         self.ui.FormActionsPreButSWNTGenerate.clicked.connect(self.swnt_create)
         self.ui.FormActionsPostButSurface.clicked.connect(self.plot_surface)
         self.ui.FormActionsPostButSurfaceParse.clicked.connect(self.parse_volumeric_data)
-        self.ui.FormActionsPostButSurfaceLoadData.clicked.connect(self.load_xsf_data)
+        self.ui.FormActionsPostButSurfaceLoadData.clicked.connect(self.volumeric_data_load)
         self.ui.FormActionsPostButContour.clicked.connect(self.plot_contour)
         self.ui.ColorBondDialogButton.clicked.connect(self.select_bond_color)
         self.ui.ColorBoxDialogButton.clicked.connect(self.select_box_color)
@@ -411,8 +413,7 @@ class mainWindow(qWidget.QMainWindow):
 
             if len(self.models)>0:
                 if len(self.models[-1].atoms) > 0:
-                    value = -1
-                    self.plot_model(value)
+                    self.plot_model(-1)
                     self.fill_gui()
                     self.save_active_Folder()
 
@@ -464,42 +465,42 @@ class mainWindow(qWidget.QMainWindow):
         dialogWin.setFixedSize(QSize(532,149))
         dialogWin.show()
 
-    def xsf_data_range(self):
+    def volumeric_data_range(self):
         getSelected = self.ui.FormActionsPostTreeSurface.selectedItems()
         if getSelected:
             if getSelected[0].parent() != None:
                 getChildNode = getSelected[0].text(0)
-                data = self.XSFfile.blocks
+                data = self.VolumericData.blocks
                 for dat in data:
                     for da in dat:
                         if da.title.find(getChildNode) > -1:
                             return da.min, da.max
 
-    def load_xsf_data(self):
+    def volumeric_data_load(self):
         getSelected = self.ui.FormActionsPostTreeSurface.selectedItems()
         if getSelected:
             if getSelected[0].parent() != None:
                 getChildNode = getSelected[0].text(0)
-                atoms = self.XSFfile.load_data(getChildNode)
+                atoms = self.VolumericData.load_data(getChildNode)
                 model = TAtomicModel()
                 atoms1 = TAtomicModel(atoms)
                 for at in atoms1:
                     model.AddAtom(at)
                 self.models = []
                 self.models.append(model)
-                self.MainForm.MainModel = self.models[-1]
+                self.plot_model(-1)
                 self.ui.FormActionsPostButSurfaceAdd.setEnabled(True)
                 self.ui.FormActionsPostButContour.setEnabled(True)
 
-                minv, maxv = self.xsf_data_range()
+                minv, maxv = self.volumeric_data_range()
                 self.ui.FormActionsPostLabelSurfaceMax.setText("Max: " + str(maxv))
                 self.ui.FormActionsPostLabelSurfaceMin.setText("Min: " + str(minv))
                 self.ui.FormActionsPostLabelSurfaceValue.setRange(minv,maxv)
                 self.ui.FormActionsPostLabelSurfaceValue.setValue(round(0.5 * (maxv + minv), 5))
 
-                self.ui.FormActionsPostSliderContourXY.setMaximum(self.XSFfile.Nz)
-                self.ui.FormActionsPostSliderContourXZ.setMaximum(self.XSFfile.Ny)
-                self.ui.FormActionsPostSliderContourYZ.setMaximum(self.XSFfile.Nx)
+                self.ui.FormActionsPostSliderContourXY.setMaximum(self.VolumericData.Nz)
+                self.ui.FormActionsPostSliderContourXZ.setMaximum(self.VolumericData.Ny)
+                self.ui.FormActionsPostSliderContourYZ.setMaximum(self.VolumericData.Nx)
 
     def plot_surface(self):
         self.MainForm.ViewSurface = False
@@ -509,12 +510,12 @@ class mainWindow(qWidget.QMainWindow):
             minv = float(self.ui.FormSettingsColorsFixedMin.text())
             maxv = float(self.ui.FormSettingsColorsFixedMax.text())
         else:
-            minv, maxv = self.xsf_data_range()
+            minv, maxv = self.volumeric_data_range()
         if self.ui.FormActionsPostCheckSurface.isChecked():
             data = []
             for i in range(0, self.ui.IsosurfaceColorsTable.rowCount()):
                 value = float(self.ui.IsosurfaceColorsTable.item(i, 0).text())
-                verts, faces = self.XSFfile.isosurface(value)
+                verts, faces = self.VolumericData.isosurface(value)
                 transp = float(self.ui.IsosurfaceColorsTable.cellWidget(i, 1).text())
                 color = self.get_color(cmap, minv, maxv, value, color_scale)
                 color = (color[0], color[1], color[2], transp)
@@ -524,7 +525,7 @@ class mainWindow(qWidget.QMainWindow):
             self.MainForm.update()
 
     def plot_contous_isovalues(self, n_contours, scale = "Log"):
-        minv, maxv = self.xsf_data_range()
+        minv, maxv = self.volumeric_data_range()
         if scale =="Linear":
             isovalues = np.linspace(minv, maxv, n_contours + 2)
         if scale == "Log":
@@ -589,7 +590,7 @@ class mainWindow(qWidget.QMainWindow):
             minv = float(self.ui.FormSettingsColorsFixedMin.text())
             maxv = float(self.ui.FormSettingsColorsFixedMax.text())
         else:
-            minv, maxv = self.xsf_data_range()
+            minv, maxv = self.volumeric_data_range()
         params = []
         params_colored_plane = []
 
@@ -620,12 +621,12 @@ class mainWindow(qWidget.QMainWindow):
                 colors = self.get_colors_list(minv, maxv, isovalues, cmap, color_scale)
 
             if self.ui.FormActionsPostRadioContour.isChecked() or self.ui.FormActionsPostRadioColorPlaneContours.isChecked():
-                conts = self.XSFfile.contours(isovalues, plane, slice)
+                conts = self.VolumericData.contours(isovalues, plane, slice)
                 params.append([isovalues, conts, colors])
 
             if self.ui.FormActionsPostRadioColorPlane.isChecked() or self.ui.FormActionsPostRadioColorPlaneContours.isChecked():
                 #params_fill.append([self.XSFfile.contours_fill(isovalues_xy, "xy", slice_xy), colors_xy])
-                points = self.XSFfile.plane(plane,slice)
+                points = self.VolumericData.plane(plane,slice)
                 colors = self.get_color_of_plane(minv, maxv, points, cmap, color_scale)
                 params_colored_plane.append([points, colors])
 
@@ -749,28 +750,30 @@ class mainWindow(qWidget.QMainWindow):
             tree.takeTopLevelItem(i)
             i -= 1
 
-    def fill_xsf(self, data):
+    def fill_volumeric_data(self, data):
+        type = data.type
+        data = data.blocks
         self.clearQTreeWidget(self.ui.FormActionsPostTreeSurface)
-        for dat in data:
-            text = ((dat[0].title).split('_')[3]).split(':')[0]
-            parent = qWidget.QTreeWidgetItem(self.ui.FormActionsPostTreeSurface)
-            parent.setText(0, "{}".format(text) + "3D")
-            for da in dat:
-                ch = text + ':' + (da.title).split(':')[1]
-                child = qWidget.QTreeWidgetItem(parent)
-                child.setText(0, "{}".format(ch))
-        self.ui.FormActionsPostTreeSurface.show()
 
-    def fill_cube(self, data):
-        self.clearQTreeWidget(self.ui.FormActionsPostTreeSurface)
-        for dat in data:
-            text = dat[0].title.split(".cube")[0]
-            parent = qWidget.QTreeWidgetItem(self.ui.FormActionsPostTreeSurface)
-            parent.setText(0, "{}".format(text))
-            for da in dat:
-                ch = text
-                child = qWidget.QTreeWidgetItem(parent)
-                child.setText(0, "{}".format(ch))
+        if type == "TXSF":
+            for dat in data:
+                text = ((dat[0].title).split('_')[3]).split(':')[0]
+                parent = qWidget.QTreeWidgetItem(self.ui.FormActionsPostTreeSurface)
+                parent.setText(0, "{}".format(text) + "3D")
+                for da in dat:
+                    ch = text + ':' + (da.title).split(':')[1]
+                    child = qWidget.QTreeWidgetItem(parent)
+                    child.setText(0, "{}".format(ch))
+
+        if type == "TGaussianCube":
+            for dat in data:
+                text = dat[0].title.split(".cube")[0]
+                parent = qWidget.QTreeWidgetItem(self.ui.FormActionsPostTreeSurface)
+                parent.setText(0, "{}".format(text))
+                for da in dat:
+                    ch = text
+                    child = qWidget.QTreeWidgetItem(parent)
+                    child.setText(0, "{}".format(ch))
         self.ui.FormActionsPostTreeSurface.show()
 
     def fill_bonds(self):
@@ -1232,17 +1235,14 @@ class mainWindow(qWidget.QMainWindow):
         self.fill_models_list()
 
     def parse_volumeric_data(self):
-        #xsf_file = self.ui.FormActionsPostEditSurface.text()
         Selected = self.ui.FormActionsPostList3DData.selectedItems()[0].text()
-        print(Selected)
         if Selected.endswith(".XSF"):
-            if self.XSFfile.parse(Selected):
-                data = self.XSFfile.blocks
-                self.fill_xsf(data)
+            self.VolumericData = TXSF()
         if Selected.endswith(".cube"):
-            if self.CUBEfile.parse(Selected):
-                data = self.CUBEfile.blocks
-                self.fill_cube(data)
+            self.VolumericData = TGaussianCube()
+        if self.VolumericData.parse(Selected):
+            data = self.VolumericData.blocks
+            self.fill_volumeric_data(self.VolumericData)
 
         self.ui.FormActionsPostButSurfaceLoadData.setEnabled(True)
 
@@ -1343,7 +1343,7 @@ class mainWindow(qWidget.QMainWindow):
         transp_cell.setDecimals(2)
         #transp_cell.show()
         self.ui.IsosurfaceColorsTable.setCellWidget(i - 1, 1, transp_cell)
-        minv, maxv = self.xsf_data_range()
+        minv, maxv = self.volumeric_data_range()
         color = self.get_color(cmap, minv, maxv, float(value), color_scale)
         #print(color)
         self.ui.IsosurfaceColorsTable.item(i - 1, 0).setBackground(QColor.fromRgbF(color[0], color[1], color[2], color[3]))

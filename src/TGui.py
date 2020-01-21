@@ -234,7 +234,6 @@ class GuiOpenGL(object):
             self.y +=ys-self.ysOld
             self.xsOld = xs
             self.ysOld = ys
-            print(str(self.x)+"   "+str(self.y))
             return True
    
     def setXY(self, x, y, width, height):
