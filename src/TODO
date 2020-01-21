@@ -1,15 +1,9 @@
 p4dft - first free SIESTA oriented GUI
 
-Allow work with non ortogonal cells (сделано для fdf)
-add atoms
-modify atoms
 BANDS
 PDOS
-save file dialog for image3D
-save to xyz
-save to fdf
 
-
+перемещение одного атома: изменить алгоритм полностью! определи нормаль и плоскость движения
 проверка на кубический тип решетки в XSF и cube или заставить работать для произвольной
 
 ####

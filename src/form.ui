@@ -30,7 +30,7 @@
        </size>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>1</number>
       </property>
       <property name="elideMode">
        <enum>Qt::ElideNone</enum>
@@ -409,15 +409,15 @@
             <item>
              <widget class="QToolBox" name="toolBox_6">
               <property name="currentIndex">
-               <number>3</number>
+               <number>2</number>
               </property>
               <widget class="QWidget" name="page_27">
                <property name="geometry">
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>115</width>
-                 <height>179</height>
+                 <width>344</width>
+                 <height>554</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -452,8 +452,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>98</width>
-                 <height>198</height>
+                 <width>344</width>
+                 <height>554</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -684,8 +684,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>339</width>
-                 <height>246</height>
+                 <width>344</width>
+                 <height>554</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -837,21 +837,21 @@
                   </property>
                   <layout class="QHBoxLayout" name="horizontalLayout_17">
                    <item>
-                    <widget class="QPushButton" name="pushButton_2">
+                    <widget class="QPushButton" name="FormActionsPreButDeleteAtom">
                      <property name="text">
-                      <string>Cancel</string>
+                      <string>Delete</string>
                      </property>
                     </widget>
                    </item>
                    <item>
-                    <widget class="QPushButton" name="pushButton_3">
+                    <widget class="QPushButton" name="FormActionsPreButModifyAtom">
                      <property name="text">
                       <string>Modify</string>
                      </property>
                     </widget>
                    </item>
                    <item>
-                    <widget class="QPushButton" name="pushButton">
+                    <widget class="QPushButton" name="FormActionsPreButAddAtom">
                      <property name="text">
                       <string>Add</string>
                      </property>
@@ -871,19 +871,6 @@
                  </widget>
                 </item>
                </layout>
-              </widget>
-              <widget class="QWidget" name="page">
-               <property name="geometry">
-                <rect>
-                 <x>0</x>
-                 <y>0</y>
-                 <width>344</width>
-                 <height>523</height>
-                </rect>
-               </property>
-               <attribute name="label">
-                <string>Add electrodes</string>
-               </attribute>
               </widget>
              </widget>
             </item>
@@ -1349,8 +1336,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>372</width>
-             <height>481</height>
+             <width>353</width>
+             <height>309</height>
             </rect>
            </property>
            <attribute name="label">
@@ -1675,8 +1662,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>372</width>
-             <height>481</height>
+             <width>98</width>
+             <height>28</height>
             </rect>
            </property>
            <attribute name="label">
@@ -1867,20 +1854,13 @@
                </attribute>
                <layout class="QVBoxLayout" name="verticalLayout_4">
                 <item>
-                 <widget class="QLineEdit" name="FormActionsPostEditSurface">
-                  <property name="enabled">
-                   <bool>true</bool>
-                  </property>
-                  <property name="readOnly">
-                   <bool>true</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item>
                  <widget class="QListWidget" name="FormActionsPostList3DData"/>
                 </item>
                 <item>
                  <widget class="QPushButton" name="FormActionsPostButSurfaceParse">
+                  <property name="enabled">
+                   <bool>false</bool>
+                  </property>
                   <property name="text">
                    <string>Parse</string>
                   </property>

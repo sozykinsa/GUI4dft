@@ -64,9 +64,7 @@ class mainWindow(qWidget.QMainWindow):
         selected_atom_info = [self.ui.FormActionsPreComboAtomsList, self.ui.FormActionsPreSpinAtomsCoordX, self.ui.FormActionsPreSpinAtomsCoordY, self.ui.FormActionsPreSpinAtomsCoordZ]
         self.MainForm = GuiOpenGL(self.ui.openGLWidget, self.ui.FormSettingsViewCheckAtomSelection, selected_atom_info)
         self.FDFData = TFDFFile()
-        #self.XSFfile = TXSF()
         self.VolumericData = TVolumericData()
-       # self.CUBEfile = TGaussianCube()
         self.filename = ""
         self.colors_cash = {}
 
@@ -74,6 +72,7 @@ class mainWindow(qWidget.QMainWindow):
         self.load_settings()
 
         self.ui.actionOpen.triggered.connect(self.menu_open)
+        self.ui.actionExport.triggered.connect(self.menu_export)
         self.ui.actionOrtho.triggered.connect(self.menu_ortho)
         self.ui.actionPerspective.triggered.connect(self.menu_perspective)
         self.ui.actionShowBox.triggered.connect(self.menu_show_box)
@@ -104,6 +103,10 @@ class mainWindow(qWidget.QMainWindow):
         self.ui.FormActionsPostButSurfaceDelete.clicked.connect(self.delete_isosurface_color_from_table)
         self.ui.FormActionsButtonPlotPDOS.clicked.connect(self.plot_pdos)
         self.ui.FormActionsButtonPlotBANDS.clicked.connect(self.plot_bands)
+
+        self.ui.FormActionsPreButDeleteAtom.clicked.connect(self.atom_delete)
+        self.ui.FormActionsPreButModifyAtom.clicked.connect(self.atom_modify)
+        self.ui.FormActionsPreButAddAtom.clicked.connect(self.atom_add)
                 
         self.ui.FormActionsButtonAddDOSFile.clicked.connect(self.add_dos_file)
         self.ui.FormActionsButtonPlotDOS.clicked.connect(self.plot_dos)
@@ -380,6 +383,12 @@ class mainWindow(qWidget.QMainWindow):
         b = strcolor.split()[2]
         bondscolor = [float(r) / 255, float(g) / 255, float(b) / 255]
         return bondscolor
+
+    def menu_export(self):
+        fname = qWidget.QFileDialog.getSaveFileName(self, 'Save File', self.WorkDir, "FDF files (*.fdf);;XYZ files (*.xyz)")[0]
+        self.MainForm.atomic_structure_to_file(fname)
+        self.WorkDir = os.path.dirname(fname)
+        self.save_active_Folder()
         
     def menu_open(self):
         """ menu Open"""
@@ -485,7 +494,7 @@ class mainWindow(qWidget.QMainWindow):
                 model = TAtomicModel()
                 atoms1 = TAtomicModel(atoms)
                 for at in atoms1:
-                    model.AddAtom(at)
+                    model.add_atom(at)
                 self.models = []
                 self.models.append(model)
                 self.plot_model(-1)
@@ -736,7 +745,6 @@ class mainWindow(qWidget.QMainWindow):
             files.append(Dir + "/" + label + ".XSF")
         for file in files:
             if os.path.exists(file):
-                self.ui.FormActionsPostEditSurface.setText(file)
                 self.ui.FormActionsPostList3DData.addItems([file])
             self.ui.FormActionsPostList3DData.update()
 
@@ -1080,10 +1088,12 @@ class mainWindow(qWidget.QMainWindow):
         #print(DATA)
         
     def save_image_to_file(self):
+        fname = qWidget.QFileDialog.getSaveFileName(self, 'Save File', self.WorkDir, "PNG files (*.png);;JPG files (*.jpg);;BMP files (*.bmp)")[0]
         newWindow = Image3Dexporter(5*self.ui.openGLWidget.width(), 5*self.ui.openGLWidget.height())
         newWindow.MainForm.copy_state(self.MainForm)
-        newWindow.MainForm.save_to_file("image1.png") #  openGLWidget.grab().save("image1.png")
-        self.MainForm.save_to_file("image.png")    #openGLWidget.grab().save("image.png")
+        newWindow.MainForm.image3D_to_file(fname)
+        self.WorkDir = os.path.dirname(fname)
+        self.save_active_Folder()
 
     def plot_voronoi(self):
         if self.MainForm.isActive():
@@ -1225,7 +1235,7 @@ class mainWindow(qWidget.QMainWindow):
         for model in models:
             secondModel = deepcopy(self.MainForm.get_model())
             for at in model:
-                secondModel.AddAtom(at)
+                secondModel.add_atom(at)
             self.models.append(secondModel)
             if self.ui.FormActionsPreSaveToFileFillSpace.isChecked():
                 text = self.FDFData.get_all_data(secondModel.atoms)
@@ -1350,6 +1360,15 @@ class mainWindow(qWidget.QMainWindow):
 
         self.ui.FormActionsPostButSurface.setEnabled(True)
         self.ui.FormActionsPostButSurfaceDelete.setEnabled(True)
+
+    def atom_delete(self):
+        self.MainForm.delete_selected_atom()
+
+    def atom_modify(self):
+        self.MainForm.modify_selected_atom()
+
+    def atom_add(self):
+        self.MainForm.add_new_atom()
 
 
 ORGANIZATION_NAME = 'Sozykin'

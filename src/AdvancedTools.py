@@ -490,7 +490,7 @@ class TAtomicModel(object):
                 atom = deepcopy(at)
             else:
                 atom = TAtom(at)
-            self.AddAtom(atom)
+            self.add_atom(atom)
 
     def get_LatVect1_norm(self):
         return norm(self.LatVect1)
@@ -514,14 +514,18 @@ class TAtomicModel(object):
         self.LatVect2 = np.array([ 0, 1.4*self.sizeY(), 0 ])
         self.LatVect3 = np.array([ 0, 0, 1.4*self.sizeZ() ])
 
+    def delete_atom(self, ind):
+        if (ind>=0) and (ind<self.nAtoms()):
+            self.atoms.pop(ind)
+            self.FindBonds()
 
-    def AddAtom(self, atom, minDist = 0):
+    def add_atom(self, atom, minDist = 0):
         """ Adds atom to the molecule is minimal distance to other atoms more then minDist """
         Dist = 10000
         if minDist > 0:
             model = TAtomicModel(self.atoms)
             model.set_lat_vectors(self.LatVect1, self.LatVect2, self.LatVect3)
-            model.AddAtom(atom)
+            model.add_atom(atom)
             for ind in range(0, len(self.atoms)):
                 r = model.atom_atom_distance(ind, len(model.atoms) - 1)
                 if r < Dist:
@@ -531,6 +535,10 @@ class TAtomicModel(object):
             newAt = deepcopy(atom)
             self.atoms.append(newAt)
 
+    def edit_atom(self, ind, newAtom):
+        if (ind>=0) and (ind<self.nAtoms()):
+            self.atoms[ind] = newAtom
+
     def AddBond(self, bond):
         self.bonds.append(bond)
 
@@ -538,6 +546,7 @@ class TAtomicModel(object):
         return len(self.bonds)
 
     def FindBonds(self):
+        self.bonds = []
         Mendeley = TPeriodTable()
         for i in range(0, len(self.atoms)):
             for j in range(i + 1, len(self.atoms)):
@@ -988,7 +997,7 @@ class TAtomicModel(object):
         r1 = norm(self.LatVect1) + norm(self.LatVect2) + norm(self.LatVect3)
         for at2 in newMolecula.atoms:
             model = TAtomicModel(self.atoms)
-            model.AddAtom(at2)
+            model.add_atom(at2)
             for ind in range(0,len(self.atoms)):
                 r = model.atom_atom_distance(ind, len(model.atoms)-1)
                 if r < r1:
@@ -1075,16 +1084,21 @@ class TAtomicModel(object):
                 types.append([i,elements[i]])            
         return types
     
-        
-        
     def toSIESTAfdf(self, filename):
         """ созадет входной файл для пакета SIESTA """
         f = open(filename,'w')
-        text = self.toSIESTAfdf()
+        text = self.toSIESTAfdfdata()
+        print(text, file=f)
+        f.close()
+        
+    def toSIESTAxyz(self, filename):
+        """ созадет xyz файл, совместимый с XMol """
+        f = open(filename,'w')
+        text = self.toSIESTAxyzdata()
         print(text, file=f)
         f.close()     
 
-    def toSIESTAfdf(self):
+    def toSIESTAfdfdata(self):
         """ возвращает данные для входного файла пакета SIESTA """
         data = ""
         PerTab = TPeriodTable()
@@ -1107,7 +1121,17 @@ class TAtomicModel(object):
             data+= str1+str2+str3+"\n"    
         data+='%endblock Zmatrix\n'
 
-        return data   
+        return data
+
+    def toSIESTAxyzdata(self):
+        """ возвращает данные для xyz файла """
+        data = "  "
+        nAtoms = self.nAtoms()
+        data+= str(nAtoms) + "\n"
+
+        for i in range(0, nAtoms):
+            data+= "\n"+self.atoms[i].let + '       '+ str(round(self.atoms[i].x, 7)) + '     ' + str(round(self.atoms[i].y, 7)) + '      ' + str(round(self.atoms[i].z, 7))
+        return data
                 
         
         
@@ -1567,7 +1591,7 @@ class TSWNT(TAtomicModel):
             qx[i_par] = R * math.sin(phi_par)
             qy[i_par] = -R * math.cos(phi_par)
             qz[i_par] = py[i_par]
-            self.AddAtom(TAtom([qx[i_par], qy[i_par], qz[i_par], "C", 6]))
+            self.add_atom(TAtom([qx[i_par], qy[i_par], qz[i_par], "C", 6]))
 
     @staticmethod
     def radius(n, m):
@@ -1772,7 +1796,6 @@ class TSIESTA:
         lat_vect_1, lat_vect_2, lat_vect_3 = TSIESTA.lattice_vectors(filename)
         if lat_vect_1 == False:
             lat_vect_1, lat_vect_2, lat_vect_3 = TSIESTA.lattice_parameters_abc_angles(filename)
-
         f = open(filename)
         lines = f.readlines()
         f.close()
@@ -1821,11 +1844,11 @@ class TSIESTA:
 
         if lat_vect_1 == False:
             AllAtoms.set_lat_vectors_default()
+
         else:
             AllAtoms.set_lat_vectors(lat_vect_1, lat_vect_2, lat_vect_3)
 
         if isBlockZMatrix == True:
-            AllAtoms = TAtomicModel(AtList)
             units = Helpers.fromFileProperty(filename, 'ZM.UnitsLength', 1, 'string')
             if units.lower() == "bohr":
                 AllAtoms.convert_from_scaled_to_cart(0.52917720859)
@@ -2000,7 +2023,7 @@ class TSIESTA:
                             y = row[1]
                             z = row[2]
 
-                            newStr.AddAtom(TAtom([x, y, z, let, charge]))
+                            newStr.add_atom(TAtom([x, y, z, let, charge]))
                     newStr.set_lat_vectors(lat1, lat2, lat3)
                     newStr.convert_from_direct_to_cart()
                     molecules.append(newStr)
@@ -2091,7 +2114,7 @@ class TSIESTA:
                 z = float(S[4])
                 charge = int(S[1])
                 let = periodTable.get_let(charge)
-                newStr.AddAtom(TAtom([x, y, z, let, charge]))
+                newStr.add_atom(TAtom([x, y, z, let, charge]))
             newStr.set_lat_vectors(lat1,lat2,lat3)
             newStr.convert_from_direct_to_cart()
             molecules.append(newStr)
@@ -3147,7 +3170,7 @@ class TCalculators:
                 a = math.sqrt(radTube*radTube - x*x)
                 y = random.uniform(-a, a)
                 z = random.uniform(0, length)
-                Molecula.AddAtom(TAtom([x,y,z,let, charge]), 2*radAtom)
+                Molecula.add_atom(TAtom([x, y, z, let, charge]), 2 * radAtom)
                 j += 1
 
             if len(Molecula.atoms) < nAtoms:

@@ -14,6 +14,7 @@ from copy import deepcopy
 
 #from TInterface import Calculator
 #from AdvancedTools import TPeriodTable
+from AdvancedTools import TAtom
 from AdvancedTools import TAtomicModel
 from AdvancedTools import TCalculators
 #from AdvancedTools import Helpers
@@ -188,8 +189,59 @@ class GuiOpenGL(object):
         newModel.move(-self.x0, -self.y0, 0)
         return newModel
 
-    def save_to_file(self, fname):
+    def image3D_to_file(self, fname):
         self.openGLWidget.grab().save(fname)
+
+    def atomic_structure_to_file(self, fname):
+        newModel = self.get_model()
+        if fname.endswith(".fdf"):
+            newModel.toSIESTAfdf(fname)
+        if fname.endswith(".xyz"):
+            newModel.toSIESTAxyz(fname)
+
+    def delete_selected_atom(self):
+        if self.selected_atom >= 0:
+            self.MainModel.delete_atom(self.selected_atom)
+            self.ViewContour = False
+            self.ViewContourFill = False
+            self.ViewSurface = False
+            self.add_atoms()
+            self.add_bonds()
+            self.openGLWidget.update()
+
+    def add_new_atom(self):
+        charge = self.selected_atom_type.currentIndex()
+        if charge > 0:
+            let = self.selected_atom_type.currentText()
+            x = self.selected_atom_X.value()
+            y = self.selected_atom_Y.value()
+            z = self.selected_atom_Z.value()
+            newAtom = TAtom([x,y,z,let,charge])
+            self.MainModel.add_atom(newAtom)
+            self.ViewContour = False
+            self.ViewContourFill = False
+            self.ViewSurface = False
+            self.add_atoms()
+            self.add_bonds()
+            self.openGLWidget.update()
+
+    def modify_selected_atom(self):
+        if self.selected_atom >= 0:
+            charge = self.selected_atom_type.currentIndex()
+            if charge > 0:
+                let = self.selected_atom_type.currentText()
+                x = self.selected_atom_X.value()
+                y = self.selected_atom_Y.value()
+                z = self.selected_atom_Z.value()
+                newAtom = TAtom([x, y, z, let, charge])
+                self.MainModel.edit_atom(self.selected_atom,newAtom)
+                self.ViewContour = False
+                self.ViewContourFill = False
+                self.ViewSurface = False
+                self.add_atoms()
+                self.add_bonds()
+                self.openGLWidget.update()
+
 
     def set_color_of_atoms(self, colors):
         self.color_of_atoms = colors
