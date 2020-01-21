@@ -14,7 +14,7 @@ import math
 from skimage.measure import marching_cubes_lewiner, find_contours
 from skimage.measure import find_contours
 
-from PyQt5 import QtWidgets
+from PyQt5.QtWidgets import QDialog, QTableWidgetItem, QComboBox, QMainWindow
 from PyQt5.QtCore import QSize
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QStandardItemModel
@@ -510,7 +510,7 @@ class TGaussianCube(TVolumericData):
             return self.atoms
 
 
-class AtomsIdentifier(QtWidgets.QDialog):
+class AtomsIdentifier(QDialog):
     def __init__(self, problemAtoms):
         super(AtomsIdentifier, self).__init__()
         self.ui = Ui_Dialog_Atoms()
@@ -536,10 +536,10 @@ class AtomsIdentifier(QtWidgets.QDialog):
 
         for problem in problemAtoms:
             self.ui.TheTable.setRowCount(self.ui.TheTable.rowCount()+1)  # и одну строку в таблице
-            data_cell = QtWidgets.QTableWidgetItem(str(problem-199))
+            data_cell = QTableWidgetItem(str(problem-199))
             data_cell.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
             self.ui.TheTable.setItem(self.ui.TheTable.rowCount() - 1, 0, data_cell)
-            atom_cell = QtWidgets.QComboBox()
+            atom_cell = QComboBox()
 
             atom_cell.setModel(model)
             atom_cell.setCurrentIndex(0)
@@ -555,7 +555,7 @@ class AtomsIdentifier(QtWidgets.QDialog):
             self.close()
 
 
-class Image3Dexporter(QtWidgets.QMainWindow):
+class Image3Dexporter(QMainWindow):
     def __init__(self, windowsWidth, windowsHeight):
             super(Image3Dexporter, self).__init__()
             self.ui = Ui_image3D()

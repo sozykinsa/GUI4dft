@@ -2,11 +2,9 @@
 
 import OpenGL.GL as gl
 import OpenGL.GLU as glu
-#import OpenGL.GLUT as glut
 
-from PyQt5 import QtWidgets as qWidget
+from PyQt5.QtWidgets import QOpenGLWidget
 from PyQt5.QtCore import QEvent
-
 from PyQt5.QtCore import QObject
 from PyQt5.QtCore import Qt
 from copy import deepcopy
@@ -505,7 +503,7 @@ class GuiOpenGL(object):
         return self.selected_atom, volume
 
     def paintGL(self):
-        qWidget.QOpenGLWidget.makeCurrent(self.openGLWidget)
+        QOpenGLWidget.makeCurrent(self.openGLWidget)
         ambient = [1.0, 1.0, 1.0, 0.04]
         lightpos = [1.0, 10.0, 100.0]
         gl.glLightModelfv(gl.GL_LIGHT_MODEL_AMBIENT, ambient) # Определяем текущую модель освещения
@@ -643,7 +641,7 @@ class GuiOpenGL(object):
         return point
 
     def initializeGL(self):
-        qWidget.QOpenGLWidget.makeCurrent(self.openGLWidget)
+        QOpenGLWidget.makeCurrent(self.openGLWidget)
         print("\033[4;30;102m INITIALIZE GL \033[0m")
         gl.glEnable(gl.GL_BLEND)
         gl.glBlendFunc(gl.GL_SRC_ALPHA, gl.GL_ONE_MINUS_SRC_ALPHA)

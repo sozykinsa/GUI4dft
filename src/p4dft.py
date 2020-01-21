@@ -15,8 +15,16 @@ from PyQt5.QtCore import QSettings
 from PyQt5.QtCore import QDir
 #from PyQt5.QtCore import QMimeData
 #import PyQt5.QtCore as QtCore
-from PyQt5 import QtWidgets as qWidget
+from PyQt5.QtWidgets import QAction
+from PyQt5.QtWidgets import QApplication
 from PyQt5.QtWidgets import QColorDialog
+from PyQt5.QtWidgets import QDialog
+from PyQt5.QtWidgets import QDoubleSpinBox
+from PyQt5.QtWidgets import QFileDialog
+from PyQt5.QtWidgets import QFileSystemModel
+from PyQt5.QtWidgets import QMainWindow
+from PyQt5.QtWidgets import QTableWidgetItem
+from PyQt5.QtWidgets import QTreeWidgetItem
 from PyQt5.QtWidgets import QTreeWidgetItemIterator
 #from PyQt5 import uic
 from PyQt5.QtGui import QIcon
@@ -54,7 +62,7 @@ from about import Ui_DialogAbout as Ui_about
 
 import xml.etree.ElementTree as ET
 
-class mainWindow(qWidget.QMainWindow):  
+class mainWindow(QMainWindow):
     def __init__(self, *args):
         super(mainWindow, self).__init__(*args)
         self.ui = Ui_form()
@@ -238,30 +246,21 @@ class mainWindow(qWidget.QMainWindow):
         self.ui.FormActionsPosTableBonds.setColumnWidth(0, 70)
         self.ui.FormActionsPosTableBonds.setColumnWidth(1, 180)
 
-        openAction = qWidget.QAction(QIcon('./images/Open.jpg'), 'Open', self)
+        openAction = QAction(QIcon('./images/Open.jpg'), 'Open', self)
         openAction.setShortcut('Ctrl+O')
         openAction.triggered.connect(self.menu_open)
         self.ui.toolBar.addAction(openAction)
 
-        modelFile = qWidget.QFileSystemModel()
+        modelFile = QFileSystemModel()
         modelFile.setRootPath((QDir.rootPath()))
         self.ui.FileBrouserTree.setModel(modelFile)
         self.ui.FileBrouserTree.selectionModel().selectionChanged.connect(self.file_brouser_selection)
 
-        # xRot = qWidget.QAction('Xrot', self)
-        # self.toolBar.addAction(xRot)
-
-        # yRot = qWidget.QAction('Yrot', self)
-        # self.toolBar.addAction(yRot)
-
-        # zRot = qWidget.QAction('Zrot', self)
-        # self.toolBar.addAction(zRot)
-
-        SaveImageToFileAction = qWidget.QAction(QIcon('./images/Save3D.jpg'), 'SaveFigure3D', self)
+        SaveImageToFileAction = QAction(QIcon('./images/Save3D.jpg'), 'SaveFigure3D', self)
         SaveImageToFileAction.triggered.connect(self.save_image_to_file)
         self.ui.toolBar.addAction(SaveImageToFileAction)
 
-        Save2DImageToFileAction = qWidget.QAction(QIcon('./images/Save2D.jpg'), 'SaveDataFromFigure', self)
+        Save2DImageToFileAction = QAction(QIcon('./images/Save2D.jpg'), 'SaveDataFromFigure', self)
         Save2DImageToFileAction.triggered.connect(self.save_data_from_figure2d)
         self.ui.toolBar.addAction(Save2DImageToFileAction)
 
@@ -314,7 +313,7 @@ class mainWindow(qWidget.QMainWindow):
         lets = Mendeley.get_all_letters()
         for i in range(1, len(lets) - 1):
             self.ui.ColorsOfAtomsTable.setRowCount(i)  # и одну строку в таблице
-            self.ui.ColorsOfAtomsTable.setItem(i - 1, 0, qWidget.QTableWidgetItem(lets[i]))
+            self.ui.ColorsOfAtomsTable.setItem(i - 1, 0, QTableWidgetItem(lets[i]))
             color = colors[i]
             self.ui.ColorsOfAtomsTable.item(i - 1, 0).setBackground(QColor.fromRgbF(color[0], color[1], color[2], 1))
         self.state_Color_Of_Bonds = str(settings.value(SETTINGS_Color_Of_Bonds, '0 0 255'))
@@ -335,7 +334,7 @@ class mainWindow(qWidget.QMainWindow):
 
     def add_cell_param(self):
         """ add cell params"""
-        fname = qWidget.QFileDialog.getOpenFileName(self, 'Open file', self.WorkDir)[0]
+        fname = QFileDialog.getOpenFileName(self, 'Open file', self.WorkDir)[0]
         if Importer.checkFormat(fname) == "SIESTAout":
             self.fill_cell_info(fname)
 
@@ -345,7 +344,7 @@ class mainWindow(qWidget.QMainWindow):
 
     def add_data_cell_param(self):
         """ add cell params from file"""
-        fname = qWidget.QFileDialog.getOpenFileName(self, 'Open file', self.WorkDir)[0]
+        fname = QFileDialog.getOpenFileName(self, 'Open file', self.WorkDir)[0]
         self.WorkDir = os.path.dirname(fname)
 
         if os.path.exists(fname):
@@ -385,7 +384,7 @@ class mainWindow(qWidget.QMainWindow):
         return bondscolor
 
     def menu_export(self):
-        fname = qWidget.QFileDialog.getSaveFileName(self, 'Save File', self.WorkDir, "FDF files (*.fdf);;XYZ files (*.xyz)")[0]
+        fname = QFileDialog.getSaveFileName(self, 'Save File', self.WorkDir, "FDF files (*.fdf);;XYZ files (*.xyz)")[0]
         self.MainForm.atomic_structure_to_file(fname)
         self.WorkDir = os.path.dirname(fname)
         self.save_active_Folder()
@@ -396,7 +395,7 @@ class mainWindow(qWidget.QMainWindow):
         if self.ui.FileBrouserUseCheckBox.isChecked():
             fname = self.ui.FileBrouserTree.model().filePath(self.ui.IndexOfFileToOpen)
         else:
-            fname = qWidget.QFileDialog.getOpenFileName(self, 'Open file', self.WorkDir)[0]
+            fname = QFileDialog.getOpenFileName(self, 'Open file', self.WorkDir)[0]
         if os.path.exists(fname):
             self.filename = fname
             self.WorkDir = os.path.dirname(fname)
@@ -468,7 +467,7 @@ class mainWindow(qWidget.QMainWindow):
 
     def menu_about(self):
         """ menu About """        
-        dialogWin = qWidget.QDialog(self)
+        dialogWin = QDialog(self)
         dialogWin.ui = Ui_about()
         dialogWin.ui.setupUi(self)
         dialogWin.setFixedSize(QSize(532,149))
@@ -665,10 +664,10 @@ class mainWindow(qWidget.QMainWindow):
         self.ui.FormModelTableAtoms.setRowCount(len(model))        # и одну строку в таблице
                 
         for i in range(0, len(model)):
-            self.ui.FormModelTableAtoms.setItem(i, 0, qWidget.QTableWidgetItem(model[i].let))
-            self.ui.FormModelTableAtoms.setItem(i, 1, qWidget.QTableWidgetItem(str(round(model[i].x,5))))
-            self.ui.FormModelTableAtoms.setItem(i, 2, qWidget.QTableWidgetItem(str(round(model[i].y,5))))
-            self.ui.FormModelTableAtoms.setItem(i, 3, qWidget.QTableWidgetItem(str(round(model[i].z,5))))
+            self.ui.FormModelTableAtoms.setItem(i, 0, QTableWidgetItem(model[i].let))
+            self.ui.FormModelTableAtoms.setItem(i, 1, QTableWidgetItem(str(round(model[i].x,5))))
+            self.ui.FormModelTableAtoms.setItem(i, 2, QTableWidgetItem(str(round(model[i].y,5))))
+            self.ui.FormModelTableAtoms.setItem(i, 3, QTableWidgetItem(str(round(model[i].z,5))))
  
         # делаем ресайз колонок по содержимому
         #self.ui.FormModelTableAtoms.resizeColumnsToContents()
@@ -686,8 +685,8 @@ class mainWindow(qWidget.QMainWindow):
         self.ui.FormModelTableProperties.setRowCount(len(properties))        # и одну строку в таблице
         
         for i in range(0, len(properties)):
-            self.ui.FormModelTableProperties.setItem(i, 0, qWidget.QTableWidgetItem(properties[i][0]))
-            self.ui.FormModelTableProperties.setItem(i, 1, qWidget.QTableWidgetItem(properties[i][1]))
+            self.ui.FormModelTableProperties.setItem(i, 0, QTableWidgetItem(properties[i][0]))
+            self.ui.FormModelTableProperties.setItem(i, 1, QTableWidgetItem(properties[i][1]))
 
         #self.ui.FormModelTableAtoms.resizeColumnsToContents()
 
@@ -718,9 +717,9 @@ class mainWindow(qWidget.QMainWindow):
             
             self.ui.FormActionsTabeDOSProperty.setRowCount(i)
             
-            self.ui.FormActionsTabeDOSProperty.setItem(i-1, 0, qWidget.QTableWidgetItem(str("?")))
-            self.ui.FormActionsTabeDOSProperty.setItem(i-1, 1, qWidget.QTableWidgetItem(str(eFermy)))
-            self.ui.FormActionsTabeDOSProperty.setItem(i-1, 2, qWidget.QTableWidgetItem(M11S11))
+            self.ui.FormActionsTabeDOSProperty.setItem(i-1, 0, QTableWidgetItem(str("?")))
+            self.ui.FormActionsTabeDOSProperty.setItem(i-1, 1, QTableWidgetItem(str(eFermy)))
+            self.ui.FormActionsTabeDOSProperty.setItem(i-1, 2, QTableWidgetItem(M11S11))
             
             self.ui.FormActionsTabeDOSProperty.update()
 
@@ -766,21 +765,21 @@ class mainWindow(qWidget.QMainWindow):
         if type == "TXSF":
             for dat in data:
                 text = ((dat[0].title).split('_')[3]).split(':')[0]
-                parent = qWidget.QTreeWidgetItem(self.ui.FormActionsPostTreeSurface)
+                parent = QTreeWidgetItem(self.ui.FormActionsPostTreeSurface)
                 parent.setText(0, "{}".format(text) + "3D")
                 for da in dat:
                     ch = text + ':' + (da.title).split(':')[1]
-                    child = qWidget.QTreeWidgetItem(parent)
+                    child = QTreeWidgetItem(parent)
                     child.setText(0, "{}".format(ch))
 
         if type == "TGaussianCube":
             for dat in data:
                 text = dat[0].title.split(".cube")[0]
-                parent = qWidget.QTreeWidgetItem(self.ui.FormActionsPostTreeSurface)
+                parent = QTreeWidgetItem(self.ui.FormActionsPostTreeSurface)
                 parent.setText(0, "{}".format(text))
                 for da in dat:
                     ch = text
-                    child = qWidget.QTreeWidgetItem(parent)
+                    child = QTreeWidgetItem(parent)
                     child.setText(0, "{}".format(ch))
         self.ui.FormActionsPostTreeSurface.show()
 
@@ -797,8 +796,8 @@ class mainWindow(qWidget.QMainWindow):
 
         for i in range(0, len(bonds)):
             s = str(bonds[i][3])+str(bonds[i][4])+"-"+str(bonds[i][5])+str(bonds[i][6])
-            self.ui.FormActionsPosTableBonds.setItem(i, 0, qWidget.QTableWidgetItem(s))
-            self.ui.FormActionsPosTableBonds.setItem(i, 1, qWidget.QTableWidgetItem(str(bonds[i][2])))
+            self.ui.FormActionsPosTableBonds.setItem(i, 0, QTableWidgetItem(s))
+            self.ui.FormActionsPosTableBonds.setItem(i, 1, QTableWidgetItem(str(bonds[i][2])))
             mean+=bonds[i][2]
             n+=1
         if n>0:
@@ -817,11 +816,11 @@ class mainWindow(qWidget.QMainWindow):
     def fill_cell_info_row(self, Energy, Volume, a, b, c):
         i = self.ui.FormActionsPostTableCellParam.rowCount() + 1
         self.ui.FormActionsPostTableCellParam.setRowCount(i)  # и одну строку в таблице
-        self.ui.FormActionsPostTableCellParam.setItem(i - 1, 0, qWidget.QTableWidgetItem(str(Volume)))
-        self.ui.FormActionsPostTableCellParam.setItem(i - 1, 1, qWidget.QTableWidgetItem(str(Energy)))
-        self.ui.FormActionsPostTableCellParam.setItem(i - 1, 2, qWidget.QTableWidgetItem(str(a)))
-        self.ui.FormActionsPostTableCellParam.setItem(i - 1, 3, qWidget.QTableWidgetItem(str(b)))
-        self.ui.FormActionsPostTableCellParam.setItem(i - 1, 4, qWidget.QTableWidgetItem(str(c)))
+        self.ui.FormActionsPostTableCellParam.setItem(i - 1, 0, QTableWidgetItem(str(Volume)))
+        self.ui.FormActionsPostTableCellParam.setItem(i - 1, 1, QTableWidgetItem(str(Energy)))
+        self.ui.FormActionsPostTableCellParam.setItem(i - 1, 2, QTableWidgetItem(str(a)))
+        self.ui.FormActionsPostTableCellParam.setItem(i - 1, 3, QTableWidgetItem(str(b)))
+        self.ui.FormActionsPostTableCellParam.setItem(i - 1, 4, QTableWidgetItem(str(c)))
 
 
     def delete_cell_param_row(self):
@@ -1059,7 +1058,7 @@ class mainWindow(qWidget.QMainWindow):
             
     def add_dos_file(self):
         """ menu Open"""
-        fname = qWidget.QFileDialog.getOpenFileName(self, 'Open file', self.WorkDir)[0]
+        fname = QFileDialog.getOpenFileName(self, 'Open file', self.WorkDir)[0]
         self.WorkDir = os.path.dirname(fname)
         self.check_dos(fname)
             
@@ -1071,7 +1070,7 @@ class mainWindow(qWidget.QMainWindow):
             DATA.append(line.get_xydata())
 
         if len(DATA)>0:
-            name = qWidget.QFileDialog.getSaveFileName(self, 'Save File')[0]
+            name = QFileDialog.getSaveFileName(self, 'Save File')[0]
 
             iter = 0
             for line in DATA:
@@ -1088,7 +1087,7 @@ class mainWindow(qWidget.QMainWindow):
         #print(DATA)
         
     def save_image_to_file(self):
-        fname = qWidget.QFileDialog.getSaveFileName(self, 'Save File', self.WorkDir, "PNG files (*.png);;JPG files (*.jpg);;BMP files (*.bmp)")[0]
+        fname = QFileDialog.getSaveFileName(self, 'Save File', self.WorkDir, "PNG files (*.png);;JPG files (*.jpg);;BMP files (*.bmp)")[0]
         newWindow = Image3Dexporter(5*self.ui.openGLWidget.width(), 5*self.ui.openGLWidget.height())
         newWindow.MainForm.copy_state(self.MainForm)
         newWindow.MainForm.image3D_to_file(fname)
@@ -1208,7 +1207,7 @@ class mainWindow(qWidget.QMainWindow):
     def fdf_data_from_form_to_file(self):
         text = self.ui.FormActionsPreTextFDF.toPlainText()
 
-        name = qWidget.QFileDialog.getSaveFileName(self, 'Save File')[0]
+        name = QFileDialog.getSaveFileName(self, 'Save File')[0]
         with open(name, 'w') as f:
             f.write(text)
 
@@ -1228,7 +1227,7 @@ class mainWindow(qWidget.QMainWindow):
 
         filename = "."
         if self.ui.FormActionsPreSaveToFileFillSpace.isChecked():
-            filename = qWidget.QFileDialog.getSaveFileName(self, 'Save File')[0]
+            filename = QFileDialog.getSaveFileName(self, 'Save File')[0]
             filename = filename.split(".fdf")[0]
 
         iter = 0
@@ -1343,10 +1342,10 @@ class mainWindow(qWidget.QMainWindow):
         i = self.ui.IsosurfaceColorsTable.rowCount() + 1
         value = self.ui.FormActionsPostLabelSurfaceValue.text()
         self.ui.IsosurfaceColorsTable.setRowCount(i)  # и одну строку в таблице
-        color_cell = qWidget.QTableWidgetItem(value)
+        color_cell = QTableWidgetItem(value)
         color_cell.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled )
         self.ui.IsosurfaceColorsTable.setItem(i - 1, 0, color_cell)
-        transp_cell = qWidget.QDoubleSpinBox()
+        transp_cell = QDoubleSpinBox()
         transp_cell.setRange(0,1)
         transp_cell.setValue(1)
         transp_cell.setSingleStep(0.1)
@@ -1405,7 +1404,7 @@ QCoreApplication.setOrganizationDomain(ORGANIZATION_DOMAIN)
 QCoreApplication.setApplicationName(APPLICATION_NAME)
 
 QCoreApplication.setAttribute(Qt.AA_ShareOpenGLContexts)
-app = qWidget.QApplication(sys.argv)
+app = QApplication(sys.argv)
 window = mainWindow()
 window.setupUI()
 window.show()
