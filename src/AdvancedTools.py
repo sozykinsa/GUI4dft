@@ -1073,9 +1073,7 @@ class TAtomicModel(object):
     
     
     def typesOfAtoms(self):
-        elements = []
-        for i in range(0,200):
-            elements.append(0)
+        elements = np.zeros((200))
         for atom in self.atoms:
             elements[atom.charge]+=1
         types = []

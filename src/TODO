@@ -3,7 +3,6 @@ p4dft - first free SIESTA oriented GUI
 BANDS
 PDOS
 periodic table: all atoms
-View Axes
 
 перемещение одного атома: изменить алгоритм полностью! определи нормаль и плоскость движения
 проверка на кубический тип решетки в XSF и cube или заставить работать для произвольной

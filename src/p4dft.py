@@ -8,11 +8,13 @@ from copy import deepcopy
 from operator import itemgetter
 
 from PyQt5.QtCore import Qt
+from PyQt5.QtCore import QDir
 from PyQt5.QtCore import QSize
 from PyQt5.QtCore import QCoreApplication
 from PyQt5.QtCore import QSettings
+from PyQt5.QtCore import QVariant
 #from PyQt5.QtCore import QItemSelection
-from PyQt5.QtCore import QDir
+
 #from PyQt5.QtCore import QMimeData
 #import PyQt5.QtCore as QtCore
 from PyQt5.QtWidgets import QAction
@@ -31,6 +33,7 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtGui import QStandardItemModel
 from PyQt5.QtGui import QStandardItem
 from PyQt5.QtGui import QImage
+
 #from PyQt5.QtGui import QPainter
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtGui import QColor
@@ -140,14 +143,6 @@ class mainWindow(QMainWindow):
             model.appendRow(QStandardItem(atoms_list[i]))
         self.ui.FormActionsPreComboAtomsList.setModel(model)
 
-        model = QStandardItemModel()
-        model.appendRow(QStandardItem("All"))
-        model.appendRow(QStandardItem("Selected atom (3D View)"))
-        model.appendRow(QStandardItem("Selected in list below"))
-        self.ui.FormActionsComboPDOSIndexes.setModel(model)
-
-        self.ui.FormActionsComboPDOSspecies.setModel(model)
-
 
         # sliders
         self.ui.FormActionsPostSliderContourXY.valueChanged.connect(self.set_xsf_z_position)
@@ -198,6 +193,13 @@ class mainWindow(QMainWindow):
         #FillSpaceModel.appendRow(QStandardItem("parallelepiped"))
         self.ui.FormActionsPreComboFillSpace.setModel(FillSpaceModel)
 
+        self.prepare_FormActionsComboPDOSIndexes()
+        self.prepare_FormActionsComboPDOSspecies()
+
+        self.prepare_q_numbers_combo(self.ui.FormActionsComboPDOSn, 0, 8)
+        self.prepare_q_numbers_combo(self.ui.FormActionsComboPDOSl, 0, 7)
+        self.prepare_q_numbers_combo(self.ui.FormActionsComboPDOSm, -7, 7)
+        self.prepare_q_numbers_combo(self.ui.FormActionsComboPDOSz, -1, 1)
 
         ColorType = QStandardItemModel()
         ColorTypes = [ 'flag', 'prism', 'ocean', 'gist_earth', 'terrain', 'gist_stern',
@@ -264,6 +266,41 @@ class mainWindow(QMainWindow):
         Save2DImageToFileAction = QAction(QIcon('./images/Save2D.jpg'), 'SaveDataFromFigure', self)
         Save2DImageToFileAction.triggered.connect(self.save_data_from_figure2d)
         self.ui.toolBar.addAction(Save2DImageToFileAction)
+
+    def prepare_FormActionsComboPDOSIndexes(self):
+        model = QStandardItemModel()
+        model.appendRow(QStandardItem("All"))
+        model.appendRow(QStandardItem("Selected atom (3D View)"))
+        model.appendRow(QStandardItem("Selected in list below"))
+        for i in range(1, self.MainForm.MainModel.nAtoms() + 1):
+            self.create_checkable_item(model, str(i))
+        self.ui.FormActionsComboPDOSIndexes.setModel(model)
+
+    def prepare_FormActionsComboPDOSspecies(self):
+        Mendeley = TPeriodTable()
+        atoms_list = Mendeley.get_all_letters()
+        model = QStandardItemModel()
+        model.appendRow(QStandardItem("All"))
+        model.appendRow(QStandardItem("Selected atom (3D View)"))
+        model.appendRow(QStandardItem("Selected in list below"))
+        typesOfAtoms = self.MainForm.MainModel.typesOfAtoms()
+        for i in range(0, len(typesOfAtoms)):
+            self.create_checkable_item(model, str(atoms_list[typesOfAtoms[i][0]]))
+        self.ui.FormActionsComboPDOSspecies.setModel(model)
+
+    def prepare_q_numbers_combo(self, FormActionsComboPDOSn, start, stop):
+        QuantumNumbersList = QStandardItemModel()
+        QuantumNumbersList.appendRow(QStandardItem("All"))
+        QuantumNumbersList.appendRow(QStandardItem("Selected"))
+        for i in range(start, stop+1):
+            self.create_checkable_item(QuantumNumbersList, str(i))
+        FormActionsComboPDOSn.setModel(QuantumNumbersList)
+
+    def create_checkable_item(self, QuantumNumbersList, value):
+        item = QStandardItem(value)
+        item.setFlags(Qt.ItemIsUserCheckable | Qt.ItemIsEnabled)
+        item.setData(QVariant(Qt.Checked), Qt.CheckStateRole)
+        QuantumNumbersList.appendRow(item)
 
     def load_settings(self):
         # The SETTINGS
@@ -449,6 +486,8 @@ class mainWindow(QMainWindow):
         boxcolor = self.get_color_from_SETTING(self.state_Color_Of_Box)
         atomscolor = self.colors_of_atoms()
         self.MainForm.set_atomic_structure(self.models[value], atomscolor, ViewBox, boxcolor, ViewBonds, bondscolor, bondWidth, ViewAxes, axescolor)
+        self.prepare_FormActionsComboPDOSIndexes()
+        self.prepare_FormActionsComboPDOSspecies()
 
     def menu_ortho(self):
         """ menu Ortho"""
@@ -882,8 +921,30 @@ class mainWindow(QMainWindow):
             tree = ET.parse(file)
             root = tree.getroot()
 
-            atom_index = range(1, 20)
-            species = ['C', 'Li']
+            atom_index = []
+            if self.ui.FormActionsComboPDOSIndexes.currentText() == 'All':
+                atom_index = range(1, self.MainForm.MainModel.nAtoms()+1)
+            if self.ui.FormActionsComboPDOSIndexes.currentText() == 'Selected atom (3D View)':
+                atom_index = [self.MainForm.MainModel.selected_atom+1]
+            if self.ui.FormActionsComboPDOSIndexes.currentText() == 'Selected in list below':
+                self.list_of_selected_items_in_combo(atom_index, self.ui.FormActionsComboPDOSIndexes)
+
+            print(atom_index)
+
+            species = []
+            if self.ui.FormActionsComboPDOSspecies.currentText() == 'All':
+                Mendeley = TPeriodTable()
+                atoms_list = Mendeley.get_all_letters()
+                typesOfAtoms = self.MainForm.MainModel.typesOfAtoms()
+                for i in range(0, len(typesOfAtoms)):
+                    species.append(str(atoms_list[typesOfAtoms[i][0]]))
+            if self.ui.FormActionsComboPDOSspecies.currentText() == 'Selected atom (3D View)':
+                species = [self.MainForm.MainModel.atoms[self.MainForm.MainModel.selected_atom].let]
+            if self.ui.FormActionsComboPDOSspecies.currentText() == 'Selected in list below':
+                self.list_of_selected_items_in_combo(species, self.ui.FormActionsComboPDOSspecies)
+
+            print(species)
+
             number_n = [0, 1, 2, 3]
             number_l = [0, 1, 2, 3]
             number_m = [0, 1, 2, 3]
@@ -910,6 +971,13 @@ class mainWindow(QMainWindow):
             self.ui.MplWidget.canvas.axes.set_ylabel("PDOS, states/eV")
 
             self.ui.MplWidget.canvas.draw()
+
+    def list_of_selected_items_in_combo(self, atom_index, combo):
+        model = combo.model()
+        maxi = combo.count()
+        for i in range(0, maxi):
+            if model.itemFromIndex(model.index(i, 0)).checkState() == Qt.Checked:
+                atom_index.append(model.itemFromIndex(model.index(i, 0)).text())
 
     def plot_bands(self):
         file = self.ui.FormActionsLineBANDSfile.text()
