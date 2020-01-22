@@ -2199,6 +2199,8 @@ class TSIESTA:
     def calc_pdos(root, atom_index, species, number_l, number_m, number_n, number_z):
         pdos = np.zeros((2, 1000))
         energy = np.zeros((1, 10))
+        count1 = 0
+        count2 = 0
         for child in root:
             # print(child.tag)
             if child.tag == "energy_values":
@@ -2206,8 +2208,8 @@ class TSIESTA:
                 data = Helpers.list_str_to_float(data)
                 energy = np.array(data)
                 pdos = np.zeros((2, len(energy)))
+
             if child.tag == "orbital":
-                # print(child.attrib)
                 if (int(child.attrib['atom_index']) in atom_index) and (child.attrib['species'] in species) and (
                         int(child.attrib['n']) in number_n) and (int(child.attrib['l']) in number_l) and (
                         int(child.attrib['m']) in number_m) and (int(child.attrib['z']) in number_z):

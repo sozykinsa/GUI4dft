@@ -48,6 +48,7 @@ from AdvancedTools import TSIESTA
 from AdvancedTools import Helpers
 from TGui import GuiOpenGL
 from matplotlib.backends.backend_qt5agg import (NavigationToolbar2QT as NavigationToolbar)
+import myfigureoptions
 import numpy as np
 #import matplotlib.cm as cm
 import matplotlib.pyplot as plt
@@ -115,6 +116,7 @@ class mainWindow(QMainWindow):
         self.ui.FormActionsPostButSurfaceDelete.clicked.connect(self.delete_isosurface_color_from_table)
         self.ui.FormActionsButtonPlotPDOS.clicked.connect(self.plot_pdos)
         self.ui.FormActionsButtonPlotBANDS.clicked.connect(self.plot_bands)
+        self.ui.FormActionsButtonParseBANDS.clicked.connect(self.parse_bands)
 
         self.ui.FormActionsPreButDeleteAtom.clicked.connect(self.atom_delete)
         self.ui.FormActionsPreButModifyAtom.clicked.connect(self.atom_modify)
@@ -199,7 +201,7 @@ class mainWindow(QMainWindow):
         self.prepare_q_numbers_combo(self.ui.FormActionsComboPDOSn, 0, 8)
         self.prepare_q_numbers_combo(self.ui.FormActionsComboPDOSl, 0, 7)
         self.prepare_q_numbers_combo(self.ui.FormActionsComboPDOSm, -7, 7)
-        self.prepare_q_numbers_combo(self.ui.FormActionsComboPDOSz, -1, 1)
+        self.prepare_q_numbers_combo(self.ui.FormActionsComboPDOSz, 1, 5)
 
         ColorType = QStandardItemModel()
         ColorTypes = [ 'flag', 'prism', 'ocean', 'gist_earth', 'terrain', 'gist_stern',
@@ -742,7 +744,7 @@ class mainWindow(QMainWindow):
         PDOSfile = Importer.CheckPDOSfile(fname)
         if PDOSfile != False:
             self.ui.FormActionsLinePDOSfile.setText(PDOSfile)
-            self.ui.FormActionsButtonPlotPDOS.setEnabled(True)
+            self.ui.FormActionsButtonParseBANDS.setEnabled(True)
 
     def check_bands(self, fname):
         BANDSfile = Importer.CheckBANDSfile(fname)
@@ -929,7 +931,7 @@ class mainWindow(QMainWindow):
             if self.ui.FormActionsComboPDOSIndexes.currentText() == 'Selected in list below':
                 self.list_of_selected_items_in_combo(atom_index, self.ui.FormActionsComboPDOSIndexes)
 
-            print(atom_index)
+            #print(atom_index)
 
             species = []
             if self.ui.FormActionsComboPDOSspecies.currentText() == 'All':
@@ -943,12 +945,28 @@ class mainWindow(QMainWindow):
             if self.ui.FormActionsComboPDOSspecies.currentText() == 'Selected in list below':
                 self.list_of_selected_items_in_combo(species, self.ui.FormActionsComboPDOSspecies)
 
-            print(species)
+            #print(species)
 
-            number_n = [0, 1, 2, 3]
-            number_l = [0, 1, 2, 3]
-            number_m = [0, 1, 2, 3]
-            number_z = [0, 1, 2, 3]
+            number_n = []
+            if self.ui.FormActionsComboPDOSn.currentText() == 'All':
+                number_n = range(0, 9)
+            if self.ui.FormActionsComboPDOSn.currentText() == 'Selected':
+                self.list_of_selected_items_in_combo(number_n, self.ui.FormActionsComboPDOSn)
+            number_l = []
+            if self.ui.FormActionsComboPDOSl.currentText() == 'All':
+                number_l = range(0, 8)
+            if self.ui.FormActionsComboPDOSl.currentText() == 'Selected':
+                self.list_of_selected_items_in_combo(number_l, self.ui.FormActionsComboPDOSl)
+            number_m = []
+            if self.ui.FormActionsComboPDOSm.currentText() == 'All':
+                number_m = range(-7, 8)
+            if self.ui.FormActionsComboPDOSm.currentText() == 'Selected':
+                self.list_of_selected_items_in_combo(number_m, self.ui.FormActionsComboPDOSm)
+            number_z = []
+            if self.ui.FormActionsComboPDOSz.currentText() == 'All':
+                number_z = range(1, 8)
+            if self.ui.FormActionsComboPDOSz.currentText() == 'Selected':
+                self.list_of_selected_items_in_combo(number_z, self.ui.FormActionsComboPDOSz)
 
             pdos, energy = TSIESTA.calc_pdos(root, atom_index, species, number_l, number_m, number_n, number_z)
             EF = TSIESTA.FermiEnergy(self.filename)
@@ -979,19 +997,48 @@ class mainWindow(QMainWindow):
             if model.itemFromIndex(model.index(i, 0)).checkState() == Qt.Checked:
                 atom_index.append(model.itemFromIndex(model.index(i, 0)).text())
 
+    def parse_bands(self):
+        file = self.ui.FormActionsLineBANDSfile.text()
+        if os.path.exists(file):
+            f = open(file)
+            eF = float(f.readline())
+            self.ui.FormActionsEditBANDSefermi.setText(str(eF))
+            str1 = f.readline().split()
+            str1 = Helpers.list_str_to_float(str1)
+            kmin = float(str1[0])
+            kmax = float(str1[1])
+            self.ui.FormActionsSpinBANDSxmin.setRange(kmin,kmax)
+            self.ui.FormActionsSpinBANDSxmin.setValue(kmin)
+            self.ui.FormActionsSpinBANDSxmax.setRange(kmin, kmax)
+            self.ui.FormActionsSpinBANDSxmax.setValue(kmax)
+
+            str1 = f.readline().split()
+            str1 = Helpers.list_str_to_float(str1)
+            emin = float(str1[0])
+            emax = float(str1[1])
+            self.ui.FormActionsSpinBANDSemin.setRange(emin, emax)
+            self.ui.FormActionsSpinBANDSemin.setValue(emin)
+            self.ui.FormActionsSpinBANDSemax.setRange(emin, emax)
+            self.ui.FormActionsSpinBANDSemax.setValue(emax)
+            f.close()
+            self.ui.FormActionsButtonPlotPDOS.setEnabled(True)
+
     def plot_bands(self):
         file = self.ui.FormActionsLineBANDSfile.text()
         if os.path.exists(file):
             f = open(file)
             eF = float(f.readline())
+            shift = 0
+            if self.ui.FormActionsCheckBANDSfermyShift.isChecked():
+                shift = eF
             str1 = f.readline().split()
             str1 = Helpers.list_str_to_float(str1)
-            kmin = str1[0]
-            kmax = str1[1]
+            kmin = self.ui.FormActionsSpinBANDSxmin.value()
+            kmax = self.ui.FormActionsSpinBANDSxmax.value()
             str1 = f.readline().split()
             str1 = Helpers.list_str_to_float(str1)
-            emin = str1[0]
-            emax = str1[1]
+            emin = self.ui.FormActionsSpinBANDSemin.value()
+            emax = self.ui.FormActionsSpinBANDSemax.value()
             str1 = f.readline().split()
             str1 = Helpers.list_str_to_int(str1)
             kmesh = np.zeros((str1[2]))
@@ -1001,33 +1048,56 @@ class mainWindow(QMainWindow):
                 str2 = Helpers.list_str_to_float(str2)
                 kmesh[i] = str2[0]
                 for j in range(1,len(str2)):
-                    bands[j-1][i] = str2[j]
+                    bands[j-1][i] = float(str2[j]) - shift
                 kol = len(str2)-1
                 while kol < str1[0]:
                     str2 = f.readline().split()
                     str2 = Helpers.list_str_to_float(str2)
                     for j in range(0, len(str2)):
-                        bands[kol + j][i] = str2[j]
+                        bands[kol + j][i] = float(str2[j]) - shift
                     kol += len(str2)
             nsticks = int(f.readline())
             xticks = []
             xticklabels = []
             for i in range(0,nsticks):
                 str3 = f.readline().split()
-                xticks.append(float(str3[0]))
-                xticklabels.append(str3[1])
+                value = float(str3[0])
+                if (round(value,2)>=kmin) and (round(value,2)<=kmax):
+                    xticks.append(value)
+                    letter = self.utf8_letter(str3[1][1:-1])
+                    xticklabels.append(letter)
             f.close()
             #print(bands)
             #print(xticks)
             self.ui.MplWidget.canvas.axes.clear()
+            #self.ui.MplWidget.canvas.rcParams.update({'font.size': 22})
             for band in bands:
-                self.ui.MplWidget.canvas.axes.plot(kmesh, band)
+                self.ui.MplWidget.canvas.axes.plot(kmesh, band, linestyle = "-", color = "black")
+            self.ui.MplWidget.canvas.axes.set_xlim(kmin, kmax)
+            self.ui.MplWidget.canvas.axes.set_ylim(emin, emax)
             self.ui.MplWidget.canvas.axes.set_xticks(xticks)
             self.ui.MplWidget.canvas.axes.set_xticklabels(xticklabels)
             self.ui.MplWidget.canvas.axes.set_xlabel("k")
             self.ui.MplWidget.canvas.axes.set_ylabel("Energy, eV")
 
             self.ui.MplWidget.canvas.draw()
+
+    def utf8_letter(self, let):
+        if let == '\Gamma':
+            return '\u0393'
+        if let == '\Delta':
+            return '\u0394'
+        if let == '\Lambda':
+            return '\u039B'
+        if let == '\Pi':
+            return '\u03A0'
+        if let == '\Sigma':
+            return '\u03A3'
+        if let == '\Omega':
+            return '\u03A9'
+        if let == '\Omega':
+            return '\u03A9'
+        return let
            
     def plot_dos(self):
         items = []
