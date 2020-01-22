@@ -159,7 +159,7 @@ class GuiOpenGL(object):
         radius = min(width, height)*float(self.Scale)
         return (2.*x-width)/radius, -(2.*y-height)/radius
 
-    def set_atomic_structure(self, structure, atomscolors, ViewBox, boxcolor, ViewBonds, bondscolor, bondWidth):
+    def set_atomic_structure(self, structure, atomscolors, ViewBox, boxcolor, ViewBonds, bondscolor, bondWidth, ViewAxes, axescolor):
         self.clean()
         self.MainModel = deepcopy(structure)
         cm = self.MainModel.centr_mass()
@@ -169,6 +169,8 @@ class GuiOpenGL(object):
         self.ViewBox = ViewBox
         self.ViewBonds = ViewBonds
         self.bondWidth = bondWidth
+        self.ViewAxes = ViewAxes
+        self.color_of_axes = axescolor
         self.ViewSurface = False
         self.ViewContour = False
         self.ViewContourFill = False
@@ -180,6 +182,7 @@ class GuiOpenGL(object):
         self.MainModel.FindBonds()
         self.add_bonds()
         self.add_box()
+        self.add_axes()
         self.openGLWidget.update()
 
     def get_model(self):
@@ -256,12 +259,20 @@ class GuiOpenGL(object):
         self.color_of_box = color
         self.add_box()
 
+    def set_color_of_axes(self,color):
+        self.color_of_axes = color
+        self.add_axes()
+
     def set_box_visible(self, state):
         self.ViewBox = state
         self.openGLWidget.update()
 
     def set_bonds_visible(self, state):
         self.ViewBonds = state
+        self.openGLWidget.update()
+
+    def set_axes_visible(self, state):
+        self.ViewAxes= state
         self.openGLWidget.update()
     
     def scale(self, wheel):
@@ -307,7 +318,10 @@ class GuiOpenGL(object):
             return True
 
     # рисует связь между атомами в виде цилиндра
-    def add_bond(self, Atom1Pos, Atom2Pos, Radius=0.1):
+    def add_bond(self, Atom1Pos, Atom2Pos, Radius=0.1, type = 'cylinder'):
+        Radius2 = Radius
+        if type == 'conus':
+            Radius2 = 0
         Rel = [Atom2Pos[0]-Atom1Pos[0], Atom2Pos[1]-Atom1Pos[1], Atom2Pos[2]-Atom1Pos[2]]
         BindingLen = math.sqrt(math.pow(Rel[0],2) + math.pow(Rel[1],2) + math.pow(Rel[2],2)) # высота цилиндра
         assert(BindingLen != 0)
@@ -320,7 +334,7 @@ class GuiOpenGL(object):
         gl.glRotated(Fall, 0, 1, 0) # преобразование координат № 1
         glu.gluCylinder(glu.gluNewQuadric(),
             Radius, # /*baseRadius:*/
-            Radius, # /*topRadius:*/
+            Radius2, # /*topRadius:*/
             BindingLen, # /*height:*/
             15, # /*slices:*/
             1) #/*stacks:*/
@@ -412,6 +426,66 @@ class GuiOpenGL(object):
         self.add_bond(p6, p8, width)
         self.add_bond(p7, p8, width)
         gl.glEndList()
+
+    def add_axes(self):
+        gl.glNewList(self.object + 7, gl.GL_COMPILE)
+        gl.glColor3f(self.color_of_axes[0], self.color_of_axes[1], self.color_of_axes[2])
+        size = 2
+        sizeCone = 0.2
+        letter_height = sizeCone
+        letter_width = 0.6*sizeCone
+        width = 0.06
+
+        self.QuadObjS.append(glu.gluNewQuadric())
+        glu.gluSphere(self.QuadObjS[-1], 2*width, 70, 70)
+
+        p0 = np.array([0, 0, 0])
+        p1 = np.array([size, 0, 0])
+        p1cone = np.array([size+sizeCone, 0, 0])
+        p2 = np.array([0, size, 0])
+        p2cone = np.array([0, size+sizeCone, 0])
+        p3 = np.array([0, 0, size])
+        p3cone = np.array([0, 0, size+sizeCone])
+
+        self.add_bond(p0, p1, width)
+        self.add_bond(p1, p1cone, 2*width, 'conus')
+        self.add_bond(p0, p2, width)
+        self.add_bond(p2, p2cone, 2 * width, 'conus')
+        self.add_bond(p0, p3, width)
+        self.add_bond(p3, p3cone, 2 * width, 'conus')
+        # lets drow "X"
+        pX = p1cone + np.array([0, 1.5 * sizeCone, 0])
+        pX1 = pX + np.array([-0.5 * letter_width, -0.5 * letter_height, 0])
+        pX2 = pX + np.array([+0.5 * letter_width, +0.5 * letter_height, 0])
+        pX3 = pX + np.array([-0.5 * letter_width, +0.5 * letter_height, 0])
+        pX4 = pX + np.array([+0.5 * letter_width, -0.5 * letter_height, 0])
+
+        self.add_bond(pX1, pX2, 0.5 * width)
+        self.add_bond(pX3, pX4, 0.5 * width)
+
+        # lets drow "Y"
+        pY = p2cone + np.array([0, 1.5 * sizeCone,  0])
+        pY1 = pY
+        pY2 = pY + np.array([0, +0.5 * letter_height, +0.5 * letter_width])
+        pY3 = pY + np.array([0, -0.5 * letter_height, +0.5 * letter_width])
+        pY4 = pY + np.array([0, +0.5 * letter_height, -0.5 * letter_width])
+
+        self.add_bond(pY1, pY2, 0.5 * width)
+        self.add_bond(pY3, pY4, 0.5 * width)
+
+        # lets drow "Z"
+        pZ = p3cone + np.array([1.5 * sizeCone, 0, 0])
+        pZ1 = pZ + np.array([-0.5 * letter_height, 0, -0.5 * letter_width])
+        pZ2 = pZ + np.array([+0.5 * letter_height, 0, +0.5 * letter_width])
+        pZ3 = pZ + np.array([-0.5 * letter_height, 0,  +0.5 * letter_width])
+        pZ4 = pZ + np.array([+0.5 * letter_height, 0,  -0.5 * letter_width])
+
+        self.add_bond(pZ1, pZ3, 0.5 * width)
+        self.add_bond(pZ1, pZ2, 0.5 * width)
+        self.add_bond(pZ2, pZ4, 0.5 * width)
+
+        gl.glEndList()
+
 
     def add_surface(self, data):
         self.data_surface = data
@@ -560,6 +634,9 @@ class GuiOpenGL(object):
 
                     if self.ViewContourFill:
                         gl.glCallList(self.object + 6)  # ContourFill
+
+                    if self.ViewAxes:
+                        gl.glCallList(self.object + 7)  # Axes
 
         except Exception as exc:
             print(exc)

@@ -30,7 +30,7 @@
        </size>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>3</number>
       </property>
       <property name="elideMode">
        <enum>Qt::ElideNone</enum>
@@ -104,8 +104,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>153</width>
-                 <height>271</height>
+                 <width>124</width>
+                 <height>260</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -389,8 +389,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>98</width>
-                 <height>28</height>
+                 <width>96</width>
+                 <height>26</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -416,8 +416,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>344</width>
-                 <height>554</height>
+                 <width>98</width>
+                 <height>166</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -452,8 +452,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>344</width>
-                 <height>554</height>
+                 <width>138</width>
+                 <height>201</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -684,8 +684,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>344</width>
-                 <height>554</height>
+                 <width>360</width>
+                 <height>545</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -740,7 +740,7 @@
                     <rect>
                      <x>40</x>
                      <y>50</y>
-                     <width>63</width>
+                     <width>111</width>
                      <height>24</height>
                     </rect>
                    </property>
@@ -766,7 +766,7 @@
                     <rect>
                      <x>40</x>
                      <y>80</y>
-                     <width>63</width>
+                     <width>111</width>
                      <height>24</height>
                     </rect>
                    </property>
@@ -805,7 +805,7 @@
                     <rect>
                      <x>40</x>
                      <y>110</y>
-                     <width>63</width>
+                     <width>111</width>
                      <height>24</height>
                     </rect>
                    </property>
@@ -910,8 +910,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>109</width>
-             <height>243</height>
+             <width>96</width>
+             <height>214</height>
             </rect>
            </property>
            <attribute name="label">
@@ -1015,8 +1015,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>344</width>
-             <height>529</height>
+             <width>338</width>
+             <height>497</height>
             </rect>
            </property>
            <attribute name="label">
@@ -1336,8 +1336,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>353</width>
-             <height>309</height>
+             <width>333</width>
+             <height>260</height>
             </rect>
            </property>
            <attribute name="label">
@@ -1480,8 +1480,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>172</width>
-             <height>250</height>
+             <width>194</width>
+             <height>251</height>
             </rect>
            </property>
            <attribute name="label">
@@ -1662,8 +1662,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>98</width>
-             <height>28</height>
+             <width>96</width>
+             <height>26</height>
             </rect>
            </property>
            <attribute name="label">
@@ -1701,8 +1701,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>199</width>
-             <height>174</height>
+             <width>289</width>
+             <height>168</height>
             </rect>
            </property>
            <attribute name="label">
@@ -1835,8 +1835,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>372</width>
-             <height>481</height>
+             <width>380</width>
+             <height>469</height>
             </rect>
            </property>
            <attribute name="label">
@@ -2454,8 +2454,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>98</width>
-             <height>28</height>
+             <width>96</width>
+             <height>26</height>
             </rect>
            </property>
            <attribute name="label">
@@ -2480,8 +2480,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>372</width>
-             <height>574</height>
+             <width>380</width>
+             <height>568</height>
             </rect>
            </property>
            <attribute name="label">
@@ -2552,14 +2552,27 @@
              <string>Width</string>
             </property>
            </widget>
+           <widget class="QCheckBox" name="FormSettingsViewCheckShowAxes">
+            <property name="geometry">
+             <rect>
+              <x>0</x>
+              <y>90</y>
+              <width>191</width>
+              <height>20</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>Show axes</string>
+            </property>
+           </widget>
           </widget>
           <widget class="QWidget" name="page_20">
            <property name="geometry">
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>233</width>
-             <height>479</height>
+             <width>380</width>
+             <height>568</height>
             </rect>
            </property>
            <attribute name="label">
@@ -2625,13 +2638,13 @@
                  <property name="minimumSize">
                   <size>
                    <width>0</width>
-                   <height>115</height>
+                   <height>140</height>
                   </size>
                  </property>
                  <property name="maximumSize">
                   <size>
                    <width>16777215</width>
-                   <height>115</height>
+                   <height>140</height>
                   </size>
                  </property>
                  <property name="frameShape">
@@ -2678,7 +2691,7 @@
                    <bool>false</bool>
                   </property>
                  </widget>
-                 <widget class="QPushButton" name="ColorVoronoiDialogButton">
+                 <widget class="QPushButton" name="ColorAxesDialogButton">
                   <property name="geometry">
                    <rect>
                     <x>200</x>
@@ -2697,7 +2710,7 @@
                    <bool>false</bool>
                   </property>
                  </widget>
-                 <widget class="QFrame" name="ColorVoronoi">
+                 <widget class="QFrame" name="ColorAxes">
                   <property name="geometry">
                    <rect>
                     <x>150</x>
@@ -2736,7 +2749,7 @@
                    </rect>
                   </property>
                   <property name="text">
-                   <string>Voronoi color</string>
+                   <string>Axes color</string>
                   </property>
                  </widget>
                  <widget class="QLabel" name="label_17">
@@ -2782,6 +2795,54 @@
                   </property>
                   <property name="frameShadow">
                    <enum>QFrame::Raised</enum>
+                  </property>
+                 </widget>
+                 <widget class="QPushButton" name="ColorVoronoiDialogButton">
+                  <property name="geometry">
+                   <rect>
+                    <x>200</x>
+                    <y>106</y>
+                    <width>121</width>
+                    <height>28</height>
+                   </rect>
+                  </property>
+                  <property name="text">
+                   <string>Edit</string>
+                  </property>
+                  <property name="checkable">
+                   <bool>false</bool>
+                  </property>
+                  <property name="checked">
+                   <bool>false</bool>
+                  </property>
+                 </widget>
+                 <widget class="QFrame" name="ColorVoronoi">
+                  <property name="geometry">
+                   <rect>
+                    <x>150</x>
+                    <y>110</y>
+                    <width>31</width>
+                    <height>16</height>
+                   </rect>
+                  </property>
+                  <property name="frameShape">
+                   <enum>QFrame::StyledPanel</enum>
+                  </property>
+                  <property name="frameShadow">
+                   <enum>QFrame::Raised</enum>
+                  </property>
+                 </widget>
+                 <widget class="QLabel" name="label_27">
+                  <property name="geometry">
+                   <rect>
+                    <x>10</x>
+                    <y>110</y>
+                    <width>101</width>
+                    <height>16</height>
+                   </rect>
+                  </property>
+                  <property name="text">
+                   <string>Voronoi color</string>
                   </property>
                  </widget>
                 </widget>
@@ -2965,8 +3026,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>109</width>
-             <height>243</height>
+             <width>96</width>
+             <height>214</height>
             </rect>
            </property>
            <attribute name="label">
@@ -3094,8 +3155,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>695</width>
-         <height>687</height>
+         <width>706</width>
+         <height>690</height>
         </rect>
        </property>
        <attribute name="label">
@@ -3112,8 +3173,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>695</width>
-         <height>687</height>
+         <width>706</width>
+         <height>690</height>
         </rect>
        </property>
        <attribute name="label">
@@ -3148,7 +3209,7 @@
      <x>0</x>
      <y>0</y>
      <width>1124</width>
-     <height>26</height>
+     <height>29</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

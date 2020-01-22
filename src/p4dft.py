@@ -107,6 +107,7 @@ class mainWindow(QMainWindow):
         self.ui.ColorBoxDialogButton.clicked.connect(self.select_box_color)
         self.ui.ColorAtomDialogButton.clicked.connect(self.select_atom_color)
         self.ui.ColorVoronoiDialogButton.clicked.connect(self.select_voronoi_color)
+        self.ui.ColorAxesDialogButton.clicked.connect(self.select_axes_color)
         self.ui.FormActionsPostButSurfaceAdd.clicked.connect(self.add_isosurface_color_to_table)
         self.ui.FormActionsPostButSurfaceDelete.clicked.connect(self.delete_isosurface_color_from_table)
         self.ui.FormActionsButtonPlotPDOS.clicked.connect(self.plot_pdos)
@@ -270,13 +271,16 @@ class mainWindow(QMainWindow):
         state_FormSettingsOpeningCheckOnlyOptimal = settings.value(SETTINGS_FormSettingsOpeningCheckOnlyOptimal, False, type=bool)
         self.ui.FormSettingsOpeningCheckOnlyOptimal.setChecked(state_FormSettingsOpeningCheckOnlyOptimal)
         self.ui.FormSettingsOpeningCheckOnlyOptimal.clicked.connect(self.save_state_FormSettingsOpeningCheckOnlyOptimal)
+        state_FormSettingsViewCheckShowAxes = settings.value(SETTINGS_FormSettingsViewCheckShowAxes, False, type=bool)
+        self.ui.FormSettingsViewCheckShowAxes.setChecked(state_FormSettingsViewCheckShowAxes)
+        self.ui.FormSettingsViewCheckShowAxes.clicked.connect(self.save_state_FormSettingsViewCheckShowAxes)
         state_FormSettingsViewCheckAtomSelection = settings.value(SETTINGS_FormSettingsViewCheckAtomSelection, False, type=bool)
         self.ui.FormSettingsViewCheckAtomSelection.setChecked(state_FormSettingsViewCheckAtomSelection)
         self.ui.FormSettingsViewCheckAtomSelection.clicked.connect(self.save_state_FormSettingsViewCheckAtomSelection)
         state_FormSettingsViewCheckShowBox = settings.value(SETTINGS_FormSettingsViewCheckShowBox, False, type=bool)
         self.ui.FormSettingsViewCheckShowBox.setChecked(state_FormSettingsViewCheckShowBox)
         self.ui.FormSettingsViewCheckShowBox.clicked.connect(self.save_state_FormSettingsViewCheckShowBox)
-        state_FormSettingsViewCheckShowBonds = settings.value(SETTINGS_FormSettingsViewCheckShowBonds, False, type=bool)
+        state_FormSettingsViewCheckShowBonds = settings.value(SETTINGS_FormSettingsViewCheckShowBonds, True, type=bool)
         self.ui.FormSettingsViewCheckShowBonds.setChecked(state_FormSettingsViewCheckShowBonds)
         self.ui.FormSettingsViewCheckShowBonds.clicked.connect(self.save_state_FormSettingsViewCheckShowBonds)
         self.WorkDir = str(settings.value(SETTINGS_Folder, "/home"))
@@ -316,21 +320,24 @@ class mainWindow(QMainWindow):
             self.ui.ColorsOfAtomsTable.setItem(i - 1, 0, QTableWidgetItem(lets[i]))
             color = colors[i]
             self.ui.ColorsOfAtomsTable.item(i - 1, 0).setBackground(QColor.fromRgbF(color[0], color[1], color[2], 1))
+
         self.state_Color_Of_Bonds = str(settings.value(SETTINGS_Color_Of_Bonds, '0 0 255'))
-        r = self.state_Color_Of_Bonds.split()[0]
-        g = self.state_Color_Of_Bonds.split()[1]
-        b = self.state_Color_Of_Bonds.split()[2]
-        self.ui.ColorBond.setStyleSheet("background-color:rgb(" + r + "," + g + "," + b + ")")
+        self.color_to_ui(self.ui.ColorBond, self.state_Color_Of_Bonds)
+
         self.state_Color_Of_Box = str(settings.value(SETTINGS_Color_Of_Box, '0 0 0'))
-        r = self.state_Color_Of_Box.split()[0]
-        g = self.state_Color_Of_Box.split()[1]
-        b = self.state_Color_Of_Box.split()[2]
-        self.ui.ColorBox.setStyleSheet("background-color:rgb(" + r + "," + g + "," + b + ")")
+        self.color_to_ui(self.ui.ColorBox, self.state_Color_Of_Box)
+
         self.state_Color_Of_Voronoi = str(settings.value(SETTINGS_Color_Of_Voronoi, '255 0 0'))
-        r = self.state_Color_Of_Voronoi.split()[0]
-        g = self.state_Color_Of_Voronoi.split()[1]
-        b = self.state_Color_Of_Voronoi.split()[2]
-        self.ui.ColorVoronoi.setStyleSheet("background-color:rgb(" + r + "," + g + "," + b + ")")
+        self.color_to_ui(self.ui.ColorVoronoi, self.state_Color_Of_Voronoi)
+
+        self.state_Color_Of_Axes = str(settings.value(SETTINGS_Color_Of_Axes, '0 255 0'))
+        self.color_to_ui(self.ui.ColorAxes, self.state_Color_Of_Axes)
+
+    def color_to_ui(self, ColorUi, state_Color):
+        r = state_Color.split()[0]
+        g = state_Color.split()[1]
+        b = state_Color.split()[2]
+        ColorUi.setStyleSheet("background-color:rgb(" + r + "," + g + "," + b + ")")
 
     def add_cell_param(self):
         """ add cell params"""
@@ -437,9 +444,11 @@ class mainWindow(QMainWindow):
         ViewBonds = self.ui.FormSettingsViewCheckShowBonds.isChecked()
         bondWidth = 0.005*self.ui.FormSettingsViewSpinBondWidth.value()
         bondscolor = self.get_color_from_SETTING(self.state_Color_Of_Bonds)
+        axescolor = self.get_color_from_SETTING(self.state_Color_Of_Axes)
+        ViewAxes = self.ui.FormSettingsViewCheckShowAxes.isChecked()
         boxcolor = self.get_color_from_SETTING(self.state_Color_Of_Box)
         atomscolor = self.colors_of_atoms()
-        self.MainForm.set_atomic_structure(self.models[value], atomscolor, ViewBox, boxcolor, ViewBonds, bondscolor, bondWidth)
+        self.MainForm.set_atomic_structure(self.models[value], atomscolor, ViewBox, boxcolor, ViewBonds, bondscolor, bondWidth, ViewAxes, axescolor)
 
     def menu_ortho(self):
         """ menu Ortho"""
@@ -1113,73 +1122,57 @@ class mainWindow(QMainWindow):
     def file_brouser_selection(self, selected, deselected):
         self.IndexOfFileToOpen = selected.indexes()[0]
         text = str(self.ui.FileBrouserTree.model().filePath(self.IndexOfFileToOpen))
-
-        #self.FileBrouserOpenLine.text
         self.ui.FileBrouserOpenLine.setText(text)
         self.ui.FileBrouserOpenLine.update()
 
     def save_active_Folder(self):
-        settings = QSettings()
-        settings.setValue(SETTINGS_Folder, self.WorkDir)
-        settings.sync()
+        self.save_property(SETTINGS_Folder, self.WorkDir)
 
     def save_state_FormSettingsOpeningCheckOnlyOptimal(self):
-        settings = QSettings()
-        settings.setValue(SETTINGS_FormSettingsOpeningCheckOnlyOptimal, self.ui.FormSettingsOpeningCheckOnlyOptimal.isChecked())
-        settings.sync()
+        self.save_property(SETTINGS_FormSettingsOpeningCheckOnlyOptimal,
+                           self.ui.FormSettingsOpeningCheckOnlyOptimal.isChecked())
+
+    def save_state_FormSettingsViewCheckShowAxes(self):
+        self.save_property(SETTINGS_FormSettingsViewCheckShowAxes,
+                           self.ui.FormSettingsViewCheckShowAxes.isChecked())
+        self.MainForm.set_axes_visible(self.ui.FormSettingsViewCheckShowAxes.isChecked())
 
     def save_state_FormSettingsViewCheckAtomSelection(self):
-        settings = QSettings()
-        settings.setValue(SETTINGS_FormSettingsViewCheckAtomSelection, self.ui.FormSettingsViewCheckAtomSelection.isChecked())
-        settings.sync()
+        self.save_property(SETTINGS_FormSettingsViewCheckAtomSelection,
+                           self.ui.FormSettingsViewCheckAtomSelection.isChecked())
 
     def save_state_FormSettingsViewCheckShowBox(self):
-        settings = QSettings()
-        settings.setValue(SETTINGS_FormSettingsViewCheckShowBox, self.ui.FormSettingsViewCheckShowBox.isChecked())
-        settings.sync()
+        self.save_property(SETTINGS_FormSettingsViewCheckShowBox, self.ui.FormSettingsViewCheckShowBox.isChecked())
         self.MainForm.set_box_visible(self.ui.FormSettingsViewCheckShowBox.isChecked())
-        #window.openGLWidget.update()
 
     def save_state_FormSettingsViewCheckShowBonds(self):
-        settings = QSettings()
-        settings.setValue(SETTINGS_FormSettingsViewCheckShowBonds, self.ui.FormSettingsViewCheckShowBonds.isChecked())
-        settings.sync()
+        self.save_property(SETTINGS_FormSettingsViewCheckShowBonds, self.ui.FormSettingsViewCheckShowBonds.isChecked())
         self.MainForm.set_bonds_visible(self.ui.FormSettingsViewCheckShowBonds.isChecked())
-        #window.openGLWidget.update()
-
 
     def save_state_FormSettingsColorsFixed(self):
-        settings = QSettings()
-        settings.setValue(SETTINGS_FormSettingsColorsFixed, self.ui.FormSettingsColorsFixed.isChecked())
-        settings.sync()
+        self.save_property(SETTINGS_FormSettingsColorsFixed, self.ui.FormSettingsColorsFixed.isChecked())
 
     def save_state_FormSettingsColorsFixedMin(self):
-        settings = QSettings()
-        settings.setValue(SETTINGS_FormSettingsColorsFixedMin, self.ui.FormSettingsColorsFixedMin.text())
-        settings.sync()
+        self.save_property(SETTINGS_FormSettingsColorsFixedMin, self.ui.FormSettingsColorsFixedMin.text())
 
     def save_state_FormSettingsViewSpinBondWidth(self):
-        settings = QSettings()
-        settings.setValue(SETTINGS_FormSettingsViewSpinBondWidth, self.ui.FormSettingsViewSpinBondWidth.text())
-        settings.sync()
+        self.save_property(SETTINGS_FormSettingsViewSpinBondWidth, self.ui.FormSettingsViewSpinBondWidth.text())
 
     def save_state_FormSettingsColorsFixedMax(self):
-        settings = QSettings()
-        settings.setValue(SETTINGS_FormSettingsColorsFixedMax, self.ui.FormSettingsColorsFixedMax.text())
-        settings.sync()
-
+        self.save_property(SETTINGS_FormSettingsColorsFixedMax, self.ui.FormSettingsColorsFixedMax.text())
 
     def save_state_FormSettingsColorsScale(self):
-        settings = QSettings()
-        settings.setValue(SETTINGS_FormSettingsColorsScale, self.ui.FormSettingsColorsScale.currentText())
-        settings.sync()
+        self.save_property(SETTINGS_FormSettingsColorsScale, self.ui.FormSettingsColorsScale.currentText())
         self.colors_cash = {}
 
     def save_state_FormSettingsColorsScaleType(self):
-        settings = QSettings()
-        settings.setValue(SETTINGS_FormSettingsColorsScaleType, self.ui.FormSettingsColorsScaleType.currentText())
-        settings.sync()
+        self.save_property(SETTINGS_FormSettingsColorsScaleType, self.ui.FormSettingsColorsScaleType.currentText())
         self.colors_cash = {}
+
+    def save_property(self, property, value):
+        settings = QSettings()
+        settings.setValue(property, value)
+        settings.sync()
 
     def state_changed_FormSettingsColorsScale(self):
         if self.ui.FormSettingsColorsScale.currentText() =="":
@@ -1284,15 +1277,6 @@ class mainWindow(QMainWindow):
         self.MainForm.add_atoms()
         self.fill_gui("SWNT-model")
 
-    def select_bond_color(self):
-        color = QColorDialog.getColor()
-        self.ui.ColorBond.setStyleSheet("background-color:rgb("+str(color.getRgb()[0])+","+str(color.getRgb()[1])+","+str(color.getRgb()[2])+")")
-        bondscolor = [color.getRgbF()[0], color.getRgbF()[1], color.getRgbF()[2]]
-
-        settings = QSettings()
-        settings.setValue(SETTINGS_Color_Of_Bonds, str(color.getRgb()[0])+" "+str(color.getRgb()[1])+" "+str(color.getRgb()[2]))
-        settings.sync()
-        self.MainForm.set_color_of_bonds(bondscolor)
 
     def select_atom_color(self):
         color = QColorDialog.getColor()
@@ -1310,31 +1294,34 @@ class mainWindow(QMainWindow):
             atomscolor.append(col)
             text_color+=str(col[0])+" "+str(col[1])+" "+str(col[2])+"|"
 
-        settings = QSettings()
-        settings.setValue(SETTINGS_Color_Of_Atoms, text_color)
-        settings.sync()
-        #print("!")
+        self.save_property(SETTINGS_Color_Of_Atoms, text_color)
         self.MainForm.set_color_of_atoms(atomscolor)
 
     def select_box_color(self):
-        color = QColorDialog.getColor()
-        self.ui.ColorBox.setStyleSheet("background-color:rgb("+str(color.getRgb()[0])+","+str(color.getRgb()[1])+","+str(color.getRgb()[2])+")")
-        boxcolor = [color.getRgbF()[0], color.getRgbF()[1], color.getRgbF()[2]]
-
-        settings = QSettings()
-        settings.setValue(SETTINGS_Color_Of_Box, str(color.getRgb()[0])+" "+str(color.getRgb()[1])+" "+str(color.getRgb()[2]))
-        settings.sync()
+        boxcolor = self.change_color(self.ui.ColorBox, SETTINGS_Color_Of_Box)
         self.MainForm.set_color_of_box(boxcolor)
 
     def select_voronoi_color(self):
-        color = QColorDialog.getColor()
-        self.ui.ColorVoronoi.setStyleSheet("background-color:rgb("+str(color.getRgb()[0])+","+str(color.getRgb()[1])+","+str(color.getRgb()[2])+")")
-        voronoicolor = [color.getRgbF()[0], color.getRgbF()[1], color.getRgbF()[2]]
-
-        settings = QSettings()
-        settings.setValue(SETTINGS_Color_Of_Voronoi, str(color.getRgb()[0])+" "+str(color.getRgb()[1])+" "+str(color.getRgb()[2]))
-        settings.sync()
+        voronoicolor = self.change_color(self.ui.ColorVoronoi, SETTINGS_Color_Of_Voronoi)
         self.MainForm.set_color_of_voronoi(voronoicolor)
+
+    def select_bond_color(self):
+        bondscolor = self.change_color(self.ui.ColorBond, SETTINGS_Color_Of_Bonds)
+        self.MainForm.set_color_of_bonds(bondscolor)
+
+    def select_axes_color(self):
+        axescolor = self.change_color(self.ui.ColorAxes, SETTINGS_Color_Of_Axes)
+        self.MainForm.set_color_of_axes(axescolor)
+
+    def change_color(self, colorUi, property):
+        color = QColorDialog.getColor()
+        colorUi.setStyleSheet(
+            "background-color:rgb(" + str(color.getRgb()[0]) + "," + str(color.getRgb()[1]) + "," + str(
+                color.getRgb()[2]) + ")")
+        newcolor = [color.getRgbF()[0], color.getRgbF()[1], color.getRgbF()[2]]
+        self.save_property(property,
+                           str(color.getRgb()[0]) + " " + str(color.getRgb()[1]) + " " + str(color.getRgb()[2]))
+        return newcolor
 
     def add_isosurface_color_to_table(self):
         cmap = plt.get_cmap(self.ui.FormSettingsColorsScale.currentText())
@@ -1350,11 +1337,9 @@ class mainWindow(QMainWindow):
         transp_cell.setValue(1)
         transp_cell.setSingleStep(0.1)
         transp_cell.setDecimals(2)
-        #transp_cell.show()
         self.ui.IsosurfaceColorsTable.setCellWidget(i - 1, 1, transp_cell)
         minv, maxv = self.volumeric_data_range()
         color = self.get_color(cmap, minv, maxv, float(value), color_scale)
-        #print(color)
         self.ui.IsosurfaceColorsTable.item(i - 1, 0).setBackground(QColor.fromRgbF(color[0], color[1], color[2], color[3]))
 
         self.ui.FormActionsPostButSurface.setEnabled(True)
@@ -1372,33 +1357,27 @@ class mainWindow(QMainWindow):
 
 ORGANIZATION_NAME = 'Sozykin'
 ORGANIZATION_DOMAIN = 'example.com'
-APPLICATION_NAME = 'p4siesta'
+APPLICATION_NAME = 'p4dft'
+
 SETTINGS_Folder = '\home'
-SETTINGS_FormSettingsColorsScale = 'rainbow'
-SETTINGS_FormSettingsColorsFixed = 'False'
-SETTINGS_FormSettingsColorsFixedMin = '1e-8'
-SETTINGS_FormSettingsColorsFixedMax = '0.15'
-SETTINGS_FormSettingsColorsScaleType = 'Log'
-SETTINGS_FormSettingsOpeningCheckOnlyOptimal = 'False'
-SETTINGS_FormSettingsViewCheckAtomSelection = 'False'
-SETTINGS_FormSettingsViewCheckShowBox = 'False'
-SETTINGS_FormSettingsViewCheckShowBonds = 'True'
-SETTINGS_FormSettingsViewSpinBondWidth = '20'
+SETTINGS_FormSettingsColorsScale = 'colors/ColorsScale'
+SETTINGS_FormSettingsColorsFixed = 'colors/ColorsFixed'
+SETTINGS_FormSettingsColorsFixedMin = 'colors/ColorsFixedMin'
+SETTINGS_FormSettingsColorsFixedMax = 'colors/ColorsFixedMin'
+SETTINGS_FormSettingsColorsScaleType = 'colors/ColorsFixedMin'
+SETTINGS_FormSettingsOpeningCheckOnlyOptimal = 'open/CheckOnlyOptimal'
+SETTINGS_FormSettingsViewCheckAtomSelection = 'view/CheckAtomSelection'
+SETTINGS_FormSettingsViewCheckShowBox = 'view/CheckShowBox'
+SETTINGS_FormSettingsViewCheckShowAxes = 'view/CheckShowAxes'
+SETTINGS_FormSettingsViewCheckShowBonds = 'view/CheckShowBonds'
+SETTINGS_FormSettingsViewSpinBondWidth = 'view/SpinBondWidth'
 
-SETTINGS_Color_Of_Atoms = "|1.0 0.6666666666666666 0.0|0.5000076295109483 0.0 1.0|1.0 1.0 0.14999618524452582|0.30000762951094834 1.0 1.0|0.6 0.30000762951094834 0.0|0.2 0.2 0.8|0.4500038147554742 0.30000762951094834 0.6|1.0 0.0 0.500007629\
-5109483|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0\
-.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.\
-0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6\
- 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6\
-0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0\
-.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|0.6 0.6 1.0|"
-SETTINGS_Color_Of_Bonds = '25 36 157'
-SETTINGS_Color_Of_Box = '0 0 0'
-SETTINGS_Color_Of_Voronoi = '255 0 0'
+SETTINGS_Color_Of_Atoms = 'colors/atoms'
+SETTINGS_Color_Of_Bonds = 'colors/bonds'
+SETTINGS_Color_Of_Box = 'colors/box'
+SETTINGS_Color_Of_Voronoi = 'colors/voronoi'
+SETTINGS_Color_Of_Axes = 'colors/axes'
 
-# Для того, чтобы каждый раз при вызове QSettings не вводить данные вашего приложения
-# по которым будут находиться настройки, можно
-# установить их глобально для всего приложения
 QCoreApplication.setApplicationName(ORGANIZATION_NAME)
 QCoreApplication.setOrganizationDomain(ORGANIZATION_DOMAIN)
 QCoreApplication.setApplicationName(APPLICATION_NAME)
