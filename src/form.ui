@@ -97,15 +97,15 @@
             <item>
              <widget class="QToolBox" name="toolBox">
               <property name="currentIndex">
-               <number>1</number>
+               <number>0</number>
               </property>
               <widget class="QWidget" name="page_21">
                <property name="geometry">
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>344</width>
-                 <height>585</height>
+                 <width>124</width>
+                 <height>260</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -190,72 +190,58 @@
                   <property name="title">
                    <string>Chirality</string>
                   </property>
-                  <layout class="QHBoxLayout" name="horizontalLayout_25">
-                   <item>
-                    <widget class="QLabel" name="label_9">
-                     <property name="maximumSize">
-                      <size>
-                       <width>20</width>
-                       <height>16777215</height>
-                      </size>
-                     </property>
-                     <property name="text">
-                      <string>n</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QSpinBox" name="FormActionsPreLineSWNTn">
-                     <property name="minimumSize">
-                      <size>
-                       <width>0</width>
-                       <height>24</height>
-                      </size>
-                     </property>
-                     <property name="maximumSize">
-                      <size>
-                       <width>16777215</width>
-                       <height>24</height>
-                      </size>
-                     </property>
-                     <property name="value">
-                      <number>7</number>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QLabel" name="label_23">
-                     <property name="maximumSize">
-                      <size>
-                       <width>20</width>
-                       <height>16777215</height>
-                      </size>
-                     </property>
-                     <property name="text">
-                      <string>m</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QSpinBox" name="FormActionsPreLineSWNTm">
-                     <property name="minimumSize">
-                      <size>
-                       <width>0</width>
-                       <height>24</height>
-                      </size>
-                     </property>
-                     <property name="maximumSize">
-                      <size>
-                       <width>16777215</width>
-                       <height>24</height>
-                      </size>
-                     </property>
-                     <property name="value">
-                      <number>7</number>
-                     </property>
-                    </widget>
-                   </item>
-                  </layout>
+                  <widget class="QLabel" name="label_9">
+                   <property name="geometry">
+                    <rect>
+                     <x>20</x>
+                     <y>30</y>
+                     <width>21</width>
+                     <height>19</height>
+                    </rect>
+                   </property>
+                   <property name="text">
+                    <string>n</string>
+                   </property>
+                  </widget>
+                  <widget class="QLabel" name="label_23">
+                   <property name="geometry">
+                    <rect>
+                     <x>180</x>
+                     <y>30</y>
+                     <width>21</width>
+                     <height>19</height>
+                    </rect>
+                   </property>
+                   <property name="text">
+                    <string>m</string>
+                   </property>
+                  </widget>
+                  <widget class="QSpinBox" name="FormActionsPreLineSWNTn">
+                   <property name="geometry">
+                    <rect>
+                     <x>40</x>
+                     <y>20</y>
+                     <width>126</width>
+                     <height>42</height>
+                    </rect>
+                   </property>
+                   <property name="value">
+                    <number>7</number>
+                   </property>
+                  </widget>
+                  <widget class="QSpinBox" name="FormActionsPreLineSWNTm">
+                   <property name="geometry">
+                    <rect>
+                     <x>210</x>
+                     <y>20</y>
+                     <width>126</width>
+                     <height>42</height>
+                    </rect>
+                   </property>
+                   <property name="value">
+                    <number>7</number>
+                   </property>
+                  </widget>
                  </widget>
                 </item>
                 <item>
@@ -302,16 +288,10 @@
                    <property name="geometry">
                     <rect>
                      <x>120</x>
-                     <y>20</y>
-                     <width>181</width>
-                     <height>24</height>
+                     <y>10</y>
+                     <width>221</width>
+                     <height>42</height>
                     </rect>
-                   </property>
-                   <property name="maximumSize">
-                    <size>
-                     <width>16777215</width>
-                     <height>24</height>
-                    </size>
                    </property>
                    <property name="singleStep">
                     <double>0.500000000000000</double>
@@ -324,16 +304,10 @@
                    <property name="geometry">
                     <rect>
                      <x>120</x>
-                     <y>60</y>
-                     <width>181</width>
-                     <height>24</height>
+                     <y>50</y>
+                     <width>221</width>
+                     <height>42</height>
                     </rect>
-                   </property>
-                   <property name="maximumSize">
-                    <size>
-                     <width>16777215</width>
-                     <height>24</height>
-                    </size>
                    </property>
                    <property name="value">
                     <number>1</number>
@@ -415,8 +389,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>344</width>
-                 <height>585</height>
+                 <width>100</width>
+                 <height>30</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -442,8 +416,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>344</width>
-                 <height>554</height>
+                 <width>98</width>
+                 <height>166</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -478,8 +452,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>344</width>
-                 <height>554</height>
+                 <width>138</width>
+                 <height>201</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -710,8 +684,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>344</width>
-                 <height>554</height>
+                 <width>360</width>
+                 <height>545</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -929,15 +903,15 @@
            <string notr="true"/>
           </property>
           <property name="currentIndex">
-           <number>4</number>
+           <number>3</number>
           </property>
           <widget class="QWidget" name="page_16">
            <property name="geometry">
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>372</width>
-             <height>481</height>
+             <width>86</width>
+             <height>214</height>
             </rect>
            </property>
            <attribute name="label">
@@ -1041,8 +1015,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>351</width>
-             <height>529</height>
+             <width>338</width>
+             <height>497</height>
             </rect>
            </property>
            <attribute name="label">
@@ -1362,8 +1336,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>372</width>
-             <height>481</height>
+             <width>380</width>
+             <height>469</height>
             </rect>
            </property>
            <attribute name="label">
@@ -1505,9 +1479,9 @@
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>0</y>
-             <width>372</width>
-             <height>481</height>
+             <y>-36</y>
+             <width>366</width>
+             <height>505</height>
             </rect>
            </property>
            <attribute name="label">
@@ -1528,23 +1502,48 @@
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_29">
                <item>
-                <widget class="QGroupBox" name="groupBox_12">
+                <widget class="QFrame" name="frame_39">
                  <property name="minimumSize">
                   <size>
                    <width>0</width>
-                   <height>75</height>
+                   <height>40</height>
                   </size>
                  </property>
                  <property name="maximumSize">
                   <size>
                    <width>16777215</width>
-                   <height>75</height>
+                   <height>40</height>
                   </size>
                  </property>
-                 <property name="title">
-                  <string>Indexes:</string>
+                 <property name="frameShape">
+                  <enum>QFrame::StyledPanel</enum>
                  </property>
-                 <layout class="QVBoxLayout" name="verticalLayout_28">
+                 <property name="frameShadow">
+                  <enum>QFrame::Raised</enum>
+                 </property>
+                 <property name="lineWidth">
+                  <number>0</number>
+                 </property>
+                 <layout class="QHBoxLayout" name="horizontalLayout_27">
+                  <property name="topMargin">
+                   <number>2</number>
+                  </property>
+                  <property name="bottomMargin">
+                   <number>2</number>
+                  </property>
+                  <item>
+                   <widget class="QLabel" name="label_34">
+                    <property name="maximumSize">
+                     <size>
+                      <width>60</width>
+                      <height>16777215</height>
+                     </size>
+                    </property>
+                    <property name="text">
+                     <string>Indexes:</string>
+                    </property>
+                   </widget>
+                  </item>
                   <item>
                    <widget class="QComboBox" name="FormActionsComboPDOSIndexes"/>
                   </item>
@@ -1552,23 +1551,48 @@
                 </widget>
                </item>
                <item>
-                <widget class="QGroupBox" name="groupBox_13">
+                <widget class="QFrame" name="frame_40">
                  <property name="minimumSize">
                   <size>
                    <width>0</width>
-                   <height>75</height>
+                   <height>40</height>
                   </size>
                  </property>
                  <property name="maximumSize">
                   <size>
                    <width>16777215</width>
-                   <height>75</height>
+                   <height>40</height>
                   </size>
                  </property>
-                 <property name="title">
-                  <string>Species:</string>
+                 <property name="frameShape">
+                  <enum>QFrame::StyledPanel</enum>
                  </property>
-                 <layout class="QVBoxLayout" name="verticalLayout_30">
+                 <property name="frameShadow">
+                  <enum>QFrame::Raised</enum>
+                 </property>
+                 <property name="lineWidth">
+                  <number>0</number>
+                 </property>
+                 <layout class="QHBoxLayout" name="horizontalLayout_28">
+                  <property name="topMargin">
+                   <number>2</number>
+                  </property>
+                  <property name="bottomMargin">
+                   <number>2</number>
+                  </property>
+                  <item>
+                   <widget class="QLabel" name="label_35">
+                    <property name="maximumSize">
+                     <size>
+                      <width>60</width>
+                      <height>16777215</height>
+                     </size>
+                    </property>
+                    <property name="text">
+                     <string>Species:</string>
+                    </property>
+                   </widget>
+                  </item>
                   <item>
                    <widget class="QComboBox" name="FormActionsComboPDOSspecies"/>
                   </item>
@@ -1576,23 +1600,48 @@
                 </widget>
                </item>
                <item>
-                <widget class="QGroupBox" name="groupBox_14">
+                <widget class="QFrame" name="frame_41">
                  <property name="minimumSize">
                   <size>
                    <width>0</width>
-                   <height>140</height>
+                   <height>80</height>
                   </size>
                  </property>
                  <property name="maximumSize">
                   <size>
                    <width>16777215</width>
-                   <height>140</height>
+                   <height>80</height>
                   </size>
                  </property>
-                 <property name="title">
-                  <string>Quantum numbers</string>
+                 <property name="frameShape">
+                  <enum>QFrame::StyledPanel</enum>
                  </property>
-                 <layout class="QVBoxLayout" name="verticalLayout_32">
+                 <property name="frameShadow">
+                  <enum>QFrame::Raised</enum>
+                 </property>
+                 <property name="lineWidth">
+                  <number>0</number>
+                 </property>
+                 <layout class="QVBoxLayout" name="verticalLayout_28">
+                  <property name="topMargin">
+                   <number>2</number>
+                  </property>
+                  <property name="bottomMargin">
+                   <number>2</number>
+                  </property>
+                  <item>
+                   <widget class="QLabel" name="label_36">
+                    <property name="maximumSize">
+                     <size>
+                      <width>180000</width>
+                      <height>16777215</height>
+                     </size>
+                    </property>
+                    <property name="text">
+                     <string>Quantum numbers:</string>
+                    </property>
+                   </widget>
+                  </item>
                   <item>
                    <widget class="QFrame" name="frame_36">
                     <property name="frameShape">
@@ -1613,64 +1662,66 @@
                      </property>
                      <item>
                       <widget class="QLabel" name="label_29">
+                       <property name="lineWidth">
+                        <number>0</number>
+                       </property>
                        <property name="text">
                         <string>n</string>
+                       </property>
+                       <property name="alignment">
+                        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                        </property>
                       </widget>
                      </item>
                      <item>
-                      <widget class="QComboBox" name="FormActionsComboPDOSn"/>
+                      <widget class="QComboBox" name="FormActionsComboPDOSn">
+                       <property name="maximumSize">
+                        <size>
+                         <width>50</width>
+                         <height>40</height>
+                        </size>
+                       </property>
+                      </widget>
                      </item>
                      <item>
                       <widget class="QLabel" name="label_30">
                        <property name="text">
                         <string>l</string>
                        </property>
+                       <property name="alignment">
+                        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                       </property>
                       </widget>
                      </item>
                      <item>
-                      <widget class="QComboBox" name="FormActionsComboPDOSl"/>
+                      <widget class="QComboBox" name="FormActionsComboPDOSl">
+                       <property name="maximumSize">
+                        <size>
+                         <width>50</width>
+                         <height>16777215</height>
+                        </size>
+                       </property>
+                      </widget>
                      </item>
-                    </layout>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QFrame" name="frame_35">
-                    <property name="frameShape">
-                     <enum>QFrame::StyledPanel</enum>
-                    </property>
-                    <property name="frameShadow">
-                     <enum>QFrame::Raised</enum>
-                    </property>
-                    <property name="lineWidth">
-                     <number>0</number>
-                    </property>
-                    <layout class="QHBoxLayout" name="horizontalLayout_23">
-                     <property name="topMargin">
-                      <number>2</number>
-                     </property>
-                     <property name="bottomMargin">
-                      <number>2</number>
-                     </property>
                      <item>
                       <widget class="QLabel" name="label_31">
                        <property name="text">
                         <string>m</string>
                        </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QComboBox" name="FormActionsComboPDOSm"/>
-                     </item>
-                     <item>
-                      <widget class="QLabel" name="label_32">
-                       <property name="text">
-                        <string>z</string>
+                       <property name="alignment">
+                        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                        </property>
                       </widget>
                      </item>
                      <item>
-                      <widget class="QComboBox" name="FormActionsComboPDOSz"/>
+                      <widget class="QComboBox" name="FormActionsComboPDOSm">
+                       <property name="maximumSize">
+                        <size>
+                         <width>50</width>
+                         <height>16777215</height>
+                        </size>
+                       </property>
+                      </widget>
                      </item>
                     </layout>
                    </widget>
@@ -1679,58 +1730,7 @@
                 </widget>
                </item>
                <item>
-                <widget class="QFrame" name="frame_34">
-                 <property name="minimumSize">
-                  <size>
-                   <width>0</width>
-                   <height>50</height>
-                  </size>
-                 </property>
-                 <property name="maximumSize">
-                  <size>
-                   <width>16777215</width>
-                   <height>50</height>
-                  </size>
-                 </property>
-                 <property name="frameShape">
-                  <enum>QFrame::StyledPanel</enum>
-                 </property>
-                 <property name="frameShadow">
-                  <enum>QFrame::Raised</enum>
-                 </property>
-                 <property name="lineWidth">
-                  <number>1</number>
-                 </property>
-                 <layout class="QHBoxLayout" name="horizontalLayout_22">
-                  <item>
-                   <widget class="QCheckBox" name="FormActionsCheckPDOS">
-                    <property name="text">
-                     <string>Spin</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QCheckBox" name="FormActionsCheckPDOS_2">
-                    <property name="text">
-                     <string>Invert Down</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QPushButton" name="FormActionsButtonPlotPDOS">
-                    <property name="enabled">
-                     <bool>false</bool>
-                    </property>
-                    <property name="text">
-                     <string>plot PDOS</string>
-                    </property>
-                   </widget>
-                  </item>
-                 </layout>
-                </widget>
-               </item>
-               <item>
-                <widget class="QFrame" name="frame_37">
+                <widget class="QFrame" name="frame_35">
                  <property name="frameShape">
                   <enum>QFrame::StyledPanel</enum>
                  </property>
@@ -1740,9 +1740,114 @@
                  <property name="lineWidth">
                   <number>0</number>
                  </property>
+                 <layout class="QHBoxLayout" name="horizontalLayout_23">
+                  <property name="topMargin">
+                   <number>2</number>
+                  </property>
+                  <property name="bottomMargin">
+                   <number>2</number>
+                  </property>
+                  <item>
+                   <widget class="QLabel" name="label_32">
+                    <property name="maximumSize">
+                     <size>
+                      <width>60</width>
+                      <height>16777215</height>
+                     </size>
+                    </property>
+                    <property name="text">
+                     <string>zeta</string>
+                    </property>
+                    <property name="alignment">
+                     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QComboBox" name="FormActionsComboPDOSz"/>
+                  </item>
+                 </layout>
                 </widget>
                </item>
               </layout>
+             </widget>
+            </item>
+            <item>
+             <widget class="QGroupBox" name="groupBox_12">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>60</height>
+               </size>
+              </property>
+              <property name="title">
+               <string>Spin</string>
+              </property>
+              <layout class="QHBoxLayout" name="horizontalLayout_26">
+               <item>
+                <widget class="QCheckBox" name="FormActionsCheckPDOS">
+                 <property name="text">
+                  <string>Spin</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QCheckBox" name="FormActionsCheckPDOS_2">
+                 <property name="text">
+                  <string>Invert Down</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
+             <widget class="QGroupBox" name="groupBox_18">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>70</height>
+               </size>
+              </property>
+              <property name="title">
+               <string>Fermi energy</string>
+              </property>
+              <layout class="QHBoxLayout" name="horizontalLayout_25">
+               <item>
+                <widget class="QLabel" name="label_33">
+                 <property name="text">
+                  <string>Value</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLineEdit" name="lineEdit_3"/>
+               </item>
+               <item>
+                <widget class="QCheckBox" name="FormActionsCheckBANDSfermyShow_2">
+                 <property name="text">
+                  <string>Show</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QCheckBox" name="FormActionsCheckBANDSfermyShift_2">
+                 <property name="text">
+                  <string>Shift to 0</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="FormActionsButtonPlotPDOS">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="text">
+               <string>plot PDOS</string>
+              </property>
              </widget>
             </item>
            </layout>
@@ -1752,8 +1857,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>372</width>
-             <height>481</height>
+             <width>380</width>
+             <height>469</height>
             </rect>
            </property>
            <attribute name="label">
@@ -1761,34 +1866,20 @@
            </attribute>
            <layout class="QVBoxLayout" name="verticalLayout_18">
             <item>
-             <widget class="QLineEdit" name="FormActionsLineBANDSfile">
-              <property name="readOnly">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QPushButton" name="FormActionsButtonParseBANDS">
-              <property name="enabled">
-               <bool>false</bool>
-              </property>
-              <property name="text">
-               <string>parse file</string>
-              </property>
-             </widget>
+             <widget class="QLineEdit" name="FormActionsLineBANDSfile"/>
             </item>
             <item>
              <widget class="QGroupBox" name="groupBox_15">
               <property name="minimumSize">
                <size>
                 <width>0</width>
-                <height>70</height>
+                <height>80</height>
                </size>
               </property>
               <property name="maximumSize">
                <size>
                 <width>16777215</width>
-                <height>70</height>
+                <height>80</height>
                </size>
               </property>
               <property name="title">
@@ -1796,18 +1887,10 @@
               </property>
               <layout class="QHBoxLayout" name="horizontalLayout_19">
                <item>
-                <widget class="QDoubleSpinBox" name="FormActionsSpinBANDSxmin">
-                 <property name="singleStep">
-                  <double>0.100000000000000</double>
-                 </property>
-                </widget>
+                <widget class="QDoubleSpinBox" name="FormActionsSpinBANDSxmin"/>
                </item>
                <item>
-                <widget class="QDoubleSpinBox" name="FormActionsSpinBANDSxmax">
-                 <property name="singleStep">
-                  <double>0.100000000000000</double>
-                 </property>
-                </widget>
+                <widget class="QDoubleSpinBox" name="FormActionsSpinBANDSxmax"/>
                </item>
               </layout>
              </widget>
@@ -1817,46 +1900,38 @@
               <property name="minimumSize">
                <size>
                 <width>0</width>
-                <height>70</height>
+                <height>80</height>
                </size>
               </property>
               <property name="maximumSize">
                <size>
                 <width>16777215</width>
-                <height>70</height>
+                <height>80</height>
                </size>
               </property>
               <property name="title">
                <string>Energy range</string>
               </property>
-              <layout class="QHBoxLayout" name="horizontalLayout_26">
-               <item>
-                <widget class="QDoubleSpinBox" name="FormActionsSpinBANDSemin">
-                 <property name="maximumSize">
-                  <size>
-                   <width>16777215</width>
-                   <height>24</height>
-                  </size>
-                 </property>
-                 <property name="singleStep">
-                  <double>0.100000000000000</double>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QDoubleSpinBox" name="FormActionsSpinBANDSemax">
-                 <property name="maximumSize">
-                  <size>
-                   <width>16777215</width>
-                   <height>24</height>
-                  </size>
-                 </property>
-                 <property name="singleStep">
-                  <double>0.100000000000000</double>
-                 </property>
-                </widget>
-               </item>
-              </layout>
+              <widget class="QDoubleSpinBox" name="FormActionsSpinBANDSemax">
+               <property name="geometry">
+                <rect>
+                 <x>193</x>
+                 <y>30</y>
+                 <width>167</width>
+                 <height>40</height>
+                </rect>
+               </property>
+              </widget>
+              <widget class="QDoubleSpinBox" name="FormActionsSpinBANDSemin">
+               <property name="geometry">
+                <rect>
+                 <x>20</x>
+                 <y>30</y>
+                 <width>167</width>
+                 <height>40</height>
+                </rect>
+               </property>
+              </widget>
              </widget>
             </item>
             <item>
@@ -1909,12 +1984,12 @@
                    </widget>
                   </item>
                   <item>
-                   <widget class="QLineEdit" name="FormActionsEditBANDSefermi">
-                    <property name="enabled">
-                     <bool>true</bool>
-                    </property>
-                    <property name="readOnly">
-                     <bool>true</bool>
+                   <widget class="QLineEdit" name="lineEdit"/>
+                  </item>
+                  <item>
+                   <widget class="QCheckBox" name="FormActionsCheckBANDSfermyShow">
+                    <property name="text">
+                     <string>Show</string>
                     </property>
                    </widget>
                   </item>
@@ -1945,13 +2020,6 @@
                   <number>0</number>
                  </property>
                  <layout class="QHBoxLayout" name="horizontalLayout_21">
-                  <item>
-                   <widget class="QCheckBox" name="FormActionsCheckBANDSfermyShow">
-                    <property name="text">
-                     <string>Show</string>
-                    </property>
-                   </widget>
-                  </item>
                   <item>
                    <widget class="QCheckBox" name="FormActionsCheckBANDSfermyShift">
                     <property name="text">
@@ -1995,8 +2063,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>372</width>
-             <height>481</height>
+             <width>289</width>
+             <height>168</height>
             </rect>
            </property>
            <attribute name="label">
@@ -2030,13 +2098,13 @@
                  <property name="minimumSize">
                   <size>
                    <width>0</width>
-                   <height>24</height>
+                   <height>42</height>
                   </size>
                  </property>
                  <property name="maximumSize">
                   <size>
                    <width>16777215</width>
-                   <height>24</height>
+                   <height>42</height>
                   </size>
                  </property>
                  <property name="buttonSymbols">
@@ -2129,8 +2197,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>361</width>
-             <height>487</height>
+             <width>378</width>
+             <height>355</height>
             </rect>
            </property>
            <attribute name="label">
@@ -2140,7 +2208,7 @@
             <item>
              <widget class="QTabWidget" name="tabWidget_2">
               <property name="currentIndex">
-               <number>1</number>
+               <number>0</number>
               </property>
               <widget class="QWidget" name="tab_2">
                <attribute name="title">
@@ -2280,13 +2348,13 @@
                         <property name="minimumSize">
                          <size>
                           <width>0</width>
-                          <height>24</height>
+                          <height>42</height>
                          </size>
                         </property>
                         <property name="maximumSize">
                          <size>
                           <width>16777215</width>
-                          <height>24</height>
+                          <height>42</height>
                          </size>
                         </property>
                         <property name="decimals">
@@ -2477,7 +2545,7 @@
                   <property name="maximumSize">
                    <size>
                     <width>16777215</width>
-                    <height>120</height>
+                    <height>150</height>
                    </size>
                   </property>
                   <property name="title">
@@ -2542,22 +2610,10 @@
                    <property name="geometry">
                     <rect>
                      <x>100</x>
-                     <y>20</y>
+                     <y>10</y>
                      <width>126</width>
-                     <height>24</height>
+                     <height>42</height>
                     </rect>
-                   </property>
-                   <property name="minimumSize">
-                    <size>
-                     <width>0</width>
-                     <height>24</height>
-                    </size>
-                   </property>
-                   <property name="maximumSize">
-                    <size>
-                     <width>16777215</width>
-                     <height>24</height>
-                    </size>
                    </property>
                    <property name="value">
                     <number>5</number>
@@ -2567,18 +2623,6 @@
                 </item>
                 <item>
                  <widget class="QGroupBox" name="groupBox_7">
-                  <property name="minimumSize">
-                   <size>
-                    <width>0</width>
-                    <height>100</height>
-                   </size>
-                  </property>
-                  <property name="maximumSize">
-                   <size>
-                    <width>16777215</width>
-                    <height>120</height>
-                   </size>
-                  </property>
                   <property name="title">
                    <string>XZ-plane</string>
                   </property>
@@ -2641,22 +2685,10 @@
                    <property name="geometry">
                     <rect>
                      <x>100</x>
-                     <y>20</y>
+                     <y>10</y>
                      <width>126</width>
-                     <height>24</height>
+                     <height>42</height>
                     </rect>
-                   </property>
-                   <property name="minimumSize">
-                    <size>
-                     <width>0</width>
-                     <height>24</height>
-                    </size>
-                   </property>
-                   <property name="maximumSize">
-                    <size>
-                     <width>16777215</width>
-                     <height>24</height>
-                    </size>
                    </property>
                    <property name="value">
                     <number>5</number>
@@ -2666,18 +2698,6 @@
                 </item>
                 <item>
                  <widget class="QGroupBox" name="groupBox_5">
-                  <property name="minimumSize">
-                   <size>
-                    <width>0</width>
-                    <height>100</height>
-                   </size>
-                  </property>
-                  <property name="maximumSize">
-                   <size>
-                    <width>16777215</width>
-                    <height>120</height>
-                   </size>
-                  </property>
                   <property name="title">
                    <string>YZ-plane</string>
                   </property>
@@ -2740,22 +2760,10 @@
                    <property name="geometry">
                     <rect>
                      <x>100</x>
-                     <y>20</y>
+                     <y>10</y>
                      <width>126</width>
-                     <height>24</height>
+                     <height>42</height>
                     </rect>
-                   </property>
-                   <property name="minimumSize">
-                    <size>
-                     <width>0</width>
-                     <height>24</height>
-                    </size>
-                   </property>
-                   <property name="maximumSize">
-                    <size>
-                     <width>16777215</width>
-                     <height>24</height>
-                    </size>
                    </property>
                    <property name="value">
                     <number>5</number>
@@ -2801,15 +2809,15 @@
         <item>
          <widget class="QToolBox" name="toolBox_3">
           <property name="currentIndex">
-           <number>3</number>
+           <number>1</number>
           </property>
           <widget class="QWidget" name="page_5">
            <property name="geometry">
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>372</width>
-             <height>574</height>
+             <width>100</width>
+             <height>30</height>
             </rect>
            </property>
            <attribute name="label">
@@ -2834,8 +2842,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>372</width>
-             <height>574</height>
+             <width>380</width>
+             <height>568</height>
             </rect>
            </property>
            <attribute name="label">
@@ -2884,22 +2892,10 @@
             <property name="geometry">
              <rect>
               <x>240</x>
-              <y>60</y>
+              <y>50</y>
               <width>126</width>
-              <height>24</height>
+              <height>42</height>
              </rect>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>24</height>
-             </size>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>16777215</width>
-              <height>24</height>
-             </size>
             </property>
             <property name="value">
              <number>20</number>
@@ -2937,8 +2933,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>372</width>
-             <height>574</height>
+             <width>252</width>
+             <height>468</height>
             </rect>
            </property>
            <attribute name="label">
@@ -3392,8 +3388,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>372</width>
-             <height>574</height>
+             <width>86</width>
+             <height>214</height>
             </rect>
            </property>
            <attribute name="label">
@@ -3514,15 +3510,15 @@
        </sizepolicy>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="page_7">
        <property name="geometry">
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>695</width>
-         <height>687</height>
+         <width>706</width>
+         <height>690</height>
         </rect>
        </property>
        <attribute name="label">
@@ -3539,8 +3535,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>695</width>
-         <height>687</height>
+         <width>706</width>
+         <height>690</height>
         </rect>
        </property>
        <attribute name="label">
@@ -3561,11 +3557,6 @@
             <height>100</height>
            </size>
           </property>
-          <property name="font">
-           <font>
-            <pointsize>20</pointsize>
-           </font>
-          </property>
          </widget>
         </item>
        </layout>
@@ -3580,7 +3571,7 @@
      <x>0</x>
      <y>0</y>
      <width>1124</width>
-     <height>26</height>
+     <height>29</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

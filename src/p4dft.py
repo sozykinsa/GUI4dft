@@ -1076,6 +1076,10 @@ class mainWindow(QMainWindow):
             self.ui.MplWidget.canvas.axes.set_xlim(kmin, kmax)
             self.ui.MplWidget.canvas.axes.set_ylim(emin, emax)
             self.ui.MplWidget.canvas.axes.set_xticks(xticks)
+            for tick in xticks:
+                self.ui.MplWidget.canvas.axes.axvline(x=tick, linestyle = "--")
+            if self.ui.FormActionsCheckBANDSfermyShow.isChecked():
+                self.ui.MplWidget.canvas.axes.axhline(y=eF, linestyle="-.")
             self.ui.MplWidget.canvas.axes.set_xticklabels(xticklabels)
             self.ui.MplWidget.canvas.axes.set_xlabel("k")
             self.ui.MplWidget.canvas.axes.set_ylabel("Energy, eV")
