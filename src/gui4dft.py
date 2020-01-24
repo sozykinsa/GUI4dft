@@ -77,6 +77,7 @@ class mainWindow(QMainWindow):
         self.MainForm = GuiOpenGL(self.ui.openGLWidget, self.ui.FormSettingsViewCheckAtomSelection, selected_atom_info)
         self.FDFData = TFDFFile()
         self.VolumericData = TVolumericData()
+        self.PDOSdata = []
         self.filename = ""
         self.colors_cash = {}
 
@@ -117,6 +118,7 @@ class mainWindow(QMainWindow):
         self.ui.FormActionsButtonPlotPDOS.clicked.connect(self.plot_pdos)
         self.ui.FormActionsButtonPlotBANDS.clicked.connect(self.plot_bands)
         self.ui.FormActionsButtonParseBANDS.clicked.connect(self.parse_bands)
+        self.ui.FormActionsButtonPlotPDOSselected.clicked.connect(self.plot_selected_pdos)
 
         self.ui.FormActionsPreButDeleteAtom.clicked.connect(self.atom_delete)
         self.ui.FormActionsPreButModifyAtom.clicked.connect(self.atom_modify)
@@ -263,6 +265,16 @@ class mainWindow(QMainWindow):
         Save2DImageToFileAction = QAction(QIcon('./images/Save2D.jpg'), 'SaveDataFromFigure', self)
         Save2DImageToFileAction.triggered.connect(self.save_data_from_figure2d)
         self.ui.toolBar.addAction(Save2DImageToFileAction)
+
+
+    def atom_delete(self):
+        self.MainForm.delete_selected_atom()
+
+    def atom_modify(self):
+        self.MainForm.modify_selected_atom()
+
+    def atom_add(self):
+        self.MainForm.add_new_atom()
 
     def prepare_FormActionsComboPDOSIndexes(self):
         model = QStandardItemModel()
@@ -750,7 +762,7 @@ class mainWindow(QMainWindow):
     def check_dos(self, fname):
         DOSfile = Importer.CheckDOSfile(fname)
         if DOSfile != False:
-            eFermy = Importer.EFermySIESTA(fname)
+            eFermy = TSIESTA.FermiEnergy(fname)
             self.ui.FormActionsEditPDOSefermi.setText(str(eFermy))
 
             i = self.ui.FormActionsTabeDOSProperty.rowCount() + 1
@@ -846,8 +858,8 @@ class mainWindow(QMainWindow):
 
 
     def fill_cell_info(self, fname):
-        Volume = Importer.volume(fname)
-        Energy = Importer.Energy(fname)
+        Volume = TSIESTA.volume(fname)
+        Energy = TSIESTA.Etot(fname)
         a = self.MainForm.MainModel.get_LatVect1_norm()
         b = self.MainForm.MainModel.get_LatVect2_norm()
         c = self.MainForm.MainModel.get_LatVect3_norm()
@@ -963,29 +975,57 @@ class mainWindow(QMainWindow):
             EF = TSIESTA.FermiEnergy(self.filename)
             shift = 0
             if self.ui.FormActionsCheckBANDSfermyShift_2.isChecked():
-                shift = file[1]
+                shift = EF
                 energy -=EF
 
             self.ui.MplWidget.canvas.axes.clear()
 
-            xs = energy
             ys = pdos[0]
             sign = 1
             if self.ui.FormActionsCheckPDOS_2.isChecked():
                 sign = -1
             ys2 = sign*pdos[1]
 
-            self.ui.MplWidget.canvas.axes.plot(xs, ys)
+            self.ui.MplWidget.canvas.axes.plot(energy, ys)
             if self.ui.FormActionsCheckPDOS.isChecked():
-                self.ui.MplWidget.canvas.axes.plot(xs, ys2)
+                self.ui.MplWidget.canvas.axes.plot(energy, ys2)
 
             self.ui.MplWidget.canvas.axes.set_xlabel("Energy, eV")
             self.ui.MplWidget.canvas.axes.set_ylabel("PDOS, states/eV")
             if self.ui.FormActionsCheckBANDSfermyShow_2.isChecked():
-                self.ui.MplWidget.canvas.axes.axvline(x=file[1] - shift, linestyle="--")
+                self.ui.MplWidget.canvas.axes.axvline(x=EF - shift, linestyle="--")
             self.ui.MplWidget.canvas.axes.axhline(y=0, linestyle="-.")
 
             self.ui.MplWidget.canvas.draw()
+            self.PDOSdata.append([energy, pdos[0], pdos[1]])
+
+            self.ui.FormActionsListPDOS.addItems([str(len(self.PDOSdata))+": "+str(self.ui.FormActionsComboPDOSIndexes.currentText())+";  "+str(self.ui.FormActionsComboPDOSspecies.currentText())])
+            self.ui.FormActionsButtonPlotPDOSselected.setEnabled(True)
+
+    def plot_selected_pdos(self):
+        selected = self.ui.FormActionsListPDOS.selectedItems()
+        self.ui.MplWidget.canvas.axes.clear()
+        for item in selected:
+            ind = int(item.text().split(':')[0])-1
+
+            energy = self.PDOSdata[ind][0]
+            spinUp = self.PDOSdata[ind][1]
+            spinDown = self.PDOSdata[ind][2]
+
+            if self.ui.FormActionsCheckPDOS_2.isChecked():
+                spinDown *=-1
+
+            self.ui.MplWidget.canvas.axes.plot(energy, spinUp)
+            if self.ui.FormActionsCheckPDOS.isChecked():
+                self.ui.MplWidget.canvas.axes.plot(energy, spinDown)
+
+        self.ui.MplWidget.canvas.axes.set_xlabel("Energy, eV")
+        self.ui.MplWidget.canvas.axes.set_ylabel("PDOS, states/eV")
+        if self.ui.FormActionsCheckBANDSfermyShow_2.isChecked():
+                self.ui.MplWidget.canvas.axes.axvline(x=EF - shift, linestyle="--")
+        self.ui.MplWidget.canvas.axes.axhline(y=0, linestyle="-.")
+
+        self.ui.MplWidget.canvas.draw()
 
     def list_of_selected_items_in_combo(self, atom_index, combo):
         model = combo.model()
@@ -1098,39 +1138,27 @@ class mainWindow(QMainWindow):
         return let
            
     def plot_dos(self):
-        items = []
+        self.ui.MplWidget.canvas.axes.clear()
         for index in range(self.ui.FormActionsTabeDOSProperty.rowCount()):
             path = self.ui.FormActionsTabeDOSProperty.item(index,0).toolTip()
             eF = float(self.ui.FormActionsTabeDOSProperty.item(index,1).text())
-            items.append([path,eF])
-        self.ui.MplWidget.canvas.axes.clear()
-        
-        for file in items:
-            if os.path.exists(file[0]):
+
+            if os.path.exists(path):
+                spinUp, spinDown, energy = TSIESTA.DOSsiesta(path)
                 shift = 0
                 if self.ui.FormActionsCheckBANDSfermyShift_3.isChecked():
-                    shift = file[1]
-                DOS = Importer.DOSSIESTA(file[0],file[1])
-            
-                xs = []
-                ys = []
-                ys2= []
-                sign = 1
+                    shift = eF
+                    energy-=shift
                 if self.ui.FormActionsCheckDOS_2.isChecked():
-                    sign = -1
-                for row in DOS:
-                    xs.append(row[0])
-                    ys.append(row[1])
-                    ys2.append(sign*float(row[2]))
-
-                self.ui.MplWidget.canvas.axes.plot(xs, ys)
+                    spinDown *=-1
+                self.ui.MplWidget.canvas.axes.plot(energy, spinUp)
                 if self.ui.FormActionsCheckDOS.isChecked():
-                        self.ui.MplWidget.canvas.axes.plot(xs, ys2)
+                    self.ui.MplWidget.canvas.axes.plot(energy, spinDown)
                 
         self.ui.MplWidget.canvas.axes.set_xlabel("Energy, eV")
         self.ui.MplWidget.canvas.axes.set_ylabel("DOS, states/eV")
         if self.ui.FormActionsCheckBANDSfermyShow_3.isChecked():
-            self.ui.MplWidget.canvas.axes.axvline(x=file[1]-shift, linestyle="--")
+            self.ui.MplWidget.canvas.axes.axvline(x=eF-shift, linestyle="--")
         self.ui.MplWidget.canvas.axes.axhline(y=0, linestyle="-.")
 
         self.ui.MplWidget.canvas.draw()
@@ -1484,19 +1512,10 @@ class mainWindow(QMainWindow):
         self.ui.FormActionsPostButSurface.setEnabled(True)
         self.ui.FormActionsPostButSurfaceDelete.setEnabled(True)
 
-    def atom_delete(self):
-        self.MainForm.delete_selected_atom()
-
-    def atom_modify(self):
-        self.MainForm.modify_selected_atom()
-
-    def atom_add(self):
-        self.MainForm.add_new_atom()
-
 
 ORGANIZATION_NAME = 'Sozykin'
-ORGANIZATION_DOMAIN = 'example.com'
-APPLICATION_NAME = 'p4dft'
+ORGANIZATION_DOMAIN = 'https://github.com/sozykinsa/GUI4dft'
+APPLICATION_NAME = 'gui4dft'
 
 SETTINGS_Folder = '\home'
 SETTINGS_FormSettingsColorsScale = 'colors/ColorsScale'

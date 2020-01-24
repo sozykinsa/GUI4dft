@@ -2199,8 +2199,6 @@ class TSIESTA:
     def calc_pdos(root, atom_index, species, number_l, number_m, number_n, number_z):
         pdos = np.zeros((2, 1000))
         energy = np.zeros((1, 10))
-        count1 = 0
-        count2 = 0
         for child in root:
             # print(child.tag)
             if child.tag == "energy_values":
@@ -2213,6 +2211,7 @@ class TSIESTA:
                 if (int(child.attrib['atom_index']) in atom_index) and (child.attrib['species'] in species) and (
                         int(child.attrib['n']) in number_n) and (int(child.attrib['l']) in number_l) and (
                         int(child.attrib['m']) in number_m) and (int(child.attrib['z']) in number_z):
+                    #print(child.attrib['species'])
                     for children in child:
                         data = (children.text).split()
                         data = Helpers.list_str_to_float(data)
@@ -2426,21 +2425,25 @@ class TSIESTA:
         return TSIESTA.ChargesSIESTA4(filename, "Mulliken")
 
     @staticmethod
-    def DOSsiesta(filename,Ef = 0):
+    def DOSsiesta(filename):
         """DOS"""
         if os.path.exists(filename):
             DOSFile = open(filename)
             strDOS = DOSFile.readline()
-            DOS = []
+            energy = []
+            spinUp = []
+            spinDown = []
             while strDOS!='':
                 line = strDOS.split(' ')
                 line1 = []
                 for i in range(0, len(line)):
                     if line[i] != '':
                         line1.append(line[i])
-                DOS.append([round(float(line1[0])-Ef,5),float(line1[1]),float(line1[2])])
+                energy.append(float(line1[0]))
+                spinUp.append(float(line1[1]))
+                spinDown.append(float(line1[2]))
                 strDOS = DOSFile.readline()
-            return DOS    
+            return np.array(spinUp), np.array(spinDown), np.array(energy)
 
     @staticmethod
     def DOSsiestaV(filename,Ef = 0):
@@ -2457,29 +2460,28 @@ class TSIESTA:
                         line1.append(line[i])                
                 DOS.append([float(line1[1]),round(float(line1[0])-Ef,5)])
                 strDOS = DOSFile.readline()
-            return DOS    
-
+            return DOS
 
     @staticmethod
     def Etot(filename):
         """ Returns the Etot from SIESTA output file """
-        return Helpers.fromFileProperty(filename, 'siesta: Etot    =', 2, 'float')
-
+        if os.path.exists(filename):
+            return Helpers.fromFileProperty(filename, 'siesta: Etot    =', 2, 'float')
+        else:
+            return None
 
     @staticmethod
     def Energies(filename):
         """ Energy from each step """
         return TSIESTA.ListOfValues(filename, "siesta: E_KS(eV) =")
-
         
     @staticmethod
     def FermiEnergy(filename):
         """ Fermy Energy from SIESTA output file """
-        Energy = 0    
         if os.path.exists(filename):
             MdSiestaFile = open(filename)
             str1 = MdSiestaFile.readline()
-    
+            Energy = 0
             while str1!='':
                 if str1 != '' and (str1.find("siesta: iscf   Eharris(eV)      E_KS(eV)   FreeEng(eV)   dDmax  Ef(eV)")>=0) or (str1.find("scf: iscf   Eharris(eV)      E_KS(eV)   FreeEng(eV)    dDmax  Ef(eV)")>=0) or (str1.find("iscf     Eharris(eV)        E_KS(eV)     FreeEng(eV)     dDmax    Ef(eV) dHmax(eV)")>=0):
                     str1 = MdSiestaFile.readline()
@@ -2490,10 +2492,10 @@ class TSIESTA:
                             Energy = float(str1.split(' ')[6])
                         str1 = MdSiestaFile.readline()
                 str1 = MdSiestaFile.readline()
-            MdSiestaFile.close()    
-        return Energy
-
-
+            MdSiestaFile.close()
+            return Energy
+        else:
+            return None
         
     @staticmethod    
     def Forces(filename):
@@ -2834,7 +2836,10 @@ class TSIESTA:
     @staticmethod
     def volume(filename):
         """ Returns cell volume from SIESTA output file """
-        return Helpers.fromFileProperty(filename, 'siesta: Cell volume = ', 2, 'float')
+        if os.path.exists(filename):
+            return Helpers.fromFileProperty(filename, 'siesta: Cell volume = ', 2, 'float')
+        else:
+            return None
 
 
 ##################################################################

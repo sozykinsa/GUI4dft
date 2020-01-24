@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>p4dft, the SIESTA Visualization Tool</string>
+   <string>GUI4dft, the SIESTA Visualization Tool</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -104,8 +104,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>153</width>
-                 <height>271</height>
+                 <width>344</width>
+                 <height>585</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -190,58 +190,42 @@
                   <property name="title">
                    <string>Chirality</string>
                   </property>
-                  <widget class="QLabel" name="label_9">
-                   <property name="geometry">
-                    <rect>
-                     <x>20</x>
-                     <y>30</y>
-                     <width>21</width>
-                     <height>19</height>
-                    </rect>
-                   </property>
-                   <property name="text">
-                    <string>n</string>
-                   </property>
-                  </widget>
-                  <widget class="QLabel" name="label_23">
-                   <property name="geometry">
-                    <rect>
-                     <x>180</x>
-                     <y>30</y>
-                     <width>21</width>
-                     <height>19</height>
-                    </rect>
-                   </property>
-                   <property name="text">
-                    <string>m</string>
-                   </property>
-                  </widget>
-                  <widget class="QSpinBox" name="FormActionsPreLineSWNTn">
-                   <property name="geometry">
-                    <rect>
-                     <x>40</x>
-                     <y>20</y>
-                     <width>126</width>
-                     <height>42</height>
-                    </rect>
-                   </property>
-                   <property name="value">
-                    <number>7</number>
-                   </property>
-                  </widget>
-                  <widget class="QSpinBox" name="FormActionsPreLineSWNTm">
-                   <property name="geometry">
-                    <rect>
-                     <x>210</x>
-                     <y>20</y>
-                     <width>126</width>
-                     <height>42</height>
-                    </rect>
-                   </property>
-                   <property name="value">
-                    <number>7</number>
-                   </property>
-                  </widget>
+                  <layout class="QHBoxLayout" name="horizontalLayout_30">
+                   <item>
+                    <widget class="QLabel" name="label_9">
+                     <property name="text">
+                      <string>n</string>
+                     </property>
+                     <property name="alignment">
+                      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QSpinBox" name="FormActionsPreLineSWNTn">
+                     <property name="value">
+                      <number>7</number>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QLabel" name="label_23">
+                     <property name="text">
+                      <string>m</string>
+                     </property>
+                     <property name="alignment">
+                      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QSpinBox" name="FormActionsPreLineSWNTm">
+                     <property name="value">
+                      <number>7</number>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
                  </widget>
                 </item>
                 <item>
@@ -249,7 +233,7 @@
                   <property name="maximumSize">
                    <size>
                     <width>16777215</width>
-                    <height>105</height>
+                    <height>100</height>
                    </size>
                   </property>
                   <property name="title">
@@ -288,10 +272,22 @@
                    <property name="geometry">
                     <rect>
                      <x>120</x>
-                     <y>10</y>
-                     <width>221</width>
-                     <height>42</height>
+                     <y>20</y>
+                     <width>181</width>
+                     <height>24</height>
                     </rect>
+                   </property>
+                   <property name="minimumSize">
+                    <size>
+                     <width>0</width>
+                     <height>24</height>
+                    </size>
+                   </property>
+                   <property name="maximumSize">
+                    <size>
+                     <width>16777215</width>
+                     <height>24</height>
+                    </size>
                    </property>
                    <property name="singleStep">
                     <double>0.500000000000000</double>
@@ -304,10 +300,22 @@
                    <property name="geometry">
                     <rect>
                      <x>120</x>
-                     <y>50</y>
-                     <width>221</width>
-                     <height>42</height>
+                     <y>60</y>
+                     <width>181</width>
+                     <height>24</height>
                     </rect>
+                   </property>
+                   <property name="minimumSize">
+                    <size>
+                     <width>0</width>
+                     <height>24</height>
+                    </size>
+                   </property>
+                   <property name="maximumSize">
+                    <size>
+                     <width>16777215</width>
+                     <height>24</height>
+                    </size>
                    </property>
                    <property name="value">
                     <number>1</number>
@@ -389,12 +397,12 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>100</width>
-                 <height>30</height>
+                 <width>344</width>
+                 <height>585</height>
                 </rect>
                </property>
                <attribute name="label">
-                <string>Page 2</string>
+                <string>...</string>
                </attribute>
               </widget>
              </widget>
@@ -409,15 +417,15 @@
             <item>
              <widget class="QToolBox" name="toolBox_6">
               <property name="currentIndex">
-               <number>2</number>
+               <number>0</number>
               </property>
               <widget class="QWidget" name="page_27">
                <property name="geometry">
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>115</width>
-                 <height>179</height>
+                 <width>344</width>
+                 <height>554</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -903,15 +911,15 @@
            <string notr="true"/>
           </property>
           <property name="currentIndex">
-           <number>1</number>
+           <number>0</number>
           </property>
           <widget class="QWidget" name="page_16">
            <property name="geometry">
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>109</width>
-             <height>243</height>
+             <width>372</width>
+             <height>481</height>
             </rect>
            </property>
            <attribute name="label">
@@ -1377,14 +1385,14 @@
                <item>
                 <widget class="QCheckBox" name="FormActionsCheckBANDSfermyShow_3">
                  <property name="text">
-                  <string>Show</string>
+                  <string>Show Fermi level</string>
                  </property>
                 </widget>
                </item>
                <item>
                 <widget class="QCheckBox" name="FormActionsCheckBANDSfermyShift_3">
                  <property name="text">
-                  <string>Shift to 0</string>
+                  <string>Shift Fermi level to 0</string>
                  </property>
                 </widget>
                </item>
@@ -1409,7 +1417,7 @@
                <item>
                 <widget class="QCheckBox" name="FormActionsCheckDOS">
                  <property name="text">
-                  <string>Spin</string>
+                  <string>Plot Up and Down spin</string>
                  </property>
                 </widget>
                </item>
@@ -1520,9 +1528,9 @@
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>0</y>
-             <width>372</width>
-             <height>481</height>
+             <y>-101</y>
+             <width>351</width>
+             <height>582</height>
             </rect>
            </property>
            <attribute name="label">
@@ -1818,17 +1826,29 @@
               <property name="minimumSize">
                <size>
                 <width>0</width>
-                <height>60</height>
+                <height>40</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>40</height>
                </size>
               </property>
               <property name="title">
                <string>Spin</string>
               </property>
               <layout class="QHBoxLayout" name="horizontalLayout_26">
+               <property name="topMargin">
+                <number>2</number>
+               </property>
+               <property name="bottomMargin">
+                <number>2</number>
+               </property>
                <item>
                 <widget class="QCheckBox" name="FormActionsCheckPDOS">
                  <property name="text">
-                  <string>Spin</string>
+                  <string>Plot Up and Down spin</string>
                  </property>
                 </widget>
                </item>
@@ -1847,7 +1867,13 @@
               <property name="minimumSize">
                <size>
                 <width>0</width>
-                <height>70</height>
+                <height>60</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>60</height>
                </size>
               </property>
               <property name="title">
@@ -1891,7 +1917,24 @@
                <bool>false</bool>
               </property>
               <property name="text">
-               <string>plot PDOS</string>
+               <string>plot single PDOS and add to list</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QListWidget" name="FormActionsListPDOS">
+              <property name="selectionMode">
+               <enum>QAbstractItemView::ExtendedSelection</enum>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="FormActionsButtonPlotPDOSselected">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="text">
+               <string>plot selected PDOS</string>
               </property>
              </widget>
             </item>
@@ -2134,8 +2177,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>199</width>
-             <height>174</height>
+             <width>372</width>
+             <height>481</height>
             </rect>
            </property>
            <attribute name="label">
@@ -2165,17 +2208,30 @@
                 </widget>
                </item>
                <item>
+                <spacer name="horizontalSpacer_12">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+               <item>
                 <widget class="QSpinBox" name="FormActionsPostTextVoronoiMaxDist">
                  <property name="minimumSize">
                   <size>
-                   <width>0</width>
-                   <height>42</height>
+                   <width>60</width>
+                   <height>24</height>
                   </size>
                  </property>
                  <property name="maximumSize">
                   <size>
-                   <width>16777215</width>
-                   <height>42</height>
+                   <width>100</width>
+                   <height>24</height>
                   </size>
                  </property>
                  <property name="buttonSymbols">
@@ -2185,6 +2241,19 @@
                   <number>5</number>
                  </property>
                 </widget>
+               </item>
+               <item>
+                <spacer name="horizontalSpacer_13">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
                </item>
               </layout>
              </widget>
@@ -2268,8 +2337,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>361</width>
-             <height>384</height>
+             <width>372</width>
+             <height>481</height>
             </rect>
            </property>
            <attribute name="label">
@@ -2419,13 +2488,13 @@
                         <property name="minimumSize">
                          <size>
                           <width>0</width>
-                          <height>42</height>
+                          <height>24</height>
                          </size>
                         </property>
                         <property name="maximumSize">
                          <size>
                           <width>16777215</width>
-                          <height>42</height>
+                          <height>24</height>
                          </size>
                         </property>
                         <property name="decimals">
@@ -2681,10 +2750,22 @@
                    <property name="geometry">
                     <rect>
                      <x>100</x>
-                     <y>10</y>
+                     <y>20</y>
                      <width>126</width>
-                     <height>42</height>
+                     <height>24</height>
                     </rect>
+                   </property>
+                   <property name="minimumSize">
+                    <size>
+                     <width>0</width>
+                     <height>24</height>
+                    </size>
+                   </property>
+                   <property name="maximumSize">
+                    <size>
+                     <width>16777215</width>
+                     <height>24</height>
+                    </size>
                    </property>
                    <property name="value">
                     <number>5</number>
@@ -2756,10 +2837,22 @@
                    <property name="geometry">
                     <rect>
                      <x>100</x>
-                     <y>10</y>
+                     <y>20</y>
                      <width>126</width>
-                     <height>42</height>
+                     <height>24</height>
                     </rect>
+                   </property>
+                   <property name="minimumSize">
+                    <size>
+                     <width>0</width>
+                     <height>24</height>
+                    </size>
+                   </property>
+                   <property name="maximumSize">
+                    <size>
+                     <width>16777215</width>
+                     <height>24</height>
+                    </size>
                    </property>
                    <property name="value">
                     <number>5</number>
@@ -2831,10 +2924,22 @@
                    <property name="geometry">
                     <rect>
                      <x>100</x>
-                     <y>10</y>
+                     <y>20</y>
                      <width>126</width>
-                     <height>42</height>
+                     <height>24</height>
                     </rect>
+                   </property>
+                   <property name="minimumSize">
+                    <size>
+                     <width>0</width>
+                     <height>24</height>
+                    </size>
+                   </property>
+                   <property name="maximumSize">
+                    <size>
+                     <width>16777215</width>
+                     <height>24</height>
+                    </size>
                    </property>
                    <property name="value">
                     <number>5</number>
@@ -2880,15 +2985,15 @@
         <item>
          <widget class="QToolBox" name="toolBox_3">
           <property name="currentIndex">
-           <number>1</number>
+           <number>0</number>
           </property>
           <widget class="QWidget" name="page_5">
            <property name="geometry">
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>100</width>
-             <height>30</height>
+             <width>372</width>
+             <height>574</height>
             </rect>
            </property>
            <attribute name="label">

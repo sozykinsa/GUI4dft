@@ -163,34 +163,6 @@ class Importer(object):
         else:
             return False
 
-    @staticmethod
-    def DOSSIESTA(filename, eF=0):
-        """Import DOS from file filename"""
-        if os.path.exists(filename):
-            DOS = TSIESTA.DOSsiesta(filename, eF)
-            return DOS
-
-    @staticmethod
-    def EFermySIESTA(filename):
-        """Import Fermy Energy from file filename"""
-        if os.path.exists(filename):
-            EF = TSIESTA.FermiEnergy(filename)
-            return EF
-
-    @staticmethod
-    def volume(filename):
-        """Import Cell volume from file filename"""
-        if os.path.exists(filename):
-            EF = TSIESTA.volume(filename)
-            return EF
-
-    @staticmethod
-    def Energy(filename):
-        """Import Etot from file filename"""
-        if os.path.exists(filename):
-            E = TSIESTA.Etot(filename)
-            return E
-
 ##################################################################
 ############################ TXSF ################################
 ##################################################################
@@ -408,9 +380,6 @@ class TXSF(TVolumericData):
                 row = f.readline()
         f.close()
 
-
-
-
 class TGaussianCube(TVolumericData):
     def __init__(self):
         TVolumericData.__init__(self)
@@ -438,9 +407,7 @@ class TGaussianCube(TVolumericData):
                 row = f.readline().split()
                 charge = int(row[0])
                 atoms.append([ float(row[2]), float(row[3]), float(row[4]), periodTable.get_let(charge), charge ])
-
             f.close()
-
             AllAtoms = TAtomicModel(atoms)
             AllAtoms.set_lat_vectors(vec1, vec2, vec3)
             AllAtoms.convert_from_scaled_to_cart(mult)
@@ -471,7 +438,6 @@ class TGaussianCube(TVolumericData):
             f.close()
             return True
         return False
-
 
     def load_data(self, getChildNode):
         periodTable = TPeriodTable()
@@ -508,7 +474,6 @@ class TGaussianCube(TVolumericData):
 
             f.close()
             return self.atoms
-
 
 class AtomsIdentifier(QDialog):
     def __init__(self, problemAtoms):
