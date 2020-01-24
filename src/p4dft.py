@@ -744,13 +744,13 @@ class mainWindow(QMainWindow):
         PDOSfile = Importer.CheckPDOSfile(fname)
         if PDOSfile != False:
             self.ui.FormActionsLinePDOSfile.setText(PDOSfile)
-            self.ui.FormActionsButtonParseBANDS.setEnabled(True)
+            self.ui.FormActionsButtonPlotPDOS.setEnabled(True)
 
     def check_bands(self, fname):
         BANDSfile = Importer.CheckBANDSfile(fname)
         if BANDSfile != False:
             self.ui.FormActionsLineBANDSfile.setText(BANDSfile)
-            self.ui.FormActionsButtonPlotBANDS.setEnabled(True)
+            self.ui.FormActionsButtonParseBANDS.setEnabled(True)
 
         
     def check_dos(self, fname):
@@ -1021,7 +1021,7 @@ class mainWindow(QMainWindow):
             self.ui.FormActionsSpinBANDSemax.setRange(emin, emax)
             self.ui.FormActionsSpinBANDSemax.setValue(emax)
             f.close()
-            self.ui.FormActionsButtonPlotPDOS.setEnabled(True)
+            self.ui.FormActionsButtonPlotBANDS.setEnabled(True)
 
     def plot_bands(self):
         file = self.ui.FormActionsLineBANDSfile.text()

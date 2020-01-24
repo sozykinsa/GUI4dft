@@ -78,10 +78,7 @@ class GuiOpenGL(object):
         self.rotZ = 0
         self.CanSearch = False
         self.selected_atom = -1
-        self.ProbeXYZ = False
         self.CheckAtomSelection = CheckAtomSelection
-
-        print("\033[1;101m SETU6P UI \033[0m")
         self.openGLWidget.initializeGL()
         self.openGLWidget.paintGL = self.paintGL
         self.openGLWidget.initializeGL = self.initializeGL
@@ -139,7 +136,6 @@ class GuiOpenGL(object):
         self.color_of_atoms = GUI.color_of_atoms
         self.color_of_bonds = GUI.color_of_bonds
         self.color_of_box = GUI.color_of_box
-
         self.add_atoms()
         self.add_bonds()
         self.add_box()
@@ -152,7 +148,6 @@ class GuiOpenGL(object):
             self.add_colored_plane(GUI.data_contour_fill)
         if self.ViewSurface:
             self.add_surface(GUI.data_surface)
-
         self.openGLWidget.update()
         
     def screen2space(self, x, y, width, height):
@@ -243,23 +238,22 @@ class GuiOpenGL(object):
                 self.add_bonds()
                 self.openGLWidget.update()
 
-
     def set_color_of_atoms(self, colors):
         self.color_of_atoms = colors
         self.add_atoms()
 
-    def set_color_of_bonds(self,color):
+    def set_color_of_bonds(self, color):
         self.color_of_bonds = color
         self.add_bonds()
 
-    def set_color_of_voronoi(self,voronoicolor):
+    def set_color_of_voronoi(self, voronoicolor):
         self.add_voronoi(voronoicolor)
 
-    def set_color_of_box(self,color):
+    def set_color_of_box(self, color):
         self.color_of_box = color
         self.add_box()
 
-    def set_color_of_axes(self,color):
+    def set_color_of_axes(self, color):
         self.color_of_axes = color
         self.add_axes()
 
@@ -306,18 +300,59 @@ class GuiOpenGL(object):
 
     def move_atom(self, x, y, width, height):
         if self.active == True:
-            if self.ProbeXYZ == False:
-                self.ProbeXYZ = True
+                dx = x - self.xScene
+                dy = y - self.yScene
+                mult = 0.01*self.Scale
+                vect = mult*np.array([-dx, dy, 0])
+                al = -math.pi * self.rotX / 180
+                bet = -math.pi * self.rotY / 180
+                gam = -math.pi * self.rotZ / 180
+                vect = self.rotate_vector(vect, al, bet, gam)
                 self.xScene, self.yScene = x, y
-                self.openGLWidget.update()
+                self.MainModel.atoms[self.selected_atom].x -= vect[0]
+                self.MainModel.atoms[self.selected_atom].y -= vect[1]
+                self.MainModel.atoms[self.selected_atom].z -= vect[2]
+                self.selected_atom_changed()
+
                 self.add_atoms()
                 self.ViewVoronoi = False
                 self.ViewSurface = False
                 self.ViewContourFill = False
                 self.ViewContour = False
-            return True
+                return True
 
-    # рисует связь между атомами в виде цилиндра
+    def rotate_vector(self, vect, al, bet, gam):
+        cos = math.cos(al)
+        sin = math.sin(al)
+        Mx = np.array([[1, 0, 0], [0, cos, -sin], [0, sin, cos]])
+        cos = math.cos(bet)
+        sin = math.sin(bet)
+        My = np.array([[cos, 0, sin], [0, 1, 0], [-sin, 0, cos]])
+        cos = math.cos(gam)
+        sin = math.sin(gam)
+        Mz = np.array([[cos, -sin, 0], [sin, cos, 0], [0, 0, 1]])
+        vect = Mx.dot(vect)
+        vect = My.dot(vect)
+        vect = Mz.dot(vect)
+        return vect
+
+    def rotate_un_vector(self, vect, al, bet, gam):
+        cos = math.cos(al)
+        sin = math.sin(al)
+        Mx = np.array([[1, 0, 0], [0, cos, -sin], [0, sin, cos]])
+        cos = math.cos(bet)
+        sin = math.sin(bet)
+        My = np.array([[cos, 0, sin], [0, 1, 0], [-sin, 0, cos]])
+        cos = math.cos(gam)
+        sin = math.sin(gam)
+        Mz = np.array([[cos, -sin, 0], [sin, cos, 0], [0, 0, 1]])
+
+        vect = Mz.dot(vect)
+        vect = My.dot(vect)
+        vect = Mx.dot(vect)
+        return vect
+
+
     def add_bond(self, Atom1Pos, Atom2Pos, Radius=0.1, type = 'cylinder'):
         Radius2 = Radius
         if type == 'conus':
@@ -329,9 +364,9 @@ class GuiOpenGL(object):
         Yaw = 180.0/math.pi*math.atan2(Rel[1], Rel[0])
        
         gl.glPushMatrix()
-        gl.glTranslated(Atom1Pos[0], Atom1Pos[1], Atom1Pos[2]) # преобразование координат № 3
-        gl.glRotated(Yaw, 0, 0, 1) # преобразование координат № 2
-        gl.glRotated(Fall, 0, 1, 0) # преобразование координат № 1
+        gl.glTranslated(Atom1Pos[0], Atom1Pos[1], Atom1Pos[2])
+        gl.glRotated(Yaw, 0, 0, 1)
+        gl.glRotated(Fall, 0, 1, 0)
         glu.gluCylinder(glu.gluNewQuadric(),
             Radius, # /*baseRadius:*/
             Radius2, # /*topRadius:*/
@@ -363,7 +398,6 @@ class GuiOpenGL(object):
             gl.glPushMatrix()
             gl.glTranslatef(at.x, at.y, at.z)
             self.QuadObjS.append(glu.gluNewQuadric())
-
             if at.isSelected() == False:
                 color = self.color_of_atoms[at.charge]
                 gl.glColor3f(color[0], color[1], color[2])
@@ -382,27 +416,22 @@ class GuiOpenGL(object):
             x1 = self.MainModel.atoms[bond[0]].x
             y1 = self.MainModel.atoms[bond[0]].y
             z1 = self.MainModel.atoms[bond[0]].z
-
             x2 = self.MainModel.atoms[bond[1]].x
             y2 = self.MainModel.atoms[bond[1]].y
             z2 = self.MainModel.atoms[bond[1]].z
-
             self.add_bond([x1, y1, z1], [x2, y2, z2], self.bondWidth)
         gl.glEndList()
 
     def add_box(self):
         gl.glNewList(self.object + 3, gl.GL_COMPILE)
         gl.glColor3f(self.color_of_box[0], self.color_of_box[1], self.color_of_box[2])
-
         minX = self.MainModel.minX()
         minY = self.MainModel.minY()
         minZ = self.MainModel.minZ()
-
         origin = np.array([minX, minY, minZ])
         v1 = self.MainModel.LatVect1
         v2 = self.MainModel.LatVect2
         v3 = self.MainModel.LatVect3
-
         p1 = origin
         p2 = origin + v1
         p3 = origin + v2
@@ -411,7 +440,6 @@ class GuiOpenGL(object):
         p6 = p2 + v3
         p7 = p3 + v3
         p8 = p4 + v3
-
         width = 0.03
         self.add_bond(p1, p2, width)
         self.add_bond(p1, p3, width)
@@ -435,10 +463,8 @@ class GuiOpenGL(object):
         letter_height = sizeCone
         letter_width = 0.6*sizeCone
         width = 0.06
-
         self.QuadObjS.append(glu.gluNewQuadric())
         glu.gluSphere(self.QuadObjS[-1], 2*width, 70, 70)
-
         p0 = np.array([0, 0, 0])
         p1 = np.array([size, 0, 0])
         p1cone = np.array([size+sizeCone, 0, 0])
@@ -446,7 +472,6 @@ class GuiOpenGL(object):
         p2cone = np.array([0, size+sizeCone, 0])
         p3 = np.array([0, 0, size])
         p3cone = np.array([0, 0, size+sizeCone])
-
         self.add_bond(p0, p1, width)
         self.add_bond(p1, p1cone, 2*width, 'conus')
         self.add_bond(p0, p2, width)
@@ -459,33 +484,26 @@ class GuiOpenGL(object):
         pX2 = pX + np.array([+0.5 * letter_width, +0.5 * letter_height, 0])
         pX3 = pX + np.array([-0.5 * letter_width, +0.5 * letter_height, 0])
         pX4 = pX + np.array([+0.5 * letter_width, -0.5 * letter_height, 0])
-
         self.add_bond(pX1, pX2, 0.5 * width)
         self.add_bond(pX3, pX4, 0.5 * width)
-
         # lets drow "Y"
         pY = p2cone + np.array([0, 1.5 * sizeCone,  0])
         pY1 = pY
         pY2 = pY + np.array([0, +0.5 * letter_height, +0.5 * letter_width])
         pY3 = pY + np.array([0, -0.5 * letter_height, +0.5 * letter_width])
         pY4 = pY + np.array([0, +0.5 * letter_height, -0.5 * letter_width])
-
         self.add_bond(pY1, pY2, 0.5 * width)
         self.add_bond(pY3, pY4, 0.5 * width)
-
         # lets drow "Z"
         pZ = p3cone + np.array([1.5 * sizeCone, 0, 0])
         pZ1 = pZ + np.array([-0.5 * letter_height, 0, -0.5 * letter_width])
         pZ2 = pZ + np.array([+0.5 * letter_height, 0, +0.5 * letter_width])
         pZ3 = pZ + np.array([-0.5 * letter_height, 0,  +0.5 * letter_width])
         pZ4 = pZ + np.array([+0.5 * letter_height, 0,  -0.5 * letter_width])
-
         self.add_bond(pZ1, pZ3, 0.5 * width)
         self.add_bond(pZ1, pZ2, 0.5 * width)
         self.add_bond(pZ2, pZ4, 0.5 * width)
-
         gl.glEndList()
-
 
     def add_surface(self, data):
         self.data_surface = data
@@ -508,7 +526,6 @@ class GuiOpenGL(object):
         self.data_contour = params
         gl.glDeleteLists(self.object + 5, 1)
         gl.glNewList(self.object + 5, gl.GL_COMPILE)
-
         for param in params:
             values = param[0]
             conts = param[1]
@@ -518,7 +535,6 @@ class GuiOpenGL(object):
                 color = colors[it]
                 it += 1
                 gl.glColor3f(color[0], color[1], color[2])
-
                 for contour in cont:
                     for i in range(0,len(contour)-1):
                         p1 = contour[i]
@@ -563,7 +579,6 @@ class GuiOpenGL(object):
         volume = np.inf
         if self.selected_atom >=0:
             ListOfPoligons, volume = TCalculators.VoronoiAnalisis(self.MainModel, self.selected_atom, maxDist)
-
             gl.glNewList(self.object+1, gl.GL_COMPILE)
             gl.glColor4f(color[0], color[1], color[2], 0.7)
             for poligon in ListOfPoligons:
@@ -589,29 +604,7 @@ class GuiOpenGL(object):
         try:
             self.prepere_scene()
             if self.active:
-                self.prepare_orientation()
-                if self.ProbeXYZ:
-                    self.add_selected_atom()
-                    gl.glCallList(self.object + 7)  # selected atom
-
-                    point = self.get_point_in_3D(self.xScene, self.yScene)
-                    if abs(self.MainModel.atoms[self.selected_atom].x - point[0]) < 0.2:
-                        self.MainModel.atoms[self.selected_atom].x = point[0]
-                    if abs(self.MainModel.atoms[self.selected_atom].y + point[1]) < 0.2:
-                        self.MainModel.atoms[self.selected_atom].y = - point[1]
-                    if abs(self.MainModel.atoms[self.selected_atom].z - point[2]) < 0.2:
-                        self.MainModel.atoms[self.selected_atom].z = point[2]
-                    self.selected_atom_changed()
-
-                    self.prepere_scene()
                     self.prepare_orientation()
-
-                    self.add_atoms()
-                    gl.glCallList(self.object)  # atoms
-                    self.add_bonds()
-                    if self.ViewBonds:
-                        gl.glCallList(self.object + 2)  # Bonds
-                else:
                     gl.glCallList(self.object)  # atoms
 
                     if self.CanSearch:
@@ -644,11 +637,9 @@ class GuiOpenGL(object):
 
     def prepare_orientation(self):
         gl.glTranslated(self.x, self.y, self.z)
-
         gl.glRotate(self.rotX, 1, 0, 0)
         gl.glRotate(self.rotY, 0, 1, 0)
         gl.glRotate(self.rotZ, 0, 0, 1)
-
         gl.glScale(self.Scale, self.Scale, self.Scale)
 
     def prepere_scene(self):
@@ -678,6 +669,7 @@ class GuiOpenGL(object):
 
     def get_atom_on_screen(self):
         point = self.get_point_in_3D(self.xScene, self.yScene)
+
         oldSelected = self.selected_atom
         minr = 10000
         ind = -1
@@ -711,34 +703,24 @@ class GuiOpenGL(object):
         model = gl.glGetDoublev(gl.GL_MODELVIEW_MATRIX)
         proj = gl.glGetDoublev(gl.GL_PROJECTION_MATRIX)
         view = gl.glGetIntegerv(gl.GL_VIEWPORT)
-        winY = float(view[3]) - float(y)
-        z = gl.glReadPixels(x, int(winY), 1, 1, gl.GL_DEPTH_COMPONENT, gl.GL_FLOAT)
+        winY = int(float(view[3]) - float(y))
+        z = gl.glReadPixels(x, winY, 1, 1, gl.GL_DEPTH_COMPONENT, gl.GL_FLOAT)
         point = glu.gluUnProject(x, y, z, model, proj, view)
-        self.ProbeXYZ = False
+        al = math.pi * self.rotX / 180
+        bet = 0 # math.pi * self.rotY / 180
+        gam = math.pi * self.rotZ / 180
+        point = self.rotate_un_vector(np.array(point), al, bet, gam)
+        point = self.rotate_vector(np.array(point), al, bet, gam)
         return point
 
     def initializeGL(self):
         QOpenGLWidget.makeCurrent(self.openGLWidget)
-        print("\033[4;30;102m INITIALIZE GL \033[0m")
         gl.glEnable(gl.GL_BLEND)
         gl.glBlendFunc(gl.GL_SRC_ALPHA, gl.GL_ONE_MINUS_SRC_ALPHA)
         gl.glEnable(gl.GL_DEPTH_TEST)
+        gl.glDepthMask(1)
+        gl.glDepthFunc(gl.GL_LEQUAL)
         self.object = gl.glGenLists(self.NLists)
         gl.glNewList(self.object, gl.GL_COMPILE)
         gl.glEndList()
-        #gl.glEnable(gl.GL_CULL_FACE) # отсечение граней
-
        
-    def delObj(self):
-        gl.glDeleteLists(self.object, self.NLists)
-        self.object = gl.glGenLists(self.NLists)
-        print(self.object)
-
-        
-    def DelObject(self):
-        i = 0
-        for quadObj in self.QuadObjS:
-            print(i)
-            i+=1
-            glu.gluDeleteQuadric(quadObj)
-
