@@ -1,1 +1,1 @@
-p4dft - first free SIESTA oriented GUI
+GUI4dft - first free SIESTA oriented GUI
