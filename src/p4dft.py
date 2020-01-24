@@ -163,21 +163,12 @@ class mainWindow(QMainWindow):
         self.ui.FormModelTableAtoms.horizontalHeader().setStyleSheet(table_header_stylesheet)
         self.ui.FormModelTableAtoms.verticalHeader().setStyleSheet(table_header_stylesheet)
 
-
         self.ui.FormModelTableProperties.setColumnCount(2)
         self.ui.FormModelTableProperties.setHorizontalHeaderLabels(["Property", "Value"])
         self.ui.FormModelTableProperties.setColumnWidth(0, 85)
         self.ui.FormModelTableProperties.setColumnWidth(1, 240)
         self.ui.FormModelTableProperties.horizontalHeader().setStyleSheet(table_header_stylesheet)
         self.ui.FormModelTableProperties.verticalHeader().setStyleSheet(table_header_stylesheet)
-        
-        
-        self.ui.FormActionsTabeDOSProperty.setColumnCount(3)
-        self.ui.FormActionsTabeDOSProperty.setHorizontalHeaderLabels(["sp", "EFermy","S11 (M11)"])
-        self.ui.FormActionsTabeDOSProperty.setColumnWidth(0, 40)
-        self.ui.FormActionsTabeDOSProperty.setColumnWidth(1, 80)
-        self.ui.FormActionsTabeDOSProperty.setColumnWidth(2, 80)
-
 
         self.ui.IsosurfaceColorsTable.setColumnCount(2)
         self.ui.IsosurfaceColorsTable.setHorizontalHeaderLabels(["Value","Transparancy"])
@@ -245,6 +236,10 @@ class mainWindow(QMainWindow):
         argsCell.appendRow(QStandardItem("c")) 
         self.ui.FormActionsPostComboCellParamX.setModel(argsCell)
 
+        self.ui.FormActionsTabeDOSProperty.setColumnCount(2)
+        self.ui.FormActionsTabeDOSProperty.setHorizontalHeaderLabels(["Path", "EFermy"])
+        self.ui.FormActionsTabeDOSProperty.setColumnWidth(0, 200)
+        self.ui.FormActionsTabeDOSProperty.setColumnWidth(1, 80)
 
         self.ui.FormActionsPosTableBonds.setColumnCount(2)
         self.ui.FormActionsPosTableBonds.setHorizontalHeaderLabels(["Bond", "Lenght"])
@@ -751,26 +746,22 @@ class mainWindow(QMainWindow):
         if BANDSfile != False:
             self.ui.FormActionsLineBANDSfile.setText(BANDSfile)
             self.ui.FormActionsButtonParseBANDS.setEnabled(True)
-
         
     def check_dos(self, fname):
         DOSfile = Importer.CheckDOSfile(fname)
         if DOSfile != False:
-            self.ui.FormActionsListDOSfile.addItems([DOSfile])
-            self.ui.FormActionsListDOSfile.update()
-            
-            eFermy = Importer.EFermySIESTA(fname)            
-            DOS = Importer.DOSSIESTA(DOSfile,eFermy)
-            M11S11 = str(Calculator.M11S11(DOS))
-            
-            i = self.ui.FormActionsTabeDOSProperty.rowCount()+1
-            
+            eFermy = Importer.EFermySIESTA(fname)
+            self.ui.FormActionsEditPDOSefermi.setText(str(eFermy))
+
+            i = self.ui.FormActionsTabeDOSProperty.rowCount() + 1
+
             self.ui.FormActionsTabeDOSProperty.setRowCount(i)
-            
-            self.ui.FormActionsTabeDOSProperty.setItem(i-1, 0, QTableWidgetItem(str("?")))
-            self.ui.FormActionsTabeDOSProperty.setItem(i-1, 1, QTableWidgetItem(str(eFermy)))
-            self.ui.FormActionsTabeDOSProperty.setItem(i-1, 2, QTableWidgetItem(M11S11))
-            
+
+            line = "..."+str(DOSfile)[-15:]
+            QTabWidg = QTableWidgetItem(line)
+            QTabWidg.setToolTip(DOSfile)
+            self.ui.FormActionsTabeDOSProperty.setItem(i - 1, 0, QTabWidg)
+            self.ui.FormActionsTabeDOSProperty.setItem(i - 1, 1, QTableWidgetItem(str(eFermy)))
             self.ui.FormActionsTabeDOSProperty.update()
 
     def check_volumeric_data(self, fname):
@@ -970,7 +961,10 @@ class mainWindow(QMainWindow):
 
             pdos, energy = TSIESTA.calc_pdos(root, atom_index, species, number_l, number_m, number_n, number_z)
             EF = TSIESTA.FermiEnergy(self.filename)
-            energy -=EF
+            shift = 0
+            if self.ui.FormActionsCheckBANDSfermyShift_2.isChecked():
+                shift = file[1]
+                energy -=EF
 
             self.ui.MplWidget.canvas.axes.clear()
 
@@ -987,6 +981,9 @@ class mainWindow(QMainWindow):
 
             self.ui.MplWidget.canvas.axes.set_xlabel("Energy, eV")
             self.ui.MplWidget.canvas.axes.set_ylabel("PDOS, states/eV")
+            if self.ui.FormActionsCheckBANDSfermyShow_2.isChecked():
+                self.ui.MplWidget.canvas.axes.axvline(x=file[1] - shift, linestyle="--")
+            self.ui.MplWidget.canvas.axes.axhline(y=0, linestyle="-.")
 
             self.ui.MplWidget.canvas.draw()
 
@@ -1067,10 +1064,7 @@ class mainWindow(QMainWindow):
                     letter = self.utf8_letter(str3[1][1:-1])
                     xticklabels.append(letter)
             f.close()
-            #print(bands)
-            #print(xticks)
             self.ui.MplWidget.canvas.axes.clear()
-            #self.ui.MplWidget.canvas.rcParams.update({'font.size': 22})
             for band in bands:
                 self.ui.MplWidget.canvas.axes.plot(kmesh, band, linestyle = "-", color = "black")
             self.ui.MplWidget.canvas.axes.set_xlim(kmin, kmax)
@@ -1105,14 +1099,17 @@ class mainWindow(QMainWindow):
            
     def plot_dos(self):
         items = []
-        for index in range(self.ui.FormActionsListDOSfile.count()):
+        for index in range(self.ui.FormActionsTabeDOSProperty.rowCount()):
+            path = self.ui.FormActionsTabeDOSProperty.item(index,0).toolTip()
             eF = float(self.ui.FormActionsTabeDOSProperty.item(index,1).text())
-            items.append([self.ui.FormActionsListDOSfile.item(index).text(),eF])
-        
+            items.append([path,eF])
         self.ui.MplWidget.canvas.axes.clear()
         
         for file in items:
             if os.path.exists(file[0]):
+                shift = 0
+                if self.ui.FormActionsCheckBANDSfermyShift_3.isChecked():
+                    shift = file[1]
                 DOS = Importer.DOSSIESTA(file[0],file[1])
             
                 xs = []
@@ -1132,13 +1129,13 @@ class mainWindow(QMainWindow):
                 
         self.ui.MplWidget.canvas.axes.set_xlabel("Energy, eV")
         self.ui.MplWidget.canvas.axes.set_ylabel("DOS, states/eV")
+        if self.ui.FormActionsCheckBANDSfermyShow_3.isChecked():
+            self.ui.MplWidget.canvas.axes.axvline(x=file[1]-shift, linestyle="--")
+        self.ui.MplWidget.canvas.axes.axhline(y=0, linestyle="-.")
 
         self.ui.MplWidget.canvas.draw()
 
     def clear_dos(self):
-        self.ui.FormActionsListDOSfile.clear()  #      addItems([DOSfile])
-        self.ui.FormActionsListDOSfile.update()
-
         self.ui.FormActionsTabeDOSProperty.setRowCount(0)
         self.ui.FormActionsTabeDOSProperty.update()
 

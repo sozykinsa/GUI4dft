@@ -903,7 +903,7 @@
            <string notr="true"/>
           </property>
           <property name="currentIndex">
-           <number>2</number>
+           <number>1</number>
           </property>
           <widget class="QWidget" name="page_16">
            <property name="geometry">
@@ -1015,7 +1015,7 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>344</width>
+             <width>351</width>
              <height>529</height>
             </rect>
            </property>
@@ -1076,7 +1076,13 @@
                  <property name="minimumSize">
                   <size>
                    <width>0</width>
-                   <height>40</height>
+                   <height>45</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>16777215</width>
+                   <height>45</height>
                   </size>
                  </property>
                  <property name="frameShape">
@@ -1117,7 +1123,13 @@
                  <property name="minimumSize">
                   <size>
                    <width>0</width>
-                   <height>40</height>
+                   <height>45</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>16777215</width>
+                   <height>45</height>
                   </size>
                  </property>
                  <property name="frameShape">
@@ -1345,10 +1357,39 @@
            </attribute>
            <layout class="QVBoxLayout" name="verticalLayout_7">
             <item>
-             <widget class="QListWidget" name="FormActionsListDOSfile"/>
+             <widget class="QTableWidget" name="FormActionsTabeDOSProperty"/>
             </item>
             <item>
-             <widget class="QTableWidget" name="FormActionsTabeDOSProperty"/>
+             <widget class="QFrame" name="frame_34">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>40</height>
+               </size>
+              </property>
+              <property name="frameShape">
+               <enum>QFrame::StyledPanel</enum>
+              </property>
+              <property name="frameShadow">
+               <enum>QFrame::Raised</enum>
+              </property>
+              <layout class="QHBoxLayout" name="horizontalLayout_29">
+               <item>
+                <widget class="QCheckBox" name="FormActionsCheckBANDSfermyShow_3">
+                 <property name="text">
+                  <string>Show</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QCheckBox" name="FormActionsCheckBANDSfermyShift_3">
+                 <property name="text">
+                  <string>Shift to 0</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
             </item>
             <item>
              <widget class="QFrame" name="frame_2">
@@ -1821,7 +1862,11 @@
                 </widget>
                </item>
                <item>
-                <widget class="QLineEdit" name="lineEdit_3"/>
+                <widget class="QLineEdit" name="FormActionsEditPDOSefermi">
+                 <property name="readOnly">
+                  <bool>true</bool>
+                 </property>
+                </widget>
                </item>
                <item>
                 <widget class="QCheckBox" name="FormActionsCheckBANDSfermyShow_2">
@@ -2006,7 +2051,11 @@
                    </widget>
                   </item>
                   <item>
-                   <widget class="QLineEdit" name="FormActionsEditBANDSefermi"/>
+                   <widget class="QLineEdit" name="FormActionsEditBANDSefermi">
+                    <property name="readOnly">
+                     <bool>true</bool>
+                    </property>
+                   </widget>
                   </item>
                   <item>
                    <widget class="QCheckBox" name="FormActionsCheckBANDSfermyShow">
