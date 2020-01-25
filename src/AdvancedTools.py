@@ -346,7 +346,7 @@ class TPeriodTableAtom:
 class TPeriodTable:
     """The TPeriodTable class provides basic fetches of Mendelevium's table. The constructor does not have arguments"""
     def __init__(self):
-        self.table_size = 110
+        self.table_size = 128
         self.Atoms = []
         self.default_color = [0.6, 0.6, 1.0]
         self.default_radius = 77
@@ -389,9 +389,97 @@ class TPeriodTable:
         self.Atoms.append(TPeriodTableAtom(34, 140, 'Se', self.default_color))
         self.Atoms.append(TPeriodTableAtom(35, 114, 'Br', self.default_color))
         self.Atoms.append(TPeriodTableAtom(36,  88, 'Kr', self.default_color))
-
-        for i in range(37,self.table_size):
-            self.Atoms.append(TPeriodTableAtom(i, self.default_radius, 'C', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(37, 248, 'Rb', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(38, 215, 'Sr', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(39, 178,  'Y', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(40, 160, 'Zr', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(41, 160, 'Nb', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(42, 139, 'Mo', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(43, 136, 'Tc', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(44, 134, 'Ru', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(45, 134, 'Rh', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(46, 137, 'Pd', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(47, 144, 'Ag', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(48, 154, 'Cd', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(49, 166, 'In', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(50, 162, 'Sn', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(51, 159, 'Sb', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(52, 160, 'Te', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(53, 136,  'I', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(54, 108, 'Xe', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(55, 267, 'Cs', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(56, 222, 'Ba', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(57, 187, 'La', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(58, 181, 'Ce', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(59, 182, 'Pr', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(60, 182, 'Nd', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(61, 183, 'Pm', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(62, 181, 'Sm', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(63, 199, 'Eu', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(64, 179, 'Gd', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(65, 180, 'Tb', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(66, 180, 'Dy', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(67, 179, 'Ho', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(68, 178, 'Er', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(69, 177, 'Tm', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(70, 194, 'Yb', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(71, 175, 'Lu', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(72, 167, 'Hf', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(73, 149, 'Ta', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(74, 141,  'W', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(75, 137, 'Re', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(76, 135, 'Os', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(77, 136, 'Ir', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(78, 139, 'Pt', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(79, 144, 'Au', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(80, 157, 'Hg', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(81, 171, 'Tl', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(82, 175, 'Pb', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(83, 170, 'Bi', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(84, 176, 'Po', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(85, 145, 'At', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(86, 214, 'Rn', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(87, 290, 'Fr', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(88, 200, 'Ra', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(89, 188, 'Ac', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(90, 180, 'Th', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(91, 161, 'Pa', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(92, 138,  'U', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(93, 130, 'Np', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(94, 162, 'Pu', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(95, 173, 'Am', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(96, 299, 'Cm', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(97, 297, 'Bk', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(98, 295, 'Cf', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(99, 292, 'Es', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(100,290, 'Fm', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(101,287, 'Md', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(102,285, 'No', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(103,282, 'Lr', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(104,280, 'Rf', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(105,280, 'Db', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(106,280, 'Sg', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(107,128, 'Bh', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(108,140, 'Hs', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(109,150, 'Mt', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(110,150, 'Ds', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(111,150, 'Rg', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(112,150, 'Cn', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(113,170, 'Nh', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(114,170, 'Fl', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(115,170, 'Mc', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(116,170, 'Lv', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(117,170, 'Ts', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(118,152, 'Og', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(119,170, 'Uue', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(120,170, 'Ubn', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(121,170, 'Ubu', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(122,170, 'Ubb', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(123,170, 'Ubt', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(124,170, 'Ubq', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(125,170, 'Ubp', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(126,170, 'Ubh', self.default_color))
+        self.Atoms.append(TPeriodTableAtom(127,170, 'Ubs', self.default_color))
 
         self.Bonds = []
         for i in range(0, self.table_size):
@@ -3399,12 +3487,12 @@ class TFDFFile:
             return self
 
 
-    def from_structure(self):
-        r=7
+    #def from_structure(self):
+    #    r=7
 
     def get_all_data(self, atoms):
         structure = TAtomicModel(atoms)
-        st = structure.toSIESTAfdf()
+        st = structure.toSIESTAfdfdata()
 
         for prop in self.properties:
             if (prop.lower().find("numberofatoms")==-1) and (prop.lower().find("numberofspecies")==-1):

@@ -798,6 +798,7 @@ class mainWindow(QMainWindow):
         for file in files:
             if os.path.exists(file):
                 self.ui.FormActionsPostList3DData.addItems([file])
+                self.ui.FormActionsPostButSurfaceParse.setEnabled(True)
             self.ui.FormActionsPostList3DData.update()
 
     def clearQTreeWidget(self, tree):
@@ -1504,6 +1505,7 @@ class mainWindow(QMainWindow):
         transp_cell.setValue(1)
         transp_cell.setSingleStep(0.1)
         transp_cell.setDecimals(2)
+        transp_cell.setMaximumWidth(145)
         self.ui.IsosurfaceColorsTable.setCellWidget(i - 1, 1, transp_cell)
         minv, maxv = self.volumeric_data_range()
         color = self.get_color(cmap, minv, maxv, float(value), color_scale)
