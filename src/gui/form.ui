@@ -104,8 +104,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>344</width>
-                 <height>585</height>
+                 <width>165</width>
+                 <height>271</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -397,8 +397,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>344</width>
-                 <height>585</height>
+                 <width>98</width>
+                 <height>28</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -460,7 +460,7 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>95</width>
+                 <width>98</width>
                  <height>198</height>
                 </rect>
                </property>
@@ -692,8 +692,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>344</width>
-                 <height>554</height>
+                 <width>339</width>
+                 <height>246</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -911,7 +911,7 @@
            <string notr="true"/>
           </property>
           <property name="currentIndex">
-           <number>0</number>
+           <number>6</number>
           </property>
           <widget class="QWidget" name="page_16">
            <property name="geometry">
@@ -1023,7 +1023,7 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>351</width>
+             <width>344</width>
              <height>529</height>
             </rect>
            </property>
@@ -1356,8 +1356,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>372</width>
-             <height>481</height>
+             <width>353</width>
+             <height>260</height>
             </rect>
            </property>
            <attribute name="label">
@@ -1528,8 +1528,8 @@
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>-101</y>
-             <width>351</width>
+             <y>0</y>
+             <width>304</width>
              <height>582</height>
             </rect>
            </property>
@@ -1945,8 +1945,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>372</width>
-             <height>481</height>
+             <width>238</width>
+             <height>374</height>
             </rect>
            </property>
            <attribute name="label">
@@ -2177,8 +2177,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>372</width>
-             <height>481</height>
+             <width>233</width>
+             <height>174</height>
             </rect>
            </property>
            <attribute name="label">
@@ -2348,7 +2348,7 @@
             <item>
              <widget class="QTabWidget" name="tabWidget_2">
               <property name="currentIndex">
-               <number>0</number>
+               <number>1</number>
               </property>
               <widget class="QWidget" name="tab_2">
                <attribute name="title">
@@ -3018,8 +3018,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>372</width>
-             <height>574</height>
+             <width>98</width>
+             <height>28</height>
             </rect>
            </property>
            <attribute name="label">
