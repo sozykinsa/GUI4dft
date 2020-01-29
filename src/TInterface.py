@@ -2,7 +2,6 @@
 
 from copy import deepcopy
 import os
-
 from AdvancedTools import TAtomicModel
 from AdvancedTools import TCalculators
 from AdvancedTools import TFDFFile
@@ -13,25 +12,16 @@ import numpy as np
 import math
 from skimage.measure import marching_cubes_lewiner, find_contours
 from skimage.measure import find_contours
-
 from PyQt5.QtWidgets import QDialog, QTableWidgetItem, QComboBox, QMainWindow
 from PyQt5.QtCore import QSize
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QStandardItemModel
 from PyQt5.QtGui import QStandardItem
-
 from image3D import Ui_MainWindow as Ui_image3D
 from atomsidentify import Ui_Dialog as Ui_Dialog_Atoms
 from TGui import GuiOpenGL
 
-
-
 class Calculator(object):
-
-    @staticmethod
-    def M11S11(DOS):
-        """Check DOS file for fdf/out filename"""
-        return TCalculators.M11S11(DOS)
 
     @staticmethod
     def ApproxParabola(ListN2):
@@ -172,7 +162,6 @@ class TVolumericDataBlock:
         self.title = title
         self.max = None
         self.min = None
-
 
 class TVolumericData:
     def __init__(self):
@@ -518,7 +507,6 @@ class AtomsIdentifier(QDialog):
                 self.ansv.append([200+i, at_type])
         if len(self.ansv) == self.ui.TheTable.rowCount():
             self.close()
-
 
 class Image3Dexporter(QMainWindow):
     def __init__(self, windowsWidth, windowsHeight):

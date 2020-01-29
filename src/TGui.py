@@ -2,24 +2,16 @@
 
 import OpenGL.GL as gl
 import OpenGL.GLU as glu
-
 from PyQt5.QtWidgets import QOpenGLWidget
 from PyQt5.QtCore import QEvent
 from PyQt5.QtCore import QObject
 from PyQt5.QtCore import Qt
 from copy import deepcopy
-
-
-#from TInterface import Calculator
-#from AdvancedTools import TPeriodTable
 from AdvancedTools import TAtom
 from AdvancedTools import TAtomicModel
 from AdvancedTools import TCalculators
-#from AdvancedTools import Helpers
 import math
-#import matplotlib.cm as cm
 import numpy as np
-
 
 class MyFilter(QObject):
     def __init__(self, wind):
@@ -51,7 +43,6 @@ class MyFilter(QObject):
 
 class GuiOpenGL(object):
     def __init__(self, widget, CheckAtomSelection, selected_atom_info = []):
-        """constructor"""
         self.openGLWidget = widget
         self.MainModel = TAtomicModel()
         self.ViewOrtho = True
@@ -723,4 +714,3 @@ class GuiOpenGL(object):
         self.object = gl.glGenLists(self.NLists)
         gl.glNewList(self.object, gl.GL_COMPILE)
         gl.glEndList()
-       

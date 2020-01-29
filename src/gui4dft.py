@@ -1,22 +1,15 @@
 # -*- coding: utf-8 -*-
-
 import sys
 import os
 import math
 from copy import deepcopy
-#import time
 from operator import itemgetter
-
 from PyQt5.QtCore import Qt
 from PyQt5.QtCore import QDir
 from PyQt5.QtCore import QSize
 from PyQt5.QtCore import QCoreApplication
 from PyQt5.QtCore import QSettings
 from PyQt5.QtCore import QVariant
-#from PyQt5.QtCore import QItemSelection
-
-#from PyQt5.QtCore import QMimeData
-#import PyQt5.QtCore as QtCore
 from PyQt5.QtWidgets import QAction
 from PyQt5.QtWidgets import QApplication
 from PyQt5.QtWidgets import QColorDialog
@@ -28,18 +21,12 @@ from PyQt5.QtWidgets import QMainWindow
 from PyQt5.QtWidgets import QTableWidgetItem
 from PyQt5.QtWidgets import QTreeWidgetItem
 from PyQt5.QtWidgets import QTreeWidgetItemIterator
-#from PyQt5 import uic
 from PyQt5.QtGui import QIcon
 from PyQt5.QtGui import QStandardItemModel
 from PyQt5.QtGui import QStandardItem
 from PyQt5.QtGui import QImage
-
-#from PyQt5.QtGui import QPainter
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtGui import QColor
-
-
-#from AdvancedTools import TAtom as Atom
 from AdvancedTools import TFDFFile
 from AdvancedTools import TPeriodTable
 from AdvancedTools import TSWNT
@@ -50,9 +37,7 @@ from TGui import GuiOpenGL
 from matplotlib.backends.backend_qt5agg import (NavigationToolbar2QT as NavigationToolbar)
 import myfigureoptions
 import numpy as np
-#import matplotlib.cm as cm
 import matplotlib.pyplot as plt
-
 from TInterface import Importer
 from TInterface import Calculator
 from TInterface import TXSF
@@ -60,10 +45,8 @@ from TInterface import TVolumericData
 from TInterface import TGaussianCube
 from TInterface import Image3Dexporter
 from TInterface import AtomsIdentifier
-
 from form import Ui_MainWindow as Ui_form
 from about import Ui_DialogAbout as Ui_about
-
 import xml.etree.ElementTree as ET
 
 class mainWindow(QMainWindow):
@@ -71,7 +54,6 @@ class mainWindow(QMainWindow):
         super(mainWindow, self).__init__(*args)
         self.ui = Ui_form()
         self.ui.setupUi(self)
-
         self.models = []
         selected_atom_info = [self.ui.FormActionsPreComboAtomsList, self.ui.FormActionsPreSpinAtomsCoordX, self.ui.FormActionsPreSpinAtomsCoordY, self.ui.FormActionsPreSpinAtomsCoordZ]
         self.MainForm = GuiOpenGL(self.ui.openGLWidget, self.ui.FormSettingsViewCheckAtomSelection, selected_atom_info)
@@ -83,16 +65,13 @@ class mainWindow(QMainWindow):
 
     def setupUI(self):
         self.load_settings()
-
         self.ui.actionOpen.triggered.connect(self.menu_open)
         self.ui.actionExport.triggered.connect(self.menu_export)
         self.ui.actionOrtho.triggered.connect(self.menu_ortho)
         self.ui.actionPerspective.triggered.connect(self.menu_perspective)
         self.ui.actionShowBox.triggered.connect(self.menu_show_box)
         self.ui.actionHideBox.triggered.connect(self.menu_hide_box)
-        
         self.ui.actionAbout.triggered.connect(self.menu_about)
-
         self.ui.FormModelComboModels.currentIndexChanged.connect(self.model_to_screen)
         self.ui.FormActionsPostTreeSurface.itemSelectionChanged.connect(self.type_of_surface)
         
@@ -147,7 +126,6 @@ class mainWindow(QMainWindow):
             model.appendRow(QStandardItem(atoms_list[i]))
         self.ui.FormActionsPreComboAtomsList.setModel(model)
 
-
         # sliders
         self.ui.FormActionsPostSliderContourXY.valueChanged.connect(self.set_xsf_z_position)
         self.ui.FormActionsPostSliderContourXZ.valueChanged.connect(self.set_xsf_y_position)
@@ -155,7 +133,6 @@ class mainWindow(QMainWindow):
 
         table_header_stylesheet = "::section{Background-color:rgb(194,169,226)}"
 
-        
         self.ui.FormModelTableAtoms.setColumnCount(4)
         self.ui.FormModelTableAtoms.setHorizontalHeaderLabels(["Atom", "x", "y","z"])
         self.ui.FormModelTableAtoms.setColumnWidth(0, 40)
@@ -200,14 +177,7 @@ class mainWindow(QMainWindow):
         ColorTypes = [ 'flag', 'prism', 'ocean', 'gist_earth', 'terrain', 'gist_stern',
             'gnuplot', 'gnuplot2', 'CMRmap', 'cubehelix', 'brg',
             'gist_rainbow', 'rainbow', 'jet', 'nipy_spectral', 'gist_ncar']
-        # Accent, Accent_r, Blues, Blues_r, BrBG, BrBG_r, BuGn, BuGn_r, BuPu, BuPu_r, CMRmap, CMRmap_r, Dark2, Dark2_r, GnBu, GnBu_r, Greens, Greens_r, Greys, Gr
-        # eys_r, OrRd, OrRd_r, Oranges, Oranges_r, PRGn, PRGn_r, Paired, Paired_r, Pastel1, Pastel1_r, Pastel2, Pastel2_r, PiYG, PiYG_r, PuBu, PuBuGn, PuBuGn_r, PuBu_r, PuOr, PuOr_r, PuRd, PuRd_r, Purples, Purples_r, RdBu,
-        # RdBu_r, RdGy, RdGy_r, RdPu, RdPu_r, RdYlBu, RdYlBu_r, RdYlGn, RdYlGn_r, Reds, Reds_r, Set1, Set1_r, Set2, Set2_r, Set3, Set3_r, Spectral, Spectral_r, Wistia, Wistia_r, YlGn, YlGnBu, YlGnBu_r, YlGn_r, YlOrBr, YlOrB
-        # r_r, YlOrRd, YlOrRd_r, afmhot, afmhot_r, autumn, autumn_r, binary, binary_r, bone, bone_r, brg, brg_r, bwr, bwr_r, cividis, cividis_r, cool, cool_r, coolwarm, coolwarm_r, copper, copper_r, cubehelix, cubehelix_r,
-        # flag, flag_r, gist_earth, gist_earth_r, gist_gray, gist_gray_r, gist_heat, gist_heat_r, gist_ncar, gist_ncar_r, gist_rainbow, gist_rainbow_r, gist_stern, gist_stern_r, gist_yarg, gist_yarg_r, gnuplot, gnuplot2, gn
-        # uplot2_r, gnuplot_r, gray, gray_r, hot, hot_r, hsv, hsv_r, inferno, inferno_r, jet, jet_r, magma, magma_r, nipy_spectral, nipy_spectral_r, ocean, ocean_r, pink, pink_r, plasma, plasma_r, prism, prism_r, rainbow, r
-        # ainbow_r, seismic, seismic_r, spring, spring_r, summer, summer_r, tab10, tab10_r, tab20, tab20_r, tab20b, tab20b_r, tab20c, tab20c_r, terrain, terrain_r, twilight, twilight_r, twilight_shifted, twilight_shifted_r,
-        #  viridis, viridis_r, winter, winter_r
+
         for t in ColorTypes:
             ColorType.appendRow(QStandardItem(t))
 
@@ -220,7 +190,6 @@ class mainWindow(QMainWindow):
         self.ui.FormSettingsColorsScaleType.setModel(ColorTypeScale)
         self.ui.FormSettingsColorsScaleType.setCurrentText(self.ColorTypeScale)
 
-
         self.ui.FormActionsPostTableCellParam.setColumnCount(5)
         self.ui.FormActionsPostTableCellParam.setHorizontalHeaderLabels(["volume", "Energy","a","b","c"])
         self.ui.FormActionsPostTableCellParam.setColumnWidth(0, 60)
@@ -228,7 +197,6 @@ class mainWindow(QMainWindow):
         self.ui.FormActionsPostTableCellParam.setColumnWidth(2, 50)
         self.ui.FormActionsPostTableCellParam.setColumnWidth(3, 50)
         self.ui.FormActionsPostTableCellParam.setColumnWidth(4, 50)
-
         
         argsCell = QStandardItemModel()
         argsCell.appendRow(QStandardItem("V"))
@@ -265,7 +233,6 @@ class mainWindow(QMainWindow):
         Save2DImageToFileAction = QAction(QIcon('./images/Save2D.jpg'), 'SaveDataFromFigure', self)
         Save2DImageToFileAction.triggered.connect(self.save_data_from_figure2d)
         self.ui.toolBar.addAction(Save2DImageToFileAction)
-
 
     def atom_delete(self):
         self.MainForm.delete_selected_atom()
@@ -421,7 +388,6 @@ class mainWindow(QMainWindow):
                     self.fill_cell_info_row(Energy, Volume, a, b, c)
             f.close()
 
-
     def colors_of_atoms(self):
         atomscolor = [ self.ui.ColorsOfAtomsTable.item(0, 0).background().color().getRgbF()]
         for i in range(0, self.ui.ColorsOfAtomsTable.rowCount()):
@@ -443,7 +409,6 @@ class mainWindow(QMainWindow):
         self.save_active_Folder()
         
     def menu_open(self):
-        """ menu Open"""
         self.ui.Form3Dand2DTabs.setCurrentIndex(0)
         if self.ui.FileBrouserUseCheckBox.isChecked():
             fname = self.ui.FileBrouserTree.model().filePath(self.ui.IndexOfFileToOpen)
@@ -478,9 +443,7 @@ class mainWindow(QMainWindow):
                     self.fill_gui()
                     self.save_active_Folder()
 
-
     def model_to_screen(self, value):
-        """print("combobox changed", value)"""
         self.plot_model(value)
         self.fill_atoms_table()
         self.fill_properties_table()
@@ -499,31 +462,25 @@ class mainWindow(QMainWindow):
         self.prepare_FormActionsComboPDOSspecies()
 
     def menu_ortho(self):
-        """ menu Ortho"""
         self.MainForm.ViewOrtho = True
         self.ui.openGLWidget.update()
 
-
     def menu_perspective(self):
-        """ menu Perspective"""
         self.MainForm.ViewOrtho = False
         self.ui.openGLWidget.update()
 
     def menu_show_box(self):
-        """  """
         self.ui.FormSettingsViewCheckShowBox.isChecked(True)
         self.MainForm.ViewBox = True
         self.ui.openGLWidget.update()
 
     def menu_hide_box(self):
-        """  """
         self.ui.FormSettingsViewCheckShowBox.isChecked(False)
         self.MainForm.ViewBox = False
         self.ui.openGLWidget.update()
 
 
     def menu_about(self):
-        """ menu About """        
         dialogWin = QDialog(self)
         dialogWin.ui = Ui_about()
         dialogWin.ui.setupUi(self)
@@ -690,7 +647,6 @@ class mainWindow(QMainWindow):
                 params.append([isovalues, conts, colors])
 
             if self.ui.FormActionsPostRadioColorPlane.isChecked() or self.ui.FormActionsPostRadioColorPlaneContours.isChecked():
-                #params_fill.append([self.XSFfile.contours_fill(isovalues_xy, "xy", slice_xy), colors_xy])
                 points = self.VolumericData.plane(plane,slice)
                 colors = self.get_color_of_plane(minv, maxv, points, cmap, color_scale)
                 params_colored_plane.append([points, colors])
@@ -725,10 +681,6 @@ class mainWindow(QMainWindow):
             self.ui.FormModelTableAtoms.setItem(i, 1, QTableWidgetItem(str(round(model[i].x,5))))
             self.ui.FormModelTableAtoms.setItem(i, 2, QTableWidgetItem(str(round(model[i].y,5))))
             self.ui.FormModelTableAtoms.setItem(i, 3, QTableWidgetItem(str(round(model[i].z,5))))
- 
-        # делаем ресайз колонок по содержимому
-        #self.ui.FormModelTableAtoms.resizeColumnsToContents()
-  
   
     def fill_properties_table(self):
         properties = []
@@ -744,8 +696,6 @@ class mainWindow(QMainWindow):
         for i in range(0, len(properties)):
             self.ui.FormModelTableProperties.setItem(i, 0, QTableWidgetItem(properties[i][0]))
             self.ui.FormModelTableProperties.setItem(i, 1, QTableWidgetItem(properties[i][1]))
-
-        #self.ui.FormModelTableAtoms.resizeColumnsToContents()
 
     def check_pdos(self, fname):
         PDOSfile = Importer.CheckPDOSfile(fname)
@@ -876,7 +826,6 @@ class mainWindow(QMainWindow):
         self.ui.FormActionsPostTableCellParam.setItem(i - 1, 3, QTableWidgetItem(str(b)))
         self.ui.FormActionsPostTableCellParam.setItem(i - 1, 4, QTableWidgetItem(str(c)))
 
-
     def delete_cell_param_row(self):
         row = self.ui.FormActionsPostTableCellParam.currentRow()
         self.ui.FormActionsPostTableCellParam.removeRow(row)
@@ -885,8 +834,6 @@ class mainWindow(QMainWindow):
         row = self.ui.IsosurfaceColorsTable.currentRow()
         self.ui.IsosurfaceColorsTable.removeRow(row)
 
-
-        
     def fill_gui(self, title = "" ):
         fname = self.filename
         if title == "":
@@ -906,7 +853,6 @@ class mainWindow(QMainWindow):
         if Importer.checkFormat(fname) == "SIESTAfdf":
             c = self.MainForm.MainModel.get_LatVect3_norm()
             self.ui.FormActionsPreZSizeFillSpace.setText(str(c))
-
 
     def plot_bonds_histogram(self):
         bonds = self.MainForm.MainModel.Bonds()
@@ -935,8 +881,6 @@ class mainWindow(QMainWindow):
             if self.ui.FormActionsComboPDOSIndexes.currentText() == 'Selected in list below':
                 self.list_of_selected_items_in_combo(atom_index, self.ui.FormActionsComboPDOSIndexes)
 
-            #print(atom_index)
-
             species = []
             if self.ui.FormActionsComboPDOSspecies.currentText() == 'All':
                 Mendeley = TPeriodTable()
@@ -948,8 +892,6 @@ class mainWindow(QMainWindow):
                 species = [self.MainForm.MainModel.atoms[self.MainForm.MainModel.selected_atom].let]
             if self.ui.FormActionsComboPDOSspecies.currentText() == 'Selected in list below':
                 self.list_of_selected_items_in_combo(species, self.ui.FormActionsComboPDOSspecies)
-
-            #print(species)
 
             number_n = []
             if self.ui.FormActionsComboPDOSn.currentText() == 'All':
@@ -1193,8 +1135,6 @@ class mainWindow(QMainWindow):
             for i in range(0, len(items)):           
                 xs.append(items[i][0])
                 ys.append(items[i][1])
-
-            #self.MplWidget.canvas.axes.plot(xs, ys)
             self.ui.MplWidget.canvas.axes.scatter(xs, ys, color='orange', s=40, marker='o')
 
             if method == "Parabola":
@@ -1231,10 +1171,8 @@ class mainWindow(QMainWindow):
             print(image_profile)
             image_profile = image_profile.scaled(320,320, aspectRatioMode=QKeepAspectRatio, transformMode=Qt.SmoothTransformation) # To scale image for example and keep its Aspect Ration
             self.ui.FormActionsPostLabelCellParamFig.setPixmap(QPixmap.fromImage(image_profile))
-            
-            
+
     def add_dos_file(self):
-        """ menu Open"""
         fname = QFileDialog.getOpenFileName(self, 'Open file', self.WorkDir)[0]
         self.WorkDir = os.path.dirname(fname)
         self.check_dos(fname)
@@ -1261,7 +1199,6 @@ class mainWindow(QMainWindow):
                         s+=str(number)+" "
                     file.write(s+"\n")
                 file.close()
-        #print(DATA)
         
     def save_image_to_file(self):
         fname = QFileDialog.getSaveFileName(self, 'Save File', self.WorkDir, "PNG files (*.png);;JPG files (*.jpg);;BMP files (*.bmp)")[0]
@@ -1285,7 +1222,6 @@ class mainWindow(QMainWindow):
             else:
                 self.ui.FormActionsPostLabelVoronoiAtom.setText("Atom: ")
                 self.ui.FormActionsPostLabelVoronoiVolume.setText("volume: ")
-
 
     def file_brouser_selection(self, selected, deselected):
         self.IndexOfFileToOpen = selected.indexes()[0]
@@ -1377,14 +1313,12 @@ class mainWindow(QMainWindow):
         nAtoms = int(self.ui.FormActionsPreNAtomsFillSpace.text())
         charge = int(self.ui.FormActionsPreAtomChargeFillSpace.text())
         radAtom = Mendeley.get_rad(charge)
-        #print(radAtom)
         let = Mendeley.get_let(charge)
         delta = float(self.ui.FormActionsPreDeltaFillSpace.text())
         nPrompts = int(self.ui.FormActionsPreNPromptsFillSpace.text())
         radTube = float(self.ui.FormActionsPreRadiusFillSpace.text())
         length = float(self.ui.FormActionsPreZSizeFillSpace.text())
         models = Calculator.FillTube(radTube, length, nAtoms, 0.01*radAtom, delta, nPrompts, let, charge)
-        #print(len(models))
 
         filename = "."
         if self.ui.FormActionsPreSaveToFileFillSpace.isChecked():
@@ -1444,7 +1378,6 @@ class mainWindow(QMainWindow):
         self.plot_model(-1)
         self.MainForm.add_atoms()
         self.fill_gui("SWNT-model")
-
 
     def select_atom_color(self):
         color = QColorDialog.getColor()
@@ -1514,9 +1447,8 @@ class mainWindow(QMainWindow):
         self.ui.FormActionsPostButSurface.setEnabled(True)
         self.ui.FormActionsPostButSurfaceDelete.setEnabled(True)
 
-
-ORGANIZATION_NAME = 'Sozykin'
-ORGANIZATION_DOMAIN = 'https://github.com/sozykinsa/GUI4dft'
+ORGANIZATION_NAME = 'SUSU'
+ORGANIZATION_DOMAIN = 'susu.ru'
 APPLICATION_NAME = 'gui4dft'
 
 SETTINGS_Folder = '\home'

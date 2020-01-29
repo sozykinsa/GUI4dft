@@ -918,8 +918,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>372</width>
-             <height>481</height>
+             <width>109</width>
+             <height>243</height>
             </rect>
            </property>
            <attribute name="label">
@@ -2347,8 +2347,20 @@
            <layout class="QVBoxLayout" name="verticalLayout_12">
             <item>
              <widget class="QTabWidget" name="tabWidget_2">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>459</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>459</height>
+               </size>
+              </property>
               <property name="currentIndex">
-               <number>1</number>
+               <number>2</number>
               </property>
               <widget class="QWidget" name="tab_2">
                <attribute name="title">
@@ -2775,6 +2787,18 @@
                 </item>
                 <item>
                  <widget class="QGroupBox" name="groupBox_7">
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>100</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>16777215</width>
+                    <height>100</height>
+                   </size>
+                  </property>
                   <property name="title">
                    <string>XZ-plane</string>
                   </property>
@@ -2862,6 +2886,18 @@
                 </item>
                 <item>
                  <widget class="QGroupBox" name="groupBox_5">
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>100</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>16777215</width>
+                    <height>100</height>
+                   </size>
+                  </property>
                   <property name="title">
                    <string>YZ-plane</string>
                   </property>
@@ -2984,16 +3020,28 @@
        <layout class="QVBoxLayout" name="verticalLayout_3">
         <item>
          <widget class="QToolBox" name="toolBox_3">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>600</height>
+           </size>
+          </property>
           <property name="currentIndex">
-           <number>0</number>
+           <number>2</number>
           </property>
           <widget class="QWidget" name="page_5">
            <property name="geometry">
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>372</width>
-             <height>574</height>
+             <width>98</width>
+             <height>28</height>
             </rect>
            </property>
            <attribute name="label">
@@ -3109,8 +3157,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>233</width>
-             <height>479</height>
+             <width>351</width>
+             <height>729</height>
             </rect>
            </property>
            <attribute name="label">
@@ -3122,7 +3170,7 @@
               <property name="minimumSize">
                <size>
                 <width>0</width>
-                <height>200</height>
+                <height>450</height>
                </size>
               </property>
               <property name="maximumSize">
@@ -3137,6 +3185,18 @@
               <layout class="QVBoxLayout" name="verticalLayout_21">
                <item>
                 <widget class="QFrame" name="frame_16">
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>250</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>16777215</width>
+                   <height>250</height>
+                  </size>
+                 </property>
                  <property name="frameShape">
                   <enum>QFrame::StyledPanel</enum>
                  </property>
@@ -3194,7 +3254,7 @@
                  <widget class="QPushButton" name="ColorBoxDialogButton">
                   <property name="geometry">
                    <rect>
-                    <x>200</x>
+                    <x>180</x>
                     <y>42</y>
                     <width>121</width>
                     <height>28</height>
@@ -3213,7 +3273,7 @@
                  <widget class="QPushButton" name="ColorBondDialogButton">
                   <property name="geometry">
                    <rect>
-                    <x>200</x>
+                    <x>180</x>
                     <y>6</y>
                     <width>121</width>
                     <height>28</height>
@@ -3232,7 +3292,7 @@
                  <widget class="QPushButton" name="ColorAxesDialogButton">
                   <property name="geometry">
                    <rect>
-                    <x>200</x>
+                    <x>180</x>
                     <y>76</y>
                     <width>121</width>
                     <height>28</height>
@@ -3251,7 +3311,7 @@
                  <widget class="QFrame" name="ColorAxes">
                   <property name="geometry">
                    <rect>
-                    <x>150</x>
+                    <x>130</x>
                     <y>80</y>
                     <width>31</width>
                     <height>16</height>
@@ -3306,7 +3366,7 @@
                  <widget class="QFrame" name="ColorBox">
                   <property name="geometry">
                    <rect>
-                    <x>150</x>
+                    <x>130</x>
                     <y>46</y>
                     <width>31</width>
                     <height>16</height>
@@ -3322,7 +3382,7 @@
                  <widget class="QFrame" name="ColorBond">
                   <property name="geometry">
                    <rect>
-                    <x>150</x>
+                    <x>130</x>
                     <y>10</y>
                     <width>31</width>
                     <height>16</height>
@@ -3338,7 +3398,7 @@
                  <widget class="QPushButton" name="ColorVoronoiDialogButton">
                   <property name="geometry">
                    <rect>
-                    <x>200</x>
+                    <x>180</x>
                     <y>106</y>
                     <width>121</width>
                     <height>28</height>
@@ -3357,7 +3417,7 @@
                  <widget class="QFrame" name="ColorVoronoi">
                   <property name="geometry">
                    <rect>
-                    <x>150</x>
+                    <x>130</x>
                     <y>110</y>
                     <width>31</width>
                     <height>16</height>
@@ -3396,6 +3456,12 @@
                 <height>250</height>
                </size>
               </property>
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>250</height>
+               </size>
+              </property>
               <property name="title">
                <string>Colors of isosurface and contours</string>
               </property>
@@ -3405,13 +3471,13 @@
                  <property name="minimumSize">
                   <size>
                    <width>0</width>
-                   <height>100</height>
+                   <height>190</height>
                   </size>
                  </property>
                  <property name="maximumSize">
                   <size>
                    <width>16777215</width>
-                   <height>200</height>
+                   <height>190</height>
                   </size>
                  </property>
                  <property name="frameShape">
@@ -3425,7 +3491,7 @@
                    <rect>
                     <x>10</x>
                     <y>40</y>
-                    <width>311</width>
+                    <width>291</width>
                     <height>40</height>
                    </rect>
                   </property>
@@ -3466,7 +3532,7 @@
                    <rect>
                     <x>50</x>
                     <y>10</y>
-                    <width>171</width>
+                    <width>151</width>
                     <height>22</height>
                    </rect>
                   </property>
@@ -3480,7 +3546,7 @@
                  <widget class="QComboBox" name="FormSettingsColorsScaleType">
                   <property name="geometry">
                    <rect>
-                    <x>230</x>
+                    <x>210</x>
                     <y>10</y>
                     <width>91</width>
                     <height>22</height>
@@ -3498,7 +3564,7 @@
                    <rect>
                     <x>140</x>
                     <y>150</y>
-                    <width>171</width>
+                    <width>161</width>
                     <height>22</height>
                    </rect>
                   </property>
@@ -3521,7 +3587,7 @@
                    <rect>
                     <x>140</x>
                     <y>120</y>
-                    <width>171</width>
+                    <width>161</width>
                     <height>22</height>
                    </rect>
                   </property>
