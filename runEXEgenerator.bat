@@ -1,1 +1,1 @@
-pyinstaller --onefile -w ./src/p4dft.py
+pyinstaller --onefile -w ./src/gui4dft.py
