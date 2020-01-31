@@ -12,7 +12,15 @@ import re
 import matplotlib
 from matplotlib import cm, colors as mcolors, markers, image as mimage
 from matplotlib.backends.qt_compat import QtGui
-from matplotlib.backends.qt_editor import _formlayout as formlayout
+
+import sys
+
+if not sys.version_info.major == 3 and sys.version_info.minor >= 7:
+    print("Python 3.7 required!")
+    print("You're using Python {}.{}.".format(sys.version_info.major, sys.version_info.minor))
+    from matplotlib.backends.qt_editor import formlayout
+else:
+    from matplotlib.backends.qt_editor import _formlayout as formlayout
 
 
 def get_icon(name):
