@@ -996,6 +996,13 @@ class mainWindow(QMainWindow):
             str1 = Helpers.list_str_to_float(str1)
             emin = float(str1[0])
             emax = float(str1[1])
+            str1 = f.readline().split()
+            str1 = Helpers.list_str_to_int(str1)
+            nspins = float(str1[1])
+            if nspins == 2:
+                self.ui.FormActionsGrBoxBANDSspin.setEnabled(True)
+            else:
+                self.ui.FormActionsGrBoxBANDSspin.setEnabled(False)
             self.ui.FormActionsSpinBANDSemin.setRange(emin, emax)
             self.ui.FormActionsSpinBANDSemin.setValue(emin)
             self.ui.FormActionsSpinBANDSemax.setRange(emin, emax)
@@ -1012,34 +1019,53 @@ class mainWindow(QMainWindow):
             if self.ui.FormActionsCheckBANDSfermyShift.isChecked():
                 shift = eF
             str1 = f.readline().split()
-            str1 = Helpers.list_str_to_float(str1)
             kmin = self.ui.FormActionsSpinBANDSxmin.value()
             kmax = self.ui.FormActionsSpinBANDSxmax.value()
             str1 = f.readline().split()
             str1 = Helpers.list_str_to_float(str1)
+            eminf = float(str1[0])
+            emaxf = float(str1[1])
             emin = self.ui.FormActionsSpinBANDSemin.value()
             emax = self.ui.FormActionsSpinBANDSemax.value()
             str1 = f.readline().split()
             str1 = Helpers.list_str_to_int(str1)
+            nbands = int(str1[0])
+            nspins = int(str1[1])
             kmesh = np.zeros((str1[2]))
-            bands = np.zeros((str1[0],str1[2]))
-            for i in range(0,str1[2]):
+            HOMO = eminf*np.ones((str1[2]))
+            LUMO = emaxf*np.ones((str1[2]))
+            bands = np.zeros((nbands*nspins, str1[2]))
+            for i in range(0, str1[2]):
                 str2 = f.readline().split()
                 str2 = Helpers.list_str_to_float(str2)
                 kmesh[i] = str2[0]
-                for j in range(1,len(str2)):
+                for j in range(1, len(str2)):
                     bands[j-1][i] = float(str2[j]) - shift
                 kol = len(str2)-1
-                while kol < str1[0]:
+                while kol < nbands*nspins:
                     str2 = f.readline().split()
                     str2 = Helpers.list_str_to_float(str2)
                     for j in range(0, len(str2)):
                         bands[kol + j][i] = float(str2[j]) - shift
                     kol += len(str2)
+
+            if self.ui.FormActionsCheckBANDSspinUp.isChecked():
+                bands = bands[:nbands]
+            else:
+                bands = bands[nbands:]
+
+            for i in range(0,nbands):
+                for j in range(0,len(bands[0])):
+                    tm = float(bands[i][j]) - eF + shift
+                    if (tm > HOMO[j]) and (tm <= 0):
+                        HOMO[j] = tm
+                    if (tm < LUMO[j]) and (tm > 0):
+                        LUMO[j] = tm
+
             nsticks = int(f.readline())
             xticks = []
             xticklabels = []
-            for i in range(0,nsticks):
+            for i in range(0, nsticks):
                 str3 = f.readline().split()
                 value = float(str3[0])
                 if (round(value,2)>=kmin) and (round(value,2)<=kmax):
@@ -1048,15 +1074,43 @@ class mainWindow(QMainWindow):
                     xticklabels.append(letter)
             f.close()
             self.ui.MplWidget.canvas.axes.clear()
+            gap = emaxf - eminf
             for band in bands:
                 self.ui.MplWidget.canvas.axes.plot(kmesh, band, linestyle = "-", color = "black")
+                for i in range(0, len(band)-1):
+                    if (band[i]-shift) * (band[i+1]-shift) <=0:
+                        gap = 0
+            mini = 0
+            if gap > 0:
+                for i in range(0, len(band)):
+                    if (LUMO[i]-HOMO[i] < gap):
+                        gap = LUMO[i]-HOMO[i]
+                        mini = i
+            #print(gap)
+
+            HOMOind = 0
+            HOMOmax = HOMO[0]
+            LUMOind = 0
+            LUMOmin = LUMO[0]
+            for i in range(0, len(band)):
+                if HOMO[i] > HOMOmax:
+                    HOMOmax = HOMO[i]
+                    HOMOind = i
+                if LUMO[i] < LUMOmin:
+                    LUMOmin = LUMO[i]
+                    LUMOind = i
+            gapIND = LUMOmin - HOMOmax
+            #print(gapIND)
+            self.ui.FormActionsLabelBANDSgap.setText("Band gap = "+str(round(gap,3))+"  "+ "Indirect gap = "+str(round(gapIND,3)))
+            #self.ui.MplWidget.canvas.axes.plot(kmesh, HOMO, linestyle="-", color="blue")
+            #self.ui.MplWidget.canvas.axes.plot(kmesh, LUMO, linestyle="-", color="red")
             self.ui.MplWidget.canvas.axes.set_xlim(kmin, kmax)
             self.ui.MplWidget.canvas.axes.set_ylim(emin, emax)
             self.ui.MplWidget.canvas.axes.set_xticks(xticks)
             for tick in xticks:
                 self.ui.MplWidget.canvas.axes.axvline(x=tick, linestyle = "--")
             if self.ui.FormActionsCheckBANDSfermyShow.isChecked():
-                self.ui.MplWidget.canvas.axes.axhline(y=eF, linestyle="-.")
+                self.ui.MplWidget.canvas.axes.axhline(y=eF - shift, linestyle="-.")
             self.ui.MplWidget.canvas.axes.set_xticklabels(xticklabels)
             self.ui.MplWidget.canvas.axes.set_xlabel("k")
             self.ui.MplWidget.canvas.axes.set_ylabel("Energy, eV")
