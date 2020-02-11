@@ -10,6 +10,7 @@ from PyQt5.QtCore import QSize
 from PyQt5.QtCore import QCoreApplication
 from PyQt5.QtCore import QSettings
 from PyQt5.QtCore import QVariant
+from PyQt5.QtCore import QLocale
 from PyQt5.QtWidgets import QAction
 from PyQt5.QtWidgets import QApplication
 from PyQt5.QtWidgets import QColorDialog
@@ -1393,16 +1394,17 @@ class mainWindow(QMainWindow):
         self.fill_models_list()
 
     def parse_volumeric_data(self):
-        Selected = self.ui.FormActionsPostList3DData.selectedItems()[0].text()
-        if Selected.endswith(".XSF"):
-            self.VolumericData = TXSF()
-        if Selected.endswith(".cube"):
-            self.VolumericData = TGaussianCube()
-        if self.VolumericData.parse(Selected):
-            data = self.VolumericData.blocks
-            self.fill_volumeric_data(self.VolumericData)
+        if len(self.ui.FormActionsPostList3DData.selectedItems())>0:
+            Selected = self.ui.FormActionsPostList3DData.selectedItems()[0].text()
+            if Selected.endswith(".XSF"):
+                self.VolumericData = TXSF()
+            if Selected.endswith(".cube"):
+                self.VolumericData = TGaussianCube()
+            if self.VolumericData.parse(Selected):
+                data = self.VolumericData.blocks
+                self.fill_volumeric_data(self.VolumericData)
 
-        self.ui.FormActionsPostButSurfaceLoadData.setEnabled(True)
+            self.ui.FormActionsPostButSurfaceLoadData.setEnabled(True)
 
     def set_xsf_z_position(self):
         value = int(self.ui.FormActionsPostSliderContourXY.value())
@@ -1492,6 +1494,7 @@ class mainWindow(QMainWindow):
         transp_cell.setValue(1)
         transp_cell.setSingleStep(0.1)
         transp_cell.setDecimals(2)
+        transp_cell.setLocale(QLocale(QLocale.English))
         transp_cell.setMaximumWidth(145)
         self.ui.IsosurfaceColorsTable.setCellWidget(i - 1, 1, transp_cell)
         minv, maxv = self.volumeric_data_range()

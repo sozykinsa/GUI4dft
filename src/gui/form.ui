@@ -1945,8 +1945,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>372</width>
-             <height>481</height>
+             <width>238</width>
+             <height>441</height>
             </rect>
            </property>
            <attribute name="label">
@@ -2391,7 +2391,7 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>361</width>
+             <width>372</width>
              <height>481</height>
             </rect>
            </property>
@@ -2414,7 +2414,7 @@
                </size>
               </property>
               <property name="currentIndex">
-               <number>2</number>
+               <number>1</number>
               </property>
               <widget class="QWidget" name="tab_2">
                <attribute name="title">
@@ -2562,6 +2562,9 @@
                           <width>16777215</width>
                           <height>24</height>
                          </size>
+                        </property>
+                        <property name="locale">
+                         <locale language="English" country="UnitedStates"/>
                         </property>
                         <property name="decimals">
                          <number>6</number>
