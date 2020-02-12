@@ -20,7 +20,7 @@
       <property name="minimumSize">
        <size>
         <width>400</width>
-        <height>0</height>
+        <height>500</height>
        </size>
       </property>
       <property name="maximumSize">
@@ -87,7 +87,7 @@
            <bool>true</bool>
           </property>
           <property name="currentIndex">
-           <number>1</number>
+           <number>0</number>
           </property>
           <widget class="QWidget" name="tab_5">
            <attribute name="title">
@@ -104,8 +104,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>165</width>
-                 <height>271</height>
+                 <width>356</width>
+                 <height>607</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -424,8 +424,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>344</width>
-                 <height>554</height>
+                 <width>356</width>
+                 <height>578</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -461,7 +461,7 @@
                  <x>0</x>
                  <y>0</y>
                  <width>98</width>
-                 <height>198</height>
+                 <height>193</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -692,8 +692,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>339</width>
-                 <height>246</height>
+                 <width>290</width>
+                 <height>240</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -901,6 +901,12 @@
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>400</height>
+           </size>
+          </property>
           <property name="layoutDirection">
            <enum>Qt::LeftToRight</enum>
           </property>
@@ -918,8 +924,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>372</width>
-             <height>481</height>
+             <width>378</width>
+             <height>509</height>
             </rect>
            </property>
            <attribute name="label">
@@ -940,32 +946,25 @@
               <property name="frameShadow">
                <enum>QFrame::Raised</enum>
               </property>
-              <widget class="QPushButton" name="FormActionsPostButCreateBonds">
-               <property name="geometry">
-                <rect>
-                 <x>20</x>
-                 <y>10</y>
-                 <width>93</width>
-                 <height>28</height>
-                </rect>
-               </property>
-               <property name="text">
-                <string>Fill table</string>
-               </property>
-              </widget>
-              <widget class="QPushButton" name="FormActionsPostButPlotBondsHistogram">
-               <property name="geometry">
-                <rect>
-                 <x>142</x>
-                 <y>10</y>
-                 <width>161</width>
-                 <height>28</height>
-                </rect>
-               </property>
-               <property name="text">
-                <string>Plot histogram</string>
-               </property>
-              </widget>
+              <property name="lineWidth">
+               <number>0</number>
+              </property>
+              <layout class="QHBoxLayout" name="horizontalLayout_32">
+               <item>
+                <widget class="QPushButton" name="FormActionsPostButCreateBonds">
+                 <property name="text">
+                  <string>Fill table</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="FormActionsPostButPlotBondsHistogram">
+                 <property name="text">
+                  <string>Plot histogram</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
              </widget>
             </item>
             <item>
@@ -985,35 +984,25 @@
               <property name="frameShadow">
                <enum>QFrame::Raised</enum>
               </property>
-              <widget class="QComboBox" name="FormActionsPostComboBonds">
-               <property name="geometry">
-                <rect>
-                 <x>0</x>
-                 <y>10</y>
-                 <width>321</width>
-                 <height>22</height>
-                </rect>
-               </property>
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-              </widget>
-              <widget class="QLabel" name="FormActionsPostLabelMeanBond">
-               <property name="geometry">
-                <rect>
-                 <x>0</x>
-                 <y>50</y>
-                 <width>321</width>
-                 <height>16</height>
-                </rect>
-               </property>
-               <property name="text">
-                <string/>
-               </property>
-              </widget>
+              <layout class="QVBoxLayout" name="verticalLayout_30">
+               <item>
+                <widget class="QComboBox" name="FormActionsPostComboBonds">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLabel" name="FormActionsPostLabelMeanBond">
+                 <property name="text">
+                  <string/>
+                 </property>
+                </widget>
+               </item>
+              </layout>
              </widget>
             </item>
            </layout>
@@ -1023,8 +1012,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>344</width>
-             <height>529</height>
+             <width>378</width>
+             <height>509</height>
             </rect>
            </property>
            <attribute name="label">
@@ -1356,8 +1345,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>353</width>
-             <height>260</height>
+             <width>323</width>
+             <height>236</height>
             </rect>
            </property>
            <attribute name="label">
@@ -1529,8 +1518,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>304</width>
-             <height>582</height>
+             <width>307</width>
+             <height>542</height>
             </rect>
            </property>
            <attribute name="label">
@@ -1945,8 +1934,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>238</width>
-             <height>441</height>
+             <width>190</width>
+             <height>419</height>
             </rect>
            </property>
            <attribute name="label">
@@ -2231,8 +2220,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>233</width>
-             <height>174</height>
+             <width>378</width>
+             <height>509</height>
             </rect>
            </property>
            <attribute name="label">
@@ -2391,8 +2380,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>372</width>
-             <height>481</height>
+             <width>378</width>
+             <height>509</height>
             </rect>
            </property>
            <attribute name="label">
@@ -2414,7 +2403,7 @@
                </size>
               </property>
               <property name="currentIndex">
-               <number>1</number>
+               <number>0</number>
               </property>
               <widget class="QWidget" name="tab_2">
                <attribute name="title">
@@ -3086,7 +3075,7 @@
           <property name="minimumSize">
            <size>
             <width>0</width>
-            <height>600</height>
+            <height>0</height>
            </size>
           </property>
           <property name="currentIndex">
@@ -3097,8 +3086,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>372</width>
-             <height>574</height>
+             <width>378</width>
+             <height>596</height>
             </rect>
            </property>
            <attribute name="label">
@@ -3226,8 +3215,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>233</width>
-             <height>729</height>
+             <width>248</width>
+             <height>724</height>
             </rect>
            </property>
            <attribute name="label">
@@ -3699,8 +3688,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>109</width>
-             <height>243</height>
+             <width>98</width>
+             <height>220</height>
             </rect>
            </property>
            <attribute name="label">
@@ -3828,8 +3817,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>695</width>
-         <height>687</height>
+         <width>700</width>
+         <height>701</height>
         </rect>
        </property>
        <attribute name="label">
@@ -3846,8 +3835,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>695</width>
-         <height>687</height>
+         <width>700</width>
+         <height>701</height>
         </rect>
        </property>
        <attribute name="label">
@@ -3882,7 +3871,7 @@
      <x>0</x>
      <y>0</y>
      <width>1124</width>
-     <height>26</height>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

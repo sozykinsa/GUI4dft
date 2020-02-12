@@ -63,6 +63,7 @@ class mainWindow(QMainWindow):
         self.PDOSdata = []
         self.filename = ""
         self.colors_cash = {}
+        self.table_header_stylesheet = "::section{Background-color:rgb(194,169,226)}"
 
     def setupUI(self):
         self.load_settings()
@@ -132,28 +133,28 @@ class mainWindow(QMainWindow):
         self.ui.FormActionsPostSliderContourXZ.valueChanged.connect(self.set_xsf_y_position)
         self.ui.FormActionsPostSliderContourYZ.valueChanged.connect(self.set_xsf_x_position)
 
-        table_header_stylesheet = "::section{Background-color:rgb(194,169,226)}"
-
         self.ui.FormModelTableAtoms.setColumnCount(4)
         self.ui.FormModelTableAtoms.setHorizontalHeaderLabels(["Atom", "x", "y","z"])
         self.ui.FormModelTableAtoms.setColumnWidth(0, 40)
         self.ui.FormModelTableAtoms.setColumnWidth(1, 80)
         self.ui.FormModelTableAtoms.setColumnWidth(2, 80)
         self.ui.FormModelTableAtoms.setColumnWidth(3, 80)
-        self.ui.FormModelTableAtoms.horizontalHeader().setStyleSheet(table_header_stylesheet)
-        self.ui.FormModelTableAtoms.verticalHeader().setStyleSheet(table_header_stylesheet)
+        self.ui.FormModelTableAtoms.horizontalHeader().setStyleSheet(self.table_header_stylesheet)
+        self.ui.FormModelTableAtoms.verticalHeader().setStyleSheet(self.table_header_stylesheet)
 
         self.ui.FormModelTableProperties.setColumnCount(2)
         self.ui.FormModelTableProperties.setHorizontalHeaderLabels(["Property", "Value"])
         self.ui.FormModelTableProperties.setColumnWidth(0, 85)
         self.ui.FormModelTableProperties.setColumnWidth(1, 240)
-        self.ui.FormModelTableProperties.horizontalHeader().setStyleSheet(table_header_stylesheet)
-        self.ui.FormModelTableProperties.verticalHeader().setStyleSheet(table_header_stylesheet)
+        self.ui.FormModelTableProperties.horizontalHeader().setStyleSheet(self.table_header_stylesheet)
+        self.ui.FormModelTableProperties.verticalHeader().setStyleSheet(self.table_header_stylesheet)
 
         self.ui.IsosurfaceColorsTable.setColumnCount(2)
         self.ui.IsosurfaceColorsTable.setHorizontalHeaderLabels(["Value","Transparancy"])
         self.ui.IsosurfaceColorsTable.setColumnWidth(0, 120)
         self.ui.IsosurfaceColorsTable.setColumnWidth(1, 150)
+        self.ui.IsosurfaceColorsTable.horizontalHeader().setStyleSheet(self.table_header_stylesheet)
+        self.ui.IsosurfaceColorsTable.verticalHeader().setStyleSheet(self.table_header_stylesheet)
 
         CellPredictionType = QStandardItemModel()
         CellPredictionType.appendRow(QStandardItem("Murnaghan"))
@@ -198,6 +199,8 @@ class mainWindow(QMainWindow):
         self.ui.FormActionsPostTableCellParam.setColumnWidth(2, 50)
         self.ui.FormActionsPostTableCellParam.setColumnWidth(3, 50)
         self.ui.FormActionsPostTableCellParam.setColumnWidth(4, 50)
+        self.ui.FormActionsPostTableCellParam.horizontalHeader().setStyleSheet(self.table_header_stylesheet)
+        self.ui.FormActionsPostTableCellParam.verticalHeader().setStyleSheet(self.table_header_stylesheet)
         
         argsCell = QStandardItemModel()
         argsCell.appendRow(QStandardItem("V"))
@@ -211,11 +214,15 @@ class mainWindow(QMainWindow):
         self.ui.FormActionsTabeDOSProperty.setHorizontalHeaderLabels(["Path", "EFermy"])
         self.ui.FormActionsTabeDOSProperty.setColumnWidth(0, 200)
         self.ui.FormActionsTabeDOSProperty.setColumnWidth(1, 80)
+        self.ui.FormActionsTabeDOSProperty.horizontalHeader().setStyleSheet(self.table_header_stylesheet)
+        self.ui.FormActionsTabeDOSProperty.verticalHeader().setStyleSheet(self.table_header_stylesheet)
 
         self.ui.FormActionsPosTableBonds.setColumnCount(2)
         self.ui.FormActionsPosTableBonds.setHorizontalHeaderLabels(["Bond", "Lenght"])
         self.ui.FormActionsPosTableBonds.setColumnWidth(0, 70)
         self.ui.FormActionsPosTableBonds.setColumnWidth(1, 180)
+        self.ui.FormActionsPosTableBonds.horizontalHeader().setStyleSheet(self.table_header_stylesheet)
+        self.ui.FormActionsPosTableBonds.verticalHeader().setStyleSheet(self.table_header_stylesheet)
 
         openAction = QAction(QIcon('./images/Open.jpg'), 'Open', self)
         openAction.setShortcut('Ctrl+O')
@@ -318,6 +325,8 @@ class mainWindow(QMainWindow):
         self.ui.ColorsOfAtomsTable.setColumnCount(1)
         self.ui.ColorsOfAtomsTable.setHorizontalHeaderLabels(["Values"])
         self.ui.ColorsOfAtomsTable.setColumnWidth(0, 120)
+        self.ui.ColorsOfAtomsTable.horizontalHeader().setStyleSheet(self.table_header_stylesheet)
+        self.ui.ColorsOfAtomsTable.verticalHeader().setStyleSheet(self.table_header_stylesheet)
         Mendeley = TPeriodTable()
         self.state_Color_Of_Atoms = str(settings.value(SETTINGS_Color_Of_Atoms, ''))
         if (self.state_Color_Of_Atoms == 'None') or (self.state_Color_Of_Atoms == ''):
