@@ -509,16 +509,13 @@ class AtomsIdentifier(QDialog):
             self.close()
 
 class Image3Dexporter(QMainWindow):
-    def __init__(self, windowsWidth, windowsHeight):
+    def __init__(self, windowsWidth, windowsHeight, quality):
             super(Image3Dexporter, self).__init__()
             self.ui = Ui_image3D()
             self.ui.setupUi(self)
             self.setFixedSize(QSize(windowsWidth, windowsHeight))
 
-            self.MainForm = GuiOpenGL(self.ui.openGLWidget, None)
+            self.MainForm = GuiOpenGL(self.ui.openGLWidget, None, quality = quality)
             self.MainForm.filter = None
-            #self.ui.openGLWidget.initializeGL()
-            #self.openGLWidget.paintGL = self.MainForm.paintGL
-            #self.openGLWidget.initializeGL = self.MainForm.initializeGL
 
             self.show()

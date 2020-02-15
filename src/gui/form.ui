@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1124</width>
-    <height>847</height>
+    <height>846</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -104,8 +104,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>356</width>
-                 <height>607</height>
+                 <width>344</width>
+                 <height>584</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -417,15 +417,15 @@
             <item>
              <widget class="QToolBox" name="toolBox_6">
               <property name="currentIndex">
-               <number>0</number>
+               <number>1</number>
               </property>
               <widget class="QWidget" name="page_27">
                <property name="geometry">
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>356</width>
-                 <height>578</height>
+                 <width>115</width>
+                 <height>179</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -460,8 +460,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>98</width>
-                 <height>193</height>
+                 <width>344</width>
+                 <height>553</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -504,32 +504,6 @@
                     <string>nPrompts</string>
                    </property>
                   </widget>
-                  <widget class="QLineEdit" name="FormActionsPreNAtomsFillSpace">
-                   <property name="geometry">
-                    <rect>
-                     <x>70</x>
-                     <y>10</y>
-                     <width>50</width>
-                     <height>22</height>
-                    </rect>
-                   </property>
-                   <property name="text">
-                    <string>5</string>
-                   </property>
-                  </widget>
-                  <widget class="QLineEdit" name="FormActionsPreNPromptsFillSpace">
-                   <property name="geometry">
-                    <rect>
-                     <x>260</x>
-                     <y>40</y>
-                     <width>50</width>
-                     <height>22</height>
-                    </rect>
-                   </property>
-                   <property name="text">
-                    <string>200</string>
-                   </property>
-                  </widget>
                   <widget class="QLabel" name="label_3">
                    <property name="geometry">
                     <rect>
@@ -556,19 +530,6 @@
                     <string>delta</string>
                    </property>
                   </widget>
-                  <widget class="QLineEdit" name="FormActionsPreDeltaFillSpace">
-                   <property name="geometry">
-                    <rect>
-                     <x>70</x>
-                     <y>40</y>
-                     <width>50</width>
-                     <height>22</height>
-                    </rect>
-                   </property>
-                   <property name="text">
-                    <string>2.5</string>
-                   </property>
-                  </widget>
                   <widget class="QLabel" name="label_6">
                    <property name="geometry">
                     <rect>
@@ -580,19 +541,6 @@
                    </property>
                    <property name="text">
                     <string>charge of atoms</string>
-                   </property>
-                  </widget>
-                  <widget class="QLineEdit" name="FormActionsPreAtomChargeFillSpace">
-                   <property name="geometry">
-                    <rect>
-                     <x>260</x>
-                     <y>10</y>
-                     <width>50</width>
-                     <height>22</height>
-                    </rect>
-                   </property>
-                   <property name="text">
-                    <string>3</string>
                    </property>
                   </widget>
                   <widget class="QLabel" name="cylinder">
@@ -608,19 +556,6 @@
                     <string>radius of cylinder (center in the origin)</string>
                    </property>
                   </widget>
-                  <widget class="QLineEdit" name="FormActionsPreRadiusFillSpace">
-                   <property name="geometry">
-                    <rect>
-                     <x>260</x>
-                     <y>70</y>
-                     <width>51</width>
-                     <height>22</height>
-                    </rect>
-                   </property>
-                   <property name="text">
-                    <string>4.2</string>
-                   </property>
-                  </widget>
                   <widget class="QLabel" name="label_7">
                    <property name="geometry">
                     <rect>
@@ -634,17 +569,103 @@
                     <string>height of cylinder (Z direction)</string>
                    </property>
                   </widget>
-                  <widget class="QLineEdit" name="FormActionsPreZSizeFillSpace">
+                  <widget class="QSpinBox" name="FormActionsPreNAtomsFillSpace">
+                   <property name="geometry">
+                    <rect>
+                     <x>70</x>
+                     <y>14</y>
+                     <width>71</width>
+                     <height>22</height>
+                    </rect>
+                   </property>
+                   <property name="maximum">
+                    <number>200</number>
+                   </property>
+                   <property name="value">
+                    <number>5</number>
+                   </property>
+                  </widget>
+                  <widget class="QDoubleSpinBox" name="FormActionsPreDeltaFillSpace">
+                   <property name="geometry">
+                    <rect>
+                     <x>70</x>
+                     <y>40</y>
+                     <width>71</width>
+                     <height>22</height>
+                    </rect>
+                   </property>
+                   <property name="maximum">
+                    <double>20.000000000000000</double>
+                   </property>
+                   <property name="singleStep">
+                    <double>0.100000000000000</double>
+                   </property>
+                   <property name="value">
+                    <double>2.500000000000000</double>
+                   </property>
+                  </widget>
+                  <widget class="QDoubleSpinBox" name="FormActionsPreZSizeFillSpace">
+                   <property name="geometry">
+                    <rect>
+                     <x>230</x>
+                     <y>100</y>
+                     <width>81</width>
+                     <height>22</height>
+                    </rect>
+                   </property>
+                   <property name="maximum">
+                    <double>1000.000000000000000</double>
+                   </property>
+                   <property name="singleStep">
+                    <double>0.100000000000000</double>
+                   </property>
+                   <property name="value">
+                    <double>10.100000000000000</double>
+                   </property>
+                  </widget>
+                  <widget class="QDoubleSpinBox" name="FormActionsPreRadiusFillSpace">
+                   <property name="geometry">
+                    <rect>
+                     <x>230</x>
+                     <y>70</y>
+                     <width>81</width>
+                     <height>22</height>
+                    </rect>
+                   </property>
+                   <property name="singleStep">
+                    <double>0.100000000000000</double>
+                   </property>
+                   <property name="value">
+                    <double>4.200000000000000</double>
+                   </property>
+                  </widget>
+                  <widget class="QSpinBox" name="FormActionsPreNPromptsFillSpace">
                    <property name="geometry">
                     <rect>
                      <x>260</x>
-                     <y>100</y>
+                     <y>40</y>
                      <width>51</width>
                      <height>22</height>
                     </rect>
                    </property>
-                   <property name="text">
-                    <string>10.1</string>
+                   <property name="maximum">
+                    <number>1000</number>
+                   </property>
+                   <property name="value">
+                    <number>200</number>
+                   </property>
+                  </widget>
+                  <widget class="QSpinBox" name="FormActionsPreAtomChargeFillSpace">
+                   <property name="geometry">
+                    <rect>
+                     <x>260</x>
+                     <y>10</y>
+                     <width>51</width>
+                     <height>22</height>
+                    </rect>
+                   </property>
+                   <property name="value">
+                    <number>3</number>
                    </property>
                   </widget>
                  </widget>
@@ -692,8 +713,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>290</width>
-                 <height>240</height>
+                 <width>339</width>
+                 <height>246</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -904,7 +925,7 @@
           <property name="minimumSize">
            <size>
             <width>0</width>
-            <height>400</height>
+            <height>600</height>
            </size>
           </property>
           <property name="layoutDirection">
@@ -924,8 +945,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>378</width>
-             <height>509</height>
+             <width>372</width>
+             <height>480</height>
             </rect>
            </property>
            <attribute name="label">
@@ -1012,8 +1033,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>378</width>
-             <height>509</height>
+             <width>344</width>
+             <height>529</height>
             </rect>
            </property>
            <attribute name="label">
@@ -1345,8 +1366,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>323</width>
-             <height>236</height>
+             <width>353</width>
+             <height>260</height>
             </rect>
            </property>
            <attribute name="label">
@@ -1518,8 +1539,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>307</width>
-             <height>542</height>
+             <width>304</width>
+             <height>582</height>
             </rect>
            </property>
            <attribute name="label">
@@ -1933,10 +1954,16 @@
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>0</y>
-             <width>190</width>
-             <height>419</height>
+             <y>-30</y>
+             <width>351</width>
+             <height>510</height>
             </rect>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>510</height>
+            </size>
            </property>
            <attribute name="label">
             <string>Band structure</string>
@@ -2204,8 +2231,14 @@
                  <x>10</x>
                  <y>10</y>
                  <width>331</width>
-                 <height>16</height>
+                 <height>50</height>
                 </rect>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>50</height>
+                </size>
                </property>
                <property name="text">
                 <string/>
@@ -2220,8 +2253,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>378</width>
-             <height>509</height>
+             <width>233</width>
+             <height>174</height>
             </rect>
            </property>
            <attribute name="label">
@@ -2380,8 +2413,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>378</width>
-             <height>509</height>
+             <width>361</width>
+             <height>481</height>
             </rect>
            </property>
            <attribute name="label">
@@ -3086,8 +3119,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>378</width>
-             <height>596</height>
+             <width>372</width>
+             <height>573</height>
             </rect>
            </property>
            <attribute name="label">
@@ -3215,8 +3248,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>248</width>
-             <height>724</height>
+             <width>233</width>
+             <height>729</height>
             </rect>
            </property>
            <attribute name="label">
@@ -3688,8 +3721,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>98</width>
-             <height>220</height>
+             <width>109</width>
+             <height>243</height>
             </rect>
            </property>
            <attribute name="label">
@@ -3817,8 +3850,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>700</width>
-         <height>701</height>
+         <width>695</width>
+         <height>686</height>
         </rect>
        </property>
        <attribute name="label">
@@ -3835,8 +3868,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>700</width>
-         <height>701</height>
+         <width>695</width>
+         <height>686</height>
         </rect>
        </property>
        <attribute name="label">
@@ -3871,7 +3904,7 @@
      <x>0</x>
      <y>0</y>
      <width>1124</width>
-     <height>20</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

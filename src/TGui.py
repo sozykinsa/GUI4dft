@@ -42,7 +42,7 @@ class MyFilter(QObject):
 
 
 class GuiOpenGL(object):
-    def __init__(self, widget, CheckAtomSelection, selected_atom_info = []):
+    def __init__(self, widget, CheckAtomSelection, selected_atom_info = [], quality = 1):
         self.openGLWidget = widget
         self.MainModel = TAtomicModel()
         self.ViewOrtho = True
@@ -76,6 +76,7 @@ class GuiOpenGL(object):
         self.openGLWidget.setMouseTracking(True)
         self.filter = MyFilter(self)
         self.openGLWidget.installEventFilter(self.filter)
+        self.quality = quality
 
         if len(selected_atom_info) == 4:
             self.selected_atom_type = selected_atom_info[0]
@@ -114,6 +115,7 @@ class GuiOpenGL(object):
         self.ViewBox = GUI.ViewBox
         self.ViewBonds = GUI.ViewBonds
         self.bondWidth = GUI.bondWidth
+        self.ViewAxes = GUI.ViewAxes
         self.ViewSurface = GUI.ViewSurface
         self.ViewContour = GUI.ViewContour
         self.ViewVoronoi = GUI.ViewVoronoi
@@ -362,7 +364,7 @@ class GuiOpenGL(object):
             Radius, # /*baseRadius:*/
             Radius2, # /*topRadius:*/
             BindingLen, # /*height:*/
-            15, # /*slices:*/
+            self.quality*15, # /*slices:*/
             1) #/*stacks:*/
         gl.glPopMatrix()
 
@@ -392,10 +394,10 @@ class GuiOpenGL(object):
             if at.isSelected() == False:
                 color = self.color_of_atoms[at.charge]
                 gl.glColor3f(color[0], color[1], color[2])
-                glu.gluSphere(self.QuadObjS[-1], 0.3, 70, 70)
+                glu.gluSphere(self.QuadObjS[-1], 0.3, self.quality*70, self.quality*70)
             else:
                 gl.glColor3f(1, 0, 0)
-                glu.gluSphere(self.QuadObjS[-1], 0.35, 70, 70)
+                glu.gluSphere(self.QuadObjS[-1], 0.35, self.quality*70, self.quality*70)
             gl.glPopMatrix()
         gl.glEndList()
         self.active = True

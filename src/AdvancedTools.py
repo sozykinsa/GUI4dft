@@ -1885,7 +1885,7 @@ class TCalculators:
                         myDelta = myDelta2
                 if myDelta > delta:
                     Models.append(Molecula)
-                    print("Iter " + str(i) + "/" + str(nPrompts) + "| we found "+str(len(Models))+"structures")
+                    print("Iter " + str(i) + "/" + str(nPrompts) + "| we found "+str(len(Models))+" structures")
                 if len(Models)==0:
                     Models.append(Molecula)
         return Models

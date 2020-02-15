@@ -57,7 +57,7 @@ class mainWindow(QMainWindow):
         self.ui.setupUi(self)
         self.models = []
         selected_atom_info = [self.ui.FormActionsPreComboAtomsList, self.ui.FormActionsPreSpinAtomsCoordX, self.ui.FormActionsPreSpinAtomsCoordY, self.ui.FormActionsPreSpinAtomsCoordZ]
-        self.MainForm = GuiOpenGL(self.ui.openGLWidget, self.ui.FormSettingsViewCheckAtomSelection, selected_atom_info)
+        self.MainForm = GuiOpenGL(self.ui.openGLWidget, self.ui.FormSettingsViewCheckAtomSelection, selected_atom_info, 1)
         self.FDFData = TFDFFile()
         self.VolumericData = TVolumericData()
         self.PDOSdata = []
@@ -825,7 +825,7 @@ class mainWindow(QMainWindow):
         b = self.MainForm.MainModel.get_LatVect2_norm()
         c = self.MainForm.MainModel.get_LatVect3_norm()
         self.fill_cell_info_row(Energy, Volume, a, b, c)
-        self.ui.FormActionsPreZSizeFillSpace.setText(str(c))
+        self.ui.FormActionsPreZSizeFillSpace.setValue(c)
 
     def fill_cell_info_row(self, Energy, Volume, a, b, c):
         i = self.ui.FormActionsPostTableCellParam.rowCount() + 1
@@ -862,7 +862,7 @@ class mainWindow(QMainWindow):
 
         if Importer.checkFormat(fname) == "SIESTAfdf":
             c = self.MainForm.MainModel.get_LatVect3_norm()
-            self.ui.FormActionsPreZSizeFillSpace.setText(str(c))
+            self.ui.FormActionsPreZSizeFillSpace.setValue(c)
 
     def plot_bonds_histogram(self):
         bonds = self.MainForm.MainModel.Bonds()
@@ -1266,9 +1266,10 @@ class mainWindow(QMainWindow):
         
     def save_image_to_file(self):
         fname = QFileDialog.getSaveFileName(self, 'Save File', self.WorkDir, "PNG files (*.png);;JPG files (*.jpg);;BMP files (*.bmp)")[0]
-        newWindow = Image3Dexporter(5*self.ui.openGLWidget.width(), 5*self.ui.openGLWidget.height())
+        newWindow = Image3Dexporter(5*self.ui.openGLWidget.width(), 5*self.ui.openGLWidget.height(),5)
         newWindow.MainForm.copy_state(self.MainForm)
         newWindow.MainForm.image3D_to_file(fname)
+        self.MainForm.image3D_to_file("copy.png")
         self.WorkDir = os.path.dirname(fname)
         self.save_active_Folder()
 
@@ -1374,14 +1375,14 @@ class mainWindow(QMainWindow):
 
     def fill_space(self):
         Mendeley = TPeriodTable()
-        nAtoms = int(self.ui.FormActionsPreNAtomsFillSpace.text())
-        charge = int(self.ui.FormActionsPreAtomChargeFillSpace.text())
+        nAtoms = int(self.ui.FormActionsPreNAtomsFillSpace.value())
+        charge = int(self.ui.FormActionsPreAtomChargeFillSpace.value())
         radAtom = Mendeley.get_rad(charge)
         let = Mendeley.get_let(charge)
-        delta = float(self.ui.FormActionsPreDeltaFillSpace.text())
-        nPrompts = int(self.ui.FormActionsPreNPromptsFillSpace.text())
-        radTube = float(self.ui.FormActionsPreRadiusFillSpace.text())
-        length = float(self.ui.FormActionsPreZSizeFillSpace.text())
+        delta = float(self.ui.FormActionsPreDeltaFillSpace.value())
+        nPrompts = int(self.ui.FormActionsPreNPromptsFillSpace.value())
+        radTube = float(self.ui.FormActionsPreRadiusFillSpace.value())
+        length = float(self.ui.FormActionsPreZSizeFillSpace.value())
         models = Calculator.FillTube(radTube, length, nAtoms, 0.01*radAtom, delta, nPrompts, let, charge)
 
         filename = "."
