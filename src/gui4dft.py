@@ -242,6 +242,30 @@ class mainWindow(QMainWindow):
         Save2DImageToFileAction.triggered.connect(self.save_data_from_figure2d)
         self.ui.toolBar.addAction(Save2DImageToFileAction)
 
+    def add_isosurface_color_to_table(self):
+        cmap = plt.get_cmap(self.ui.FormSettingsColorsScale.currentText())
+        color_scale = self.ui.FormSettingsColorsScaleType.currentText()
+        i = self.ui.IsosurfaceColorsTable.rowCount() + 1
+        value = self.ui.FormActionsPostLabelSurfaceValue.text()
+        self.ui.IsosurfaceColorsTable.setRowCount(i)  # и одну строку в таблице
+        color_cell = QTableWidgetItem(value)
+        color_cell.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled )
+        self.ui.IsosurfaceColorsTable.setItem(i - 1, 0, color_cell)
+        transp_cell = QDoubleSpinBox()
+        transp_cell.setRange(0,1)
+        transp_cell.setValue(1)
+        transp_cell.setSingleStep(0.1)
+        transp_cell.setDecimals(2)
+        transp_cell.setLocale(QLocale(QLocale.English))
+        transp_cell.setMaximumWidth(145)
+        self.ui.IsosurfaceColorsTable.setCellWidget(i - 1, 1, transp_cell)
+        minv, maxv = self.volumeric_data_range()
+        color = self.get_color(cmap, minv, maxv, float(value), color_scale)
+        self.ui.IsosurfaceColorsTable.item(i - 1, 0).setBackground(QColor.fromRgbF(color[0], color[1], color[2], color[3]))
+
+        self.ui.FormActionsPostButSurface.setEnabled(True)
+        self.ui.FormActionsPostButSurfaceDelete.setEnabled(True)
+
     def atom_delete(self):
         self.MainForm.delete_selected_atom()
 
@@ -771,6 +795,12 @@ class mainWindow(QMainWindow):
             tree.takeTopLevelItem(i)
             i -= 1
 
+    def file_brouser_selection(self, selected, deselected):
+        self.IndexOfFileToOpen = selected.indexes()[0]
+        text = str(self.ui.FileBrouserTree.model().filePath(self.IndexOfFileToOpen))
+        self.ui.FileBrouserOpenLine.setText(text)
+        self.ui.FileBrouserOpenLine.update()
+
     def fill_volumeric_data(self, data):
         type = data.type
         data = data.blocks
@@ -1127,23 +1157,21 @@ class mainWindow(QMainWindow):
 
             self.ui.MplWidget.canvas.draw()
 
-    def utf8_letter(self, let):
-        if let == '\Gamma':
-            return '\u0393'
-        if let == '\Delta':
-            return '\u0394'
-        if let == '\Lambda':
-            return '\u039B'
-        if let == '\Pi':
-            return '\u03A0'
-        if let == '\Sigma':
-            return '\u03A3'
-        if let == '\Omega':
-            return '\u03A9'
-        if let == '\Omega':
-            return '\u03A9'
-        return let
-           
+    def plot_voronoi(self):
+        if self.MainForm.isActive():
+            r = self.state_Color_Of_Voronoi.split()[0]
+            g = self.state_Color_Of_Voronoi.split()[1]
+            b = self.state_Color_Of_Voronoi.split()[2]
+            color = [float(r)/255, float(g)/255, float(b)/255]
+            maxDist = float(self.ui.FormActionsPostTextVoronoiMaxDist.value())
+            atom_index, volume = self.MainForm.add_voronoi(color, maxDist)
+            if atom_index >=0:
+                self.ui.FormActionsPostLabelVoronoiAtom.setText("Atom: " + str(atom_index))
+                self.ui.FormActionsPostLabelVoronoiVolume.setText("volume: "+str(volume))
+            else:
+                self.ui.FormActionsPostLabelVoronoiAtom.setText("Atom: ")
+                self.ui.FormActionsPostLabelVoronoiVolume.setText("volume: ")
+
     def plot_dos(self):
         self.ui.MplWidget.canvas.axes.clear()
         for index in range(self.ui.FormActionsTabeDOSProperty.rowCount()):
@@ -1265,34 +1293,24 @@ class mainWindow(QMainWindow):
                 file.close()
         
     def save_image_to_file(self):
-        fname = QFileDialog.getSaveFileName(self, 'Save File', self.WorkDir, "PNG files (*.png);;JPG files (*.jpg);;BMP files (*.bmp)")[0]
+        name = QFileDialog.getSaveFileName(self, 'Save File', self.WorkDir, "PNG files (*.png);;JPG files (*.jpg);;BMP files (*.bmp)")
+        fname = name[0]
+        if name[1] == "PNG files (*.png)":
+            ext = "png"
+        if name[1] == "JPG files (*.jpg)":
+            ext = "jpg"
+        if name[1] == "BMP files (*.bmp)":
+            ext = "bmp"
+        if not fname.endswith(ext):
+            fname +="."+ext
+
         newWindow = Image3Dexporter(5*self.ui.openGLWidget.width(), 5*self.ui.openGLWidget.height(),5)
         newWindow.MainForm.copy_state(self.MainForm)
+
         newWindow.MainForm.image3D_to_file(fname)
-        self.MainForm.image3D_to_file("copy.png")
+        #self.MainForm.image3D_to_file("copy.png")
         self.WorkDir = os.path.dirname(fname)
         self.save_active_Folder()
-
-    def plot_voronoi(self):
-        if self.MainForm.isActive():
-            r = self.state_Color_Of_Voronoi.split()[0]
-            g = self.state_Color_Of_Voronoi.split()[1]
-            b = self.state_Color_Of_Voronoi.split()[2]
-            color = [float(r)/255, float(g)/255, float(b)/255]
-            maxDist = float(self.ui.FormActionsPostTextVoronoiMaxDist.value())
-            atom_index, volume = self.MainForm.add_voronoi(color, maxDist)
-            if atom_index >=0:
-                self.ui.FormActionsPostLabelVoronoiAtom.setText("Atom: " + str(atom_index))
-                self.ui.FormActionsPostLabelVoronoiVolume.setText("volume: "+str(volume))
-            else:
-                self.ui.FormActionsPostLabelVoronoiAtom.setText("Atom: ")
-                self.ui.FormActionsPostLabelVoronoiVolume.setText("volume: ")
-
-    def file_brouser_selection(self, selected, deselected):
-        self.IndexOfFileToOpen = selected.indexes()[0]
-        text = str(self.ui.FileBrouserTree.model().filePath(self.IndexOfFileToOpen))
-        self.ui.FileBrouserOpenLine.setText(text)
-        self.ui.FileBrouserOpenLine.update()
 
     def save_active_Folder(self):
         self.save_property(SETTINGS_Folder, self.WorkDir)
@@ -1428,23 +1446,6 @@ class mainWindow(QMainWindow):
         value = int(self.ui.FormActionsPostSliderContourYZ.value())
         self.ui.FormActionsPostLabelContourYZposition.setText("Slice "+str(value)+" among "+str(self.ui.FormActionsPostSliderContourYZ.maximum()))
 
-    def swnt_create(self):
-        n = int(self.ui.FormActionsPreLineSWNTn.text())
-        m = int(self.ui.FormActionsPreLineSWNTm.text())
-        if self.ui.FormActionsPreRadioSWNTuselen.isChecked():
-            leng = float(self.ui.FormActionsPreLineSWNTlen.text())
-            cells = 1
-        else:
-            leng = 0
-            cells = float(self.ui.FormActionsPreLineSWNTcells.text())
-
-        model = TSWNT(n,m,leng,cells)
-
-        self.models.append(model)
-        self.plot_model(-1)
-        self.MainForm.add_atoms()
-        self.fill_gui("SWNT-model")
-
     def select_atom_color(self):
         color = QColorDialog.getColor()
         atomcolor = [color.getRgbF()[0], color.getRgbF()[1], color.getRgbF()[2]]
@@ -1480,6 +1481,23 @@ class mainWindow(QMainWindow):
         axescolor = self.change_color(self.ui.ColorAxes, SETTINGS_Color_Of_Axes)
         self.MainForm.set_color_of_axes(axescolor)
 
+    def swnt_create(self):
+        n = int(self.ui.FormActionsPreLineSWNTn.text())
+        m = int(self.ui.FormActionsPreLineSWNTm.text())
+        if self.ui.FormActionsPreRadioSWNTuselen.isChecked():
+            leng = float(self.ui.FormActionsPreLineSWNTlen.text())
+            cells = 1
+        else:
+            leng = 0
+            cells = float(self.ui.FormActionsPreLineSWNTcells.text())
+
+        model = TSWNT(n,m,leng,cells)
+
+        self.models.append(model)
+        self.plot_model(-1)
+        self.MainForm.add_atoms()
+        self.fill_gui("SWNT-model")
+
     def change_color(self, colorUi, property):
         color = QColorDialog.getColor()
         colorUi.setStyleSheet(
@@ -1490,29 +1508,22 @@ class mainWindow(QMainWindow):
                            str(color.getRgb()[0]) + " " + str(color.getRgb()[1]) + " " + str(color.getRgb()[2]))
         return newcolor
 
-    def add_isosurface_color_to_table(self):
-        cmap = plt.get_cmap(self.ui.FormSettingsColorsScale.currentText())
-        color_scale = self.ui.FormSettingsColorsScaleType.currentText()
-        i = self.ui.IsosurfaceColorsTable.rowCount() + 1
-        value = self.ui.FormActionsPostLabelSurfaceValue.text()
-        self.ui.IsosurfaceColorsTable.setRowCount(i)  # и одну строку в таблице
-        color_cell = QTableWidgetItem(value)
-        color_cell.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled )
-        self.ui.IsosurfaceColorsTable.setItem(i - 1, 0, color_cell)
-        transp_cell = QDoubleSpinBox()
-        transp_cell.setRange(0,1)
-        transp_cell.setValue(1)
-        transp_cell.setSingleStep(0.1)
-        transp_cell.setDecimals(2)
-        transp_cell.setLocale(QLocale(QLocale.English))
-        transp_cell.setMaximumWidth(145)
-        self.ui.IsosurfaceColorsTable.setCellWidget(i - 1, 1, transp_cell)
-        minv, maxv = self.volumeric_data_range()
-        color = self.get_color(cmap, minv, maxv, float(value), color_scale)
-        self.ui.IsosurfaceColorsTable.item(i - 1, 0).setBackground(QColor.fromRgbF(color[0], color[1], color[2], color[3]))
-
-        self.ui.FormActionsPostButSurface.setEnabled(True)
-        self.ui.FormActionsPostButSurfaceDelete.setEnabled(True)
+    def utf8_letter(self, let):
+        if let == '\Gamma':
+            return '\u0393'
+        if let == '\Delta':
+            return '\u0394'
+        if let == '\Lambda':
+            return '\u039B'
+        if let == '\Pi':
+            return '\u03A0'
+        if let == '\Sigma':
+            return '\u03A3'
+        if let == '\Omega':
+            return '\u03A9'
+        if let == '\Omega':
+            return '\u03A9'
+        return let
 
 ORGANIZATION_NAME = 'SUSU'
 ORGANIZATION_DOMAIN = 'susu.ru'
@@ -1545,6 +1556,7 @@ QCoreApplication.setAttribute(Qt.AA_ShareOpenGLContexts)
 app = QApplication(sys.argv)
 window = mainWindow()
 window.setupUI()
+window.setWindowIcon(QIcon('./images/ico.png'))
 window.show()
 
 sys.exit(app.exec_())

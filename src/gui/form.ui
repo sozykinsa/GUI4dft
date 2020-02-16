@@ -104,8 +104,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>344</width>
-                 <height>584</height>
+                 <width>356</width>
+                 <height>596</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -424,8 +424,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>115</width>
-                 <height>179</height>
+                 <width>98</width>
+                 <height>150</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -460,8 +460,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>344</width>
-                 <height>553</height>
+                 <width>104</width>
+                 <height>195</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -713,8 +713,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>339</width>
-                 <height>246</height>
+                 <width>290</width>
+                 <height>240</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -938,15 +938,15 @@
            <string notr="true"/>
           </property>
           <property name="currentIndex">
-           <number>0</number>
+           <number>6</number>
           </property>
           <widget class="QWidget" name="page_16">
            <property name="geometry">
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>372</width>
-             <height>480</height>
+             <width>378</width>
+             <height>490</height>
             </rect>
            </property>
            <attribute name="label">
@@ -1033,8 +1033,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>344</width>
-             <height>529</height>
+             <width>327</width>
+             <height>503</height>
             </rect>
            </property>
            <attribute name="label">
@@ -1366,8 +1366,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>353</width>
-             <height>260</height>
+             <width>349</width>
+             <height>236</height>
             </rect>
            </property>
            <attribute name="label">
@@ -1539,8 +1539,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>304</width>
-             <height>582</height>
+             <width>335</width>
+             <height>552</height>
             </rect>
            </property>
            <attribute name="label">
@@ -1954,8 +1954,8 @@
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>-30</y>
-             <width>351</width>
+             <y>0</y>
+             <width>230</width>
              <height>510</height>
             </rect>
            </property>
@@ -2253,8 +2253,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>233</width>
-             <height>174</height>
+             <width>243</width>
+             <height>161</height>
             </rect>
            </property>
            <attribute name="label">
@@ -2413,8 +2413,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>361</width>
-             <height>481</height>
+             <width>378</width>
+             <height>490</height>
             </rect>
            </property>
            <attribute name="label">
@@ -2436,7 +2436,7 @@
                </size>
               </property>
               <property name="currentIndex">
-               <number>0</number>
+               <number>1</number>
               </property>
               <widget class="QWidget" name="tab_2">
                <attribute name="title">
@@ -2489,32 +2489,34 @@
                   <property name="title">
                    <string>Values</string>
                   </property>
-                  <widget class="QLabel" name="FormActionsPostLabelSurfaceMin">
-                   <property name="geometry">
-                    <rect>
-                     <x>0</x>
-                     <y>20</y>
-                     <width>151</width>
-                     <height>16</height>
-                    </rect>
+                  <layout class="QHBoxLayout" name="horizontalLayout_33">
+                   <property name="topMargin">
+                    <number>2</number>
                    </property>
-                   <property name="text">
-                    <string/>
+                   <property name="bottomMargin">
+                    <number>2</number>
                    </property>
-                  </widget>
-                  <widget class="QLabel" name="FormActionsPostLabelSurfaceMax">
-                   <property name="geometry">
-                    <rect>
-                     <x>160</x>
-                     <y>20</y>
-                     <width>151</width>
-                     <height>16</height>
-                    </rect>
-                   </property>
-                   <property name="text">
-                    <string/>
-                   </property>
-                  </widget>
+                   <item>
+                    <widget class="QLabel" name="FormActionsPostLabelSurfaceMin">
+                     <property name="minimumSize">
+                      <size>
+                       <width>0</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="text">
+                      <string/>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QLabel" name="FormActionsPostLabelSurfaceMax">
+                     <property name="text">
+                      <string/>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
                  </widget>
                 </item>
                </layout>
@@ -3119,8 +3121,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>372</width>
-             <height>573</height>
+             <width>378</width>
+             <height>583</height>
             </rect>
            </property>
            <attribute name="label">
@@ -3248,8 +3250,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>233</width>
-             <height>729</height>
+             <width>273</width>
+             <height>724</height>
             </rect>
            </property>
            <attribute name="label">
@@ -3721,8 +3723,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>109</width>
-             <height>243</height>
+             <width>98</width>
+             <height>220</height>
             </rect>
            </property>
            <attribute name="label">
@@ -3850,8 +3852,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>695</width>
-         <height>686</height>
+         <width>700</width>
+         <height>694</height>
         </rect>
        </property>
        <attribute name="label">
@@ -3868,8 +3870,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>695</width>
-         <height>686</height>
+         <width>700</width>
+         <height>694</height>
         </rect>
        </property>
        <attribute name="label">
@@ -3904,7 +3906,7 @@
      <x>0</x>
      <y>0</y>
      <width>1124</width>
-     <height>26</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

@@ -179,7 +179,8 @@ class GuiOpenGL(object):
         return newModel
 
     def image3D_to_file(self, fname):
-        self.openGLWidget.grab().save(fname)
+        #self.openGLWidget.grab().save(fname)
+        self.openGLWidget.grabFramebuffer().save(fname)
 
     def atomic_structure_to_file(self, fname):
         newModel = self.get_model()
