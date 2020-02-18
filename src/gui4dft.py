@@ -986,6 +986,12 @@ class mainWindow(QMainWindow):
             self.ui.FormActionsButtonPlotPDOSselected.setEnabled(True)
 
     def plot_selected_pdos(self):
+        EF = TSIESTA.FermiEnergy(self.filename)
+        shift = 0
+        if self.ui.FormActionsCheckBANDSfermyShift_2.isChecked():
+            shift = EF
+            #energy -= EF
+
         selected = self.ui.FormActionsListPDOS.selectedItems()
         self.ui.MplWidget.canvas.axes.clear()
         for item in selected:
