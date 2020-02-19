@@ -5,4 +5,6 @@ dist/
 build/
 registration/
 venv/
+Utils/
+Examples/
 p4dft.spec

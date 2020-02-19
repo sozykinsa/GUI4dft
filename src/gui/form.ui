@@ -289,6 +289,9 @@
                      <height>24</height>
                     </size>
                    </property>
+                   <property name="locale">
+                    <locale language="English" country="UnitedStates"/>
+                   </property>
                    <property name="singleStep">
                     <double>0.500000000000000</double>
                    </property>
@@ -397,8 +400,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>344</width>
-                 <height>584</height>
+                 <width>276</width>
+                 <height>517</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -763,7 +766,7 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>95</width>
+                 <width>98</width>
                  <height>198</height>
                 </rect>
                </property>
@@ -3450,8 +3453,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>100</width>
-             <height>30</height>
+             <width>98</width>
+             <height>28</height>
             </rect>
            </property>
            <attribute name="label">
