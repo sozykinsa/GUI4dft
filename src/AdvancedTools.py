@@ -929,6 +929,10 @@ class TSIESTA:
                     NumberOfAtoms = 0
         return molecules
 
+
+
+
+
     @staticmethod
     def atoms_from_fdf(filename):
         """Return a AtList from fdf file"""
@@ -937,8 +941,14 @@ class TSIESTA:
         AtomicCoordinatesFormat = TSIESTA.atomic_coordinates_format(filename)
 
         lat_vect_1, lat_vect_2, lat_vect_3 = TSIESTA.lattice_vectors(filename)
-        if lat_vect_1 == False:
+        if lat_vect_1[0] == False:
             lat_vect_1, lat_vect_2, lat_vect_3 = TSIESTA.lattice_parameters_abc_angles(filename)
+
+        tmp_ar = {}
+        ChemicalSpeciesLabel = TSIESTA.get_block_from_siesta_fdf(filename, "ChemicalSpeciesLabel")
+        for j in range(0, len(ChemicalSpeciesLabel)):
+            tmp_ar[(ChemicalSpeciesLabel[j].split())[0]] = (ChemicalSpeciesLabel[j].split())[1:3]
+
         f = open(filename)
         lines = f.readlines()
         f.close()
@@ -950,12 +960,6 @@ class TSIESTA:
         isBlockZMatrix = False
 
         while i < len(lines):
-            if (lines[i].find("%block ChemicalSpeciesLabel") >= 0):
-                tmp_ar = {}
-                for j in range(0, NumberOfSpecies):
-                    i += 1
-                    tmp_ar[(lines[i].split())[0]] = (lines[i].split())[1:3]
-
             if (lines[i].find("%block Zmatrix") >= 0):
                 isBlockZMatrix = True
                 i += 1
@@ -985,7 +989,7 @@ class TSIESTA:
             if isBlockAtomicCoordinates == True:
                 AllAtoms = TAtomicModel(AtList1)
 
-        if lat_vect_1 == False:
+        if lat_vect_1[0] == False:
             AllAtoms.set_lat_vectors_default()
 
         else:
@@ -1326,7 +1330,7 @@ class TSIESTA:
 
             return lat_vect_1, lat_vect_2, lat_vect_3
         else:
-            return False, False, False
+            return [False, False, False], [False, False, False], [False, False, False]
 
     @staticmethod
     def lattice_vectors(filename):
@@ -1334,10 +1338,13 @@ class TSIESTA:
         LatticeVectors = TSIESTA.get_block_from_siesta_fdf(filename, 'LatticeVectors')
         if len(LatticeVectors) > 0:
             lat_vect_1 = Helpers.spacedel(LatticeVectors[0]).split()
+            lat_vect_1 = np.array(Helpers.list_str_to_float(lat_vect_1))
             lat_vect_2 = Helpers.spacedel(LatticeVectors[1]).split()
+            lat_vect_2 = np.array(Helpers.list_str_to_float(lat_vect_2))
             lat_vect_3 = Helpers.spacedel(LatticeVectors[2]).split()
+            lat_vect_3 = np.array(Helpers.list_str_to_float(lat_vect_3))
             return LatConstant*lat_vect_1, LatConstant*lat_vect_2, LatConstant*lat_vect_3
-        return False, False, False
+        return [False, False, False], [False, False, False], [False, False, False]
 
     @staticmethod
     def calc_pdos(root, atom_index, species, number_l, number_m, number_n, number_z):
