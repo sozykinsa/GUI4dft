@@ -97,7 +97,7 @@
             <item>
              <widget class="QToolBox" name="toolBox">
               <property name="currentIndex">
-               <number>0</number>
+               <number>1</number>
               </property>
               <widget class="QWidget" name="page_21">
                <property name="geometry">
@@ -400,8 +400,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>276</width>
-                 <height>517</height>
+                 <width>344</width>
+                 <height>584</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -431,10 +431,14 @@
                        </widget>
                       </item>
                       <item>
-                       <widget class="QLineEdit" name="lineEdit"/>
+                       <widget class="QLineEdit" name="FormActionsPreLeftElectrode">
+                        <property name="readOnly">
+                         <bool>true</bool>
+                        </property>
+                       </widget>
                       </item>
                       <item>
-                       <widget class="QPushButton" name="pushButton">
+                       <widget class="QPushButton" name="FormActionsPreButSelectLeftElectrode">
                         <property name="text">
                          <string/>
                         </property>
@@ -479,7 +483,11 @@
                        </spacer>
                       </item>
                       <item>
-                       <widget class="QDoubleSpinBox" name="doubleSpinBox_2"/>
+                       <widget class="QDoubleSpinBox" name="FormActionsPreSpinLeftElectrodeDist">
+                        <property name="locale">
+                         <locale language="English" country="UnitedStates"/>
+                        </property>
+                       </widget>
                       </item>
                      </layout>
                     </widget>
@@ -510,10 +518,14 @@
                        </widget>
                       </item>
                       <item>
-                       <widget class="QLineEdit" name="lineEdit_3"/>
+                       <widget class="QLineEdit" name="FormActionsPreScatRegion">
+                        <property name="readOnly">
+                         <bool>true</bool>
+                        </property>
+                       </widget>
                       </item>
                       <item>
-                       <widget class="QPushButton" name="pushButton_2">
+                       <widget class="QPushButton" name="FormActionsPreButSelectScatRegione">
                         <property name="text">
                          <string/>
                         </property>
@@ -558,7 +570,11 @@
                        </spacer>
                       </item>
                       <item>
-                       <widget class="QDoubleSpinBox" name="doubleSpinBox"/>
+                       <widget class="QDoubleSpinBox" name="FormActionsPreSpinScatRotation">
+                        <property name="locale">
+                         <locale language="English" country="UnitedStates"/>
+                        </property>
+                       </widget>
                       </item>
                      </layout>
                     </widget>
@@ -589,10 +605,14 @@
                        </widget>
                       </item>
                       <item>
-                       <widget class="QLineEdit" name="lineEdit_4"/>
+                       <widget class="QLineEdit" name="FormActionsPreRightElectrode">
+                        <property name="readOnly">
+                         <bool>true</bool>
+                        </property>
+                       </widget>
                       </item>
                       <item>
-                       <widget class="QPushButton" name="pushButton_3">
+                       <widget class="QPushButton" name="FormActionsPreButSelectRightElectrode">
                         <property name="text">
                          <string/>
                         </property>
@@ -637,7 +657,11 @@
                        </spacer>
                       </item>
                       <item>
-                       <widget class="QDoubleSpinBox" name="doubleSpinBox_3"/>
+                       <widget class="QDoubleSpinBox" name="FormActionsPreSpinRightElectrodeDist">
+                        <property name="locale">
+                         <locale language="English" country="UnitedStates"/>
+                        </property>
+                       </widget>
                       </item>
                      </layout>
                     </widget>
@@ -674,7 +698,7 @@
                     </spacer>
                    </item>
                    <item>
-                    <widget class="QPushButton" name="pushButton_5">
+                    <widget class="QPushButton" name="FormActionsPreButCreateModelWithElectrodes">
                      <property name="text">
                       <string>Create</string>
                      </property>
@@ -723,7 +747,7 @@
             <item>
              <widget class="QToolBox" name="toolBox_6">
               <property name="currentIndex">
-               <number>1</number>
+               <number>2</number>
               </property>
               <widget class="QWidget" name="page_27">
                <property name="geometry">
@@ -766,8 +790,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>98</width>
-                 <height>198</height>
+                 <width>344</width>
+                 <height>553</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -1019,8 +1043,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>339</width>
-                 <height>246</height>
+                 <width>344</width>
+                 <height>553</height>
                 </rect>
                </property>
                <attribute name="label">

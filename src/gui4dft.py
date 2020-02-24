@@ -104,6 +104,11 @@ class mainWindow(QMainWindow):
         self.ui.FormActionsPreButDeleteAtom.clicked.connect(self.atom_delete)
         self.ui.FormActionsPreButModifyAtom.clicked.connect(self.atom_modify)
         self.ui.FormActionsPreButAddAtom.clicked.connect(self.atom_add)
+
+        self.ui.FormActionsPreButSelectLeftElectrode.clicked.connect(self.add_left_electrode_file)
+        self.ui.FormActionsPreButSelectScatRegione.clicked.connect(self.add_scat_region_file)
+        self.ui.FormActionsPreButSelectRightElectrode.clicked.connect(self.add_right_electrode_file)
+        self.ui.FormActionsPreButCreateModelWithElectrodes.clicked.connect(self.create_model_with_electrodes)
                 
         self.ui.FormActionsButtonAddDOSFile.clicked.connect(self.add_dos_file)
         self.ui.FormActionsButtonPlotDOS.clicked.connect(self.plot_dos)
@@ -385,6 +390,50 @@ class mainWindow(QMainWindow):
         g = state_Color.split()[1]
         b = state_Color.split()[2]
         ColorUi.setStyleSheet("background-color:rgb(" + r + "," + g + "," + b + ")")
+
+    def add_left_electrode_file(self):
+        fname = self.get_fdf_file_name()
+        if os.path.exists(fname):
+            self.WorkDir = os.path.dirname(fname)
+            self.save_active_Folder()
+            self.ui.FormActionsPreLeftElectrode.setText(fname)
+
+    def get_fdf_file_name(self):
+        fname = QFileDialog.getOpenFileName(self, 'Open file', self.WorkDir, "FDF files (*.fdf)")[0]
+        if not fname.endswith(".fdf"):
+            fname += ".fdf"
+        return fname
+
+    def add_scat_region_file(self):
+        fname = self.get_fdf_file_name()
+        if os.path.exists(fname):
+            self.WorkDir = os.path.dirname(fname)
+            self.save_active_Folder()
+            self.ui.FormActionsPreScatRegion.setText(fname)
+
+    def add_right_electrode_file(self):
+        fname = self.get_fdf_file_name()
+        if os.path.exists(fname):
+            self.WorkDir = os.path.dirname(fname)
+            self.save_active_Folder()
+            self.ui.FormActionsPreRightElectrode.setText(fname)
+
+    def create_model_with_electrodes(self):
+        left_file = self.ui.FormActionsPreLeftElectrode.text
+        scat_file = self.ui.FormActionsPreScatRegion.text
+        righ_file = self.ui.FormActionsPreRightElectrode.text
+
+        model_left, fdf_left = Importer.Import(left_file)
+        model_scat, fdf_scat = Importer.Import(scat_file)
+        model_righ, fdf_righ = Importer.Import(righ_file)
+
+        left_bord = model_scat.minZ()
+        righ_bord = model_scat.maxZ()
+
+        left_dist = self.ui.FormActionsPreSpinLeftElectrodeDist.value
+        righ_dist = self.ui.FormActionsPreSpinRighElectrodeDist.value
+
+        scat_rotation = self.ui.FormActionsPreSpinScatRotation.value
 
     def add_cell_param(self):
         """ add cell params"""

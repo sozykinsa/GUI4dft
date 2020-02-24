@@ -1755,77 +1755,6 @@ class TSIESTA:
             i += 1
         return newlines
             
-    @staticmethod
-    def Updateatominsiestafdf(filename,model):
-        """ заменяет атомы во входном файле SIESTA """
-        NumberOfAtoms = Helpers.fromFileProperty(filename,'number_of_atoms')
-        lines = []
-        f = open(filename)
-        lines = f.readlines()    
-    
-        i = 0
-    
-        newlines = []
-        
-        while i < len(lines):    
-            if (lines[i].find("%block Zmatrix")>=0):
-                newlines.append(lines[i])
-                i += 1
-                if (lines[i].find("cartesian")>=0):
-                    newlines.append(lines[i])
-                    i+=1
-                    for j in range(0, NumberOfAtoms):
-                        row = Helpers.spacedel(lines[i])
-                        ind=row.split(' ')[0]
-                        dx = row.split(' ')[4]
-                        dy = row.split(' ')[5]
-                        dz = row.split(' ')[6]
-                        newlines.append('   '+str(ind) + '   ' +str(model.AtList[j].x)+ '   ' +str(model.AtList[j].y)+ '   ' +str(model.AtList[j].z)+'   '+str(dx)+'   '+str(dy)+'   '+str(dz)+'\n')
-    
-                        i += 1    
-            newlines.append(lines[i])
-            i+=1
-        return newlines
-    
-    @staticmethod
-    def Updatepropertyinsiestafdf(filename,property, newvalue, units):
-        """ изменяет один из параметров во входном файле """
-        lines = []
-        f = open(filename)
-        lines = f.readlines()    
-        f.close()
-        
-        f = open(filename, 'w')        
-        for j in range(0,len(lines)):
-            field = lines[j]
-            if (lines[j].find(property)>=0):
-                field = property + "  " + str(newvalue)+"  " + str(units)+"\n"            
-            f.write(field)                    
-        f.close()
-        
-    @staticmethod
-    def Updateblockinsiestafdf(filename,blockname, newvalue):
-        """ изменяет один из блоков во входном файле """
-        lines = []
-        f = open(filename)
-        lines = f.readlines()    
-        f.close()
-        
-        f = open(filename, 'w')    
-        flag = 0
-        for j in range(0,len(lines)):
-            if (lines[j].find(blockname)>=0) and (flag == 1):
-                f.write(lines[j])
-                flag = 0
-            else:
-                if (lines[j].find(blockname)>=0) and (flag == 0):
-                    f.write(lines[j])
-                    flag = 1
-                    f.write(str(newvalue)+"\n")    
-                else:
-                    if (flag == 0):
-                        f.write(lines[j])    
-        f.close()
 
     @staticmethod
     def get_block_from_siesta_fdf(filename, blockname):
@@ -2103,3 +2032,78 @@ class TFDFFile:
                     st += row
                 st +="%endblock "+block.name+"\n"
         return st
+
+    @staticmethod
+    def updateAtominSIESTAfdf(filename, model):
+        """ заменяет атомы во входном файле SIESTA """
+        NumberOfAtoms = Helpers.fromFileProperty(filename, 'NumberOfAtoms')
+        lines = []
+        f = open(filename)
+        lines = f.readlines()
+
+        i = 0
+
+        newlines = []
+
+        while i < len(lines):
+            if (lines[i].find("%block Zmatrix") >= 0):
+                newlines.append(lines[i])
+                i += 1
+                if (lines[i].find("cartesian") >= 0):
+                    newlines.append(lines[i])
+                    i += 1
+                    for j in range(0, NumberOfAtoms):
+                        row = Helpers.spacedel(lines[i])
+                        ind = row.split(' ')[0]
+                        dx = row.split(' ')[4]
+                        dy = row.split(' ')[5]
+                        dz = row.split(' ')[6]
+                        newlines.append('   ' + str(ind) + '   ' + str(model.AtList[j].x) + '   ' + str(
+                            model.AtList[j].y) + '   ' + str(model.AtList[j].z) + '   ' + str(dx) + '   ' + str(
+                            dy) + '   ' + str(dz) + '\n')
+
+                        i += 1
+            newlines.append(lines[i])
+            i += 1
+        return newlines
+
+    @staticmethod
+    def updatePropertyInSIESTAfdf(filename, property, newvalue, units):
+        """ изменяет один из параметров во входном файле """
+        lines = []
+        f = open(filename)
+        lines = f.readlines()
+        f.close()
+
+        f = open(filename, 'w')
+        for j in range(0, len(lines)):
+            field = lines[j]
+            if (lines[j].find(property) >= 0):
+                field = property + "  " + str(newvalue) + "  " + str(units) + "\n"
+            f.write(field)
+        f.close()
+
+    @staticmethod
+    def updateBlockinSIESTAfdf(filename, blockname, newvalue):
+        """ изменяет один из блоков во входном файле """
+        lines = []
+        f = open(filename)
+        lines = f.readlines()
+        f.close()
+
+        f = open(filename, 'w')
+        flag = 0
+        for j in range(0, len(lines)):
+            if (lines[j].find(blockname) >= 0) and (flag == 1):
+                f.write(lines[j])
+                flag = 0
+            else:
+                if (lines[j].find(blockname) >= 0) and (flag == 0):
+                    f.write(lines[j])
+                    flag = 1
+                    f.write(str(newvalue) + "\n")
+                else:
+                    if (flag == 0):
+                        f.write(lines[j])
+        f.close()
+
