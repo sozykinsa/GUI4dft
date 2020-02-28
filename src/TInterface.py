@@ -21,26 +21,26 @@ from image3D import Ui_MainWindow as Ui_image3D
 from atomsidentify import Ui_Dialog as Ui_Dialog_Atoms
 from TGui import GuiOpenGL
 
-class Calculator(object):
+#class Calculator(object):
 
-    @staticmethod
-    def ApproxParabola(ListN2):
-        """List N x 2"""
-        return TCalculators.ApproxParabola(ListN2)
+#    @staticmethod
+#    def ApproxParabola(ListN2):
+#        """List N x 2"""
+#        return TCalculators.ApproxParabola(ListN2)
 
-    @staticmethod
-    def ApproxMurnaghan(ListN2):
-        """List N x 2"""
-        return TCalculators.ApproxMurnaghan(ListN2)
+#    @staticmethod
+#    def ApproxMurnaghan(ListN2):
+#        """List N x 2"""
+#        return TCalculators.ApproxMurnaghan(ListN2)
 
-    @staticmethod
-    def ApproxBirchMurnaghan(ListN2):
-        """List N x 2"""
-        return TCalculators.ApproxBirchMurnaghan(ListN2)
+#    @staticmethod
+#    def ApproxBirchMurnaghan(ListN2):
+#        """List N x 2"""
+#        return TCalculators.ApproxBirchMurnaghan(ListN2)
 
-    @staticmethod
-    def FillTube(radTube, length, nAtoms, radAtom, delta, nPrompts, let, charge):
-        return TCalculators.FillTube(radTube, length, nAtoms, radAtom, delta, nPrompts, let, charge)
+#    @staticmethod
+#    def FillTube(radTube, length, nAtoms, radAtom, delta, nPrompts, let, charge):
+#        return TCalculators.FillTube(radTube, length, nAtoms, radAtom, delta, nPrompts, let, charge)
 
 class Importer(object):
 

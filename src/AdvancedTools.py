@@ -1834,16 +1834,19 @@ class TCalculators:
     @staticmethod
     def ApproxParabola(DATA):
         xdata, ydata = Helpers.ListN2Split(DATA)
-        beta_opt, beta_cov = curve_fit(TCalculators.fParabola, xdata, ydata)
-        print(beta_opt)
+        # y = ax^2 + bx + c
+        a, b, c = polyfit(xdata, ydata, 2)
+
+        #beta_opt, beta_cov = curve_fit(TCalculators.fParabola, xdata, ydata)
+        print(str(a)+"  "+str(b)+"  "+str(c))
 
         xmin = xdata.min()
         xmax = xdata.max()
 
         x = np.linspace(xmin, xmax, 200)
-        y = TCalculators.fParabola(x, *beta_opt)
+        y = TCalculators.fParabola(x, c, b, a)
 
-        return beta_opt, x.tolist(), y.tolist()
+        return [c, b, a], x.tolist(), y.tolist()
 
     @staticmethod
     def fMurnaghan(parameters,vol):

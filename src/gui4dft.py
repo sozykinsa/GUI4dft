@@ -34,13 +34,14 @@ from AdvancedTools import TSWNT
 from AdvancedTools import TAtomicModel
 from AdvancedTools import TSIESTA
 from AdvancedTools import Helpers
+from AdvancedTools import TCalculators as Calculator
 from TGui import GuiOpenGL
 from matplotlib.backends.backend_qt5agg import (NavigationToolbar2QT as NavigationToolbar)
 import myfigureoptions
 import numpy as np
 import matplotlib.pyplot as plt
 from TInterface import Importer
-from TInterface import Calculator
+#from TInterface import Calculator
 from TInterface import TXSF
 from TInterface import TVolumericData
 from TInterface import TGaussianCube
@@ -904,11 +905,16 @@ class mainWindow(QMainWindow):
     def fill_cell_info(self, fname):
         Volume = TSIESTA.volume(fname)
         Energy = TSIESTA.Etot(fname)
-        a = self.MainForm.MainModel.get_LatVect1_norm()
-        b = self.MainForm.MainModel.get_LatVect2_norm()
-        c = self.MainForm.MainModel.get_LatVect3_norm()
+
+        model, FDFData = Importer.Import(fname)
+        model = model[-1]
+        a = model.get_LatVect1_norm()
+        b = model.get_LatVect2_norm()
+        c = model.get_LatVect3_norm()
         self.fill_cell_info_row(Energy, Volume, a, b, c)
         self.ui.FormActionsPreZSizeFillSpace.setValue(c)
+        self.WorkDir = os.path.dirname(fname)
+        self.save_active_Folder()
 
     def fill_cell_info_row(self, Energy, Volume, a, b, c):
         i = self.ui.FormActionsPostTableCellParam.rowCount() + 1
@@ -1268,16 +1274,13 @@ class mainWindow(QMainWindow):
         xi = self.ui.FormActionsPostComboCellParamX.currentIndex()
         yi = 1
 
-
         for index in range(self.ui.FormActionsPostTableCellParam.rowCount()):
             x = self.ui.FormActionsPostTableCellParam.item(index, xi).text()
             y = self.ui.FormActionsPostTableCellParam.item(index, yi).text()
             items.append([float(x),float(y)])
 
         if len(items):
-
             items = sorted(items, key=itemgetter(0))
-        
             self.ui.MplWidget.canvas.axes.clear()
 
             xs = []
@@ -1293,7 +1296,8 @@ class mainWindow(QMainWindow):
                 image_path = '.\images\parabola.png' #path to your image file
                 self.ui.FormActionsPostLabelCellParamOptimExpr.setText("E(x0)="+str(round(float(aprox[0]),2)))
                 self.ui.FormActionsPostLabelCellParamOptimExpr2.setText("a="+str(round(float(aprox[1]),2)))
-                self.ui.FormActionsPostLabelCellParamOptimExpr3.setText("b="+str(round(float(aprox[2]),2)))
+                self.ui.FormActionsPostLabelCellParamOptimExpr3.setText("x0="+str(round(-float(aprox[1])/float(2*aprox[2]),2)))
+                self.ui.FormActionsPostLabelCellParamOptimExpr4.setText("b=" + str(round(float(aprox[2]), 2)))
 
             if method == "Murnaghan":
                 aprox, xs2, ys2 = Calculator.ApproxMurnaghan(items)
@@ -1320,7 +1324,7 @@ class mainWindow(QMainWindow):
 
             image_profile = QImage(image_path)
             print(image_profile)
-            image_profile = image_profile.scaled(320,320, aspectRatioMode=QKeepAspectRatio, transformMode=Qt.SmoothTransformation) # To scale image for example and keep its Aspect Ration
+            image_profile = image_profile.scaled(320,320, aspectRatioMode=Qt.KeepAspectRatio, transformMode=Qt.SmoothTransformation) # To scale image for example and keep its Aspect Ration
             self.ui.FormActionsPostLabelCellParamFig.setPixmap(QPixmap.fromImage(image_profile))
 
     def add_dos_file(self):
@@ -1610,8 +1614,6 @@ SETTINGS_Color_Of_Axes = 'colors/axes'
 QCoreApplication.setApplicationName(ORGANIZATION_NAME)
 QCoreApplication.setOrganizationDomain(ORGANIZATION_DOMAIN)
 QCoreApplication.setApplicationName(APPLICATION_NAME)
-
-print("tr")
 
 QCoreApplication.setAttribute(Qt.AA_ShareOpenGLContexts)
 app = QApplication(sys.argv)
