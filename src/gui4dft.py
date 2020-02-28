@@ -490,8 +490,12 @@ class mainWindow(QMainWindow):
         self.MainForm.atomic_structure_to_file(fname)
         self.WorkDir = os.path.dirname(fname)
         self.save_active_Folder()
+
+    def clear_form(self):
+        self.ui.FormActionsPostTableCellParam.items.clear()
         
     def menu_open(self):
+        self.clear_form()
         self.ui.Form3Dand2DTabs.setCurrentIndex(0)
         if self.ui.FileBrouserUseCheckBox.isChecked():
             fname = self.ui.FileBrouserTree.model().filePath(self.ui.IndexOfFileToOpen)

@@ -2058,8 +2058,8 @@ class TFDFFile:
                         dx = row.split(' ')[4]
                         dy = row.split(' ')[5]
                         dz = row.split(' ')[6]
-                        newlines.append('   ' + str(ind) + '   ' + str(model.AtList[j].x) + '   ' + str(
-                            model.AtList[j].y) + '   ' + str(model.AtList[j].z) + '   ' + str(dx) + '   ' + str(
+                        newlines.append('   ' + str(ind) + '   ' + str(model.atoms[j].x) + '   ' + str(
+                            model.atoms[j].y) + '   ' + str(model.atoms[j].z) + '   ' + str(dx) + '   ' + str(
                             dy) + '   ' + str(dz) + '\n')
 
                         i += 1
