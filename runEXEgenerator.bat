@@ -1,1 +1,0 @@
-pyinstaller --onefile -w ./src/gui4dft.py

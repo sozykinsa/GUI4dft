@@ -492,7 +492,7 @@ class mainWindow(QMainWindow):
         self.save_active_Folder()
 
     def clear_form(self):
-        self.ui.FormActionsPostTableCellParam.items.clear()
+        self.ui.FormActionsPostTableCellParam.setRowCount(0)
         
     def menu_open(self):
         self.clear_form()
@@ -1610,6 +1610,8 @@ SETTINGS_Color_Of_Axes = 'colors/axes'
 QCoreApplication.setApplicationName(ORGANIZATION_NAME)
 QCoreApplication.setOrganizationDomain(ORGANIZATION_DOMAIN)
 QCoreApplication.setApplicationName(APPLICATION_NAME)
+
+print("tr")
 
 QCoreApplication.setAttribute(Qt.AA_ShareOpenGLContexts)
 app = QApplication(sys.argv)
