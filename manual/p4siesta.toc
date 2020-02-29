@@ -1,3 +1,0 @@
-\babel@toc {russian}{}
-\contentsline {chapter}{\numberline {1}INSTALLATION}{3}{chapter.1}% 
-\contentsline {chapter}{\numberline {2}Quick start}{4}{chapter.2}% 

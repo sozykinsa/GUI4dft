@@ -168,6 +168,17 @@ class mainWindow(QMainWindow):
         CellPredictionType.appendRow(QStandardItem("Parabola"))
         self.ui.FormActionsPostComboCellParam.setModel(CellPredictionType)
 
+        EnergyUnitsType = QStandardItemModel()
+        EnergyUnitsType.appendRow(QStandardItem("eV"))
+        #EnergyUnitsType.appendRow(QStandardItem("Ry"))
+        self.ui.FormActionsPostComboCellParamEnergy.setModel(EnergyUnitsType)
+
+        LengUnitsType = QStandardItemModel()
+        LengUnitsType.appendRow(QStandardItem("A"))
+        #LengUnitsType.appendRow(QStandardItem("Bohr"))
+        #LengUnitsType.appendRow(QStandardItem("nm"))
+        self.ui.FormActionsPostComboCellParamLen.setModel(LengUnitsType)
+
         FillSpaceModel = QStandardItemModel()
         FillSpaceModel.appendRow(QStandardItem("cylinder"))
         #FillSpaceModel.appendRow(QStandardItem("parallelepiped"))
@@ -571,9 +582,9 @@ class mainWindow(QMainWindow):
     def menu_about(self):
         dialogWin = QDialog(self)
         dialogWin.ui = Ui_about()
-        dialogWin.ui.setupUi(self)
+        dialogWin.ui.setupUi(dialogWin)
         dialogWin.setFixedSize(QSize(532,149))
-        dialogWin.show()
+        dialogWin.exec()
 
     def volumeric_data_range(self):
         getSelected = self.ui.FormActionsPostTreeSurface.selectedItems()
@@ -1272,6 +1283,7 @@ class mainWindow(QMainWindow):
         items = []
         method = self.ui.FormActionsPostComboCellParam.currentText()
         xi = self.ui.FormActionsPostComboCellParamX.currentIndex()
+        LabelX = self.ui.FormActionsPostComboCellParamX.currentText()
         yi = 1
 
         for index in range(self.ui.FormActionsPostTableCellParam.rowCount()):
@@ -1291,14 +1303,6 @@ class mainWindow(QMainWindow):
                 ys.append(items[i][1])
             self.ui.MplWidget.canvas.axes.scatter(xs, ys, color='orange', s=40, marker='o')
 
-            if method == "Parabola":
-                aprox, xs2, ys2 = Calculator.ApproxParabola(items)
-                image_path = '.\images\parabola.png' #path to your image file
-                self.ui.FormActionsPostLabelCellParamOptimExpr.setText("E(x0)="+str(round(float(aprox[0]),2)))
-                self.ui.FormActionsPostLabelCellParamOptimExpr2.setText("a="+str(round(float(aprox[1]),2)))
-                self.ui.FormActionsPostLabelCellParamOptimExpr3.setText("x0="+str(round(-float(aprox[1])/float(2*aprox[2]),2)))
-                self.ui.FormActionsPostLabelCellParamOptimExpr4.setText("b=" + str(round(float(aprox[2]), 2)))
-
             if method == "Murnaghan":
                 aprox, xs2, ys2 = Calculator.ApproxMurnaghan(items)
                 image_path = '.\images\murnaghan.png' #path to your image file
@@ -1315,15 +1319,26 @@ class mainWindow(QMainWindow):
                 self.ui.FormActionsPostLabelCellParamOptimExpr3.setText("B0'="+str(round(float(aprox[2]),2)))
                 self.ui.FormActionsPostLabelCellParamOptimExpr4.setText("V0="+str(round(float(aprox[3]),2)))
 
+            if method == "Parabola":
+                aprox, xs2, ys2 = Calculator.ApproxParabola(items)
+                image_path = '.\images\parabola.png' #path to your image file
+                self.ui.FormActionsPostLabelCellParamOptimExpr.setText("a=" + str(round(float(aprox[2]), 2)))
+                self.ui.FormActionsPostLabelCellParamOptimExpr2.setText("b="+str(round(float(aprox[1]),2)))
+                self.ui.FormActionsPostLabelCellParamOptimExpr3.setText("x0="+str(round(-float(aprox[1])/float(2*aprox[2]),2)))
+                self.ui.FormActionsPostLabelCellParamOptimExpr4.setText("c="+str(round(float(aprox[0]),2)))
+
             self.ui.MplWidget.canvas.axes.plot(xs2, ys2)
-                
-            self.ui.MplWidget.canvas.axes.set_xlabel("volume, A^3")
-            self.ui.MplWidget.canvas.axes.set_ylabel("Energy, eV")
+
+            self.ui.MplWidget.canvas.axes.set_ylabel("Energy, "+self.ui.FormActionsPostComboCellParamEnergy.currentText())
+            if LabelX == "V":
+                self.ui.MplWidget.canvas.axes.set_xlabel(LabelX+", "+self.ui.FormActionsPostComboCellParamLen.currentText()+"^3")
+            else:
+                self.ui.MplWidget.canvas.axes.set_xlabel(LabelX + ", " + self.ui.FormActionsPostComboCellParamLen.currentText())
 
             self.ui.MplWidget.canvas.draw()
 
             image_profile = QImage(image_path)
-            print(image_profile)
+            #print(image_profile)
             image_profile = image_profile.scaled(320,320, aspectRatioMode=Qt.KeepAspectRatio, transformMode=Qt.SmoothTransformation) # To scale image for example and keep its Aspect Ration
             self.ui.FormActionsPostLabelCellParamFig.setPixmap(QPixmap.fromImage(image_profile))
 

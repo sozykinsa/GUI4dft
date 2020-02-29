@@ -1838,7 +1838,7 @@ class TCalculators:
         a, b, c = polyfit(xdata, ydata, 2)
 
         #beta_opt, beta_cov = curve_fit(TCalculators.fParabola, xdata, ydata)
-        print(str(a)+"  "+str(b)+"  "+str(c))
+        #print(str(a)+"  "+str(b)+"  "+str(c))
 
         xmin = xdata.min()
         xmax = xdata.max()
