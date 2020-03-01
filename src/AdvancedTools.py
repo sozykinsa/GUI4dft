@@ -1350,13 +1350,16 @@ class TSIESTA:
     def calc_pdos(root, atom_index, species, number_l, number_m, number_n, number_z):
         pdos = np.zeros((2, 1000))
         energy = np.zeros((1, 10))
+        nspin = 1
         for child in root:
+            if child.tag == "nspin":
+                nspin = int(child.text)
             # print(child.tag)
             if child.tag == "energy_values":
                 data = (child.text).split()
                 data = Helpers.list_str_to_float(data)
                 energy = np.array(data)
-                pdos = np.zeros((2, len(energy)))
+                pdos = np.zeros((nspin, len(energy)))
 
             if child.tag == "orbital":
                 if (int(child.attrib['atom_index']) in atom_index) and (child.attrib['species'] in species) and (
@@ -1367,7 +1370,7 @@ class TSIESTA:
                         data = (children.text).split()
                         data = Helpers.list_str_to_float(data)
                         data = np.array(data)
-                        data = data.reshape((2, len(energy)), order='F')
+                        data = data.reshape((nspin, len(energy)), order='F')
                         pdos += data
         return pdos, energy
 
@@ -1591,7 +1594,10 @@ class TSIESTA:
                         line1.append(line[i])
                 energy.append(float(line1[0]))
                 spinUp.append(float(line1[1]))
-                spinDown.append(float(line1[2]))
+                if len(line1)>2:
+                    spinDown.append(float(line1[2]))
+                else:
+                    spinDown.append(0)
                 strDOS = DOSFile.readline()
             return np.array(spinUp), np.array(spinDown), np.array(energy)
 

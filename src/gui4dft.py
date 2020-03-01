@@ -1037,7 +1037,10 @@ class mainWindow(QMainWindow):
             sign = 1
             if self.ui.FormActionsCheckPDOS_2.isChecked():
                 sign = -1
-            ys2 = sign*pdos[1]
+            if len(pdos)>1:
+                ys2 = sign*pdos[1]
+            else:
+                ys2 = np.zeros((len(pdos[0])))
 
             self.ui.MplWidget.canvas.axes.plot(energy, ys)
             if self.ui.FormActionsCheckPDOS.isChecked():
@@ -1050,7 +1053,10 @@ class mainWindow(QMainWindow):
             self.ui.MplWidget.canvas.axes.axhline(y=0, linestyle="-.")
 
             self.ui.MplWidget.canvas.draw()
-            self.PDOSdata.append([energy, pdos[0], pdos[1]])
+            if len(pdos) > 1:
+                self.PDOSdata.append([energy, pdos[0], pdos[1]])
+            else:
+                self.PDOSdata.append([energy, pdos[0], np.zeros((len(pdos[0])))])
 
             self.ui.FormActionsListPDOS.addItems([str(len(self.PDOSdata))+": "+str(self.ui.FormActionsComboPDOSIndexes.currentText())+";  "+str(self.ui.FormActionsComboPDOSspecies.currentText())])
             self.ui.FormActionsButtonPlotPDOSselected.setEnabled(True)
@@ -1191,14 +1197,15 @@ class mainWindow(QMainWindow):
             f.close()
             self.ui.MplWidget.canvas.axes.clear()
             gap = emaxf - eminf
+            #print(gap)
             for band in bands:
                 self.ui.MplWidget.canvas.axes.plot(kmesh, band, linestyle = "-", color = "black")
                 for i in range(0, len(band)-1):
-                    if (band[i]-shift) * (band[i+1]-shift) <=0:
+                    if (band[i]-eF + shift) * (band[i+1]-eF + shift) <=0:
                         gap = 0
             mini = 0
             if gap > 0:
-                for i in range(0, len(band)):
+                for i in range(0, len(bands[0])):
                     if (LUMO[i]-HOMO[i] < gap):
                         gap = LUMO[i]-HOMO[i]
                         mini = i
@@ -1208,7 +1215,7 @@ class mainWindow(QMainWindow):
             HOMOmax = HOMO[0]
             LUMOind = 0
             LUMOmin = LUMO[0]
-            for i in range(0, len(band)):
+            for i in range(0, len(bands[0])):
                 if HOMO[i] > HOMOmax:
                     HOMOmax = HOMO[i]
                     HOMOind = i
