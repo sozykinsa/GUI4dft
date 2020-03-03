@@ -309,6 +309,7 @@ class GuiOpenGL(object):
                 self.selected_atom_changed()
 
                 self.add_atoms()
+                self.add_bonds()
                 self.ViewVoronoi = False
                 self.ViewSurface = False
                 self.ViewContourFill = False

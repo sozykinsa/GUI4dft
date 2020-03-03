@@ -1616,8 +1616,6 @@ class mainWindow(QMainWindow):
             return '\u03A3'
         if let == '\Omega':
             return '\u03A9'
-        if let == '\Omega':
-            return '\u03A9'
         return let
 
 ORGANIZATION_NAME = 'SUSU'
