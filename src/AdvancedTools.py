@@ -1672,12 +1672,16 @@ class TSIESTA:
     def atomic_coordinates_format(filename):
         """ Returns the AtomicCoordinatesFormat from SIESTA output file """
         format = Helpers.fromFileProperty(filename, 'AtomicCoordinatesFormat', 1, 'string')
+        if format == None:
+            formatlow = ""
+        else:
+            formatlow = format.lower()
         ans = "NotScaledCartesianBohr"
-        if (format.lower() == "ang") or (format.lower() == "notscaledcartesianang"):
+        if (formatlow == "ang") or (formatlow == "notscaledcartesianang"):
             ans = "NotScaledCartesianAng"
-        if (format.lower() == "fractional") or (format.lower() == "scaledbylatticevectors"):
+        if (formatlow == "fractional") or (formatlow == "scaledbylatticevectors"):
             ans = "ScaledByLatticeVectors"
-        if (format.lower() == "scaledcartesian"):
+        if (formatlow == "scaledcartesian"):
             ans = "ScaledCartesian"
         return ans
 

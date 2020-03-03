@@ -505,6 +505,10 @@ class mainWindow(QMainWindow):
 
     def clear_form(self):
         self.ui.FormActionsPostTableCellParam.setRowCount(0)
+        self.ui.FormActionsPosTableBonds.setRowCount(0)
+        self.ui.FormActionsTabeDOSProperty.setRowCount(0)
+        self.ui.FormActionsListPDOS.clear()
+        self.ui.FormActionsButtonPlotBANDS.setEnabled(False)
         
     def menu_open(self):
         self.clear_form()
@@ -1013,6 +1017,8 @@ class mainWindow(QMainWindow):
                 number_l = range(0, 8)
             if self.ui.FormActionsComboPDOSl.currentText() == 'Selected':
                 self.list_of_selected_items_in_combo(number_l, self.ui.FormActionsComboPDOSl)
+            print(number_l)
+
             number_m = []
             if self.ui.FormActionsComboPDOSm.currentText() == 'All':
                 number_m = range(-7, 8)
@@ -1058,12 +1064,13 @@ class mainWindow(QMainWindow):
             else:
                 self.PDOSdata.append([energy, pdos[0], np.zeros((len(pdos[0])))])
 
-            self.ui.FormActionsListPDOS.addItems([str(len(self.PDOSdata))+": "+str(self.ui.FormActionsComboPDOSIndexes.currentText())+";  "+str(self.ui.FormActionsComboPDOSspecies.currentText())])
+            self.ui.FormActionsListPDOS.addItems([str(len(self.PDOSdata))+": "+str(self.ui.FormActionsComboPDOSIndexes.currentText())+";  "+str(self.ui.FormActionsComboPDOSspecies.currentText())+" : "+ self.ui.FormActionsEditPDOSLabel.text()])
             self.ui.FormActionsButtonPlotPDOSselected.setEnabled(True)
 
     def plot_selected_pdos(self):
         EF = TSIESTA.FermiEnergy(self.filename)
         shift = 0
+        labels = []
         if self.ui.FormActionsCheckBANDSfermyShift_2.isChecked():
             shift = EF
             #energy -= EF
@@ -1072,6 +1079,7 @@ class mainWindow(QMainWindow):
         self.ui.MplWidget.canvas.axes.clear()
         for item in selected:
             ind = int(item.text().split(':')[0])-1
+            labels.append(item.text())
 
             energy = self.PDOSdata[ind][0]
             spinUp = self.PDOSdata[ind][1]
@@ -1090,6 +1098,8 @@ class mainWindow(QMainWindow):
                 self.ui.MplWidget.canvas.axes.axvline(x=EF - shift, linestyle="--")
         self.ui.MplWidget.canvas.axes.axhline(y=0, linestyle="-.")
 
+        self.ui.MplWidget.canvas.axes.legend(labels)
+
         self.ui.MplWidget.canvas.draw()
 
     def list_of_selected_items_in_combo(self, atom_index, combo):
@@ -1097,7 +1107,7 @@ class mainWindow(QMainWindow):
         maxi = combo.count()
         for i in range(0, maxi):
             if model.itemFromIndex(model.index(i, 0)).checkState() == Qt.Checked:
-                atom_index.append(model.itemFromIndex(model.index(i, 0)).text())
+                atom_index.append(int(model.itemFromIndex(model.index(i, 0)).text()))
 
     def parse_bands(self):
         file = self.ui.FormActionsLineBANDSfile.text()
