@@ -363,6 +363,9 @@ class mainWindow(QMainWindow):
         state_FormSettingsViewSpinBondWidth = int(settings.value(SETTINGS_FormSettingsViewSpinBondWidth, '20'))
         self.ui.FormSettingsViewSpinBondWidth.setValue(state_FormSettingsViewSpinBondWidth)
         self.ui.FormSettingsViewSpinBondWidth.valueChanged.connect(self.save_state_FormSettingsViewSpinBondWidth)
+        state_FormSettingsViewSpinContourWidth = int(settings.value(SETTINGS_FormSettingsViewSpinContourWidth, '20'))
+        self.ui.FormSettingsViewSpinContourWidth.setValue(state_FormSettingsViewSpinContourWidth)
+        self.ui.FormSettingsViewSpinContourWidth.valueChanged.connect(self.save_state_FormSettingsViewSpinContourWidth)
         self.ui.ColorsOfAtomsTable.setColumnCount(1)
         self.ui.ColorsOfAtomsTable.setHorizontalHeaderLabels(["Values"])
         self.ui.ColorsOfAtomsTable.setColumnWidth(0, 120)
@@ -560,7 +563,8 @@ class mainWindow(QMainWindow):
         ViewAxes = self.ui.FormSettingsViewCheckShowAxes.isChecked()
         boxcolor = self.get_color_from_SETTING(self.state_Color_Of_Box)
         atomscolor = self.colors_of_atoms()
-        self.MainForm.set_atomic_structure(self.models[value], atomscolor, ViewBox, boxcolor, ViewBonds, bondscolor, bondWidth, ViewAxes, axescolor)
+        contour_width = (self.ui.FormSettingsViewSpinContourWidth.value())/1000.0
+        self.MainForm.set_atomic_structure(self.models[value], atomscolor, ViewBox, boxcolor, ViewBonds, bondscolor, bondWidth, ViewAxes, axescolor, contour_width)
         self.prepare_FormActionsComboPDOSIndexes()
         self.prepare_FormActionsComboPDOSspecies()
 
@@ -1434,6 +1438,9 @@ class mainWindow(QMainWindow):
     def save_state_FormSettingsColorsFixed(self):
         self.save_property(SETTINGS_FormSettingsColorsFixed, self.ui.FormSettingsColorsFixed.isChecked())
 
+    def save_state_FormSettingsViewSpinContourWidth(self):
+        self.save_property(SETTINGS_FormSettingsViewSpinContourWidth, self.ui.FormSettingsViewSpinContourWidth.text())
+
     def save_state_FormSettingsColorsFixedMin(self):
         self.save_property(SETTINGS_FormSettingsColorsFixedMin, self.ui.FormSettingsColorsFixedMin.text())
 
@@ -1634,6 +1641,7 @@ SETTINGS_FormSettingsViewCheckShowBox = 'view/CheckShowBox'
 SETTINGS_FormSettingsViewCheckShowAxes = 'view/CheckShowAxes'
 SETTINGS_FormSettingsViewCheckShowBonds = 'view/CheckShowBonds'
 SETTINGS_FormSettingsViewSpinBondWidth = 'view/SpinBondWidth'
+SETTINGS_FormSettingsViewSpinContourWidth = 'view/SpinContourWidth'
 
 SETTINGS_Color_Of_Atoms = 'colors/atoms'
 SETTINGS_Color_Of_Bonds = 'colors/bonds'

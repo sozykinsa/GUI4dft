@@ -129,6 +129,7 @@ class GuiOpenGL(object):
         self.color_of_atoms = GUI.color_of_atoms
         self.color_of_bonds = GUI.color_of_bonds
         self.color_of_box = GUI.color_of_box
+        self.contour_width = GUI.contour_width
         self.add_atoms()
         self.add_bonds()
         self.add_box()
@@ -147,7 +148,7 @@ class GuiOpenGL(object):
         radius = min(width, height)*float(self.Scale)
         return (2.*x-width)/radius, -(2.*y-height)/radius
 
-    def set_atomic_structure(self, structure, atomscolors, ViewBox, boxcolor, ViewBonds, bondscolor, bondWidth, ViewAxes, axescolor):
+    def set_atomic_structure(self, structure, atomscolors, ViewBox, boxcolor, ViewBonds, bondscolor, bondWidth, ViewAxes, axescolor, contour_width):
         self.clean()
         self.MainModel = deepcopy(structure)
         cm = self.MainModel.centr_mass()
@@ -168,6 +169,7 @@ class GuiOpenGL(object):
         self.color_of_bonds = bondscolor
         self.color_of_box = boxcolor
         self.MainModel.FindBonds()
+        self.contour_width = contour_width
         self.add_bonds()
         self.add_box()
         self.add_axes()
@@ -534,8 +536,7 @@ class GuiOpenGL(object):
                     for i in range(0,len(contour)-1):
                         p1 = contour[i]
                         p2 = contour[i+1]
-                        width = 0.03
-                        self.add_bond(p1, p2, width)
+                        self.add_bond(p1, p2, self.contour_width)
         gl.glEndList()
         self.ViewContour = True
         self.openGLWidget.update()
