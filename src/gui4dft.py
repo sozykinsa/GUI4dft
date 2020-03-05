@@ -95,6 +95,7 @@ class mainWindow(QMainWindow):
         self.ui.ColorAtomDialogButton.clicked.connect(self.select_atom_color)
         self.ui.ColorVoronoiDialogButton.clicked.connect(self.select_voronoi_color)
         self.ui.ColorAxesDialogButton.clicked.connect(self.select_axes_color)
+        self.ui.ColorContourDialogButton.clicked.connect(self.select_contour_color)
         self.ui.FormActionsPostButSurfaceAdd.clicked.connect(self.add_isosurface_color_to_table)
         self.ui.FormActionsPostButSurfaceDelete.clicked.connect(self.delete_isosurface_color_from_table)
         self.ui.FormActionsButtonPlotPDOS.clicked.connect(self.plot_pdos)
@@ -259,6 +260,28 @@ class mainWindow(QMainWindow):
         Save2DImageToFileAction.triggered.connect(self.save_data_from_figure2d)
         self.ui.toolBar.addAction(Save2DImageToFileAction)
 
+    def add_left_electrode_file(self):
+        fname = self.get_fdf_file_name()
+        if os.path.exists(fname):
+            self.WorkDir = os.path.dirname(fname)
+            self.save_active_Folder()
+            self.ui.FormActionsPreLeftElectrode.setText(fname)
+
+    def add_scat_region_file(self):
+        fname = self.get_fdf_file_name()
+        if os.path.exists(fname):
+            self.WorkDir = os.path.dirname(fname)
+            self.save_active_Folder()
+            self.ui.FormActionsPreScatRegion.setText(fname)
+
+    def add_right_electrode_file(self):
+        fname = self.get_fdf_file_name()
+        if os.path.exists(fname):
+            self.WorkDir = os.path.dirname(fname)
+            self.save_active_Folder()
+            self.ui.FormActionsPreRightElectrode.setText(fname)
+
+
     def add_isosurface_color_to_table(self):
         cmap = plt.get_cmap(self.ui.FormSettingsColorsScale.currentText())
         color_scale = self.ui.FormSettingsColorsScaleType.currentText()
@@ -282,6 +305,48 @@ class mainWindow(QMainWindow):
 
         self.ui.FormActionsPostButSurface.setEnabled(True)
         self.ui.FormActionsPostButSurfaceDelete.setEnabled(True)
+
+    def add_cell_param(self):
+        """ add cell params"""
+        fname = QFileDialog.getOpenFileName(self, 'Open file', self.WorkDir)[0]
+        if Importer.checkFormat(fname) == "SIESTAout":
+            self.fill_cell_info(fname)
+
+    def add_cell_param_row(self):
+        i = self.ui.FormActionsPostTableCellParam.rowCount()+1
+        self.ui.FormActionsPostTableCellParam.setRowCount(i)
+
+    def add_data_cell_param(self):
+        """ add cell params from file"""
+        fname = QFileDialog.getOpenFileName(self, 'Open file', self.WorkDir)[0]
+        self.WorkDir = os.path.dirname(fname)
+
+        if os.path.exists(fname):
+            f = open(fname)
+            rows = f.readlines()
+
+            for i in range(2,len(rows)):
+                row = rows[i].split()
+                if len(row) > 1:
+                    Energy = row[1]
+                    Volume = row[0]
+                    a = 0
+                    if len(row) > 2:
+                        a = row[2]
+                    b = 0
+                    if len(row) > 3:
+                        b = row[3]
+                    c = 0
+                    if len(row) > 4:
+                        c = row[4]
+                    self.fill_cell_info_row(Energy, Volume, a, b, c)
+            f.close()
+
+    def add_dos_file(self):
+        fname = QFileDialog.getOpenFileName(self, 'Open file', self.WorkDir)[0]
+        self.WorkDir = os.path.dirname(fname)
+        self.check_dos(fname)
+
 
     def atom_delete(self):
         self.MainForm.delete_selected_atom()
@@ -400,18 +465,14 @@ class mainWindow(QMainWindow):
         self.state_Color_Of_Axes = str(settings.value(SETTINGS_Color_Of_Axes, '0 255 0'))
         self.color_to_ui(self.ui.ColorAxes, self.state_Color_Of_Axes)
 
+        self.state_Color_Of_Contour = str(settings.value(SETTINGS_Color_Of_Contour, '0 255 0'))
+        self.color_to_ui(self.ui.ColorContour, self.state_Color_Of_Contour)
+
     def color_to_ui(self, ColorUi, state_Color):
         r = state_Color.split()[0]
         g = state_Color.split()[1]
         b = state_Color.split()[2]
         ColorUi.setStyleSheet("background-color:rgb(" + r + "," + g + "," + b + ")")
-
-    def add_left_electrode_file(self):
-        fname = self.get_fdf_file_name()
-        if os.path.exists(fname):
-            self.WorkDir = os.path.dirname(fname)
-            self.save_active_Folder()
-            self.ui.FormActionsPreLeftElectrode.setText(fname)
 
     def get_fdf_file_name(self):
         fname = QFileDialog.getOpenFileName(self, 'Open file', self.WorkDir, "FDF files (*.fdf)")[0]
@@ -419,19 +480,6 @@ class mainWindow(QMainWindow):
             fname += ".fdf"
         return fname
 
-    def add_scat_region_file(self):
-        fname = self.get_fdf_file_name()
-        if os.path.exists(fname):
-            self.WorkDir = os.path.dirname(fname)
-            self.save_active_Folder()
-            self.ui.FormActionsPreScatRegion.setText(fname)
-
-    def add_right_electrode_file(self):
-        fname = self.get_fdf_file_name()
-        if os.path.exists(fname):
-            self.WorkDir = os.path.dirname(fname)
-            self.save_active_Folder()
-            self.ui.FormActionsPreRightElectrode.setText(fname)
 
     def create_model_with_electrodes(self):
         left_file = self.ui.FormActionsPreLeftElectrode.text
@@ -450,41 +498,6 @@ class mainWindow(QMainWindow):
 
         scat_rotation = self.ui.FormActionsPreSpinScatRotation.value
 
-    def add_cell_param(self):
-        """ add cell params"""
-        fname = QFileDialog.getOpenFileName(self, 'Open file', self.WorkDir)[0]
-        if Importer.checkFormat(fname) == "SIESTAout":
-            self.fill_cell_info(fname)
-
-    def add_cell_param_row(self):
-        i = self.ui.FormActionsPostTableCellParam.rowCount()+1
-        self.ui.FormActionsPostTableCellParam.setRowCount(i)
-
-    def add_data_cell_param(self):
-        """ add cell params from file"""
-        fname = QFileDialog.getOpenFileName(self, 'Open file', self.WorkDir)[0]
-        self.WorkDir = os.path.dirname(fname)
-
-        if os.path.exists(fname):
-            f = open(fname)
-            rows = f.readlines()
-
-            for i in range(2,len(rows)):
-                row = rows[i].split()
-                if len(row) > 1:
-                    Energy = row[1]
-                    Volume = row[0]
-                    a = 0
-                    if len(row) > 2:
-                        a = row[2]
-                    b = 0
-                    if len(row) > 3:
-                        b = row[3]
-                    c = 0
-                    if len(row) > 4:
-                        c = row[4]
-                    self.fill_cell_info_row(Energy, Volume, a, b, c)
-            f.close()
 
     def colors_of_atoms(self):
         atomscolor = [ self.ui.ColorsOfAtomsTable.item(0, 0).background().color().getRgbF()]
@@ -537,7 +550,7 @@ class mainWindow(QMainWindow):
 
             if len(problemAtoms)>0:
                 self.atomDialog = AtomsIdentifier(problemAtoms)
-                self.atomDialog.exec()
+                self.atomDialog.show()
                 ansv = self.atomDialog.ansv
 
                 for structure in self.models:
@@ -592,44 +605,8 @@ class mainWindow(QMainWindow):
         dialogWin.ui = Ui_about()
         dialogWin.ui.setupUi(dialogWin)
         dialogWin.setFixedSize(QSize(532,149))
-        dialogWin.exec()
+        dialogWin.show()
 
-    def volumeric_data_range(self):
-        getSelected = self.ui.FormActionsPostTreeSurface.selectedItems()
-        if getSelected:
-            if getSelected[0].parent() != None:
-                getChildNode = getSelected[0].text(0)
-                data = self.VolumericData.blocks
-                for dat in data:
-                    for da in dat:
-                        if da.title.find(getChildNode) > -1:
-                            return da.min, da.max
-
-    def volumeric_data_load(self):
-        getSelected = self.ui.FormActionsPostTreeSurface.selectedItems()
-        if getSelected:
-            if getSelected[0].parent() != None:
-                getChildNode = getSelected[0].text(0)
-                atoms = self.VolumericData.load_data(getChildNode)
-                model = TAtomicModel()
-                atoms1 = TAtomicModel(atoms)
-                for at in atoms1:
-                    model.add_atom(at)
-                self.models = []
-                self.models.append(model)
-                self.plot_model(-1)
-                self.ui.FormActionsPostButSurfaceAdd.setEnabled(True)
-                self.ui.FormActionsPostButContour.setEnabled(True)
-
-                minv, maxv = self.volumeric_data_range()
-                self.ui.FormActionsPostLabelSurfaceMax.setText("Max: " + str(maxv))
-                self.ui.FormActionsPostLabelSurfaceMin.setText("Min: " + str(minv))
-                self.ui.FormActionsPostLabelSurfaceValue.setRange(minv,maxv)
-                self.ui.FormActionsPostLabelSurfaceValue.setValue(round(0.5 * (maxv + minv), 5))
-
-                self.ui.FormActionsPostSliderContourXY.setMaximum(self.VolumericData.Nz)
-                self.ui.FormActionsPostSliderContourXZ.setMaximum(self.VolumericData.Ny)
-                self.ui.FormActionsPostSliderContourYZ.setMaximum(self.VolumericData.Nx)
 
     def plot_surface(self):
         self.MainForm.ViewSurface = False
@@ -748,6 +725,11 @@ class mainWindow(QMainWindow):
                 colors = self.get_colors_list(minv, maxv, isovalues, cmap, 'black')
             else:
                 colors = self.get_colors_list(minv, maxv, isovalues, cmap, color_scale)
+
+            if self.ui.FormSettingsContourColorFixed.isChecked():
+                color = self.get_color_from_SETTING(self.state_Color_Of_Contour)
+                for i in range(0,len(colors)):
+                    colors[i] = color
 
             if self.ui.FormActionsPostRadioContour.isChecked() or self.ui.FormActionsPostRadioColorPlaneContours.isChecked():
                 conts = self.VolumericData.contours(isovalues, plane, slice)
@@ -1363,11 +1345,7 @@ class mainWindow(QMainWindow):
             image_profile = image_profile.scaled(320,320, aspectRatioMode=Qt.KeepAspectRatio, transformMode=Qt.SmoothTransformation) # To scale image for example and keep its Aspect Ration
             self.ui.FormActionsPostLabelCellParamFig.setPixmap(QPixmap.fromImage(image_profile))
 
-    def add_dos_file(self):
-        fname = QFileDialog.getOpenFileName(self, 'Open file', self.WorkDir)[0]
-        self.WorkDir = os.path.dirname(fname)
-        self.check_dos(fname)
-            
+
     def save_data_from_figure2d(self):
         DATA = []
         lines = self.ui.MplWidget.canvas.axes.lines
@@ -1440,12 +1418,15 @@ class mainWindow(QMainWindow):
 
     def save_state_FormSettingsViewSpinContourWidth(self):
         self.save_property(SETTINGS_FormSettingsViewSpinContourWidth, self.ui.FormSettingsViewSpinContourWidth.text())
+        self.MainForm.set_contour_width(self.ui.FormSettingsViewSpinContourWidth.value() / 1000)
+        self.plot_contour()
 
     def save_state_FormSettingsColorsFixedMin(self):
         self.save_property(SETTINGS_FormSettingsColorsFixedMin, self.ui.FormSettingsColorsFixedMin.text())
 
     def save_state_FormSettingsViewSpinBondWidth(self):
         self.save_property(SETTINGS_FormSettingsViewSpinBondWidth, self.ui.FormSettingsViewSpinBondWidth.text())
+        self.MainForm.set_bond_width(self.ui.FormSettingsViewSpinBondWidth.value()/100)
 
     def save_state_FormSettingsColorsFixedMax(self):
         self.save_property(SETTINGS_FormSettingsColorsFixedMax, self.ui.FormSettingsColorsFixedMax.text())
@@ -1583,6 +1564,10 @@ class mainWindow(QMainWindow):
         axescolor = self.change_color(self.ui.ColorAxes, SETTINGS_Color_Of_Axes)
         self.MainForm.set_color_of_axes(axescolor)
 
+    def select_contour_color(self):
+        self.change_color(self.ui.ColorContour, SETTINGS_Color_Of_Contour)
+        self.plot_contour()
+
     def swnt_create(self):
         n = int(self.ui.FormActionsPreLineSWNTn.text())
         m = int(self.ui.FormActionsPreLineSWNTm.text())
@@ -1610,6 +1595,44 @@ class mainWindow(QMainWindow):
                            str(color.getRgb()[0]) + " " + str(color.getRgb()[1]) + " " + str(color.getRgb()[2]))
         return newcolor
 
+    def volumeric_data_range(self):
+        getSelected = self.ui.FormActionsPostTreeSurface.selectedItems()
+        if getSelected:
+            if getSelected[0].parent() != None:
+                getChildNode = getSelected[0].text(0)
+                data = self.VolumericData.blocks
+                for dat in data:
+                    for da in dat:
+                        if da.title.find(getChildNode) > -1:
+                            return da.min, da.max
+
+    def volumeric_data_load(self):
+        getSelected = self.ui.FormActionsPostTreeSurface.selectedItems()
+        if getSelected:
+            if getSelected[0].parent() != None:
+                getChildNode = getSelected[0].text(0)
+                atoms = self.VolumericData.load_data(getChildNode)
+                model = TAtomicModel()
+                atoms1 = TAtomicModel(atoms)
+                for at in atoms1:
+                    model.add_atom(at)
+                self.models = []
+                self.models.append(model)
+                self.plot_model(-1)
+                self.ui.FormActionsPostButSurfaceAdd.setEnabled(True)
+                self.ui.FormActionsPostButContour.setEnabled(True)
+
+                minv, maxv = self.volumeric_data_range()
+                self.ui.FormActionsPostLabelSurfaceMax.setText("Max: " + str(maxv))
+                self.ui.FormActionsPostLabelSurfaceMin.setText("Min: " + str(minv))
+                self.ui.FormActionsPostLabelSurfaceValue.setRange(minv,maxv)
+                self.ui.FormActionsPostLabelSurfaceValue.setValue(round(0.5 * (maxv + minv), 5))
+
+                self.ui.FormActionsPostSliderContourXY.setMaximum(self.VolumericData.Nz)
+                self.ui.FormActionsPostSliderContourXZ.setMaximum(self.VolumericData.Ny)
+                self.ui.FormActionsPostSliderContourYZ.setMaximum(self.VolumericData.Nx)
+
+
     def utf8_letter(self, let):
         if let == '\Gamma':
             return '\u0393'
@@ -1633,8 +1656,8 @@ SETTINGS_Folder = '\home'
 SETTINGS_FormSettingsColorsScale = 'colors/ColorsScale'
 SETTINGS_FormSettingsColorsFixed = 'colors/ColorsFixed'
 SETTINGS_FormSettingsColorsFixedMin = 'colors/ColorsFixedMin'
-SETTINGS_FormSettingsColorsFixedMax = 'colors/ColorsFixedMin'
-SETTINGS_FormSettingsColorsScaleType = 'colors/ColorsFixedMin'
+SETTINGS_FormSettingsColorsFixedMax = 'colors/ColorsFixedMax'
+SETTINGS_FormSettingsColorsScaleType = 'colors/ColorsScaleType'
 SETTINGS_FormSettingsOpeningCheckOnlyOptimal = 'open/CheckOnlyOptimal'
 SETTINGS_FormSettingsViewCheckAtomSelection = 'view/CheckAtomSelection'
 SETTINGS_FormSettingsViewCheckShowBox = 'view/CheckShowBox'
@@ -1648,6 +1671,7 @@ SETTINGS_Color_Of_Bonds = 'colors/bonds'
 SETTINGS_Color_Of_Box = 'colors/box'
 SETTINGS_Color_Of_Voronoi = 'colors/voronoi'
 SETTINGS_Color_Of_Axes = 'colors/axes'
+SETTINGS_Color_Of_Contour = 'colors/contour'
 
 QCoreApplication.setApplicationName(ORGANIZATION_NAME)
 QCoreApplication.setOrganizationDomain(ORGANIZATION_DOMAIN)

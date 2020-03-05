@@ -253,6 +253,13 @@ class GuiOpenGL(object):
         self.color_of_axes = color
         self.add_axes()
 
+    def set_bond_width(self, width):
+        self.bondWidth = width
+        self.add_bonds()
+
+    def set_contour_width(self, width):
+        self.contour_width = width
+
     def set_box_visible(self, state):
         self.ViewBox = state
         self.openGLWidget.update()
