@@ -41,7 +41,6 @@ import myfigureoptions
 import numpy as np
 import matplotlib.pyplot as plt
 from TInterface import Importer
-#from TInterface import Calculator
 from TInterface import TXSF
 from TInterface import TVolumericData
 from TInterface import TGaussianCube
@@ -75,8 +74,13 @@ class mainWindow(QMainWindow):
         self.ui.actionShowBox.triggered.connect(self.menu_show_box)
         self.ui.actionHideBox.triggered.connect(self.menu_hide_box)
         self.ui.actionAbout.triggered.connect(self.menu_about)
+
         self.ui.FormModelComboModels.currentIndexChanged.connect(self.model_to_screen)
         self.ui.FormActionsPostTreeSurface.itemSelectionChanged.connect(self.type_of_surface)
+
+        self.ui.FormActionsPreRadioSWNT.toggled.connect(self.swnt_type1_selected)
+        self.ui.FormActionsPreRadioSWNTcap.toggled.connect(self.swnt_type2_selected)
+        self.ui.FormActionsPreRadioSWNTcap_2.toggled.connect(self.swnt_type2_selected)
         
         #buttons
         self.ui.FileBrouserOpenFile.clicked.connect(self.menu_open)
@@ -1569,8 +1573,11 @@ class mainWindow(QMainWindow):
         self.plot_contour()
 
     def swnt_create(self):
-        n = int(self.ui.FormActionsPreLineSWNTn.text())
-        m = int(self.ui.FormActionsPreLineSWNTm.text())
+        n=0
+        m=0
+        if self.ui.FormActionsPreRadioSWNT.isChecked():
+            n = int(self.ui.FormActionsPreLineSWNTn.text())
+            m = int(self.ui.FormActionsPreLineSWNTm.text())
         if self.ui.FormActionsPreRadioSWNTuselen.isChecked():
             leng = float(self.ui.FormActionsPreLineSWNTlen.text())
             cells = 1
@@ -1584,6 +1591,16 @@ class mainWindow(QMainWindow):
         self.plot_model(-1)
         self.MainForm.add_atoms()
         self.fill_gui("SWNT-model")
+
+    def swnt_type1_selected(self):
+        self.ui.FormActionsPreLineSWNTn.setEnabled(True)
+        self.ui.FormActionsPreLineSWNTm.setEnabled(True)
+        self.ui.FormActionsPreComboSWNTind.setEnabled(False)
+
+    def swnt_type2_selected(self):
+        self.ui.FormActionsPreLineSWNTn.setEnabled(False)
+        self.ui.FormActionsPreLineSWNTm.setEnabled(False)
+        self.ui.FormActionsPreComboSWNTind.setEnabled(True)
 
     def change_color(self, colorUi, property):
         color = QColorDialog.getColor()
