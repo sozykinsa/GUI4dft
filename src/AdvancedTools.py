@@ -2162,43 +2162,77 @@ class TCap(TAtomicModel):
         cap_atoms.add_atom(TAtom([0.13496217634E+01, -0.28131482088E+00, 1.87047317, "C", 6, False]))
         cap_atoms.add_atom(TAtom([0.10071810608E+01, 0.10985087143E+01, 1.89193246, "C", 6, False]))
         cap_atoms.add_atom(TAtom([-0.19987312467E+01, 0.30014395545E+01, 0.73606458, "C", 6, False]))
+        cap_atoms.add_atom(TAtom([ -0.29578581189E+01, 0.19721596960E+01, 0.73632071, "C", 6, False]))
+        cap_atoms.add_atom(TAtom([-0.27571698247E+01, 0.71874399926E+00, 1.44108245, "C", 6, False]))
+        cap_atoms.add_atom(TAtom([-0.35829370629E+01,-0.24291285515E+00,0.68239008, "C", 6, False]))
+        cap_atoms.add_atom(TAtom([-0.32349211883E+01,-0.16206333154E+01,0.68625620, "C", 6, False]))
+        cap_atoms.add_atom(TAtom([-0.20047282591E+01,-0.19775980251E+01,1.40477121, "C", 6, False]))
+        cap_atoms.add_atom(TAtom([-0.16362756027E+01,-0.32383913803E+01,0.75524927, "C", 6, False]))
+        cap_atoms.add_atom(TAtom([-0.28063713290E+00,-0.36132532671E+01,0.71923701, "C", 6, False]))
+        cap_atoms.add_atom(TAtom([0.70896305879E+00,-0.27408666603E+01,1.38701774, "C", 6, False]))
+        cap_atoms.add_atom(TAtom([0.19888600177E+01,-0.29354589995E+01,0.70705602, "C", 6, False]))
+        cap_atoms.add_atom(TAtom([0.30282933796E+01,-0.19633677080E+01,0.74070240, "C", 6, False]))
+        cap_atoms.add_atom(TAtom([0.27179573531E+01,-0.64426510383E+00,1.43991810, "C", 6, False]))
+        cap_atoms.add_atom(TAtom([0.36391537961E+01,0.27223176788E+00,0.72968705, "C", 6, False]))
+        cap_atoms.add_atom(TAtom([0.32670313687E+01,0.16238573940E+01,0.73224586, "C", 6, False]))
+        cap_atoms.add_atom(TAtom([0.20483841305E+01,0.19967370195E+01,1.37748738, "C", 6, False]))
+        cap_atoms.add_atom(TAtom([0.15990133003E+01,0.32589685312E+01,0.71464324, "C", 6, False]))
+        cap_atoms.add_atom(TAtom([0.23683726128E+00,0.36518477604E+01,0.74698622, "C", 6, False]))
+        cap_atoms.add_atom(TAtom([-0.74036797244E+00,0.28521743942E+01,1.47972432, "C", 6, False]))
+        cap_atoms.add_atom(TAtom([4.0586,-0.7137,-0.5264, "C", 6, False]))
+        cap_atoms.add_atom(TAtom([3.5688,2.0604,-0.5264, "C", 6, False]))
+        cap_atoms.add_atom(TAtom([2.6474,3.1580,-0.5264, "C", 6, False]))
+        cap_atoms.add_atom(TAtom([-0.0000,4.1209,-0.5264, "C", 6, False]))
+        cap_atoms.add_atom(TAtom([-1.4111,3.8717,-0.5264, "C", 6, False]))
+        cap_atoms.add_atom(TAtom([-3.5688,2.0604,-0.5264, "C", 6, False]))
+        cap_atoms.add_atom(TAtom([-4.0586,0.7137,-0.5264, "C", 6, False]))
+        cap_atoms.add_atom(TAtom([-3.5688,-2.0604,-0.5264, "C", 6, False]))
+        cap_atoms.add_atom(TAtom([-2.6474,-3.1580,-0.5264, "C", 6, False]))
+        cap_atoms.add_atom(TAtom([0.0000,-4.1209,-0.5264, "C", 6, False]))
+        cap_atoms.add_atom(TAtom([1.4111,-3.8717,-0.5264, "C", 6, False]))
+        cap_atoms.add_atom(TAtom([3.5688,-2.0604,-0.5264, "C", 6, False]))
+
+        self.caps.append(cap_atoms)
+
+        self.availableind[1][0] = 10
+        self.availableind[1][1] = 0
+        self.availableind[1][2] = 1 # cap
+        self.availableind[1][3] = 20
+        self.availableind[1][4] = 0
+        self.availableind[1][5] = 0
+        self.availableind[1][6] = 0
+        self.availableind[1][7] = 0
+
+        cap_atoms = TAtomicModel()
+        cap_atoms.add_atom(TAtom([0.34216148481E+00, -0.12053675732E+01, 0.27817708814E+00, "C", 6, False]))
+        cap_atoms.add_atom(TAtom([0.29945044883E+01,-0.12353947470E+01,0.15621427500E+01, "C", 6, False]))
+        cap_atoms.add_atom(TAtom([-0.31963746233E+01,0.76302077744E+00,0.15989438777E+01, "C", 6, False]))
+        cap_atoms.add_atom(TAtom([-0.99585806005E+00,-0.74592960370E+00,0.38623433120E+00, "C", 6, False]))
+        cap_atoms.add_atom(TAtom([-0.28372435918E+00, -0.33073880303E+01, 0.15748123961E+01, "C", 6, False]))
+        cap_atoms.add_atom(TAtom([0.20970977233E+01,0.24759817007E+01,0.15783693808E+01, "C", 6, False]))
+        cap_atoms.add_atom(TAtom([0.76620899479E+00,0.23662547380E+01,0.10756116106E+01, "C", 6, False]))
+        cap_atoms.add_atom(TAtom([-0.29097152253E+00,0.31787983516E+01,0.16306217062E+01, "C", 6, False]))
+        cap_atoms.add_atom(TAtom([0.25460695924E+01,-0.12019370177E-01,0.10168833638E+01, "C", 6, False]))
+        cap_atoms.add_atom(TAtom([-0.98415232530E+00,0.71949433978E+00,0.38919891314E+00, "C", 6, False]))
+        cap_atoms.add_atom(TAtom([0.12527638107E+01,-0.26556683526E-01,0.42986738706E+00, "C", 6, False]))
 
         self.caps.append(cap_atoms)
 
 
 
 """
-    !!!!!!!!!!!!!!!!!!!!!!!!
 
-    cap[0][7].x = (float) -0.29578581189E+01;  cap[0][7].y = (float) 0.19721596960E+01;   cap[0][7].z = (float)  0.73632071;
-    cap[0][8].x = (float) -0.27571698247E+01;  cap[0][8].y = (float) 0.71874399926E+00;   cap[0][8].z = (float)  1.44108245;
-    cap[0][9].x = (float) -0.35829370629E+01;  cap[0][9].y = (float) -0.24291285515E+00;  cap[0][9].z = (float)  0.68239008;
-    cap[0][10].x = (float) -0.32349211883E+01; cap[0][10].y = (float) -0.16206333154E+01; cap[0][10].z = (float) 0.68625620;
-    cap[0][11].x = (float) -0.20047282591E+01; cap[0][11].y = (float) -0.19775980251E+01; cap[0][11].z = (float) 1.40477121;
-    cap[0][12].x = (float) -0.16362756027E+01; cap[0][12].y = (float) -0.32383913803E+01; cap[0][12].z = (float) 0.75524927;
-    cap[0][13].x = (float) -0.28063713290E+00; cap[0][13].y = (float) -0.36132532671E+01; cap[0][13].z = (float) 0.71923701;
-    cap[0][14].x = (float) 0.70896305879E+00;  cap[0][14].y = (float) -0.27408666603E+01; cap[0][14].z = (float) 1.38701774;
-    cap[0][15].x = (float) 0.19888600177E+01;  cap[0][15].y = (float) -0.29354589995E+01; cap[0][15].z = (float) 0.70705602;
-    cap[0][16].x = (float) 0.30282933796E+01;  cap[0][16].y = (float) -0.19633677080E+01; cap[0][16].z = (float) 0.74070240;
-    cap[0][17].x = (float) 0.27179573531E+01;  cap[0][17].y = (float) -0.64426510383E+00; cap[0][17].z = (float) 1.43991810;
-    cap[0][18].x = (float) 0.36391537961E+01;  cap[0][18].y = (float) 0.27223176788E+00;  cap[0][18].z = (float) 0.72968705;
-    cap[0][19].x = (float) 0.32670313687E+01;  cap[0][19].y = (float) 0.16238573940E+01;  cap[0][19].z = (float) 0.73224586;
-    cap[0][20].x = (float) 0.20483841305E+01;  cap[0][20].y = (float) 0.19967370195E+01;  cap[0][20].z = (float) 1.37748738;
-    cap[0][21].x = (float) 0.15990133003E+01;  cap[0][21].y = (float) 0.32589685312E+01;  cap[0][21].z = (float) 0.71464324;
-    cap[0][22].x = (float) 0.23683726128E+00;  cap[0][22].y = (float) 0.36518477604E+01;  cap[0][22].z = (float) 0.74698622;
-    cap[0][23].x = (float) -0.74036797244E+00; cap[0][23].y = (float) 0.28521743942E+01;  cap[0][23].z = (float) 1.47972432;
-    cap[0][24].x = (float) 4.0586;  cap[0][24].y = (float) -0.7137;  cap[0][24].z = (float) -0.5264;
-    cap[0][25].x = (float) 3.5688;  cap[0][25].y = (float) 2.0604;   cap[0][25].z = (float) -0.5264;
-    cap[0][26].x = (float) 2.6474;  cap[0][26].y = (float) 3.1580;   cap[0][26].z = (float) -0.5264;
-    cap[0][27].x = (float) -0.0000; cap[0][27].y = (float) 4.1209;   cap[0][27].z = (float) -0.5264;
-    cap[0][28].x = (float) -1.4111; cap[0][28].y = (float) 3.8717;   cap[0][28].z = (float) -0.5264;
-    cap[0][29].x = (float) -3.5688; cap[0][29].y = (float) 2.0604;   cap[0][29].z = (float) -0.5264;
-    cap[0][30].x = (float) -4.0586; cap[0][30].y = (float) 0.7137;   cap[0][30].z = (float) -0.5264;
-    cap[0][31].x = (float) -3.5688; cap[0][31].y = (float) -2.0604;  cap[0][31].z = (float) -0.5264;
-    cap[0][32].x = (float) -2.6474; cap[0][32].y = (float) -3.1580;  cap[0][32].z = (float) -0.5264;
-    cap[0][33].x = (float) 0.0000;  cap[0][33].y = (float) -4.1209;  cap[0][33].z = (float) -0.5264;
-    cap[0][34].x = (float) 1.4111;  cap[0][34].y = (float) -3.8717;  cap[0][34].z = (float) -0.5264;
-    cap[0][35].x = (float) 3.5688;  cap[0][35].y = (float) -2.0604;  cap[0][35].z = (float) -0.5264;
+    cap[1][11].x = (float) -0.20374152633E+01;  cap[1][11].y = (float) 0.15039739223E+01;    cap[1][11].z = (float) 0.10034475884E+01;
+    cap[1][12].x = (float) -0.16718683612E+01;  cap[1][12].y = (float) -0.28065794251E+01;   cap[1][12].z = (float) 0.15605264317E+01;
+    cap[1][13].x = (float) 0.78433886197E+00;   cap[1][13].y = (float) -0.24167512792E+01;   cap[1][13].z = (float) 0.96858303258E+00;
+    cap[1][14].x = (float) -0.31930381398E+01;  cap[1][14].y = (float) -0.81568604886E+00;   cap[1][14].z = (float) 0.15674645057E+01;
+    cap[1][15].x = (float) 0.39669805001E+00;   cap[1][15].y = (float) 0.11287767681E+01;    cap[1][15].z = (float) 0.46634191420E+00;
+    cap[1][16].x = (float) -0.17123909710E+01;  cap[1][16].y = (float) 0.27591217116E+01;    cap[1][16].z = (float) 0.16091964100E+01;
+    cap[1][17].x = (float) 0.29519974190E+01;   cap[1][17].y = (float) 0.12337637208E+01;    cap[1][17].z = (float) 0.16234022245E+01;
+    cap[1][18].x = (float) 0.21072419022E+01;   cap[1][18].y = (float) -0.24689911393E+01;   cap[1][18].z = (float) 0.15851545095E+01;
+    cap[1][19].x = (float) -0.20785821822E+01;  cap[1][19].y = (float) -0.15522369686E+01;   cap[1][19].z = (float) 0.10403308851E+01;
+
+
 
     class TCap{
 
@@ -2221,43 +2255,7 @@ class TCap(TAtomicModel):
         cap = new atom * [4];
     int  i;
     
-    
-    availableind[1][0] = 10;
-    availableind[1][1] = 0;
-    availableind[1][2] = 1; // cap
-    availableind[1][3] = 20;
-    availableind[1][4] = 0;
-    availableind[1][5] = 0;
-    availableind[1][6] = 0;
-    availableind[1][7] = 0;
-    cap[1] = new atom[20];
-    for (i=0;i < 20;i++){
-    cap[1][i].c.SetStr("C", 1);
-    cap[1][i].charge = 6;
-    cap[1][i].select = 1;
-    }
-    cap[1][0].x = (float) 0.34216148481E+00;    cap[1][0].y = (float) -0.12053675732E+01;    cap[1][0].z = (float) 0.27817708814E+00;
-    cap[1][1].x = (float) 0.29945044883E+01;    cap[1][1].y = (float) -0.12353947470E+01;    cap[1][1].z = (float) 0.15621427500E+01;
-    cap[1][2].x = (float) -0.31963746233E+01;   cap[1][2].y = (float) 0.76302077744E+00;     cap[1][2].z = (float) 0.15989438777E+01;
-    cap[1][3].x = (float) -0.99585806005E+00;   cap[1][3].y = (float) -0.74592960370E+00;    cap[1][3].z = (float) 0.38623433120E+00;
-    cap[1][4].x = (float) -0.28372435918E+00;   cap[1][4].y = (float) -0.33073880303E+01;    cap[1][4].z = (float) 0.15748123961E+01;
-    cap[1][5].x = (float) 0.20970977233E+01;    cap[1][5].y = (float) 0.24759817007E+01;     cap[1][5].z = (float) 0.15783693808E+01;
-    cap[1][6].x = (float) 0.76620899479E+00;    cap[1][6].y = (float) 0.23662547380E+01;     cap[1][6].z = (float) 0.10756116106E+01;
-    cap[1][7].x = (float) -0.29097152253E+00;   cap[1][7].y = (float) 0.31787983516E+01;     cap[1][7].z = (float) 0.16306217062E+01;
-    cap[1][8].x = (float) 0.25460695924E+01;    cap[1][8].y = (float) -0.12019370177E-01;    cap[1][8].z = (float) 0.10168833638E+01;
-    cap[1][9].x = (float) -0.98415232530E+00;   cap[1][9].y = (float) 0.71949433978E+00;     cap[1][9].z = (float) 0.38919891314E+00;
-    cap[1][10].x = (float) 0.12527638107E+01;  cap[1][10].y = (float) -0.26556683526E-01;   cap[1][10].z = (float) 0.42986738706E+00;
-    cap[1][11].x = (float) -0.20374152633E+01;  cap[1][11].y = (float) 0.15039739223E+01;    cap[1][11].z = (float) 0.10034475884E+01;
-    cap[1][12].x = (float) -0.16718683612E+01;  cap[1][12].y = (float) -0.28065794251E+01;   cap[1][12].z = (float) 0.15605264317E+01;
-    cap[1][13].x = (float) 0.78433886197E+00;   cap[1][13].y = (float) -0.24167512792E+01;   cap[1][13].z = (float) 0.96858303258E+00;
-    cap[1][14].x = (float) -0.31930381398E+01;  cap[1][14].y = (float) -0.81568604886E+00;   cap[1][14].z = (float) 0.15674645057E+01;
-    cap[1][15].x = (float) 0.39669805001E+00;   cap[1][15].y = (float) 0.11287767681E+01;    cap[1][15].z = (float) 0.46634191420E+00;
-    cap[1][16].x = (float) -0.17123909710E+01;  cap[1][16].y = (float) 0.27591217116E+01;    cap[1][16].z = (float) 0.16091964100E+01;
-    cap[1][17].x = (float) 0.29519974190E+01;   cap[1][17].y = (float) 0.12337637208E+01;    cap[1][17].z = (float) 0.16234022245E+01;
-    cap[1][18].x = (float) 0.21072419022E+01;   cap[1][18].y = (float) -0.24689911393E+01;   cap[1][18].z = (float) 0.15851545095E+01;
-    cap[1][19].x = (float) -0.20785821822E+01;  cap[1][19].y = (float) -0.15522369686E+01;   cap[1][19].z = (float) 0.10403308851E+01;
-
-
+    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1111
 
 
     availableind[2][0] = 10;
