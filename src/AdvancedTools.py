@@ -786,7 +786,7 @@ class TAtomicModel(object):
 
 class TSWNT(TAtomicModel):
     """The TSWNT class provides """
-    def __init__(self, n, m, leng = 0, ncell = 1):
+    def __init__(self, n, m, leng = 0, ncell = 1, type = 0):
         TAtomicModel.__init__(self)
         maxMol = 1000000
         pi = math.pi
@@ -878,6 +878,60 @@ class TSWNT(TAtomicModel):
             qy[i_par] = -R * math.cos(phi_par)
             qz[i_par] = py[i_par]
             self.add_atom(TAtom([qx[i_par], qy[i_par], qz[i_par], "C", 6]))
+
+        print("type = "+str(type))
+
+        if type == 1 or type == 2:
+            # cap generation
+            Cap = TCap(n,m)
+            print("isAvailable: "+ str(Cap.isavailable(n, m)) )
+            if Cap.isavailable(n, m):
+                size1 = Cap.Size(n, m)
+                capatoms = Cap.cap4SWNT_norm(n, m)
+                if Cap.invert(n, m):
+                    for i in range(0,size1):
+                        capatoms[i].z = -capatoms[i].z
+
+                minz = self.minZ()
+                maxz = capatoms.maxZ()
+
+                capatoms.move(0,0, minz - maxz - 1.2)
+                for i in range(0,capatoms.nAtoms()):
+                    self.add_atom(capatoms[i])
+
+            if type == 2:
+                # second cap generation
+                df=3
+
+            """ 
+            tmp = new atom[size1+size];
+            capatoms = new atom[size1];
+            capatoms = Cap->cap4SWNT_norm(n, m);
+            if (!Cap->invert(n, m)) for (int i=0;i < size1;i++)  capatoms[i].z = -capatoms[i].z;
+            min = capatoms[0].z;
+            max = dot[0].z;
+
+            for (int i=0;i < size1;i++) if (capatoms[i].z < min) min = capatoms[i].z;
+            for (int i=0;i < size;i++) if (dot[i].z > max) max = dot[i].z;
+
+            if (n == m) zaz = 1.2;
+            if (m == 0) zaz = 0.71;
+
+            for (int i=0;i < size1;i++) capatoms[i].z = capatoms[i].z + (max - min) + zaz;
+
+            for (int i=0;i < size;i++) tmp[i] = dot[i];
+            for (int i=0;i < size1;i++) tmp[size+i] = capatoms[i];
+            delete[] dot;
+            size += size1;
+            dot = new atom[size];
+
+            for (int i=0;i < size;i++) dot[i] = tmp[i];
+            delete[] tmp;
+            delete[] capatoms;
+            }
+            }
+            }
+            // end cap generation    """
 
     @staticmethod
     def radius(n, m):
@@ -1304,7 +1358,7 @@ class TSIESTA:
         property = (Helpers.fromFileProperty(filename,'LatticeConstant',1,'unformatted')).split()
         if property[1].lower() == "bohr":
             mult = 0.52917720859
-        return mult*property[0]
+        return mult*float(property[0])
 
     @staticmethod
     def lattice_parameters_abc_angles(filename):
@@ -2130,12 +2184,44 @@ class TCap(TAtomicModel):
     def isavailable(self, n, m):
         for i in range(0,len(self.availableind)):
             if (n == self.availableind[i][0]) and (m == self.availableind[i][1]):
+                print("found")
                 return self.availableind[i][2]
         return 0
+
+    def Size(self, n, m):
+        for i in range(0,len(self.availableind)):
+            if (n == self.availableind[i][0]) and (m == self.availableind[i][1]):
+                return int(self.availableind[i][3])
+        return -1
+
+    def cap4SWNT_norm(self, n, m):
+        for i in range(0,len(self.availableind)):
+            if (n == self.availableind[i][0]) and (m == self.availableind[i][1]):
+                cap1 = TAtomicModel()
+                for j in range(0,self.caps[i].nAtoms()):
+                    cap1.add_atom(self.caps[i][j])
+                cap1.move(- 1.0 * self.availableind[i][4] / 2.0, - 1.0 * self.availableind[i][5] / 2.0, 0)
+
+                for j in range(0, cap1.nAtoms()):
+                    xnn = cap1[j].x * math.cos(self.availableind[i][6] / 100.0) - cap1[j].y * math.sin(self.availableind[i][6] / 100.0)
+                    ynn = cap1[j].x * math.sin(self.availableind[i][6] / 100.0) + cap1[j].y * math.cos(self.availableind[i][6] / 100.0)
+
+                    cap1[j].x = xnn
+                    cap1[j].y = ynn
+                return cap1
+        return None
+
+    def invert(self,n,m):
+        for i in range(0, len(self.availableind)):
+            if (n == self.availableind[i][0]) and (m == self.availableind[i][1]):
+                return self.availableind[i][7]
+        return -1
 
     def __init__(self, n, m):
         self.availableind = np.zeros((10, 8))
         self.caps = []
+        self.n = n
+        self.m = m
         # 0 - n
         # 1 - m
         # 2 - index in Cap
@@ -2147,7 +2233,7 @@ class TCap(TAtomicModel):
 
         self.availableind[0][0] = 6
         self.availableind[0][1] = 6
-        self.availableind[0][2] = 0 # cap
+        self.availableind[0][2] = 1 # cap  0
         self.availableind[0][3] = 36
         self.availableind[0][4] = 0
         self.availableind[0][5] = 0
@@ -2215,25 +2301,21 @@ class TCap(TAtomicModel):
         cap_atoms.add_atom(TAtom([0.25460695924E+01,-0.12019370177E-01,0.10168833638E+01, "C", 6, False]))
         cap_atoms.add_atom(TAtom([-0.98415232530E+00,0.71949433978E+00,0.38919891314E+00, "C", 6, False]))
         cap_atoms.add_atom(TAtom([0.12527638107E+01,-0.26556683526E-01,0.42986738706E+00, "C", 6, False]))
+        cap_atoms.add_atom(TAtom([ -0.20374152633E+01 , 0.15039739223E+01 , 0.10034475884E+01 , "C", 6, False]))
+        cap_atoms.add_atom(TAtom([-0.16718683612E+01,-0.28065794251E+01,0.15605264317E+01, "C", 6, False]))
+        cap_atoms.add_atom(TAtom([0.78433886197E+00,-0.24167512792E+01,0.96858303258E+00, "C", 6, False]))
+        cap_atoms.add_atom(TAtom([-0.31930381398E+01,-0.81568604886E+00,0.15674645057E+01, "C", 6, False]))
+        cap_atoms.add_atom(TAtom([0.39669805001E+00,0.11287767681E+01,0.46634191420E+00, "C", 6, False]))
+        cap_atoms.add_atom(TAtom([-0.17123909710E+01,0.27591217116E+01,0.16091964100E+01, "C", 6, False]))
+        cap_atoms.add_atom(TAtom([0.29519974190E+01,0.12337637208E+01,0.16234022245E+01, "C", 6, False]))
+        cap_atoms.add_atom(TAtom([0.21072419022E+01, -0.24689911393E+01,0.15851545095E+01, "C", 6, False]))
+        cap_atoms.add_atom(TAtom([-0.20785821822E+01,-0.15522369686E+01,0.10403308851E+01, "C", 6, False]))
 
         self.caps.append(cap_atoms)
 
 
 
 """
-
-    cap[1][11].x = (float) -0.20374152633E+01;  cap[1][11].y = (float) 0.15039739223E+01;    cap[1][11].z = (float) 0.10034475884E+01;
-    cap[1][12].x = (float) -0.16718683612E+01;  cap[1][12].y = (float) -0.28065794251E+01;   cap[1][12].z = (float) 0.15605264317E+01;
-    cap[1][13].x = (float) 0.78433886197E+00;   cap[1][13].y = (float) -0.24167512792E+01;   cap[1][13].z = (float) 0.96858303258E+00;
-    cap[1][14].x = (float) -0.31930381398E+01;  cap[1][14].y = (float) -0.81568604886E+00;   cap[1][14].z = (float) 0.15674645057E+01;
-    cap[1][15].x = (float) 0.39669805001E+00;   cap[1][15].y = (float) 0.11287767681E+01;    cap[1][15].z = (float) 0.46634191420E+00;
-    cap[1][16].x = (float) -0.17123909710E+01;  cap[1][16].y = (float) 0.27591217116E+01;    cap[1][16].z = (float) 0.16091964100E+01;
-    cap[1][17].x = (float) 0.29519974190E+01;   cap[1][17].y = (float) 0.12337637208E+01;    cap[1][17].z = (float) 0.16234022245E+01;
-    cap[1][18].x = (float) 0.21072419022E+01;   cap[1][18].y = (float) -0.24689911393E+01;   cap[1][18].z = (float) 0.15851545095E+01;
-    cap[1][19].x = (float) -0.20785821822E+01;  cap[1][19].y = (float) -0.15522369686E+01;   cap[1][19].z = (float) 0.10403308851E+01;
-
-
-
     class TCap{
 
         atom ** cap;
@@ -2537,52 +2619,11 @@ class TCap(TAtomicModel):
     for (int i=0;i < 100;i++) if ((n == availableind[i][0]) & & (m == availableind[i][1])) id =availableind[i][2];
     return cap[id];
     };
-    atom * TCap::cap4SWNT_norm(int
-    n, int
-    m){
-    for (int i=0;i < 100;i++)
-        if ((n == availableind[i][0]) & & (m == availableind[i][1]))
-            {
-                atom * cap1;
-            cap1 = new
-            atom[availableind[i][3]];
-            for (int j=0; j < availableind[i][3]; j++)
-            {
-                cap1[j] = cap[availableind[i][2]][j];
-            cap1[j].x = cap1[j].x - 1.0 * availableind[i][4] / 2.0;
-            cap1[j].y = cap1[j].y - 1.0 * availableind[i][5] / 2.0;
-
-            double xnn, ynn;
-            xnn = cap1[j].x * cos(availableind[i][6] / 100.0) - cap1[j].y * sin(availableind[i][6] / 100.0);
-            ynn = cap1[j].x * sin(availableind[i][6] / 100.0) + cap1[j].y * cos(availableind[i][6] / 100.0);
-            cap1[j].x = xnn; cap1[j].y = ynn;
-            }
-        return cap1;
-        }
-        atom * cap1 = NULL;
-    return cap1;
-
-};
-int
-TCap::size(int
-n, int
-m){
-int
-id = -1;
-for (int i=0;i < 100;i++) if ((n == availableind[i][0]) & & (m == availableind[i][1])) id =availableind[i][3];
-return id;
-};"""
+    
+"""
 
 
 
 """
-int
-TCap::invert(int
-n, int
-m){
-int
-id = -1;
-for (int i=0;i < 100;i++) if ((n == availableind[i][0]) & & (m == availableind[i][1])) id =availableind[i][7];
-return id;
-};
+
 """

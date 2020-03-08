@@ -184,6 +184,11 @@ class mainWindow(QMainWindow):
         #LengUnitsType.appendRow(QStandardItem("nm"))
         self.ui.FormActionsPostComboCellParamLen.setModel(LengUnitsType)
 
+        SWNTindType = QStandardItemModel()
+        SWNTindType.appendRow(QStandardItem("(6,6)"))
+        SWNTindType.appendRow(QStandardItem("(10,0)"))
+        self.ui.FormActionsPreComboSWNTind.setModel(SWNTindType)
+
         FillSpaceModel = QStandardItemModel()
         FillSpaceModel.appendRow(QStandardItem("cylinder"))
         #FillSpaceModel.appendRow(QStandardItem("parallelepiped"))
@@ -1575,9 +1580,15 @@ class mainWindow(QMainWindow):
     def swnt_create(self):
         n=0
         m=0
+        type = 0
         if self.ui.FormActionsPreRadioSWNT.isChecked():
             n = int(self.ui.FormActionsPreLineSWNTn.text())
             m = int(self.ui.FormActionsPreLineSWNTm.text())
+        if self.ui.FormActionsPreRadioSWNTcap.isChecked():
+            nm = self.ui.FormActionsPreComboSWNTind.currentText().split(",")
+            n = int( nm[0].split("(")[1] )
+            m = int( nm[1].split(")")[0] )
+            type = 1
         if self.ui.FormActionsPreRadioSWNTuselen.isChecked():
             leng = float(self.ui.FormActionsPreLineSWNTlen.text())
             cells = 1
@@ -1585,7 +1596,10 @@ class mainWindow(QMainWindow):
             leng = 0
             cells = float(self.ui.FormActionsPreLineSWNTcells.text())
 
-        model = TSWNT(n,m,leng,cells)
+        print(n)
+        print(m)
+
+        model = TSWNT(n,m,leng,cells,type)
 
         self.models.append(model)
         self.plot_model(-1)
