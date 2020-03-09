@@ -502,6 +502,16 @@ class TAtomicModel(object):
                 if (self.atoms[j].z<0):
                     self.atoms[j].z+=self.boxZ
         return self
+
+    def rotateZ(self, alpha):
+        """The method RotateAtList rotate the AtList on alpha Angle"""
+        alpha*= math.pi / 180
+        # oz
+        for i in range(0, len(self.atoms)):
+            xnn = float(self.atoms[i].x) * math.cos(alpha) - float(self.atoms[i].y) * math.sin(alpha)
+            ynn = float(self.atoms[i].x) * math.sin(alpha) + float(self.atoms[i].y) * math.cos(alpha)
+            self.atoms[i].x = xnn
+            self.atoms[i].y = ynn
         
     def ProjectionToCylinder(self,atomslist,radius):
         """This method returns projections on cylinder with radius for atom at"""
@@ -695,6 +705,21 @@ class TAtomicModel(object):
             if r1>DeltaMolecula1:
                 DeltaMolecula1 = r1
         return DeltaMolecula1
+
+    def DeltaMin(self, newMolecula):
+        """ minimum distance from atoms in self to the atoms in the newMolecula"""
+        DeltaMolecula1 = 100000
+        r1 = norm(self.LatVect1) + norm(self.LatVect2) + norm(self.LatVect3)
+        for at2 in newMolecula.atoms:
+            model = TAtomicModel(self.atoms)
+            model.add_atom(at2)
+            for ind in range(0,len(self.atoms)):
+                r = model.atom_atom_distance(ind, len(model.atoms)-1)
+                if r < r1:
+                    r1 = r
+            if r1<DeltaMolecula1:
+                DeltaMolecula1 = r1
+        return DeltaMolecula1
         
     def grow(self):
         """ модель транслируется в трех измерениях и становится в 27 раз больше """
@@ -803,8 +828,10 @@ class TSWNT(TAtomicModel):
         a = 1.43
         nx = 40
         ny = 100
+
         if (leng == 0):
             leng = ncell*TSWNT.unitlength(n, m, a)
+
         rad = TSWNT.radius(n, m)
         self.set_lat_vectors([10*rad,0,0],[0, 10*rad, 0], [0, 0, leng])
         """ calculations """
@@ -879,12 +906,11 @@ class TSWNT(TAtomicModel):
             qz[i_par] = py[i_par]
             self.add_atom(TAtom([qx[i_par], qy[i_par], qz[i_par], "C", 6]))
 
-        print("type = "+str(type))
-
         if type == 1 or type == 2:
             # cap generation
+            if n == m: zaz = 1.2
+            if m == 0: zaz = 0.71
             Cap = TCap(n,m)
-            print("isAvailable: "+ str(Cap.isavailable(n, m)) )
             if Cap.isavailable(n, m):
                 size1 = Cap.Size(n, m)
                 capatoms = Cap.cap4SWNT_norm(n, m)
@@ -895,43 +921,35 @@ class TSWNT(TAtomicModel):
                 minz = self.minZ()
                 maxz = capatoms.maxZ()
 
-                capatoms.move(0,0, minz - maxz - 1.2)
+                capatoms.move(0,0, minz - maxz - zaz)
+                delm = self.DeltaMin(capatoms)
+                print(delm)
+                if (delm > 0.97*zaz) and (delm < 1.03*zaz):
+                    alpha = 360 / (2*n)
+                    print("rotation1")
+                    capatoms.rotateZ(alpha)
                 for i in range(0,capatoms.nAtoms()):
                     self.add_atom(capatoms[i])
 
             if type == 2:
                 # second cap generation
-                df=3
+                capatoms = Cap.cap4SWNT_norm(n, m)
+                if not Cap.invert(n, m):
+                    for i in range(0, size1):
+                        capatoms[i].z = -capatoms[i].z
+                maxz = self.maxZ()
+                minz = capatoms.minZ()
 
-            """ 
-            tmp = new atom[size1+size];
-            capatoms = new atom[size1];
-            capatoms = Cap->cap4SWNT_norm(n, m);
-            if (!Cap->invert(n, m)) for (int i=0;i < size1;i++)  capatoms[i].z = -capatoms[i].z;
-            min = capatoms[0].z;
-            max = dot[0].z;
-
-            for (int i=0;i < size1;i++) if (capatoms[i].z < min) min = capatoms[i].z;
-            for (int i=0;i < size;i++) if (dot[i].z > max) max = dot[i].z;
-
-            if (n == m) zaz = 1.2;
-            if (m == 0) zaz = 0.71;
-
-            for (int i=0;i < size1;i++) capatoms[i].z = capatoms[i].z + (max - min) + zaz;
-
-            for (int i=0;i < size;i++) tmp[i] = dot[i];
-            for (int i=0;i < size1;i++) tmp[size+i] = capatoms[i];
-            delete[] dot;
-            size += size1;
-            dot = new atom[size];
-
-            for (int i=0;i < size;i++) dot[i] = tmp[i];
-            delete[] tmp;
-            delete[] capatoms;
-            }
-            }
-            }
-            // end cap generation    """
+                capatoms.move(0, 0, (maxz - minz) + zaz)
+                delm = self.DeltaMin(capatoms)
+                print(delm)
+                if (delm > 0.97*zaz) and (delm < 1.03*zaz):
+                    alpha = 360 / (2*n)
+                    print("rotation2")
+                    capatoms.rotateZ(alpha)
+                for i in range(0,capatoms.nAtoms()):
+                    self.add_atom(capatoms[i])
+            # end cap generation
 
     @staticmethod
     def radius(n, m):
@@ -2203,8 +2221,8 @@ class TCap(TAtomicModel):
                 cap1.move(- 1.0 * self.availableind[i][4] / 2.0, - 1.0 * self.availableind[i][5] / 2.0, 0)
 
                 for j in range(0, cap1.nAtoms()):
-                    xnn = cap1[j].x * math.cos(self.availableind[i][6] / 100.0) - cap1[j].y * math.sin(self.availableind[i][6] / 100.0)
-                    ynn = cap1[j].x * math.sin(self.availableind[i][6] / 100.0) + cap1[j].y * math.cos(self.availableind[i][6] / 100.0)
+                    xnn = cap1[j].x * math.cos(self.availableind[i][6] *math.pi / 180.0) - cap1[j].y * math.sin(self.availableind[i][6] *math.pi / 180.0)
+                    ynn = cap1[j].x * math.sin(self.availableind[i][6] *math.pi / 180.0) + cap1[j].y * math.cos(self.availableind[i][6] *math.pi / 180.0)
 
                     cap1[j].x = xnn
                     cap1[j].y = ynn
@@ -2237,7 +2255,7 @@ class TCap(TAtomicModel):
         self.availableind[0][3] = 36
         self.availableind[0][4] = 0
         self.availableind[0][5] = 0
-        self.availableind[0][6] = 0
+        self.availableind[0][6] = -40
         self.availableind[0][7] = 1
         cap_atoms = TAtomicModel()
 
@@ -2286,7 +2304,7 @@ class TCap(TAtomicModel):
         self.availableind[1][3] = 20
         self.availableind[1][4] = 0
         self.availableind[1][5] = 0
-        self.availableind[1][6] = 0
+        self.availableind[1][6] = 36
         self.availableind[1][7] = 0
 
         cap_atoms = TAtomicModel()
@@ -2620,10 +2638,4 @@ class TCap(TAtomicModel):
     return cap[id];
     };
     
-"""
-
-
-
-"""
-
 """

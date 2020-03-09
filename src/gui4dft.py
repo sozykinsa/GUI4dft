@@ -1584,20 +1584,20 @@ class mainWindow(QMainWindow):
         if self.ui.FormActionsPreRadioSWNT.isChecked():
             n = int(self.ui.FormActionsPreLineSWNTn.text())
             m = int(self.ui.FormActionsPreLineSWNTm.text())
-        if self.ui.FormActionsPreRadioSWNTcap.isChecked():
+        if self.ui.FormActionsPreRadioSWNTcap.isChecked() or self.ui.FormActionsPreRadioSWNTcap_2.isChecked():
             nm = self.ui.FormActionsPreComboSWNTind.currentText().split(",")
             n = int( nm[0].split("(")[1] )
             m = int( nm[1].split(")")[0] )
+        if self.ui.FormActionsPreRadioSWNTcap.isChecked():
             type = 1
+        if self.ui.FormActionsPreRadioSWNTcap_2.isChecked():
+            type = 2
         if self.ui.FormActionsPreRadioSWNTuselen.isChecked():
             leng = float(self.ui.FormActionsPreLineSWNTlen.text())
             cells = 1
         else:
             leng = 0
             cells = float(self.ui.FormActionsPreLineSWNTcells.text())
-
-        print(n)
-        print(m)
 
         model = TSWNT(n,m,leng,cells,type)
 
