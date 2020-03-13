@@ -31,6 +31,7 @@ from PyQt5.QtGui import QColor
 from AdvancedTools import TFDFFile
 from AdvancedTools import TPeriodTable
 from AdvancedTools import TSWNT
+from AdvancedTools import TCapedSWNT
 from AdvancedTools import TAtomicModel
 from AdvancedTools import TSIESTA
 from AdvancedTools import Helpers
@@ -1599,7 +1600,11 @@ class mainWindow(QMainWindow):
             leng = 0
             cells = float(self.ui.FormActionsPreLineSWNTcells.text())
 
-        model = TSWNT(n,m,leng,cells,type)
+        if type == 0:
+            model = TSWNT(n, m, leng, cells)
+
+        if type == 1 or type == 2:
+            model = TCapedSWNT(n, m, leng, cells, type)
 
         self.models.append(model)
         self.plot_model(-1)
