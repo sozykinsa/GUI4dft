@@ -1482,14 +1482,14 @@ class TSIESTA:
 
             if method == "Mulliken":
                 """Заряды всех атомов в выходном файле SIESTA4 (Милликен)"""
-                SpinPolarized = Helpers.fromFileProperty(filename, 'redata: Number of spin components        =', 1,
-                                                         'string')
+                SpinPolarized = int(Helpers.fromFileProperty(filename, 'redata: Number of spin components', 1, 'string').split("=")[1])
+
                 MdSiestaFile = open(filename)
                 str1 = MdSiestaFile.readline()
                 skip = 0
                 step = 0
 
-                if (SpinPolarized == '2'):
+                if (SpinPolarized == 2):
                     NumberOfSpecies *= 2
                     NumberOfAtoms *= 2
 
@@ -1511,17 +1511,17 @@ class TSIESTA:
                             if (AtomSort == "C"):
                                 skip = 2
                                 neutral = 4
-                                if (SpinPolarized == '2'):
+                                if (SpinPolarized == 2):
                                     neutral = neutral / 2.0
                             if (AtomSort == "S"):
                                 skip = 2
                                 neutral = 6
-                                if (SpinPolarized == '2'):
+                                if (SpinPolarized == 2):
                                     neutral = neutral / 2.0
                             if (AtomSort == "Li") or (AtomSort == "H"):
                                 skip = 1
-                                neutral = 1
-                                if (SpinPolarized == '2'):
+                                neutral = 1.0
+                                if (SpinPolarized == 2):
                                     neutral = neutral / 2.0
 
                             if (AtomSort == "C"):
@@ -1540,7 +1540,7 @@ class TSIESTA:
                                     str1 = Helpers.spacedel(str1)
                                     ch += neutral - float(str1.split(' ')[1])
 
-                            if (SpinPolarized == '2') and (nsp > NumberOfSpecies / 2.0):
+                            if (SpinPolarized == 2) and (nsp > NumberOfSpecies / 2.0):
                                 charge[int(nsp / 2)] += ch
                             else:
                                 charge.append(ch)

@@ -1481,8 +1481,9 @@ class mainWindow(QMainWindow):
         text = self.ui.FormActionsPreTextFDF.toPlainText()
 
         name = QFileDialog.getSaveFileName(self, 'Save File')[0]
-        with open(name, 'w') as f:
-            f.write(text)
+        if len(name)>0:
+            with open(name, 'w') as f:
+                f.write(text)
 
     def fill_space(self):
         Mendeley = TPeriodTable()
