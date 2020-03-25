@@ -1508,21 +1508,37 @@ class TSIESTA:
                                     AtomSort = str1.split(' ')[1]
                                 str1 = MdSiestaFile.readline()
                             neutral = 3
-                            if (AtomSort == "C"):
-                                skip = 2
-                                neutral = 4
-                                if (SpinPolarized == 2):
-                                    neutral = neutral / 2.0
-                            if (AtomSort == "S"):
-                                skip = 2
-                                neutral = 6
-                                if (SpinPolarized == 2):
-                                    neutral = neutral / 2.0
-                            if (AtomSort == "Li") or (AtomSort == "H"):
-                                skip = 1
-                                neutral = 1.0
-                                if (SpinPolarized == 2):
-                                    neutral = neutral / 2.0
+
+                            base = []
+                            #base.append([charge, letter, skip, neutral])
+                            base.append([1, "H", 1, 1])
+                            base.append([3, "Li", 1, 1])
+                            base.append([6, "C", 2, 4])
+                            base.append([16, "S", 2, 6])
+
+                            for i in range(0,len(base)):
+                                if base[i][1] == AtomSort:
+                                    skip = base[i][2]
+                                    neutral = base[i][3]
+
+                                    if(SpinPolarized == 2):
+                                        neutral /= 2.0
+
+                            #if (AtomSort == "C"):
+                            #    skip = 2
+                            #    neutral = 4
+                            #    if (SpinPolarized == 2):
+                            #        neutral = neutral / 2.0
+                            #if (AtomSort == "S"):
+                            #    skip = 2
+                            #    neutral = 6
+                            #    if (SpinPolarized == 2):
+                            #        neutral = neutral / 2.0
+                            #if (AtomSort == "Li") or (AtomSort == "H"):
+                            #    skip = 1
+                            #    neutral = 1.0
+                            #    if (SpinPolarized == 2):
+                            #        neutral = neutral / 2.0
 
                             if (AtomSort == "C"):
                                 for i in range(0, skip - 1):
