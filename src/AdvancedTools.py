@@ -1514,7 +1514,13 @@ class TSIESTA:
                             base.append([1, "H", 1, 1])
                             base.append([3, "Li", 1, 1])
                             base.append([6, "C", 2, 4])
+                            base.append([13, "Al", 2, 3])
                             base.append([16, "S", 2, 6])
+                            base.append([22, "Ti", 2, 4])
+                            base.append([24, "Cr", 2, 6])
+                            base.append([28, "Ni", 2, 10])
+                            base.append([37, "Ru", 2, 8])
+                            base.append([78, "Pt", 2, 10])
 
                             for i in range(0,len(base)):
                                 if base[i][1] == AtomSort:
@@ -1540,12 +1546,14 @@ class TSIESTA:
                             #    if (SpinPolarized == 2):
                             #        neutral = neutral / 2.0
 
-                            if (AtomSort == "C"):
-                                for i in range(0, skip - 1):
-                                    str1 = MdSiestaFile.readline()
-                            else:
-                                for i in range(0, skip):
-                                    str1 = MdSiestaFile.readline()
+                            str1 = MdSiestaFile.readline()
+
+                            #if (AtomSort == "C") or (AtomSort == "Al") or (AtomSort == "Ti") or (AtomSort == "Ni") or (AtomSort == "Cr"):
+                            #    for i in range(0, skip - 1):
+                            #        str1 = MdSiestaFile.readline()
+                            #else:
+                            #    for i in range(0, skip):
+                            #        str1 = MdSiestaFile.readline()
                             ch = 0
 
                             while (str1 != '\n'):
