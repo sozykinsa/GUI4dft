@@ -49,6 +49,57 @@ class Helpers:
     @staticmethod
     def list_str_to_int(x):
         return [int(item) for item in x]
+
+    @staticmethod
+    def nearest(latEn, nextLat):
+        """ This example shows how to """
+        res = abs(float(latEn[0][0]) - nextLat)
+        for i in range(1, len(latEn)):
+            if res > abs(float(latEn[i][0]) - nextLat):
+                res = abs(float(latEn[i][0]) - nextLat)
+        return res
+
+    @staticmethod
+    def NextLat(latEn, eps):
+        """ This example shows how to """
+        if len(latEn) == 1:
+            nextLat = float(latEn[0][0]) + 0.5
+        if len(latEn) == 2:
+            if float(latEn[0][1]) > float(latEn[1][1]):
+                nextLat = float(latEn[1][0]) + 0.5
+            else:
+                nextLat = float(latEn[0][0]) - 0.5
+        if len(latEn) > 2:
+            latEn.sort(key=lambda x: x[0])
+            imin = Helpers.mini(latEn)
+            tmList = []
+            start = imin - 1
+            if imin == 0:
+                start = 0
+            if imin == len(latEn) - 1:
+                start = len(latEn) - 4
+            k = 3
+            x = []
+            y = []
+            for i in range(0, k):
+                x.append(float(latEn[start + i][0]))
+                y.append(float(latEn[start + i][1]))
+
+            a, b, c = polyfit(x, y, 2)
+            nextLat = -b / (2 * a)
+            sign = 1
+            st = 0
+            # errxrange = AT.Helpers.errorsrange(latEn)
+            while (Helpers.nearest(latEn, nextLat) < eps / 4) and (st < 5):
+                if (len(latEn) <= imin + sign) or (imin + sign < 0):
+                    nextLat = float(latEn[imin][0]) + sign * eps / 2
+                else:
+                    nextLat = (float(latEn[imin + sign][0]) + float(latEn[imin][0])) / 2
+                sign = -sign
+                st = st + 1
+            if st == 5:
+                nextLat = 0
+        return nextLat
         
     @staticmethod
     def getsubs(dir):
