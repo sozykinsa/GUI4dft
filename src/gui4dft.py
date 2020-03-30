@@ -363,6 +363,8 @@ class mainWindow(QMainWindow):
 
     def atom_modify(self):
         self.MainForm.modify_selected_atom()
+        self.models.append(self.MainForm.MainModel)
+        self.model_to_screen(-1)
 
     def atom_add(self):
         self.MainForm.add_new_atom()
@@ -492,22 +494,42 @@ class mainWindow(QMainWindow):
 
 
     def create_model_with_electrodes(self):
-        left_file = self.ui.FormActionsPreLeftElectrode.text
-        scat_file = self.ui.FormActionsPreScatRegion.text
-        righ_file = self.ui.FormActionsPreRightElectrode.text
+        left_file = self.ui.FormActionsPreLeftElectrode.text()
+        scat_file = self.ui.FormActionsPreScatRegion.text()
+        righ_file = self.ui.FormActionsPreRightElectrode.text()
 
         model_left, fdf_left = Importer.Import(left_file)
         model_scat, fdf_scat = Importer.Import(scat_file)
         model_righ, fdf_righ = Importer.Import(righ_file)
 
+        model_left = model_left[0]
+        model_scat = model_scat[0]
+        model_righ = model_righ[0]
+
+        left_elec_max = model_left.maxZ()
         left_bord = model_scat.minZ()
-        righ_bord = model_scat.maxZ()
 
-        left_dist = self.ui.FormActionsPreSpinLeftElectrodeDist.value
-        righ_dist = self.ui.FormActionsPreSpinRighElectrodeDist.value
+        right_elec_min = model_righ.minZ()
 
-        scat_rotation = self.ui.FormActionsPreSpinScatRotation.value
+        left_dist = self.ui.FormActionsPreSpinLeftElectrodeDist.value()
+        righ_dist = self.ui.FormActionsPreSpinRightElectrodeDist.value()
 
+        scat_rotation = self.ui.FormActionsPreSpinScatRotation.value()
+
+        model = TAtomicModel()
+        model_left.move(0,0,0)
+        model.add_atomic_model(model_left)
+        model_scat.rotateZ(scat_rotation)
+        model_scat.move(0, 0, -(left_bord - left_elec_max) + left_dist)
+        model.add_atomic_model(model_scat)
+        righ_bord = model.maxZ()
+        model_righ.move(0, 0, (righ_bord - right_elec_min) + righ_dist)
+        model.add_atomic_model(model_righ)
+
+        self.models.append(model)
+        self.plot_model(-1)
+        self.MainForm.add_atoms()
+        self.fill_gui("SWNT-model")
 
     def colors_of_atoms(self):
         atomscolor = [ self.ui.ColorsOfAtomsTable.item(0, 0).background().color().getRgbF()]
@@ -1605,7 +1627,11 @@ class mainWindow(QMainWindow):
             model = TSWNT(n, m, leng, cells)
 
         if type == 1 or type == 2:
-            model = TCapedSWNT(n, m, leng, cells, type)
+            dist1 = float(self.ui.FormCreateSpinFirstCapDist.value())
+            angle1 = float(self.ui.FormCreateSpinFirstCapAngle.value())
+            dist2 = float(self.ui.FormCreateSpinSecondCapDist.value())
+            angle2 = float(self.ui.FormCreateSpinSecondCapAngle.value())
+            model = TCapedSWNT(n, m, leng, cells, type, dist1, angle1, dist2, angle2)
 
         self.models.append(model)
         self.plot_model(-1)
@@ -1616,11 +1642,18 @@ class mainWindow(QMainWindow):
         self.ui.FormActionsPreLineSWNTn.setEnabled(True)
         self.ui.FormActionsPreLineSWNTm.setEnabled(True)
         self.ui.FormActionsPreComboSWNTind.setEnabled(False)
+        self.ui.FormCreateGroupFirstCap.setEnabled(False)
+        self.ui.FormCreateGroupSecondCap.setEnabled(False)
 
     def swnt_type2_selected(self):
         self.ui.FormActionsPreLineSWNTn.setEnabled(False)
         self.ui.FormActionsPreLineSWNTm.setEnabled(False)
         self.ui.FormActionsPreComboSWNTind.setEnabled(True)
+        self.ui.FormCreateGroupFirstCap.setEnabled(True)
+        if self.ui.FormActionsPreRadioSWNTcap_2.isChecked():
+            self.ui.FormCreateGroupSecondCap.setEnabled(True)
+        else:
+            self.ui.FormCreateGroupSecondCap.setEnabled(False)
 
     def change_color(self, colorUi, property):
         color = QColorDialog.getColor()

@@ -481,6 +481,10 @@ class TAtomicModel(object):
             newAt = deepcopy(atom)
             self.atoms.append(newAt)
 
+    def add_atomic_model(self, atomic_model, minDist = 0):
+        for at in atomic_model:
+            self.add_atom(at, minDist)
+
     def edit_atom(self, ind, newAtom):
         if (ind>=0) and (ind<self.nAtoms()):
             self.atoms[ind] = newAtom
@@ -2230,7 +2234,7 @@ class TFDFFile:
 
 class TCapedSWNT(TAtomicModel):
 
-    def __init__(self, n, m, leng, cells, type):
+    def __init__(self, n, m, leng, cells, type, dist1, angle1, dist2, angle2):
         TAtomicModel.__init__(self)
         self.availableind = np.zeros((8))
         self.available = False
@@ -2247,8 +2251,7 @@ class TCapedSWNT(TAtomicModel):
 
         if type == 1 or type == 2:
             # cap generation
-            if n == m: zaz = 1.2
-            if m == 0: zaz = 1.2  # 0.71
+            zaz = dist1
             Cap = self.cap_formation()  # TCap(n,m)
             if self.available:
                 size1 = self.Size(n, m)
@@ -2261,12 +2264,7 @@ class TCapedSWNT(TAtomicModel):
                 maxz = capatoms.maxZ()
 
                 capatoms.move(0, 0, minz - maxz - zaz)
-                delm = self.DeltaMin(capatoms)
-                print(delm)
-                if (delm > 0.97 * zaz) and (delm < 1.03 * zaz):
-                    alpha = 360 / (2 * n)
-                    print("rotation1")
-                    capatoms.rotateZ(alpha)
+                capatoms.rotateZ(angle1)
                 for i in range(0, capatoms.nAtoms()):
                     self.add_atom(capatoms[i])
 
@@ -2279,13 +2277,10 @@ class TCapedSWNT(TAtomicModel):
                 maxz = self.maxZ()
                 minz = capatoms.minZ()
 
+                zaz = dist2
+
                 capatoms.move(0, 0, (maxz - minz) + zaz)
-                delm = self.DeltaMin(capatoms)
-                print(delm)
-                if (delm > 0.97 * zaz) and (delm < 1.03 * zaz):
-                    alpha = 360 / (2 * n)
-                    print("rotation2")
-                    capatoms.rotateZ(alpha)
+                capatoms.rotateZ(angle2)
                 for i in range(0, capatoms.nAtoms()):
                     self.add_atom(capatoms[i])
             # end cap generation
