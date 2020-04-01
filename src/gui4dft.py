@@ -270,52 +270,6 @@ class mainWindow(QMainWindow):
         Save2DImageToFileAction.triggered.connect(self.save_data_from_figure2d)
         self.ui.toolBar.addAction(Save2DImageToFileAction)
 
-    def add_left_electrode_file(self):
-        fname = self.get_fdf_file_name()
-        if os.path.exists(fname):
-            self.WorkDir = os.path.dirname(fname)
-            self.save_active_Folder()
-            self.ui.FormActionsPreLeftElectrode.setText(fname)
-
-    def add_scat_region_file(self):
-        fname = self.get_fdf_file_name()
-        if os.path.exists(fname):
-            self.WorkDir = os.path.dirname(fname)
-            self.save_active_Folder()
-            self.ui.FormActionsPreScatRegion.setText(fname)
-
-    def add_right_electrode_file(self):
-        fname = self.get_fdf_file_name()
-        if os.path.exists(fname):
-            self.WorkDir = os.path.dirname(fname)
-            self.save_active_Folder()
-            self.ui.FormActionsPreRightElectrode.setText(fname)
-
-
-    def add_isosurface_color_to_table(self):
-        cmap = plt.get_cmap(self.ui.FormSettingsColorsScale.currentText())
-        color_scale = self.ui.FormSettingsColorsScaleType.currentText()
-        i = self.ui.IsosurfaceColorsTable.rowCount() + 1
-        value = self.ui.FormActionsPostLabelSurfaceValue.text()
-        self.ui.IsosurfaceColorsTable.setRowCount(i)  # и одну строку в таблице
-        color_cell = QTableWidgetItem(value)
-        color_cell.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled )
-        self.ui.IsosurfaceColorsTable.setItem(i - 1, 0, color_cell)
-        transp_cell = QDoubleSpinBox()
-        transp_cell.setRange(0,1)
-        transp_cell.setValue(1)
-        transp_cell.setSingleStep(0.1)
-        transp_cell.setDecimals(2)
-        transp_cell.setLocale(QLocale(QLocale.English))
-        transp_cell.setMaximumWidth(145)
-        self.ui.IsosurfaceColorsTable.setCellWidget(i - 1, 1, transp_cell)
-        minv, maxv = self.volumeric_data_range()
-        color = self.get_color(cmap, minv, maxv, float(value), color_scale)
-        self.ui.IsosurfaceColorsTable.item(i - 1, 0).setBackground(QColor.fromRgbF(color[0], color[1], color[2], color[3]))
-
-        self.ui.FormActionsPostButSurface.setEnabled(True)
-        self.ui.FormActionsPostButSurfaceDelete.setEnabled(True)
-
     def add_cell_param(self):
         """ add cell params"""
         fname = QFileDialog.getOpenFileName(self, 'Open file', self.WorkDir)[0]
@@ -358,6 +312,56 @@ class mainWindow(QMainWindow):
         self.check_dos(fname)
 
 
+    def add_isosurface_color_to_table(self):
+        cmap = plt.get_cmap(self.ui.FormSettingsColorsScale.currentText())
+        color_scale = self.ui.FormSettingsColorsScaleType.currentText()
+        i = self.ui.IsosurfaceColorsTable.rowCount() + 1
+        value = self.ui.FormActionsPostLabelSurfaceValue.text()
+        self.ui.IsosurfaceColorsTable.setRowCount(i)  # и одну строку в таблице
+        color_cell = QTableWidgetItem(value)
+        color_cell.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled )
+        self.ui.IsosurfaceColorsTable.setItem(i - 1, 0, color_cell)
+        transp_cell = QDoubleSpinBox()
+        transp_cell.setRange(0,1)
+        transp_cell.setValue(1)
+        transp_cell.setSingleStep(0.1)
+        transp_cell.setDecimals(2)
+        transp_cell.setLocale(QLocale(QLocale.English))
+        transp_cell.setMaximumWidth(145)
+        self.ui.IsosurfaceColorsTable.setCellWidget(i - 1, 1, transp_cell)
+        minv, maxv = self.volumeric_data_range()
+        color = self.get_color(cmap, minv, maxv, float(value), color_scale)
+        self.ui.IsosurfaceColorsTable.item(i - 1, 0).setBackground(QColor.fromRgbF(color[0], color[1], color[2], color[3]))
+
+        self.ui.FormActionsPostButSurface.setEnabled(True)
+        self.ui.FormActionsPostButSurfaceDelete.setEnabled(True)
+
+
+    def add_left_electrode_file(self):
+        fname = self.get_fdf_file_name()
+        if os.path.exists(fname):
+            self.WorkDir = os.path.dirname(fname)
+            self.save_active_Folder()
+            self.ui.FormActionsPreLeftElectrode.setText(fname)
+
+    def add_right_electrode_file(self):
+        fname = self.get_fdf_file_name()
+        if os.path.exists(fname):
+            self.WorkDir = os.path.dirname(fname)
+            self.save_active_Folder()
+            self.ui.FormActionsPreRightElectrode.setText(fname)
+
+    def add_scat_region_file(self):
+        fname = self.get_fdf_file_name()
+        if os.path.exists(fname):
+            self.WorkDir = os.path.dirname(fname)
+            self.save_active_Folder()
+            self.ui.FormActionsPreScatRegion.setText(fname)
+
+
+    def atom_add(self):
+        self.MainForm.add_new_atom()
+
     def atom_delete(self):
         self.MainForm.delete_selected_atom()
 
@@ -366,43 +370,339 @@ class mainWindow(QMainWindow):
         self.models.append(self.MainForm.MainModel)
         self.model_to_screen(-1)
 
-    def atom_add(self):
-        self.MainForm.add_new_atom()
+    def clear_form(self):
+        self.ui.FormActionsPostTableCellParam.setRowCount(0)
+        self.ui.FormActionsPosTableBonds.setRowCount(0)
+        self.ui.FormActionsTabeDOSProperty.setRowCount(0)
+        self.ui.FormActionsListPDOS.clear()
+        self.ui.FormActionsButtonPlotBANDS.setEnabled(False)
 
-    def prepare_FormActionsComboPDOSIndexes(self):
-        model = QStandardItemModel()
-        model.appendRow(QStandardItem("All"))
-        model.appendRow(QStandardItem("Selected atom (3D View)"))
-        model.appendRow(QStandardItem("Selected in list below"))
-        for i in range(1, self.MainForm.MainModel.nAtoms() + 1):
-            self.create_checkable_item(model, str(i))
-        self.ui.FormActionsComboPDOSIndexes.setModel(model)
+    def check_pdos(self, fname):
+        PDOSfile = Importer.CheckPDOSfile(fname)
+        if PDOSfile != False:
+            self.ui.FormActionsLinePDOSfile.setText(PDOSfile)
+            self.ui.FormActionsButtonPlotPDOS.setEnabled(True)
 
-    def prepare_FormActionsComboPDOSspecies(self):
-        Mendeley = TPeriodTable()
-        atoms_list = Mendeley.get_all_letters()
-        model = QStandardItemModel()
-        model.appendRow(QStandardItem("All"))
-        model.appendRow(QStandardItem("Selected atom (3D View)"))
-        model.appendRow(QStandardItem("Selected in list below"))
-        typesOfAtoms = self.MainForm.MainModel.typesOfAtoms()
-        for i in range(0, len(typesOfAtoms)):
-            self.create_checkable_item(model, str(atoms_list[typesOfAtoms[i][0]]))
-        self.ui.FormActionsComboPDOSspecies.setModel(model)
+    def check_bands(self, fname):
+        BANDSfile = Importer.CheckBANDSfile(fname)
+        if BANDSfile != False:
+            self.ui.FormActionsLineBANDSfile.setText(BANDSfile)
+            self.ui.FormActionsButtonParseBANDS.setEnabled(True)
 
-    def prepare_q_numbers_combo(self, FormActionsComboPDOSn, start, stop):
-        QuantumNumbersList = QStandardItemModel()
-        QuantumNumbersList.appendRow(QStandardItem("All"))
-        QuantumNumbersList.appendRow(QStandardItem("Selected"))
-        for i in range(start, stop+1):
-            self.create_checkable_item(QuantumNumbersList, str(i))
-        FormActionsComboPDOSn.setModel(QuantumNumbersList)
+    def check_dos(self, fname):
+        DOSfile = Importer.CheckDOSfile(fname)
+        if DOSfile != False:
+            eFermy = TSIESTA.FermiEnergy(fname)
+            self.ui.FormActionsEditPDOSefermi.setText(str(eFermy))
+
+            i = self.ui.FormActionsTabeDOSProperty.rowCount() + 1
+
+            self.ui.FormActionsTabeDOSProperty.setRowCount(i)
+
+            line = "..." + str(DOSfile)[-15:]
+            QTabWidg = QTableWidgetItem(line)
+            QTabWidg.setToolTip(DOSfile)
+            self.ui.FormActionsTabeDOSProperty.setItem(i - 1, 0, QTabWidg)
+            self.ui.FormActionsTabeDOSProperty.setItem(i - 1, 1, QTableWidgetItem(str(eFermy)))
+            self.ui.FormActionsTabeDOSProperty.update()
+
+    def check_volumeric_data(self, fname):
+        files = []
+        if fname.endswith(".XSF"):
+            files.append(fname)
+        if fname.endswith(".cube"):
+            files.append(fname)
+
+        if fname.endswith(".out") or fname.endswith(".OUT"):
+            label = TSIESTA.SystemLabel(fname)
+            Dir = os.path.dirname(fname)
+            dirs, content = Helpers.getsubs(Dir)
+            for posFile in content:
+                F = posFile.split("\\")
+                if len(F) > 1:
+                    F = F[1]
+                    if F.startswith(label) and F.endswith(".cube"):
+                        files.append(Dir + "/" + F)
+
+            files.append(Dir + "/" + label + ".XSF")
+        for file in files:
+            if os.path.exists(file):
+                self.ui.FormActionsPostList3DData.addItems([file])
+                self.ui.FormActionsPostButSurfaceParse.setEnabled(True)
+            self.ui.FormActionsPostList3DData.update()
+
+    def clearQTreeWidget(self, tree):
+        iterator = QTreeWidgetItemIterator(tree, QTreeWidgetItemIterator.All)
+        while iterator.value():
+            iterator.value().takeChildren()
+            iterator += 1
+        i = tree.topLevelItemCount()
+        while i > -1:
+            tree.takeTopLevelItem(i)
+            i -= 1
+
+    def color_to_ui(self, ColorUi, state_Color):
+        r = state_Color.split()[0]
+        g = state_Color.split()[1]
+        b = state_Color.split()[2]
+        ColorUi.setStyleSheet("background-color:rgb(" + r + "," + g + "," + b + ")")
+
+
+    def create_model_with_electrodes(self):
+        left_file = self.ui.FormActionsPreLeftElectrode.text()
+        scat_file = self.ui.FormActionsPreScatRegion.text()
+        righ_file = self.ui.FormActionsPreRightElectrode.text()
+
+        model_left, fdf_left = Importer.Import(left_file)
+        model_scat, fdf_scat = Importer.Import(scat_file)
+        model_righ, fdf_righ = Importer.Import(righ_file)
+
+        model_left = model_left[0]
+        model_scat = model_scat[0]
+        model_righ = model_righ[0]
+
+        left_elec_max = model_left.maxZ()
+        left_bord = model_scat.minZ()
+
+        right_elec_min = model_righ.minZ()
+
+        left_dist = self.ui.FormActionsPreSpinLeftElectrodeDist.value()
+        righ_dist = self.ui.FormActionsPreSpinRightElectrodeDist.value()
+
+        scat_rotation = self.ui.FormActionsPreSpinScatRotation.value()
+
+        model = TAtomicModel()
+        model_left.move(0,0,0)
+        model.add_atomic_model(model_left)
+        model_scat.rotateZ(scat_rotation)
+        model_scat.move(0, 0, -(left_bord - left_elec_max) + left_dist)
+        model.add_atomic_model(model_scat)
+        righ_bord = model.maxZ()
+        model_righ.move(0, 0, (righ_bord - right_elec_min) + righ_dist)
+        model.add_atomic_model(model_righ)
+
+        self.models.append(model)
+        self.plot_model(-1)
+        self.MainForm.add_atoms()
+        self.fill_gui("SWNT-model")
+
+    def colors_of_atoms(self):
+        atomscolor = [ self.ui.ColorsOfAtomsTable.item(0, 0).background().color().getRgbF()]
+        for i in range(0, self.ui.ColorsOfAtomsTable.rowCount()):
+            col = self.ui.ColorsOfAtomsTable.item(i, 0).background().color().getRgbF()
+            atomscolor.append(col)
+        return atomscolor
+
 
     def create_checkable_item(self, QuantumNumbersList, value):
         item = QStandardItem(value)
         item.setFlags(Qt.ItemIsUserCheckable | Qt.ItemIsEnabled)
         item.setData(QVariant(Qt.Checked), Qt.CheckStateRole)
         QuantumNumbersList.appendRow(item)
+
+
+
+    def delete_cell_param_row(self):
+        row = self.ui.FormActionsPostTableCellParam.currentRow()
+        self.ui.FormActionsPostTableCellParam.removeRow(row)
+
+    def delete_isosurface_color_from_table(self):
+        row = self.ui.IsosurfaceColorsTable.currentRow()
+        self.ui.IsosurfaceColorsTable.removeRow(row)
+
+    def fill_gui(self, title = "" ):
+        fname = self.filename
+        if title == "":
+            self.fill_file_name(fname)
+        else:
+            self.fill_file_name(title)
+        self.fill_models_list()
+        self.fill_atoms_table()
+        self.fill_properties_table()
+        self.check_volumeric_data(fname)
+        if Importer.checkFormat(fname) == "SIESTAout":
+            self.check_dos(fname)
+            self.check_pdos(fname)
+            self.check_bands(fname)
+            self.fill_cell_info(fname)
+
+        if Importer.checkFormat(fname) == "SIESTAfdf":
+            c = self.MainForm.MainModel.get_LatVect3_norm()
+            self.ui.FormActionsPreZSizeFillSpace.setValue(c)
+
+
+    def fill_file_name(self, fname):
+        self.ui.Form3Dand2DTabs.setItemText(0, "3D View: " + fname)
+        self.ui.Form3Dand2DTabs.update()
+
+    def fill_models_list(self):
+        model = QStandardItemModel()
+        if len(self.models) == 1:
+            model.appendRow(QStandardItem("single model"))
+        else:
+            for i in range(0, len(self.models)):
+                model.appendRow(QStandardItem("model " + str(i)))
+
+        self.ui.FormModelComboModels.setModel(model)
+        self.ui.FormModelComboModels.setCurrentIndex(len(self.models) - 1)
+
+    def fill_atoms_table(self):
+        model = self.MainForm.get_model().atoms
+        self.ui.FormModelTableAtoms.setRowCount(len(model))  # и одну строку в таблице
+
+        for i in range(0, len(model)):
+            self.ui.FormModelTableAtoms.setItem(i, 0, QTableWidgetItem(model[i].let))
+            self.ui.FormModelTableAtoms.setItem(i, 1, QTableWidgetItem(str(round(model[i].x, 5))))
+            self.ui.FormModelTableAtoms.setItem(i, 2, QTableWidgetItem(str(round(model[i].y, 5))))
+            self.ui.FormModelTableAtoms.setItem(i, 3, QTableWidgetItem(str(round(model[i].z, 5))))
+
+    def fill_properties_table(self):
+        properties = []
+
+        model = self.MainForm.get_model()
+        properties.append(["Natoms", str(len(model.atoms))])
+        properties.append(["LatVect1", str(model.LatVect1)])
+        properties.append(["LatVect2", str(model.LatVect2)])
+        properties.append(["LatVect3", str(model.LatVect3)])
+
+        self.ui.FormModelTableProperties.setRowCount(len(properties))  # и одну строку в таблице
+
+        for i in range(0, len(properties)):
+            self.ui.FormModelTableProperties.setItem(i, 0, QTableWidgetItem(properties[i][0]))
+            self.ui.FormModelTableProperties.setItem(i, 1, QTableWidgetItem(properties[i][1]))
+
+    def file_brouser_selection(self, selected, deselected):
+        self.IndexOfFileToOpen = selected.indexes()[0]
+        text = str(self.ui.FileBrouserTree.model().filePath(self.IndexOfFileToOpen))
+        self.ui.FileBrouserOpenLine.setText(text)
+        self.ui.FileBrouserOpenLine.update()
+
+    def fill_volumeric_data(self, data):
+        type = data.type
+        data = data.blocks
+        self.clearQTreeWidget(self.ui.FormActionsPostTreeSurface)
+
+        if type == "TXSF":
+            for dat in data:
+                text = ((dat[0].title).split('_')[3]).split(':')[0]
+                parent = QTreeWidgetItem(self.ui.FormActionsPostTreeSurface)
+                parent.setText(0, "{}".format(text) + "3D")
+                for da in dat:
+                    ch = text + ':' + (da.title).split(':')[1]
+                    child = QTreeWidgetItem(parent)
+                    child.setText(0, "{}".format(ch))
+
+        if type == "TGaussianCube":
+            for dat in data:
+                text = dat[0].title.split(".cube")[0]
+                parent = QTreeWidgetItem(self.ui.FormActionsPostTreeSurface)
+                parent.setText(0, "{}".format(text))
+                for da in dat:
+                    ch = text
+                    child = QTreeWidgetItem(parent)
+                    child.setText(0, "{}".format(ch))
+        self.ui.FormActionsPostTreeSurface.show()
+
+    def fill_bonds(self):
+        bonds = self.MainForm.MainModel.Bonds()
+        self.ui.FormActionsPosTableBonds.setRowCount(len(bonds))  # и одну строку в таблице
+
+        BondsType = QStandardItemModel()
+        BondsType.appendRow(QStandardItem("All"))
+        self.ui.FormActionsPostComboBonds.setModel(BondsType)
+
+        mean = 0
+        n = 0
+
+        for i in range(0, len(bonds)):
+            s = str(bonds[i][3]) + str(bonds[i][4]) + "-" + str(bonds[i][5]) + str(bonds[i][6])
+            self.ui.FormActionsPosTableBonds.setItem(i, 0, QTableWidgetItem(s))
+            self.ui.FormActionsPosTableBonds.setItem(i, 1, QTableWidgetItem(str(bonds[i][2])))
+            mean += bonds[i][2]
+            n += 1
+        if n > 0:
+            self.ui.FormActionsPostLabelMeanBond.setText("Mean value: " + str(mean / n))
+
+    def fill_cell_info(self, fname):
+        Volume = TSIESTA.volume(fname)
+        Energy = TSIESTA.Etot(fname)
+
+        model, FDFData = Importer.Import(fname)
+        model = model[-1]
+        a = model.get_LatVect1_norm()
+        b = model.get_LatVect2_norm()
+        c = model.get_LatVect3_norm()
+        self.fill_cell_info_row(Energy, Volume, a, b, c)
+        self.ui.FormActionsPreZSizeFillSpace.setValue(c)
+        self.WorkDir = os.path.dirname(fname)
+        self.save_active_Folder()
+
+    def fill_cell_info_row(self, Energy, Volume, a, b, c):
+        i = self.ui.FormActionsPostTableCellParam.rowCount() + 1
+        self.ui.FormActionsPostTableCellParam.setRowCount(i)  # и одну строку в таблице
+        self.ui.FormActionsPostTableCellParam.setItem(i - 1, 0, QTableWidgetItem(str(Volume)))
+        self.ui.FormActionsPostTableCellParam.setItem(i - 1, 1, QTableWidgetItem(str(Energy)))
+        self.ui.FormActionsPostTableCellParam.setItem(i - 1, 2, QTableWidgetItem(str(a)))
+        self.ui.FormActionsPostTableCellParam.setItem(i - 1, 3, QTableWidgetItem(str(b)))
+        self.ui.FormActionsPostTableCellParam.setItem(i - 1, 4, QTableWidgetItem(str(c)))
+
+    def get_colors_list(self, minv, maxv, values, cmap, color_scale):
+        n = len(values)
+        colors = []
+        for i in range(0,n):
+            value = values[i]
+            colors.append(self.get_color(cmap, minv, maxv,  value, color_scale))
+        return colors
+
+    def get_color_of_plane(self, minv, maxv, points, cmap, color_scale):
+        Nx = len(points)
+        Ny = len(points[0])
+        minv = float(minv)
+        maxv = float(maxv)
+        colors = []
+        for i in range(0, Nx):
+            row = []
+            for j in range(0, Ny):
+                value = float(points[i][j][3])
+                prev = self.colors_cash.get(value)
+                if prev == None:
+                    color = self.get_color(cmap, minv, maxv,  value, color_scale)
+                    self.colors_cash[value] = [color[0], color[1], color[2]]
+                    row.append([color[0], color[1], color[2]])
+                else:
+                    row.append(prev)
+            colors.append(row)
+        return colors
+
+    def get_color(self, cmap, minv, maxv, value, scale):
+        if scale == "black":
+            return QColor.fromRgb(0,0,0,1).getRgbF()
+        if scale == "Linear":
+            part = (value - minv) / (maxv - minv)
+        if scale == "Log":
+            if minv < 1e-8:
+                minv = 1e-8
+            if value < 1e-8:
+                value = 1e-8
+            part = (math.log10(value) - math.log10(minv)) / (math.log10(maxv) - math.log10(minv))
+        color = cmap(part)
+        return color
+
+
+    def get_fdf_file_name(self):
+        fname = QFileDialog.getOpenFileName(self, 'Open file', self.WorkDir, "FDF files (*.fdf)")[0]
+        if not fname.endswith(".fdf"):
+            fname += ".fdf"
+        return fname
+
+
+    def get_color_from_SETTING(self, strcolor):
+        r = strcolor.split()[0]
+        g = strcolor.split()[1]
+        b = strcolor.split()[2]
+        bondscolor = [float(r) / 255, float(g) / 255, float(b) / 255]
+        return bondscolor
+
 
     def load_settings(self):
         # The SETTINGS
@@ -480,70 +780,6 @@ class mainWindow(QMainWindow):
         self.state_Color_Of_Contour = str(settings.value(SETTINGS_Color_Of_Contour, '0 255 0'))
         self.color_to_ui(self.ui.ColorContour, self.state_Color_Of_Contour)
 
-    def color_to_ui(self, ColorUi, state_Color):
-        r = state_Color.split()[0]
-        g = state_Color.split()[1]
-        b = state_Color.split()[2]
-        ColorUi.setStyleSheet("background-color:rgb(" + r + "," + g + "," + b + ")")
-
-    def get_fdf_file_name(self):
-        fname = QFileDialog.getOpenFileName(self, 'Open file', self.WorkDir, "FDF files (*.fdf)")[0]
-        if not fname.endswith(".fdf"):
-            fname += ".fdf"
-        return fname
-
-
-    def create_model_with_electrodes(self):
-        left_file = self.ui.FormActionsPreLeftElectrode.text()
-        scat_file = self.ui.FormActionsPreScatRegion.text()
-        righ_file = self.ui.FormActionsPreRightElectrode.text()
-
-        model_left, fdf_left = Importer.Import(left_file)
-        model_scat, fdf_scat = Importer.Import(scat_file)
-        model_righ, fdf_righ = Importer.Import(righ_file)
-
-        model_left = model_left[0]
-        model_scat = model_scat[0]
-        model_righ = model_righ[0]
-
-        left_elec_max = model_left.maxZ()
-        left_bord = model_scat.minZ()
-
-        right_elec_min = model_righ.minZ()
-
-        left_dist = self.ui.FormActionsPreSpinLeftElectrodeDist.value()
-        righ_dist = self.ui.FormActionsPreSpinRightElectrodeDist.value()
-
-        scat_rotation = self.ui.FormActionsPreSpinScatRotation.value()
-
-        model = TAtomicModel()
-        model_left.move(0,0,0)
-        model.add_atomic_model(model_left)
-        model_scat.rotateZ(scat_rotation)
-        model_scat.move(0, 0, -(left_bord - left_elec_max) + left_dist)
-        model.add_atomic_model(model_scat)
-        righ_bord = model.maxZ()
-        model_righ.move(0, 0, (righ_bord - right_elec_min) + righ_dist)
-        model.add_atomic_model(model_righ)
-
-        self.models.append(model)
-        self.plot_model(-1)
-        self.MainForm.add_atoms()
-        self.fill_gui("SWNT-model")
-
-    def colors_of_atoms(self):
-        atomscolor = [ self.ui.ColorsOfAtomsTable.item(0, 0).background().color().getRgbF()]
-        for i in range(0, self.ui.ColorsOfAtomsTable.rowCount()):
-            col = self.ui.ColorsOfAtomsTable.item(i, 0).background().color().getRgbF()
-            atomscolor.append(col)
-        return atomscolor
-
-    def get_color_from_SETTING(self, strcolor):
-        r = strcolor.split()[0]
-        g = strcolor.split()[1]
-        b = strcolor.split()[2]
-        bondscolor = [float(r) / 255, float(g) / 255, float(b) / 255]
-        return bondscolor
 
     def menu_export(self):
         fname = QFileDialog.getSaveFileName(self, 'Save File', self.WorkDir, "FDF files (*.fdf);;XYZ files (*.xyz)")[0]
@@ -551,13 +787,7 @@ class mainWindow(QMainWindow):
         self.WorkDir = os.path.dirname(fname)
         self.save_active_Folder()
 
-    def clear_form(self):
-        self.ui.FormActionsPostTableCellParam.setRowCount(0)
-        self.ui.FormActionsPosTableBonds.setRowCount(0)
-        self.ui.FormActionsTabeDOSProperty.setRowCount(0)
-        self.ui.FormActionsListPDOS.clear()
-        self.ui.FormActionsButtonPlotBANDS.setEnabled(False)
-        
+
     def menu_open(self):
         self.clear_form()
         self.ui.Form3Dand2DTabs.setCurrentIndex(0)
@@ -594,25 +824,6 @@ class mainWindow(QMainWindow):
                     self.fill_gui()
                     self.save_active_Folder()
 
-    def model_to_screen(self, value):
-        self.plot_model(value)
-        self.fill_atoms_table()
-        self.fill_properties_table()
-
-    def plot_model(self, value):
-        ViewBox = self.ui.FormSettingsViewCheckShowBox.isChecked()
-        ViewBonds = self.ui.FormSettingsViewCheckShowBonds.isChecked()
-        bondWidth = 0.005*self.ui.FormSettingsViewSpinBondWidth.value()
-        bondscolor = self.get_color_from_SETTING(self.state_Color_Of_Bonds)
-        axescolor = self.get_color_from_SETTING(self.state_Color_Of_Axes)
-        ViewAxes = self.ui.FormSettingsViewCheckShowAxes.isChecked()
-        boxcolor = self.get_color_from_SETTING(self.state_Color_Of_Box)
-        atomscolor = self.colors_of_atoms()
-        contour_width = (self.ui.FormSettingsViewSpinContourWidth.value())/1000.0
-        self.MainForm.set_atomic_structure(self.models[value], atomscolor, ViewBox, boxcolor, ViewBonds, bondscolor, bondWidth, ViewAxes, axescolor, contour_width)
-        self.prepare_FormActionsComboPDOSIndexes()
-        self.prepare_FormActionsComboPDOSspecies()
-
     def menu_ortho(self):
         self.MainForm.ViewOrtho = True
         self.ui.openGLWidget.update()
@@ -638,6 +849,27 @@ class mainWindow(QMainWindow):
         dialogWin.ui.setupUi(dialogWin)
         dialogWin.setFixedSize(QSize(532,149))
         dialogWin.show()
+
+
+    def model_to_screen(self, value):
+        self.plot_model(value)
+        self.fill_atoms_table()
+        self.fill_properties_table()
+
+
+    def plot_model(self, value):
+        ViewBox = self.ui.FormSettingsViewCheckShowBox.isChecked()
+        ViewBonds = self.ui.FormSettingsViewCheckShowBonds.isChecked()
+        bondWidth = 0.005*self.ui.FormSettingsViewSpinBondWidth.value()
+        bondscolor = self.get_color_from_SETTING(self.state_Color_Of_Bonds)
+        axescolor = self.get_color_from_SETTING(self.state_Color_Of_Axes)
+        ViewAxes = self.ui.FormSettingsViewCheckShowAxes.isChecked()
+        boxcolor = self.get_color_from_SETTING(self.state_Color_Of_Box)
+        atomscolor = self.colors_of_atoms()
+        contour_width = (self.ui.FormSettingsViewSpinContourWidth.value())/1000.0
+        self.MainForm.set_atomic_structure(self.models[value], atomscolor, ViewBox, boxcolor, ViewBonds, bondscolor, bondWidth, ViewAxes, axescolor, contour_width)
+        self.prepare_FormActionsComboPDOSIndexes()
+        self.prepare_FormActionsComboPDOSspecies()
 
 
     def plot_surface(self):
@@ -676,48 +908,6 @@ class mainWindow(QMainWindow):
                 item = isovalueslog[i]
                 isovalues.append( math.exp( math.log(10)*item ))
         return isovalues
-
-    def get_colors_list(self, minv, maxv, values, cmap, color_scale):
-        n = len(values)
-        colors = []
-        for i in range(0,n):
-            value = values[i]
-            colors.append(self.get_color(cmap, minv, maxv,  value, color_scale))
-        return colors
-
-    def get_color_of_plane(self, minv, maxv, points, cmap, color_scale):
-        Nx = len(points)
-        Ny = len(points[0])
-        minv = float(minv)
-        maxv = float(maxv)
-        colors = []
-        for i in range(0, Nx):
-            row = []
-            for j in range(0, Ny):
-                value = float(points[i][j][3])
-                prev = self.colors_cash.get(value)
-                if prev == None:
-                    color = self.get_color(cmap, minv, maxv,  value, color_scale)
-                    self.colors_cash[value] = [color[0], color[1], color[2]]
-                    row.append([color[0], color[1], color[2]])
-                else:
-                    row.append(prev)
-            colors.append(row)
-        return colors
-
-    def get_color(self, cmap, minv, maxv, value, scale):
-        if scale == "black":
-            return QColor.fromRgb(0,0,0,1).getRgbF()
-        if scale == "Linear":
-            part = (value - minv) / (maxv - minv)
-        if scale == "Log":
-            if minv < 1e-8:
-                minv = 1e-8
-            if value < 1e-8:
-                value = 1e-8
-            part = (math.log10(value) - math.log10(minv)) / (math.log10(maxv) - math.log10(minv))
-        color = cmap(part)
-        return color
 
     def plot_contour(self):
         self.MainForm.ViewContour = False
@@ -777,214 +967,37 @@ class mainWindow(QMainWindow):
 
         if self.ui.FormActionsPostRadioColorPlane.isChecked() or self.ui.FormActionsPostRadioColorPlaneContours.isChecked():
             self.MainForm.add_colored_plane(params_colored_plane)
-        
-    def fill_file_name(self, fname):
-        self.ui.Form3Dand2DTabs.setItemText(0, "3D View: "+fname)
-        self.ui.Form3Dand2DTabs.update()
-        
-    def fill_models_list(self):
+
+
+    def prepare_FormActionsComboPDOSIndexes(self):
         model = QStandardItemModel()
-        if len(self.models) == 1:
-            model.appendRow(QStandardItem("single model"))
-        else:
-            for i in range(0,len(self.models)):
-                model.appendRow(QStandardItem("model "+str(i)))
-  
-        self.ui.FormModelComboModels.setModel(model)
-        self.ui.FormModelComboModels.setCurrentIndex(len(self.models)-1)
-        
-    def fill_atoms_table(self):
-        model = self.MainForm.get_model().atoms
-        self.ui.FormModelTableAtoms.setRowCount(len(model))        # и одну строку в таблице
-                
-        for i in range(0, len(model)):
-            self.ui.FormModelTableAtoms.setItem(i, 0, QTableWidgetItem(model[i].let))
-            self.ui.FormModelTableAtoms.setItem(i, 1, QTableWidgetItem(str(round(model[i].x,5))))
-            self.ui.FormModelTableAtoms.setItem(i, 2, QTableWidgetItem(str(round(model[i].y,5))))
-            self.ui.FormModelTableAtoms.setItem(i, 3, QTableWidgetItem(str(round(model[i].z,5))))
-  
-    def fill_properties_table(self):
-        properties = []
-                
-        model = self.MainForm.get_model()
-        properties.append(["Natoms",str(len(model.atoms))])
-        properties.append(["LatVect1", str(model.LatVect1)])
-        properties.append(["LatVect2", str(model.LatVect2)])
-        properties.append(["LatVect3", str(model.LatVect3)])
+        model.appendRow(QStandardItem("All"))
+        model.appendRow(QStandardItem("Selected atom (3D View)"))
+        model.appendRow(QStandardItem("Selected in list below"))
+        for i in range(1, self.MainForm.MainModel.nAtoms() + 1):
+            self.create_checkable_item(model, str(i))
+        self.ui.FormActionsComboPDOSIndexes.setModel(model)
 
-        self.ui.FormModelTableProperties.setRowCount(len(properties))        # и одну строку в таблице
-        
-        for i in range(0, len(properties)):
-            self.ui.FormModelTableProperties.setItem(i, 0, QTableWidgetItem(properties[i][0]))
-            self.ui.FormModelTableProperties.setItem(i, 1, QTableWidgetItem(properties[i][1]))
+    def prepare_FormActionsComboPDOSspecies(self):
+        Mendeley = TPeriodTable()
+        atoms_list = Mendeley.get_all_letters()
+        model = QStandardItemModel()
+        model.appendRow(QStandardItem("All"))
+        model.appendRow(QStandardItem("Selected atom (3D View)"))
+        model.appendRow(QStandardItem("Selected in list below"))
+        typesOfAtoms = self.MainForm.MainModel.typesOfAtoms()
+        for i in range(0, len(typesOfAtoms)):
+            self.create_checkable_item(model, str(atoms_list[typesOfAtoms[i][0]]))
+        self.ui.FormActionsComboPDOSspecies.setModel(model)
 
-    def check_pdos(self, fname):
-        PDOSfile = Importer.CheckPDOSfile(fname)
-        if PDOSfile != False:
-            self.ui.FormActionsLinePDOSfile.setText(PDOSfile)
-            self.ui.FormActionsButtonPlotPDOS.setEnabled(True)
+    def prepare_q_numbers_combo(self, FormActionsComboPDOSn, start, stop):
+        QuantumNumbersList = QStandardItemModel()
+        QuantumNumbersList.appendRow(QStandardItem("All"))
+        QuantumNumbersList.appendRow(QStandardItem("Selected"))
+        for i in range(start, stop+1):
+            self.create_checkable_item(QuantumNumbersList, str(i))
+        FormActionsComboPDOSn.setModel(QuantumNumbersList)
 
-    def check_bands(self, fname):
-        BANDSfile = Importer.CheckBANDSfile(fname)
-        if BANDSfile != False:
-            self.ui.FormActionsLineBANDSfile.setText(BANDSfile)
-            self.ui.FormActionsButtonParseBANDS.setEnabled(True)
-        
-    def check_dos(self, fname):
-        DOSfile = Importer.CheckDOSfile(fname)
-        if DOSfile != False:
-            eFermy = TSIESTA.FermiEnergy(fname)
-            self.ui.FormActionsEditPDOSefermi.setText(str(eFermy))
-
-            i = self.ui.FormActionsTabeDOSProperty.rowCount() + 1
-
-            self.ui.FormActionsTabeDOSProperty.setRowCount(i)
-
-            line = "..."+str(DOSfile)[-15:]
-            QTabWidg = QTableWidgetItem(line)
-            QTabWidg.setToolTip(DOSfile)
-            self.ui.FormActionsTabeDOSProperty.setItem(i - 1, 0, QTabWidg)
-            self.ui.FormActionsTabeDOSProperty.setItem(i - 1, 1, QTableWidgetItem(str(eFermy)))
-            self.ui.FormActionsTabeDOSProperty.update()
-
-    def check_volumeric_data(self, fname):
-        files = []
-        if fname.endswith(".XSF"):
-            files.append(fname)
-        if fname.endswith(".cube"):
-            files.append(fname)
-
-        if fname.endswith(".out") or fname.endswith(".OUT"):
-            label = TSIESTA.SystemLabel(fname)
-            Dir = os.path.dirname(fname)
-            dirs, content = Helpers.getsubs(Dir)
-            for posFile in content:
-                F = posFile.split("\\")
-                if len(F)>1:
-                    F = F[1]
-                    if F.startswith(label) and F.endswith(".cube"):
-                        files.append(Dir + "/" + F)
-
-            files.append(Dir + "/" + label + ".XSF")
-        for file in files:
-            if os.path.exists(file):
-                self.ui.FormActionsPostList3DData.addItems([file])
-                self.ui.FormActionsPostButSurfaceParse.setEnabled(True)
-            self.ui.FormActionsPostList3DData.update()
-
-    def clearQTreeWidget(self, tree):
-        iterator = QTreeWidgetItemIterator(tree, QTreeWidgetItemIterator.All)
-        while iterator.value():
-            iterator.value().takeChildren()
-            iterator += 1
-        i = tree.topLevelItemCount()
-        while i > -1:
-            tree.takeTopLevelItem(i)
-            i -= 1
-
-    def file_brouser_selection(self, selected, deselected):
-        self.IndexOfFileToOpen = selected.indexes()[0]
-        text = str(self.ui.FileBrouserTree.model().filePath(self.IndexOfFileToOpen))
-        self.ui.FileBrouserOpenLine.setText(text)
-        self.ui.FileBrouserOpenLine.update()
-
-    def fill_volumeric_data(self, data):
-        type = data.type
-        data = data.blocks
-        self.clearQTreeWidget(self.ui.FormActionsPostTreeSurface)
-
-        if type == "TXSF":
-            for dat in data:
-                text = ((dat[0].title).split('_')[3]).split(':')[0]
-                parent = QTreeWidgetItem(self.ui.FormActionsPostTreeSurface)
-                parent.setText(0, "{}".format(text) + "3D")
-                for da in dat:
-                    ch = text + ':' + (da.title).split(':')[1]
-                    child = QTreeWidgetItem(parent)
-                    child.setText(0, "{}".format(ch))
-
-        if type == "TGaussianCube":
-            for dat in data:
-                text = dat[0].title.split(".cube")[0]
-                parent = QTreeWidgetItem(self.ui.FormActionsPostTreeSurface)
-                parent.setText(0, "{}".format(text))
-                for da in dat:
-                    ch = text
-                    child = QTreeWidgetItem(parent)
-                    child.setText(0, "{}".format(ch))
-        self.ui.FormActionsPostTreeSurface.show()
-
-    def fill_bonds(self):
-        bonds = self.MainForm.MainModel.Bonds()
-        self.ui.FormActionsPosTableBonds.setRowCount(len(bonds))  # и одну строку в таблице
-
-        BondsType = QStandardItemModel()
-        BondsType.appendRow(QStandardItem("All"))
-        self.ui.FormActionsPostComboBonds.setModel(BondsType)
-
-        mean = 0
-        n = 0
-
-        for i in range(0, len(bonds)):
-            s = str(bonds[i][3])+str(bonds[i][4])+"-"+str(bonds[i][5])+str(bonds[i][6])
-            self.ui.FormActionsPosTableBonds.setItem(i, 0, QTableWidgetItem(s))
-            self.ui.FormActionsPosTableBonds.setItem(i, 1, QTableWidgetItem(str(bonds[i][2])))
-            mean+=bonds[i][2]
-            n+=1
-        if n>0:
-            self.ui.FormActionsPostLabelMeanBond.setText("Mean value: "+str(mean/n))
-
-
-    def fill_cell_info(self, fname):
-        Volume = TSIESTA.volume(fname)
-        Energy = TSIESTA.Etot(fname)
-
-        model, FDFData = Importer.Import(fname)
-        model = model[-1]
-        a = model.get_LatVect1_norm()
-        b = model.get_LatVect2_norm()
-        c = model.get_LatVect3_norm()
-        self.fill_cell_info_row(Energy, Volume, a, b, c)
-        self.ui.FormActionsPreZSizeFillSpace.setValue(c)
-        self.WorkDir = os.path.dirname(fname)
-        self.save_active_Folder()
-
-    def fill_cell_info_row(self, Energy, Volume, a, b, c):
-        i = self.ui.FormActionsPostTableCellParam.rowCount() + 1
-        self.ui.FormActionsPostTableCellParam.setRowCount(i)  # и одну строку в таблице
-        self.ui.FormActionsPostTableCellParam.setItem(i - 1, 0, QTableWidgetItem(str(Volume)))
-        self.ui.FormActionsPostTableCellParam.setItem(i - 1, 1, QTableWidgetItem(str(Energy)))
-        self.ui.FormActionsPostTableCellParam.setItem(i - 1, 2, QTableWidgetItem(str(a)))
-        self.ui.FormActionsPostTableCellParam.setItem(i - 1, 3, QTableWidgetItem(str(b)))
-        self.ui.FormActionsPostTableCellParam.setItem(i - 1, 4, QTableWidgetItem(str(c)))
-
-    def delete_cell_param_row(self):
-        row = self.ui.FormActionsPostTableCellParam.currentRow()
-        self.ui.FormActionsPostTableCellParam.removeRow(row)
-
-    def delete_isosurface_color_from_table(self):
-        row = self.ui.IsosurfaceColorsTable.currentRow()
-        self.ui.IsosurfaceColorsTable.removeRow(row)
-
-    def fill_gui(self, title = "" ):
-        fname = self.filename
-        if title == "":
-            self.fill_file_name(fname)
-        else:
-            self.fill_file_name(title)
-        self.fill_models_list()
-        self.fill_atoms_table()
-        self.fill_properties_table()
-        self.check_volumeric_data(fname)
-        if Importer.checkFormat(fname) == "SIESTAout":
-            self.check_dos(fname)
-            self.check_pdos(fname)
-            self.check_bands(fname)
-            self.fill_cell_info(fname)
-
-        if Importer.checkFormat(fname) == "SIESTAfdf":
-            c = self.MainForm.MainModel.get_LatVect3_norm()
-            self.ui.FormActionsPreZSizeFillSpace.setValue(c)
 
     def plot_bonds_histogram(self):
         bonds = self.MainForm.MainModel.Bonds()
