@@ -100,27 +100,27 @@ class Importer(object):
 
             if fileFormat == "SIESTAANI":
                 models = TSIESTA.atoms_from_ani(filename)
-                fdf = "#"
+                fdf = TFDFFile()
 
             if fileFormat == "SIESTASTRUCT_OUT":
                 models = TSIESTA.atoms_from_struct_out(filename)
-                fdf = "#"
+                fdf = TFDFFile()
 
             if fileFormat == "SIESTAMD_CAR":
                 models = TSIESTA.atoms_from_md_car(filename)
-                fdf = "#"
+                fdf = TFDFFile()
 
             if fileFormat == "SIESTAXSF":
                 models = TXSF.get_atoms(filename)
-                fdf = "#"
+                fdf = TFDFFile()
 
             if fileFormat == "GAUSSIAN_cube":
                 models = TGaussianCube.get_atoms(filename)
-                fdf = "#"
+                fdf = TFDFFile()
 
             if fileFormat == "XMolXYZ":
                 models = TSIESTA.atoms_from_xyz(filename)
-                fdf = "#"
+                fdf = TFDFFile()
         return models, fdf
 
     @staticmethod

@@ -1,1 +1,1 @@
-python qui4dft.py
+python gui4dft.py
