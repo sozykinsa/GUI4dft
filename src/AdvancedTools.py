@@ -807,6 +807,19 @@ class TAtomicModel(object):
             if r1<DeltaMolecula1:
                 DeltaMolecula1 = r1
         return DeltaMolecula1
+
+
+    def GoToPositiveCoordinates(self):
+        xm = self.minX()
+        ym = self.minY()
+        zm = self.minZ()
+        for i in range(0, self.nAtoms()):
+            self.atoms[i].x -= xm
+            self.atoms[i].x += 0.1
+            self.atoms[i].y -= ym
+            self.atoms[i].y += 0.1
+            self.atoms[i].z -= zm
+            self.atoms[i].z += 0.1
         
     def grow(self):
         """ модель транслируется в трех измерениях и становится в 27 раз больше """
@@ -901,6 +914,7 @@ class TAtomicModel(object):
             data+='%endblock Zmatrix\n'
 
         if coord_style == "Fractional":
+            self.GoToPositiveCoordinates()
             self.convert_from_cart_to_direct()
             data += 'AtomicCoordinatesFormat Fractional\n'
             data += '%block AtomicCoordinatesAndAtomicSpecies\n'
@@ -1474,6 +1488,12 @@ class TSIESTA:
             lat_vect_1 = [a, 0, 0]
             lat_vect_2 = [b * math.cos(gamma), b * math.sin(gamma), 0]
             lat_vect_3 = [c * math.cos(beta), c * math.cos(alpha) * math.sin(gamma), h]
+
+            if lat_vect_2[0] < 1e-8: lat_vect_2[0] = 0
+            if lat_vect_2[1] < 1e-8: lat_vect_2[1] = 0
+            if lat_vect_3[0] < 1e-8: lat_vect_3[0] = 0
+            if lat_vect_3[1] < 1e-8: lat_vect_3[1] = 0
+            if lat_vect_3[2] < 1e-8: lat_vect_3[2] = 0
 
             return lat_vect_1, lat_vect_2, lat_vect_3
         else:
@@ -2201,8 +2221,11 @@ class TFDFFile:
             self.fdf_parser(fdf)
             return self
 
-    def get_all_data(self, structure, coordType, lattType):
+
+    def get_all_data(self, _structure, coordType, lattType):
         #structure = TAtomicModel(atoms)
+        structure = deepcopy(_structure)
+
         st = structure.toSIESTAfdfdata(coordType,lattType)
 
         for prop in self.properties:
