@@ -447,6 +447,27 @@ class TAtomicModel(object):
     def get_LatVect3_norm(self):
         return norm(self.LatVect3)
 
+    def get_angle_alpha(self):
+        a = self.get_LatVect2_norm()
+        b = self.get_LatVect3_norm()
+        ab = self.LatVect2[0]*self.LatVect3[0] + self.LatVect2[1]*self.LatVect3[1] + self.LatVect2[2]*self.LatVect3[2]
+        angle = math.acos(ab/(a*b))
+        return 180*angle/math.pi
+
+    def get_angle_beta(self):
+        a = self.get_LatVect1_norm()
+        b = self.get_LatVect3_norm()
+        ab = self.LatVect1[0]*self.LatVect3[0] + self.LatVect1[1]*self.LatVect3[1] + self.LatVect1[2]*self.LatVect3[2]
+        angle = math.acos(ab/(a*b))
+        return 180*angle/math.pi
+
+    def get_angle_gamma(self):
+        a = self.get_LatVect2_norm()
+        b = self.get_LatVect1_norm()
+        ab = self.LatVect2[0]*self.LatVect1[0] + self.LatVect2[1]*self.LatVect1[1] + self.LatVect2[2]*self.LatVect1[2]
+        angle = math.acos(ab/(a*b))
+        return 180*angle/math.pi
+
     def set_lat_vectors(self, v1, v2, v3):
         if (len(v1) == 3) and (len(v2) == 3) and (len(v3) == 3):
             self.LatVect1 = np.array(v1)
@@ -614,6 +635,17 @@ class TAtomicModel(object):
             atom.x = x
             atom.y = y
             atom.z = z
+
+    def convert_from_cart_to_direct(self):
+        SysCoord = np.array([self.LatVect1, self.LatVect2, self.LatVect3])
+        obr = np.linalg.inv(SysCoord).transpose()
+
+        for atom in self.atoms:
+            Coord = np.array([atom.x, atom.y, atom.z])
+            res = obr.dot(Coord)
+            atom.x = res[0]
+            atom.y = res[1]
+            atom.z = res[2]
 
     def minX(self):
         """ минимальная координата по оси X """
@@ -827,28 +859,60 @@ class TAtomicModel(object):
         print(text, file=f)
         f.close()     
 
-    def toSIESTAfdfdata(self):
+    def toSIESTAfdfdata(self, coord_style, latt_style='LatticeParameters'):
         """ возвращает данные для входного файла пакета SIESTA """
         data = ""
         PerTab = TPeriodTable()
-        data+='NumberOfAtoms ' + str(len(self.atoms)) + "\n"
+        data += 'NumberOfAtoms ' + str(len(self.atoms)) + "\n"
         types = self.typesOfAtoms()
-        data+='NumberOfSpecies '+str(len(types))+"\n"
-        data+='%block ChemicalSpeciesLabel\n'
-        for i in range(0,len(types)):
-            data+=' '+str(i+1)+'  '+str(types[i][0])+'  '+str(PerTab.get_let(int(types[i][0])))+"\n"
-        data+='%endblock ChemicalSpeciesLabel\n'
-        data+='%block Zmatrix\n'
-        data+='cartesian\n'
-        for i in range(0, len(self.atoms)):
-            str1 = ' '
-            for j in range(0,len(types)):
-                if types[j][0] == self.atoms[i].charge:
-                    str1 = ' ' + str(j+1)
-            str2 = '    ' + str(round(self.atoms[i].x, 7)) + '     ' + str(round(self.atoms[i].y, 7)) + '      ' + str(round(self.atoms[i].z, 7))
-            str3 = '      1  1  1'
-            data+= str1+str2+str3+"\n"    
-        data+='%endblock Zmatrix\n'
+        data += 'NumberOfSpecies ' + str(len(types)) + "\n"
+        data += '%block ChemicalSpeciesLabel\n'
+        for i in range(0, len(types)):
+            data += ' ' + str(i + 1) + '  ' + str(types[i][0]) + '  ' + str(PerTab.get_let(int(types[i][0]))) + "\n"
+        data += '%endblock ChemicalSpeciesLabel\n'
+
+        # LatticeConstant
+        data +='LatticeConstant       1.0 Ang\n'
+
+        if latt_style=='LatticeParameters':
+            data += '%block LatticeParameters\n'
+            data += '  '+str(self.get_LatVect1_norm())+'  '+str(self.get_LatVect2_norm())+'  '+str(self.get_LatVect3_norm()) + '  '+str(self.get_angle_alpha())+'  '+ str(self.get_angle_beta()) +'  '+  str(self.get_angle_gamma()) +   '\n'
+            data += '%endblock LatticeParameters\n'
+        #or
+        if latt_style=='LatticeVectors':
+            data += '%block LatticeVectors\n'
+            data += '  ' + str(self.LatVect1[0]) + '  ' + str(self.LatVect1[1]) + '  ' + str(self.LatVect1[2]) + '\n'
+            data += '  ' + str(self.LatVect2[0]) + '  ' + str(self.LatVect2[1]) + '  ' + str(self.LatVect2[2]) + '\n'
+            data += '  ' + str(self.LatVect3[0]) + '  ' + str(self.LatVect3[1]) + '  ' + str(self.LatVect3[2]) + '\n'
+            data += '%endblock LatticeVectors\n'
+
+        if coord_style == "Zmatrix Cartesian":
+            data += 'AtomicCoordinatesFormat NotScaledCartesianAng\n'
+            data+='%block Zmatrix\n'
+            data+='cartesian\n'
+            for i in range(0, len(self.atoms)):
+                str1 = ' '
+                for j in range(0,len(types)):
+                    if types[j][0] == self.atoms[i].charge:
+                        str1 = ' ' + str(j+1)
+                str2 = '    ' + str(round(self.atoms[i].x, 7)) + '     ' + str(round(self.atoms[i].y, 7)) + '      ' + str(round(self.atoms[i].z, 7))
+                str3 = '      1  1  1'
+                data+= str1+str2+str3+"\n"
+            data+='%endblock Zmatrix\n'
+
+        if coord_style == "Fractional":
+            self.convert_from_cart_to_direct()
+            data += 'AtomicCoordinatesFormat Fractional\n'
+            data += '%block AtomicCoordinatesAndAtomicSpecies\n'
+            for i in range(0, len(self.atoms)):
+                str1 = ' '
+                for j in range(0, len(types)):
+                    if types[j][0] == self.atoms[i].charge:
+                        str1 = ' ' + str(j + 1)
+                str2 = '    ' + str(round(self.atoms[i].x, 7)) + '     ' + str(
+                        round(self.atoms[i].y, 7)) + '      ' + str(round(self.atoms[i].z, 7))
+                data += str2 + str1 + "\n"
+            data += '%endblock AtomicCoordinatesAndAtomicSpecies\n'
         return data
 
     def toSIESTAxyzdata(self):
@@ -2137,16 +2201,27 @@ class TFDFFile:
             self.fdf_parser(fdf)
             return self
 
-    def get_all_data(self, atoms):
-        structure = TAtomicModel(atoms)
-        st = structure.toSIESTAfdfdata()
+    def get_all_data(self, structure, coordType, lattType):
+        #structure = TAtomicModel(atoms)
+        st = structure.toSIESTAfdfdata(coordType,lattType)
 
         for prop in self.properties:
-            if (prop.lower().find("numberofatoms")==-1) and (prop.lower().find("numberofspecies")==-1):
+            f = True
+            if (prop.lower().find("numberofatoms")>=0): f = False
+            if (prop.lower().find("numberofspecies")>=0): f = False
+            if (prop.lower().find("atomiccoordinatesformat")>=0): f = False
+            if (prop.lower().find("latticeconstant") >= 0): f = False
+            if f:
                 st += prop
 
         for block in self.blocks:
-            if (((block.name).lower().find("zmatrix")==-1) and ((block.name).lower().find("chemicalspecieslabel")==-1)):
+            f = True
+            if ((block.name).lower().find("zmatrix")>=0): f = False
+            if ((block.name).lower().find("chemicalspecieslabel")>=0): f = False
+            if ((block.name).lower().find("latticeparameters") >=0): f = False
+            if ((block.name).lower().find("latticevectors") >=0): f = False
+
+            if f:
                 st +="%block "+block.name+"\n"
                 for row in block.value:
                     st += row

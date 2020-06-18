@@ -174,6 +174,20 @@ class mainWindow(QMainWindow):
         CellPredictionType.appendRow(QStandardItem("Parabola"))
         self.ui.FormActionsPostComboCellParam.setModel(CellPredictionType)
 
+        FormSettingsPreferredCoordinatesType = QStandardItemModel()
+        FormSettingsPreferredCoordinatesType.appendRow(QStandardItem("Zmatrix Cartesian"))
+        FormSettingsPreferredCoordinatesType.appendRow(QStandardItem("Fractional"))
+        self.ui.FormSettingsPreferredCoordinates.setModel(FormSettingsPreferredCoordinatesType)
+        self.ui.FormSettingsPreferredCoordinates.setCurrentText(self.CoordType)
+        self.ui.FormSettingsPreferredCoordinates.currentIndexChanged.connect(self.save_state_FormSettingsPreferredCoordinates)
+
+        FormSettingsPreferredLatticeType = QStandardItemModel()
+        FormSettingsPreferredLatticeType.appendRow(QStandardItem("LatticeParameters"))
+        FormSettingsPreferredLatticeType.appendRow(QStandardItem("LatticeVectors"))
+        self.ui.FormSettingsPreferredLattice.setModel(FormSettingsPreferredLatticeType)
+        self.ui.FormSettingsPreferredLattice.setCurrentText(self.LatticeType)
+        self.ui.FormSettingsPreferredLattice.currentIndexChanged.connect(self.save_state_FormSettingsPreferredLattice)
+
         EnergyUnitsType = QStandardItemModel()
         EnergyUnitsType.appendRow(QStandardItem("eV"))
         #EnergyUnitsType.appendRow(QStandardItem("Ry"))
@@ -780,12 +794,16 @@ class mainWindow(QMainWindow):
         self.state_Color_Of_Contour = str(settings.value(SETTINGS_Color_Of_Contour, '0 255 0'))
         self.color_to_ui(self.ui.ColorContour, self.state_Color_Of_Contour)
 
+        self.CoordType = str(settings.value(SETTINGS_FormSettingsPreferredCoordinates, 'Zmatrix Cartesian'))
+
+        self.LatticeType = str(settings.value(SETTINGS_FormSettingsPreferredLattice, 'LatticeParameters'))
 
     def menu_export(self):
-        fname = QFileDialog.getSaveFileName(self, 'Save File', self.WorkDir, "FDF files (*.fdf);;XYZ files (*.xyz)")[0]
-        self.MainForm.atomic_structure_to_file(fname)
-        self.WorkDir = os.path.dirname(fname)
-        self.save_active_Folder()
+        if self.MainForm.MainModel.nAtoms()>0:
+            fname = QFileDialog.getSaveFileName(self, 'Save File', self.WorkDir, "FDF files (*.fdf);;XYZ files (*.xyz)")[0]
+            self.MainForm.atomic_structure_to_file(fname)
+            self.WorkDir = os.path.dirname(fname)
+            self.save_active_Folder()
 
 
     def menu_open(self):
@@ -1484,6 +1502,15 @@ class mainWindow(QMainWindow):
         self.save_property(SETTINGS_FormSettingsColorsScaleType, self.ui.FormSettingsColorsScaleType.currentText())
         self.colors_cash = {}
 
+    def save_state_FormSettingsPreferredCoordinates(self):
+        self.save_property(SETTINGS_FormSettingsPreferredCoordinates, self.ui.FormSettingsPreferredCoordinates.currentText())
+        self.CoordType = self.ui.FormSettingsPreferredCoordinates.currentText()
+
+    def save_state_FormSettingsPreferredLattice(self):
+        self.save_property(SETTINGS_FormSettingsPreferredLattice, self.ui.FormSettingsPreferredLattice.currentText())
+        self.LatticeType = self.ui.FormSettingsPreferredLattice.currentText()
+
+
     def save_property(self, property, value):
         settings = QSettings()
         settings.setValue(property, value)
@@ -1509,7 +1536,7 @@ class mainWindow(QMainWindow):
 
     def fdf_data_to_form(self):
         model = self.MainForm.get_model()
-        text = self.FDFData.get_all_data(model.atoms)
+        text = self.FDFData.get_all_data(model, self.CoordType, self.LatticeType)
         self.ui.FormActionsPreTextFDF.setText(text)
 
     def fdf_data_from_form_to_file(self):
@@ -1748,6 +1775,9 @@ SETTINGS_FormSettingsViewCheckShowAxes = 'view/CheckShowAxes'
 SETTINGS_FormSettingsViewCheckShowBonds = 'view/CheckShowBonds'
 SETTINGS_FormSettingsViewSpinBondWidth = 'view/SpinBondWidth'
 SETTINGS_FormSettingsViewSpinContourWidth = 'view/SpinContourWidth'
+
+SETTINGS_FormSettingsPreferredCoordinates = 'model/FormSettingsPreferredCoordinates'
+SETTINGS_FormSettingsPreferredLattice = 'model/FormSettingsPreferredLattice'
 
 SETTINGS_Color_Of_Atoms = 'colors/atoms'
 SETTINGS_Color_Of_Bonds = 'colors/bonds'
