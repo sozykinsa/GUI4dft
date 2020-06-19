@@ -710,6 +710,16 @@ class TAtomicModel(object):
     def sizeZ(self):
         """ длина молекулы по оси Z """
         return self.maxZ() - self.minZ()
+
+    def sort_atoms_by_type(self):
+        #atom = TAtom()
+        for i in range(0, self.nAtoms()):
+            for j in range(0, self.nAtoms()-i-1):
+                if self.atoms[j].charge > self.atoms[j+1].charge:
+                    atom = self.atoms[j]
+                    self.atoms[j] = self.atoms[j+1]
+                    self.atoms[j+1] = atom
+
         
     def atom_atom_distance(self, at1, at2):
         """ atom_atom_distance
@@ -914,6 +924,7 @@ class TAtomicModel(object):
             data+='%endblock Zmatrix\n'
 
         if coord_style == "Fractional":
+            self.sort_atoms_by_type()
             self.GoToPositiveCoordinates()
             self.convert_from_cart_to_direct()
             data += 'AtomicCoordinatesFormat Fractional\n'
