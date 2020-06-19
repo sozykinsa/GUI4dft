@@ -107,6 +107,7 @@ class mainWindow(QMainWindow):
         self.ui.FormActionsButtonPlotBANDS.clicked.connect(self.plot_bands)
         self.ui.FormActionsButtonParseBANDS.clicked.connect(self.parse_bands)
         self.ui.FormActionsButtonPlotPDOSselected.clicked.connect(self.plot_selected_pdos)
+        self.ui.FormModifyCellButton.clicked.connect(self.edit_cell)
 
         self.ui.FormActionsPreButDeleteAtom.clicked.connect(self.atom_delete)
         self.ui.FormActionsPreButModifyAtom.clicked.connect(self.atom_modify)
@@ -524,6 +525,23 @@ class mainWindow(QMainWindow):
         row = self.ui.IsosurfaceColorsTable.currentRow()
         self.ui.IsosurfaceColorsTable.removeRow(row)
 
+    def edit_cell(self):
+        a1 = float(self.ui.FormModifyCellEditA1.text())
+        a2 = float(self.ui.FormModifyCellEditA2.text())
+        a3 = float(self.ui.FormModifyCellEditA3.text())
+        v1 = [a1, a2, a3]
+        b1 = float(self.ui.FormModifyCellEditB1.text())
+        b2 = float(self.ui.FormModifyCellEditB2.text())
+        b3 = float(self.ui.FormModifyCellEditB3.text())
+        v2 = [b1, b2, b3]
+        c1 = float(self.ui.FormModifyCellEditC1.text())
+        c2 = float(self.ui.FormModifyCellEditC2.text())
+        c3 = float(self.ui.FormModifyCellEditC3.text())
+        v3 = [c1, c2, c3]
+        self.MainForm.MainModel.set_lat_vectors(v1, v2, v3)
+        self.models.append(self.MainForm.MainModel)
+        self.model_to_screen(-1)
+
     def fill_gui(self, title = "" ):
         fname = self.filename
         if title == "":
@@ -584,6 +602,16 @@ class mainWindow(QMainWindow):
         for i in range(0, len(properties)):
             self.ui.FormModelTableProperties.setItem(i, 0, QTableWidgetItem(properties[i][0]))
             self.ui.FormModelTableProperties.setItem(i, 1, QTableWidgetItem(properties[i][1]))
+
+        self.ui.FormModifyCellEditA1.setText(str(model.LatVect1[0]))
+        self.ui.FormModifyCellEditA2.setText(str(model.LatVect1[1]))
+        self.ui.FormModifyCellEditA3.setText(str(model.LatVect1[2]))
+        self.ui.FormModifyCellEditB1.setText(str(model.LatVect2[0]))
+        self.ui.FormModifyCellEditB2.setText(str(model.LatVect2[1]))
+        self.ui.FormModifyCellEditB3.setText(str(model.LatVect2[2]))
+        self.ui.FormModifyCellEditC1.setText(str(model.LatVect3[0]))
+        self.ui.FormModifyCellEditC2.setText(str(model.LatVect3[1]))
+        self.ui.FormModifyCellEditC3.setText(str(model.LatVect3[2]))
 
     def file_brouser_selection(self, selected, deselected):
         self.IndexOfFileToOpen = selected.indexes()[0]
