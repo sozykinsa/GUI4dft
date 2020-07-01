@@ -438,6 +438,438 @@ class TAtomicModel(object):
                 atom = TAtom(at)
             self.add_atom(atom)
 
+
+    @staticmethod
+    def atoms_from_ani(filename):
+        """import from ANI file"""
+        periodTable = TPeriodTable()
+        molecules = []
+        if os.path.exists(filename):
+            ani_file = open(filename)
+            NumberOfAtoms = int(ani_file.readline())
+            while NumberOfAtoms>0:
+                newModel = TSIESTA.atoms_from_xyz_structure(NumberOfAtoms, ani_file, periodTable)
+                molecules.append(newModel)
+                st = ani_file.readline()
+                if st!='':
+                    NumberOfAtoms = int(st)
+                else:
+                    NumberOfAtoms = 0
+        return molecules
+
+
+
+
+
+    @staticmethod
+    def atoms_from_fdf(filename):
+        """Return a AtList from fdf file"""
+        NumberOfAtoms = TSIESTA.number_of_atoms(filename)
+        NumberOfSpecies = TSIESTA.number_of_species(filename)
+        AtomicCoordinatesFormat = TSIESTA.atomic_coordinates_format(filename)
+
+        lat_vect_1, lat_vect_2, lat_vect_3 = TSIESTA.lattice_vectors(filename)
+        if lat_vect_1[0] == False:
+            lat_vect_1, lat_vect_2, lat_vect_3 = TSIESTA.lattice_parameters_abc_angles(filename)
+
+        tmp_ar = {}
+        ChemicalSpeciesLabel = TSIESTA.get_block_from_siesta_fdf(filename, "ChemicalSpeciesLabel")
+        for j in range(0, len(ChemicalSpeciesLabel)):
+            tmp_ar[(ChemicalSpeciesLabel[j].split())[0]] = (ChemicalSpeciesLabel[j].split())[1:3]
+
+        f = open(filename)
+        lines = f.readlines()
+        f.close()
+        AllAtoms = TAtomicModel()
+        AtList = []
+        AtList1 = []
+        i = 0
+        isBlockAtomicCoordinates = False
+        isBlockZMatrix = False
+
+        while i < len(lines):
+            if (lines[i].find("%block Zmatrix") >= 0):
+                isBlockZMatrix = True
+                i += 1
+                AtList = []
+                if (lines[i].find("cartesian") >= 0):
+                    for j in range(0, NumberOfAtoms):
+                        i += 1
+                        Atom_full = lines[i].split()
+                        AtList.append([float(Atom_full[1]), float(Atom_full[2]), float(Atom_full[3]),
+                                       (tmp_ar[str(Atom_full[0])])[1], (tmp_ar[str(Atom_full[0])])[0]])
+            if (lines[i].find("%block AtomicCoordinatesAndAtomicSpecies") >= 0):
+                isBlockAtomicCoordinates = True
+                mult = 1
+                if AtomicCoordinatesFormat == "NotScaledCartesianBohr":
+                    mult = 0.52917720859
+                for j in range(0, NumberOfAtoms):
+                    i += 1
+                    Atom_full = lines[i].split()
+                    AtList1.append([mult*float(Atom_full[0]), mult*float(Atom_full[1]), mult*float(Atom_full[2]),
+                                   (tmp_ar[str(Atom_full[3])])[1], (tmp_ar[str(Atom_full[3])])[0]])
+
+            i += 1
+
+        if isBlockZMatrix == True:
+            AllAtoms = TAtomicModel(AtList)
+        else:
+            if isBlockAtomicCoordinates == True:
+                AllAtoms = TAtomicModel(AtList1)
+
+        if lat_vect_1[0] == False:
+            AllAtoms.set_lat_vectors_default()
+
+        else:
+            AllAtoms.set_lat_vectors(lat_vect_1, lat_vect_2, lat_vect_3)
+
+        if isBlockZMatrix == True:
+            units = Helpers.fromFileProperty(filename, 'ZM.UnitsLength', 1, 'string')
+            if units.lower() == "bohr":
+                AllAtoms.convert_from_scaled_to_cart(0.52917720859)
+        else:
+            if isBlockAtomicCoordinates == True:
+                if AtomicCoordinatesFormat == "ScaledByLatticeVectors":
+                    AllAtoms.convert_from_direct_to_cart()
+                if AtomicCoordinatesFormat == "ScaledCartesian":
+                    lat = TSIESTA.lattice_constant(filename)
+                    AllAtoms.convert_from_scaled_to_cart(lat)
+
+        Molecules = [AllAtoms]
+        return Molecules
+
+    @staticmethod
+    def atoms_from_output_cg(filename):
+        """import from CG output"""
+        periodTable = TPeriodTable()
+        molecules = []
+        if os.path.exists(filename):
+            number_of_atoms = TSIESTA.number_of_atoms(filename)
+            sps = TSIESTA.Species(filename)
+            species_label_charges = ['null']
+            for spec in sps:
+                species_label_charges.append(spec[1])
+
+            siesta_file = open(filename)
+            sl = []
+            isSpesF = 0
+            str1 = siesta_file.readline()
+            atoms = []
+            while str1 != '':
+                if (str1 != '') and (str1.find("siesta: Atomic coordinates (Bohr) and species") >= 0) and (isSpesF == 0):
+                    str1 = siesta_file.readline()
+                    while str1.find('siesta') >= 0:
+                        str1 = Helpers.spacedel(str1)
+                        sl.append(int(str.split(str1, ' ')[4]))
+                        str1 = siesta_file.readline()
+                    isSpesF = 1
+
+                if (str1 != '') and (str1.find("outcell: Unit cell vectors (Ang):") >= 0) and (isSpesF == 1):
+                    lat_vect_1 = siesta_file.readline().split()
+                    lat_vect_1 = Helpers.list_str_to_float(lat_vect_1)
+                    lat_vect_2 = siesta_file.readline().split()
+                    lat_vect_2 = Helpers.list_str_to_float(lat_vect_2)
+                    lat_vect_3 = siesta_file.readline().split()
+                    lat_vect_3 = Helpers.list_str_to_float(lat_vect_3)
+
+                    AllAtoms = TAtomicModel(atoms)
+                    AllAtoms.set_lat_vectors(lat_vect_1, lat_vect_2, lat_vect_3)
+                    molecules.append(AllAtoms)
+
+                if (str1 != '') and (str1.find("zmatrix: Z-matrix coordinates: (Ang ; rad )") >= 0) and (isSpesF == 1):
+                    for j in range(0, 2):
+                        str1 = siesta_file.readline()
+                    atoms = []
+
+                    for i1 in range(0, number_of_atoms):
+                        str1 = Helpers.spacedel(siesta_file.readline())
+                        S = str1.split(' ')
+                        d1 = float(S[0])
+                        d2 = float(S[1])
+                        d3 = float(S[2])
+                        Charge = species_label_charges[sl[len(atoms)]]
+                        C = periodTable.get_let(Charge)
+                        A = [d1, d2, d3, C, Charge]
+                        atoms.append(A)
+                str1 = siesta_file.readline()
+            siesta_file.close()
+        return molecules
+
+    @staticmethod
+    def atoms_from_output_md(filename):
+        """import from MD output """
+        periodTable = TPeriodTable()
+        molecules = []
+        if os.path.exists(filename):
+            NumberOfSpecies = TSIESTA.number_of_species(filename)
+            NumberOfAtoms = TSIESTA.number_of_atoms(filename)
+            MdSiestaFile = open(filename)
+            speciesLabel = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+            sl = []
+            isSpesFinde = 0
+            isSpesF = 0
+            str1 = MdSiestaFile.readline()
+            while str1 != '':
+                if (str1 != '') and (str1.find("siesta: Atomic coordinates (Bohr) and species") >= 0) and (
+                        isSpesF == 0):
+                    str1 = MdSiestaFile.readline()
+                    while str1.find('siesta') >= 0:
+                        str1 = Helpers.spacedel(str1)
+                        sl.append(int(str.split(str1, ' ')[4]))
+                        str1 = MdSiestaFile.readline()
+                    isSpesF = 1
+                if (str1 != '') and (str1.find("ChemicalSpeciesLabel") >= 0) and (isSpesFinde == 0):
+                    for i in range(0, NumberOfSpecies):
+                        str1 = Helpers.spacedel(MdSiestaFile.readline())
+                        S = str.split(str1, ' ')
+                        speciesLabel[int(S[0])] = S[1]
+                    isSpesFinde = 1
+
+                atoms = []
+
+                if (str1 != '') and (str1.find("Begin CG move") >= 0 or str1.find("Begin MD step") >= 0):
+                    if (str1 != '') and str1.find("Begin MD step") >= 0:
+                        for j in range(0, 3):
+                            MdSiestaFile.readline()
+                    else:
+                        if str1.find("Begin CG move") >= 0:
+                            while (str1 != '') and (str1.find("block") == -1) and (str1.find("outcoor") == -1):
+                                str1 = MdSiestaFile.readline()
+
+                    atoms = []
+                    for i1 in range(0, NumberOfAtoms):
+                        str1 = Helpers.spacedel(MdSiestaFile.readline())
+                        S = str1.split(' ')
+                        d1 = float(S[0])
+                        d2 = float(S[1])
+                        d3 = float(S[2])
+                        Charge = speciesLabel[sl[len(atoms)]]
+                        C = periodTable.get_let(Charge)
+                        A = [d1, d2, d3, C, Charge]
+                        atoms.append(A)
+                    str1 = MdSiestaFile.readline()
+                    while str1.find("outcell: Unit cell vectors (Ang):")==-1:
+                        str1 = MdSiestaFile.readline()
+                    vec1 = MdSiestaFile.readline().split()
+                    vec1 = Helpers.list_str_to_float(vec1)
+                    vec2 = MdSiestaFile.readline().split()
+                    vec2 = Helpers.list_str_to_float(vec2)
+                    vec3 = MdSiestaFile.readline().split()
+                    vec3 = Helpers.list_str_to_float(vec3)
+                    AllAtoms = TAtomicModel(atoms)
+                    AllAtoms.set_lat_vectors(vec1, vec2, vec3)
+                    molecules.append(AllAtoms)
+                str1 = MdSiestaFile.readline()
+            MdSiestaFile.close()
+        return molecules
+
+    @staticmethod
+    def atoms_from_md_car(filename):
+        """import from MD_CAR output """
+        periodTable = TPeriodTable()
+        molecules = []
+        if os.path.exists(filename):
+            struct_file = open(filename)
+            str1 = struct_file.readline()
+            while str1.find("---")>=0:
+                newStr = TAtomicModel()
+                LatConst = float(struct_file.readline())
+                lat1 = Helpers.spacedel(struct_file.readline()).split()
+                lat1 = Helpers.list_str_to_float(lat1)
+                lat1 = LatConst*np.array(lat1)
+                lat2 = Helpers.spacedel(struct_file.readline()).split()
+                lat2 = Helpers.list_str_to_float(lat2)
+                lat2 = LatConst * np.array(lat2)
+                lat3 = Helpers.spacedel(struct_file.readline()).split()
+                lat3 = Helpers.list_str_to_float(lat3)
+                lat3 = LatConst * np.array(lat3)
+                NumbersOfAtoms = Helpers.spacedel(struct_file.readline()).split()
+                NumbersOfAtoms = Helpers.list_str_to_int(NumbersOfAtoms)
+                str1 = struct_file.readline()
+                if Helpers.spacedel(str1) == "Direct":
+                    for i in range(0,len(NumbersOfAtoms)):
+                        for j in range(0, NumbersOfAtoms[i]):
+                            row = Helpers.spacedel(struct_file.readline()).split()
+                            row = Helpers.list_str_to_float(row)
+
+                            let = "Direct"
+                            charge = 200 + i
+                            x = row[0]
+                            y = row[1]
+                            z = row[2]
+
+                            newStr.add_atom(TAtom([x, y, z, let, charge]))
+                    newStr.set_lat_vectors(lat1, lat2, lat3)
+                    newStr.convert_from_direct_to_cart()
+                    molecules.append(newStr)
+        return molecules
+
+    @staticmethod
+    def atoms_from_output_optim(filename):
+        """Return the relaxed AtList from output file"""
+        NumberOfAtoms = TSIESTA.number_of_atoms(filename)
+        NumberOfSpecies = TSIESTA.number_of_species(filename)
+        Species = TSIESTA.Species(filename)
+
+        AtList = []
+        f1 = False
+        f2 = False
+        f3 = False
+        n_vec = 0
+        lat_vect_1 = ""
+        lat_vect_2 = ""
+        lat_vect_3 = ""
+
+        for line in open(filename, 'r'):
+            if (line.find("outcell: Unit cell vectors (Ang):") > -1):
+                f2 = True
+                n_vec = 0
+            else:
+                if (n_vec == 0) and (f2 == True):
+                    lat_vect_1 = line.split()
+                    lat_vect_1 = Helpers.list_str_to_float(lat_vect_1)
+                if (n_vec == 1) and (f2 == True):
+                    lat_vect_2 = line.split()
+                    lat_vect_2 = Helpers.list_str_to_float(lat_vect_2)
+                if (n_vec == 2) and (f2 == True):
+                    lat_vect_3 = line.split()
+                    lat_vect_3 = Helpers.list_str_to_float(lat_vect_3)
+                    f2 = False
+                if f2 == True:
+                    n_vec += 1
+
+            if (line.find("outcoor: Relaxed atomic coordinates (Ang)") > -1):
+                f1 = True
+            else:
+                if (len(AtList) < NumberOfAtoms) and (f1 == True):
+                    line1 = line.split()
+                    line2 = [float(line1[0]), float(line1[1]), float(line1[2]), line1[5], Species[int(line1[3]) - 1][1]]
+                    AtList.append(line2)
+                if len(AtList) == NumberOfAtoms:
+                    f1 = False
+                    AllAtoms = TAtomicModel(AtList)
+                    AllAtoms.set_lat_vectors(lat_vect_1, lat_vect_2, lat_vect_3)
+                    return [AllAtoms]
+            if (line.find("outcoor: Relaxed atomic coordinates (fractional)") > -1):
+                f3 = True
+            else:
+                if (len(AtList) < NumberOfAtoms) and (f3 == True):
+                    line1 = line.split()
+                    line2 = [float(line1[0]), float(line1[1]), float(line1[2]), line1[5], Species[int(line1[3]) - 1][1]]
+                    AtList.append(line2)
+                if len(AtList) == NumberOfAtoms:
+                    f3 = False
+                    AllAtoms = TAtomicModel(AtList)
+                    AllAtoms.set_lat_vectors(lat_vect_1, lat_vect_2, lat_vect_3)
+                    AllAtoms.convert_from_direct_to_cart()
+                    return [AllAtoms]
+        return []
+
+    @staticmethod
+    def atoms_from_POSCAR(filename):
+        """import from xyz file"""
+        periodTable = TPeriodTable()
+        molecules = []
+        if os.path.exists(filename):
+            struct_file = open(filename)
+            str1 = Helpers.spacedel(struct_file.readline())
+            latConst = float(Helpers.spacedel(struct_file.readline()))
+            lat1 = Helpers.spacedel(struct_file.readline()).split()
+            lat1 = np.array(Helpers.list_str_to_float(lat1))*latConst
+            lat2 = Helpers.spacedel(struct_file.readline()).split()
+            lat2 = np.array(Helpers.list_str_to_float(lat2))*latConst
+            lat3 = Helpers.spacedel(struct_file.readline()).split()
+            lat3 = np.array(Helpers.list_str_to_float(lat3))*latConst
+            SortsOfAtoms = Helpers.spacedel(struct_file.readline()).split()
+            NumbersOfAtoms = Helpers.spacedel(struct_file.readline()).split()
+            NumbersOfAtoms = Helpers.list_str_to_int(NumbersOfAtoms)
+            NumberOfAtoms = 0
+            for number in NumbersOfAtoms:
+                NumberOfAtoms+=number
+
+            if Helpers.spacedel(struct_file.readline()).lower() == "direct":
+                newStr = TAtomicModel()
+                for i in range(0, len(NumbersOfAtoms)):
+                    number = NumbersOfAtoms[i]
+                    for j in range(0, number):
+                        str1 = Helpers.spacedel(struct_file.readline())
+                        S = str1.split(' ')
+                        x = float(S[0])
+                        y = float(S[1])
+                        z = float(S[2])
+                        charge = periodTable.get_charge_by_letter(SortsOfAtoms[i])
+                        let = SortsOfAtoms[i]
+                        newStr.add_atom(TAtom([x, y, z, let, charge]))
+                newStr.set_lat_vectors(lat1, lat2, lat3)
+                newStr.convert_from_direct_to_cart()
+                molecules.append(newStr)
+        return molecules
+
+
+    @staticmethod
+    def atoms_from_struct_out(filename):
+        """import from STRUCT_OUT file"""
+        periodTable = TPeriodTable()
+        molecules = []
+        if os.path.exists(filename):
+            struct_file = open(filename)
+            lat1 = Helpers.spacedel(struct_file.readline()).split()
+            lat1 = Helpers.list_str_to_float(lat1)
+            lat2 = Helpers.spacedel(struct_file.readline()).split()
+            lat2 = Helpers.list_str_to_float(lat2)
+            lat3 = Helpers.spacedel(struct_file.readline()).split()
+            lat3 = Helpers.list_str_to_float(lat3)
+            NumberOfAtoms = int(struct_file.readline())
+
+            newStr = TAtomicModel()
+            for i1 in range(0, NumberOfAtoms):
+                str1 = Helpers.spacedel(struct_file.readline())
+                S = str1.split(' ')
+                x = float(S[2])
+                y = float(S[3])
+                z = float(S[4])
+                charge = int(S[1])
+                let = periodTable.get_let(charge)
+                newStr.add_atom(TAtom([x, y, z, let, charge]))
+            newStr.set_lat_vectors(lat1,lat2,lat3)
+            newStr.convert_from_direct_to_cart()
+            molecules.append(newStr)
+        return molecules
+
+    @staticmethod
+    def atoms_from_xyz(filename):
+        """import from xyz file"""
+        periodTable = TPeriodTable()
+        molecules = []
+        if os.path.exists(filename):
+            f = open(filename)
+            NumberOfAtoms = int(f.readline())
+            newModel = TAtomicModel.atoms_from_xyz_structure(NumberOfAtoms, f, periodTable)
+            molecules.append(newModel)
+        return molecules
+
+
+
+    @staticmethod
+    def atoms_from_xyz_structure(NumberOfAtoms, ani_file, periodTable):
+        str1 = Helpers.spacedel(ani_file.readline())
+        atoms = []
+        for i1 in range(0, NumberOfAtoms):
+            str1 = Helpers.spacedel(ani_file.readline())
+            S = str1.split(' ')
+            d1 = float(S[1])
+            d2 = float(S[2])
+            d3 = float(S[3])
+            C = S[0]
+            Charge = periodTable.get_charge_by_letter(C)
+            A = [d1, d2, d3, C, Charge]
+            atoms.append(A)
+        newModel = TAtomicModel(atoms)
+        newModel.set_lat_vectors_default()
+        return newModel
+
+
+
     def get_LatVect1_norm(self):
         return norm(self.LatVect1)
 
@@ -1083,391 +1515,6 @@ class TSWNT(TAtomicModel):
 ##################################################################
     
 class TSIESTA:
-    @staticmethod
-    def atoms_from_ani(filename):
-        """import from ANI file"""
-        periodTable = TPeriodTable()
-        molecules = []
-        if os.path.exists(filename):
-            ani_file = open(filename)
-            NumberOfAtoms = int(ani_file.readline())
-            while NumberOfAtoms>0:
-                newModel = TSIESTA.atoms_from_xyz_structure(NumberOfAtoms, ani_file, periodTable)
-                molecules.append(newModel)
-                st = ani_file.readline()
-                if st!='':
-                    NumberOfAtoms = int(st)
-                else:
-                    NumberOfAtoms = 0
-        return molecules
-
-
-
-
-
-    @staticmethod
-    def atoms_from_fdf(filename):
-        """Return a AtList from fdf file"""
-        NumberOfAtoms = TSIESTA.number_of_atoms(filename)
-        NumberOfSpecies = TSIESTA.number_of_species(filename)
-        AtomicCoordinatesFormat = TSIESTA.atomic_coordinates_format(filename)
-
-        lat_vect_1, lat_vect_2, lat_vect_3 = TSIESTA.lattice_vectors(filename)
-        if lat_vect_1[0] == False:
-            lat_vect_1, lat_vect_2, lat_vect_3 = TSIESTA.lattice_parameters_abc_angles(filename)
-
-        tmp_ar = {}
-        ChemicalSpeciesLabel = TSIESTA.get_block_from_siesta_fdf(filename, "ChemicalSpeciesLabel")
-        for j in range(0, len(ChemicalSpeciesLabel)):
-            tmp_ar[(ChemicalSpeciesLabel[j].split())[0]] = (ChemicalSpeciesLabel[j].split())[1:3]
-
-        f = open(filename)
-        lines = f.readlines()
-        f.close()
-        AllAtoms = TAtomicModel()
-        AtList = []
-        AtList1 = []
-        i = 0
-        isBlockAtomicCoordinates = False
-        isBlockZMatrix = False
-
-        while i < len(lines):
-            if (lines[i].find("%block Zmatrix") >= 0):
-                isBlockZMatrix = True
-                i += 1
-                AtList = []
-                if (lines[i].find("cartesian") >= 0):
-                    for j in range(0, NumberOfAtoms):
-                        i += 1
-                        Atom_full = lines[i].split()
-                        AtList.append([float(Atom_full[1]), float(Atom_full[2]), float(Atom_full[3]),
-                                       (tmp_ar[str(Atom_full[0])])[1], (tmp_ar[str(Atom_full[0])])[0]])
-            if (lines[i].find("%block AtomicCoordinatesAndAtomicSpecies") >= 0):
-                isBlockAtomicCoordinates = True
-                mult = 1
-                if AtomicCoordinatesFormat == "NotScaledCartesianBohr":
-                    mult = 0.52917720859
-                for j in range(0, NumberOfAtoms):
-                    i += 1
-                    Atom_full = lines[i].split()
-                    AtList1.append([mult*float(Atom_full[0]), mult*float(Atom_full[1]), mult*float(Atom_full[2]),
-                                   (tmp_ar[str(Atom_full[3])])[1], (tmp_ar[str(Atom_full[3])])[0]])
-
-            i += 1
-
-        if isBlockZMatrix == True:
-            AllAtoms = TAtomicModel(AtList)
-        else:
-            if isBlockAtomicCoordinates == True:
-                AllAtoms = TAtomicModel(AtList1)
-
-        if lat_vect_1[0] == False:
-            AllAtoms.set_lat_vectors_default()
-
-        else:
-            AllAtoms.set_lat_vectors(lat_vect_1, lat_vect_2, lat_vect_3)
-
-        if isBlockZMatrix == True:
-            units = Helpers.fromFileProperty(filename, 'ZM.UnitsLength', 1, 'string')
-            if units.lower() == "bohr":
-                AllAtoms.convert_from_scaled_to_cart(0.52917720859)
-        else:
-            if isBlockAtomicCoordinates == True:
-                if AtomicCoordinatesFormat == "ScaledByLatticeVectors":
-                    AllAtoms.convert_from_direct_to_cart()
-                if AtomicCoordinatesFormat == "ScaledCartesian":
-                    lat = TSIESTA.lattice_constant(filename)
-                    AllAtoms.convert_from_scaled_to_cart(lat)
-
-        Molecules = [AllAtoms]
-        return Molecules
-
-    @staticmethod
-    def atoms_from_output_cg(filename):
-        """import from CG output"""
-        periodTable = TPeriodTable()
-        molecules = []
-        if os.path.exists(filename):
-            number_of_atoms = TSIESTA.number_of_atoms(filename)
-            sps = TSIESTA.Species(filename)
-            species_label_charges = ['null']
-            for spec in sps:
-                species_label_charges.append(spec[1])
-
-            siesta_file = open(filename)
-            sl = []
-            isSpesF = 0
-            str1 = siesta_file.readline()
-            atoms = []
-            while str1 != '':
-                if (str1 != '') and (str1.find("siesta: Atomic coordinates (Bohr) and species") >= 0) and (isSpesF == 0):
-                    str1 = siesta_file.readline()
-                    while str1.find('siesta') >= 0:
-                        str1 = Helpers.spacedel(str1)
-                        sl.append(int(str.split(str1, ' ')[4]))
-                        str1 = siesta_file.readline()
-                    isSpesF = 1
-
-                if (str1 != '') and (str1.find("outcell: Unit cell vectors (Ang):") >= 0) and (isSpesF == 1):
-                    lat_vect_1 = siesta_file.readline().split()
-                    lat_vect_1 = Helpers.list_str_to_float(lat_vect_1)
-                    lat_vect_2 = siesta_file.readline().split()
-                    lat_vect_2 = Helpers.list_str_to_float(lat_vect_2)
-                    lat_vect_3 = siesta_file.readline().split()
-                    lat_vect_3 = Helpers.list_str_to_float(lat_vect_3)
-
-                    AllAtoms = TAtomicModel(atoms)
-                    AllAtoms.set_lat_vectors(lat_vect_1, lat_vect_2, lat_vect_3)
-                    molecules.append(AllAtoms)
-
-                if (str1 != '') and (str1.find("zmatrix: Z-matrix coordinates: (Ang ; rad )") >= 0) and (isSpesF == 1):
-                    for j in range(0, 2):
-                        str1 = siesta_file.readline()
-                    atoms = []
-
-                    for i1 in range(0, number_of_atoms):
-                        str1 = Helpers.spacedel(siesta_file.readline())
-                        S = str1.split(' ')
-                        d1 = float(S[0])
-                        d2 = float(S[1])
-                        d3 = float(S[2])
-                        Charge = species_label_charges[sl[len(atoms)]]
-                        C = periodTable.get_let(Charge)
-                        A = [d1, d2, d3, C, Charge]
-                        atoms.append(A)
-                str1 = siesta_file.readline()
-            siesta_file.close()
-        return molecules
-
-    @staticmethod
-    def atoms_from_output_md(filename):
-        """import from MD output """
-        periodTable = TPeriodTable()
-        molecules = []
-        if os.path.exists(filename):
-            NumberOfSpecies = TSIESTA.number_of_species(filename)
-            NumberOfAtoms = TSIESTA.number_of_atoms(filename)
-            MdSiestaFile = open(filename)
-            speciesLabel = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-            sl = []
-            isSpesFinde = 0
-            isSpesF = 0
-            str1 = MdSiestaFile.readline()
-            while str1 != '':
-                if (str1 != '') and (str1.find("siesta: Atomic coordinates (Bohr) and species") >= 0) and (
-                        isSpesF == 0):
-                    str1 = MdSiestaFile.readline()
-                    while str1.find('siesta') >= 0:
-                        str1 = Helpers.spacedel(str1)
-                        sl.append(int(str.split(str1, ' ')[4]))
-                        str1 = MdSiestaFile.readline()
-                    isSpesF = 1
-                if (str1 != '') and (str1.find("ChemicalSpeciesLabel") >= 0) and (isSpesFinde == 0):
-                    for i in range(0, NumberOfSpecies):
-                        str1 = Helpers.spacedel(MdSiestaFile.readline())
-                        S = str.split(str1, ' ')
-                        speciesLabel[int(S[0])] = S[1]
-                    isSpesFinde = 1
-
-                atoms = []
-
-                if (str1 != '') and (str1.find("Begin CG move") >= 0 or str1.find("Begin MD step") >= 0):
-                    if (str1 != '') and str1.find("Begin MD step") >= 0:
-                        for j in range(0, 3):
-                            MdSiestaFile.readline()
-                    else:
-                        if str1.find("Begin CG move") >= 0:
-                            while (str1 != '') and (str1.find("block") == -1) and (str1.find("outcoor") == -1):
-                                str1 = MdSiestaFile.readline()
-
-                    atoms = []
-                    for i1 in range(0, NumberOfAtoms):
-                        str1 = Helpers.spacedel(MdSiestaFile.readline())
-                        S = str1.split(' ')
-                        d1 = float(S[0])
-                        d2 = float(S[1])
-                        d3 = float(S[2])
-                        Charge = speciesLabel[sl[len(atoms)]]
-                        C = periodTable.get_let(Charge)
-                        A = [d1, d2, d3, C, Charge]
-                        atoms.append(A)
-                    str1 = MdSiestaFile.readline()
-                    while str1.find("outcell: Unit cell vectors (Ang):")==-1:
-                        str1 = MdSiestaFile.readline()
-                    vec1 = MdSiestaFile.readline().split()
-                    vec1 = Helpers.list_str_to_float(vec1)
-                    vec2 = MdSiestaFile.readline().split()
-                    vec2 = Helpers.list_str_to_float(vec2)
-                    vec3 = MdSiestaFile.readline().split()
-                    vec3 = Helpers.list_str_to_float(vec3)
-                    AllAtoms = TAtomicModel(atoms)
-                    AllAtoms.set_lat_vectors(vec1, vec2, vec3)
-                    molecules.append(AllAtoms)
-                str1 = MdSiestaFile.readline()
-            MdSiestaFile.close()
-        return molecules
-
-    @staticmethod
-    def atoms_from_md_car(filename):
-        """import from MD_CAR output """
-        periodTable = TPeriodTable()
-        molecules = []
-        if os.path.exists(filename):
-            struct_file = open(filename)
-            str1 = struct_file.readline()
-            while str1.find("---")>=0:
-                newStr = TAtomicModel()
-                LatConst = float(struct_file.readline())
-                lat1 = Helpers.spacedel(struct_file.readline()).split()
-                lat1 = Helpers.list_str_to_float(lat1)
-                lat1 = LatConst*np.array(lat1)
-                lat2 = Helpers.spacedel(struct_file.readline()).split()
-                lat2 = Helpers.list_str_to_float(lat2)
-                lat2 = LatConst * np.array(lat2)
-                lat3 = Helpers.spacedel(struct_file.readline()).split()
-                lat3 = Helpers.list_str_to_float(lat3)
-                lat3 = LatConst * np.array(lat3)
-                NumbersOfAtoms = Helpers.spacedel(struct_file.readline()).split()
-                NumbersOfAtoms = Helpers.list_str_to_int(NumbersOfAtoms)
-                str1 = struct_file.readline()
-                if Helpers.spacedel(str1) == "Direct":
-                    for i in range(0,len(NumbersOfAtoms)):
-                        for j in range(0, NumbersOfAtoms[i]):
-                            row = Helpers.spacedel(struct_file.readline()).split()
-                            row = Helpers.list_str_to_float(row)
-
-                            let = "Direct"
-                            charge = 200 + i
-                            x = row[0]
-                            y = row[1]
-                            z = row[2]
-
-                            newStr.add_atom(TAtom([x, y, z, let, charge]))
-                    newStr.set_lat_vectors(lat1, lat2, lat3)
-                    newStr.convert_from_direct_to_cart()
-                    molecules.append(newStr)
-        return molecules
-
-    @staticmethod
-    def atoms_from_output_optim(filename):
-        """Return the relaxed AtList from output file"""
-        NumberOfAtoms = TSIESTA.number_of_atoms(filename)
-        NumberOfSpecies = TSIESTA.number_of_species(filename)
-        Species = TSIESTA.Species(filename)
-
-        AtList = []
-        f1 = False
-        f2 = False
-        f3 = False
-        n_vec = 0
-        lat_vect_1 = ""
-        lat_vect_2 = ""
-        lat_vect_3 = ""
-
-        for line in open(filename, 'r'):
-            if (line.find("outcell: Unit cell vectors (Ang):") > -1):
-                f2 = True
-                n_vec = 0
-            else:
-                if (n_vec == 0) and (f2 == True):
-                    lat_vect_1 = line.split()
-                    lat_vect_1 = Helpers.list_str_to_float(lat_vect_1)
-                if (n_vec == 1) and (f2 == True):
-                    lat_vect_2 = line.split()
-                    lat_vect_2 = Helpers.list_str_to_float(lat_vect_2)
-                if (n_vec == 2) and (f2 == True):
-                    lat_vect_3 = line.split()
-                    lat_vect_3 = Helpers.list_str_to_float(lat_vect_3)
-                    f2 = False
-                if f2 == True:
-                    n_vec += 1
-
-            if (line.find("outcoor: Relaxed atomic coordinates (Ang)") > -1):
-                f1 = True
-            else:
-                if (len(AtList) < NumberOfAtoms) and (f1 == True):
-                    line1 = line.split()
-                    line2 = [float(line1[0]), float(line1[1]), float(line1[2]), line1[5], Species[int(line1[3]) - 1][1]]
-                    AtList.append(line2)
-                if len(AtList) == NumberOfAtoms:
-                    f1 = False
-                    AllAtoms = TAtomicModel(AtList)
-                    AllAtoms.set_lat_vectors(lat_vect_1, lat_vect_2, lat_vect_3)
-                    return [AllAtoms]
-            if (line.find("outcoor: Relaxed atomic coordinates (fractional)") > -1):
-                f3 = True
-            else:
-                if (len(AtList) < NumberOfAtoms) and (f3 == True):
-                    line1 = line.split()
-                    line2 = [float(line1[0]), float(line1[1]), float(line1[2]), line1[5], Species[int(line1[3]) - 1][1]]
-                    AtList.append(line2)
-                if len(AtList) == NumberOfAtoms:
-                    f3 = False
-                    AllAtoms = TAtomicModel(AtList)
-                    AllAtoms.set_lat_vectors(lat_vect_1, lat_vect_2, lat_vect_3)
-                    AllAtoms.convert_from_direct_to_cart()
-                    return [AllAtoms]
-        return []
-
-    @staticmethod
-    def atoms_from_struct_out(filename):
-        """import from STRUCT_OUT file"""
-        periodTable = TPeriodTable()
-        molecules = []
-        if os.path.exists(filename):
-            struct_file = open(filename)
-            lat1 = Helpers.spacedel(struct_file.readline()).split()
-            lat1 = Helpers.list_str_to_float(lat1)
-            lat2 = Helpers.spacedel(struct_file.readline()).split()
-            lat2 = Helpers.list_str_to_float(lat2)
-            lat3 = Helpers.spacedel(struct_file.readline()).split()
-            lat3 = Helpers.list_str_to_float(lat3)
-            NumberOfAtoms = int(struct_file.readline())
-
-            newStr = TAtomicModel()
-            for i1 in range(0, NumberOfAtoms):
-                str1 = Helpers.spacedel(struct_file.readline())
-                S = str1.split(' ')
-                x = float(S[2])
-                y = float(S[3])
-                z = float(S[4])
-                charge = int(S[1])
-                let = periodTable.get_let(charge)
-                newStr.add_atom(TAtom([x, y, z, let, charge]))
-            newStr.set_lat_vectors(lat1,lat2,lat3)
-            newStr.convert_from_direct_to_cart()
-            molecules.append(newStr)
-        return molecules
-
-    @staticmethod
-    def atoms_from_xyz(filename):
-        """import from xyz file"""
-        periodTable = TPeriodTable()
-        molecules = []
-        if os.path.exists(filename):
-            f = open(filename)
-            NumberOfAtoms = int(f.readline())
-            newModel = TSIESTA.atoms_from_xyz_structure(NumberOfAtoms, f, periodTable)
-            molecules.append(newModel)
-        return molecules
-
-    @staticmethod
-    def atoms_from_xyz_structure(NumberOfAtoms, ani_file, periodTable):
-        str1 = Helpers.spacedel(ani_file.readline())
-        atoms = []
-        for i1 in range(0, NumberOfAtoms):
-            str1 = Helpers.spacedel(ani_file.readline())
-            S = str1.split(' ')
-            d1 = float(S[1])
-            d2 = float(S[2])
-            d3 = float(S[3])
-            C = S[0]
-            Charge = periodTable.get_charge_by_letter(C)
-            A = [d1, d2, d3, C, Charge]
-            atoms.append(A)
-        newModel = TAtomicModel(atoms)
-        newModel.set_lat_vectors_default()
-        return newModel
 
     @staticmethod
     def lattice_constant(filename):

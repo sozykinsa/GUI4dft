@@ -391,6 +391,7 @@ class mainWindow(QMainWindow):
         self.ui.FormActionsTabeDOSProperty.setRowCount(0)
         self.ui.FormActionsListPDOS.clear()
         self.ui.FormActionsButtonPlotBANDS.setEnabled(False)
+        self.ui.FormActionsPreTextFDF.setText("")
 
     def check_pdos(self, fname):
         PDOSfile = Importer.CheckPDOSfile(fname)

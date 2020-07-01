@@ -71,6 +71,9 @@ class Importer(object):
         if filename.endswith(".cube"):
             return "GAUSSIAN_cube"
 
+        if filename.endswith("POSCAR") or filename.endswith("CONTCAR"):
+            return "VASPposcar"
+
         return "unknown"
 
     @staticmethod
@@ -82,7 +85,7 @@ class Importer(object):
             fileFormat = Importer.checkFormat(filename)
 
             if fileFormat == "SIESTAfdf":
-                models = TSIESTA.atoms_from_fdf(filename)
+                models = TAtomicModel.atoms_from_fdf(filename)
                 fdf.from_fdf_file(filename)
 
             if fileFormat == "SIESTAout":
@@ -90,38 +93,44 @@ class Importer(object):
                 if type_of_run == 'cg':
                     models = []
                     if fl != 'opt':
-                        models = TSIESTA.atoms_from_output_cg(filename)
-                    modelsopt = TSIESTA.atoms_from_output_optim(filename)
+                        models = TAtomicModel.atoms_from_output_cg(filename)
+                    modelsopt = TAtomicModel.atoms_from_output_optim(filename)
                     if len(modelsopt) == 1:
                         models.append(modelsopt[0])
                 else:
-                    models = TSIESTA.atoms_from_output_md(filename)
+                    models = TAtomicModel.atoms_from_output_md(filename)
                 fdf.from_out_file(filename)
 
             if fileFormat == "SIESTAANI":
-                models = TSIESTA.atoms_from_ani(filename)
-                fdf = TFDFFile()
+                models = TAtomicModel.atoms_from_ani(filename)
+                #fdf = TFDFFile()
 
             if fileFormat == "SIESTASTRUCT_OUT":
-                models = TSIESTA.atoms_from_struct_out(filename)
-                fdf = TFDFFile()
+                models = TAtomicModel.atoms_from_struct_out(filename)
+                #fdf = TFDFFile()
 
             if fileFormat == "SIESTAMD_CAR":
-                models = TSIESTA.atoms_from_md_car(filename)
-                fdf = TFDFFile()
+                models = TAtomicModel.atoms_from_md_car(filename)
+                #fdf = TFDFFile()
 
             if fileFormat == "SIESTAXSF":
                 models = TXSF.get_atoms(filename)
-                fdf = TFDFFile()
+                #fdf = TFDFFile()
 
             if fileFormat == "GAUSSIAN_cube":
                 models = TGaussianCube.get_atoms(filename)
-                fdf = TFDFFile()
+                #fdf = TFDFFile()
 
             if fileFormat == "XMolXYZ":
-                models = TSIESTA.atoms_from_xyz(filename)
-                fdf = TFDFFile()
+                models = TAtomicModel.atoms_from_xyz(filename)
+                #fdf = TFDFFile()
+
+            if fileFormat == "VASPposcar":
+                models = TAtomicModel.atoms_from_POSCAR(filename)
+                #fdf.from_POSCAR_file(filename)
+
         return models, fdf
+
 
     @staticmethod
     def CheckDOSfile(filename):
