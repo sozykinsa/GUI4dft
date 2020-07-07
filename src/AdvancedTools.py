@@ -204,11 +204,12 @@ class Helpers:
 ##################################################################    
 
 class TPeriodTableAtom:
-    def __init__(self, charge, radius, let, color):
+    def __init__(self, charge, radius, let, color, mass = 1):
         self.charge = charge
         self.radius = radius
         self.let = let
         self.color = color
+        self.mass = mass
 
 class TPeriodTable:
     """The TPeriodTable class provides basic fetches of Mendelevium's table. The constructor does not have arguments"""
@@ -218,14 +219,14 @@ class TPeriodTable:
         self.default_color = [0.6, 0.6, 1.0]
         self.default_radius = 77
         self.Atoms.append(TPeriodTableAtom(0,    0, ' ',  [0.1, 1.0, 0.1]))
-        self.Atoms.append(TPeriodTableAtom(1,   53, 'H',  [0.1, 0.6, 0.1]))
+        self.Atoms.append(TPeriodTableAtom(1,   53, 'H',  [0.1, 0.6, 0.1], 1))
         self.Atoms.append(TPeriodTableAtom(2,   31, 'He', [0.5, 0.0, 1.0]))
         self.Atoms.append(TPeriodTableAtom(3,  145, 'Li', [1.0, 1.0, 0.15]))
         self.Atoms.append(TPeriodTableAtom(4,  112, 'Be', [0.3, 1.0, 1.0]))
         self.Atoms.append(TPeriodTableAtom(5,   98,  'B', [0.6, 0.3, 0.0]))
-        self.Atoms.append(TPeriodTableAtom(6,   77,  'C', [0.2, 0.2, 0.8]))
+        self.Atoms.append(TPeriodTableAtom(6,   77,  'C', [0.2, 0.2, 0.8], 12))
         self.Atoms.append(TPeriodTableAtom(7,   92,  'N', [0.45, 0.3, 0.6]))
-        self.Atoms.append(TPeriodTableAtom(8,   60,  'O', [1.0, 0.0, 0.5]))
+        self.Atoms.append(TPeriodTableAtom(8,   60,  'O', [1.0, 0.0, 0.5], 16))
         self.Atoms.append(TPeriodTableAtom(9,   73,  'F', self.default_color))
         self.Atoms.append(TPeriodTableAtom(10,  38, 'Ne', self.default_color))
         self.Atoms.append(TPeriodTableAtom(11, 190, 'Na', self.default_color))
@@ -995,11 +996,13 @@ class TAtomicModel(object):
         n = 0
         
         if (charge==0):
+            Mendeley = TPeriodTable()
             for j in range(0, len(self.atoms)):
-                cx+=self.atoms[j].x
-                cy+=self.atoms[j].y
-                cz+=self.atoms[j].z
-                n+=1
+                m = Mendeley.Atoms[self.atoms[j].charge].mass
+                cx+=self.atoms[j].x*m
+                cy+=self.atoms[j].y*m
+                cz+=self.atoms[j].z*m
+                n+=m
         else:
             for j in range(0, len(self.atoms)):
                 if (int(self.atoms[j].charge) == int(charge)):
@@ -1017,6 +1020,27 @@ class TAtomicModel(object):
                 if (self.atoms[j].z<0):
                     self.atoms[j].z+=self.boxZ
         return self
+
+
+    def rotateX(self, alpha):
+        """The method RotateAtList rotate the AtList on alpha Angle"""
+        alpha*= math.pi / 180
+        # ox
+        for i in range(0, len(self.atoms)):
+            xnn = float(self.atoms[i].y) * math.cos(alpha) - float(self.atoms[i].z) * math.sin(alpha)
+            ynn = float(self.atoms[i].y) * math.sin(alpha) + float(self.atoms[i].z) * math.cos(alpha)
+            self.atoms[i].y = xnn
+            self.atoms[i].z = ynn
+
+    def rotateY(self, alpha):
+        """The method RotateAtList rotate the AtList on alpha Angle"""
+        alpha*= math.pi / 180
+        # oy
+        for i in range(0, len(self.atoms)):
+            xnn = float(self.atoms[i].x) * math.cos(alpha) + float(self.atoms[i].z) * math.sin(alpha)
+            ynn = -float(self.atoms[i].x) * math.sin(alpha) + float(self.atoms[i].z) * math.cos(alpha)
+            self.atoms[i].x = xnn
+            self.atoms[i].z = ynn
 
     def rotateZ(self, alpha):
         """The method RotateAtList rotate the AtList on alpha Angle"""

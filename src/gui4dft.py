@@ -127,6 +127,9 @@ class mainWindow(QMainWindow):
         self.ui.FormActionsPostButDeleteRowCellParam.clicked.connect(self.delete_cell_param_row)
         self.ui.FormActionsPostButPlusDataCellParam.clicked.connect(self.add_data_cell_param)
 
+        self.ui.FormModifyRotation.clicked.connect(self.model_rotation)
+        self.ui.FormModifyMove.clicked.connect(self.model_move)
+
         self.ui.FormActionsPostButVoronoi.clicked.connect(self.plot_voronoi)
         
         self.ui.FormActionsPostButOptimizeCellParam.clicked.connect(self.plot_volume_param_energy)
@@ -903,6 +906,34 @@ class mainWindow(QMainWindow):
         self.fill_atoms_table()
         self.fill_properties_table()
 
+    def model_rotation(self):
+        angle = self.ui.FormModifyRotationAngle.value()
+        model = self.MainForm.MainModel
+
+        if self.ui.FormModifyRotationCenter.isChecked():
+            center = model.centr_mass()
+            model.move(center[0],center[1],center[2])
+
+        if self.ui.FormModifyRotationX.isChecked():
+            model.rotateX(angle)
+        if self.ui.FormModifyRotationY.isChecked():
+            model.rotateY(angle)
+        if self.ui.FormModifyRotationZ.isChecked():
+            model.rotateZ(angle)
+
+        self.models.append(model)
+        self.fill_models_list()
+        self.model_to_screen(-1)
+
+    def model_move(self):
+        dx = self.ui.MoveX.value()
+        dy = self.ui.MoveY.value()
+        dz = self.ui.MoveZ.value()
+        model = self.MainForm.MainModel
+        model.move(dx,dy,dz)
+        self.models.append(model)
+        self.fill_models_list()
+        self.model_to_screen(-1)
 
     def plot_model(self, value):
         ViewBox = self.ui.FormSettingsViewCheckShowBox.isChecked()
