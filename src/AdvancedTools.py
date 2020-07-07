@@ -353,11 +353,18 @@ class TPeriodTable:
                 row.append(0)
             self.Bonds.append(row)
 
+        self.Bonds[1][6] = 1.0
         self.Bonds[6][6] = 1.42
+        self.Bonds[6][8] = 1.42
         self.Bonds[16][16] = 1.9
         self.Bonds[46][46] = 2.5
         self.Bonds[78][78] = 2.5
         self.Bonds[79][79] = 2.5
+
+
+        for i in range(0, self.table_size):
+            for j in range(i+1, self.table_size):
+                self.Bonds[j][i] = self.Bonds[i][j]
 
     def get_rad(self, charge):
         if int(charge)< self.table_size:

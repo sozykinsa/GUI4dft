@@ -10,6 +10,7 @@ from copy import deepcopy
 from AdvancedTools import TAtom
 from AdvancedTools import TAtomicModel
 from AdvancedTools import TCalculators
+from AdvancedTools import TPeriodTable
 import math
 import numpy as np
 
@@ -397,18 +398,20 @@ class GuiOpenGL(object):
         gl.glEndList()
         
     def add_atoms(self):
+        Mendeley = TPeriodTable()
         gl.glNewList(self.object, gl.GL_COMPILE)
         for at in self.MainModel.atoms:            
             gl.glPushMatrix()
             gl.glTranslatef(at.x, at.y, at.z)
             self.QuadObjS.append(glu.gluNewQuadric())
+            rad = Mendeley.Atoms[at.charge].radius/Mendeley.Atoms[6].radius
             if at.isSelected() == False:
                 color = self.color_of_atoms[at.charge]
                 gl.glColor3f(color[0], color[1], color[2])
-                glu.gluSphere(self.QuadObjS[-1], 0.3, self.quality*70, self.quality*70)
+                glu.gluSphere(self.QuadObjS[-1], 0.3*rad, self.quality*70, self.quality*70)
             else:
                 gl.glColor3f(1, 0, 0)
-                glu.gluSphere(self.QuadObjS[-1], 0.35, self.quality*70, self.quality*70)
+                glu.gluSphere(self.QuadObjS[-1], 0.35*rad, self.quality*70, self.quality*70)
             gl.glPopMatrix()
         gl.glEndList()
         self.active = True
