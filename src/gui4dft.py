@@ -61,6 +61,7 @@ class mainWindow(QMainWindow):
         self.MainForm = GuiOpenGL(self.ui.openGLWidget, self.ui.FormSettingsViewCheckAtomSelection, selected_atom_info, 1)
         self.FDFData = TFDFFile()
         self.VolumericData = TVolumericData()
+        self.VolumericData2 = TVolumericData()  # only for volumeric data difference
         self.PDOSdata = []
         self.filename = ""
         self.colors_cash = {}
@@ -93,7 +94,10 @@ class mainWindow(QMainWindow):
         self.ui.FormActionsPreButSWNTGenerate.clicked.connect(self.swnt_create)
         self.ui.FormActionsPostButSurface.clicked.connect(self.plot_surface)
         self.ui.FormActionsPostButSurfaceParse.clicked.connect(self.parse_volumeric_data)
+        self.ui.FormActionsPostButSurfaceParse2.clicked.connect(self.parse_volumeric_data2)
         self.ui.FormActionsPostButSurfaceLoadData.clicked.connect(self.volumeric_data_load)
+        self.ui.FormActionsPostButSurfaceLoadData2.clicked.connect(self.volumeric_data_load2)
+        self.ui.CalculateTheVolumericDataDifference.clicked.connect(self.volumeric_data_difference)
         self.ui.FormActionsPostButContour.clicked.connect(self.plot_contour)
         self.ui.ColorBondDialogButton.clicked.connect(self.select_bond_color)
         self.ui.ColorBoxDialogButton.clicked.connect(self.select_box_color)
@@ -623,15 +627,17 @@ class mainWindow(QMainWindow):
         self.ui.FileBrouserOpenLine.setText(text)
         self.ui.FileBrouserOpenLine.update()
 
-    def fill_volumeric_data(self, data):
+    def fill_volumeric_data(self, data, tree = " "):
+        if tree == " ":
+            tree = self.ui.FormActionsPostTreeSurface
         type = data.type
         data = data.blocks
-        self.clearQTreeWidget(self.ui.FormActionsPostTreeSurface)
+        self.clearQTreeWidget(tree)
 
         if type == "TXSF":
             for dat in data:
                 text = ((dat[0].title).split('_')[3]).split(':')[0]
-                parent = QTreeWidgetItem(self.ui.FormActionsPostTreeSurface)
+                parent = QTreeWidgetItem(tree)
                 parent.setText(0, "{}".format(text) + "3D")
                 for da in dat:
                     ch = text + ':' + (da.title).split(':')[1]
@@ -641,13 +647,13 @@ class mainWindow(QMainWindow):
         if type == "TGaussianCube":
             for dat in data:
                 text = dat[0].title.split(".cube")[0]
-                parent = QTreeWidgetItem(self.ui.FormActionsPostTreeSurface)
+                parent = QTreeWidgetItem(tree)
                 parent.setText(0, "{}".format(text))
                 for da in dat:
                     ch = text
                     child = QTreeWidgetItem(parent)
                     child.setText(0, "{}".format(ch))
-        self.ui.FormActionsPostTreeSurface.show()
+        tree.show()
 
     def fill_bonds(self):
         bonds = self.MainForm.MainModel.Bonds()
@@ -1645,10 +1651,33 @@ class mainWindow(QMainWindow):
             if Selected.endswith(".cube"):
                 self.VolumericData = TGaussianCube()
             if self.VolumericData.parse(Selected):
-                data = self.VolumericData.blocks
+                #data = self.VolumericData.blocks
                 self.fill_volumeric_data(self.VolumericData)
 
             self.ui.FormActionsPostButSurfaceLoadData.setEnabled(True)
+
+            self.clearQTreeWidget(self.ui.FormActionsPostTreeSurface2)
+            self.ui.FormActionsPosEdit3DData2.setText("")
+            self.ui.FormActionsPostLabelSurfaceNx.setText("")
+            self.ui.FormActionsPostLabelSurfaceNy.setText("")
+            self.ui.FormActionsPostLabelSurfaceNz.setText("")
+            self.ui.VolumrricDataGridCorrect.setEnabled(False)
+            self.ui.FormActionsPostButSurfaceLoadData2.setEnabled(False)
+
+    def parse_volumeric_data2(self):
+        fname = QFileDialog.getOpenFileName(self, 'Open file', self.WorkDir)
+        if len(fname)>0:
+            fname = fname[0]
+            if fname.endswith(".XSF"):
+                self.VolumericData2 = TXSF()
+            if fname.endswith(".cube"):
+                self.VolumericData2 = TGaussianCube()
+            if self.VolumericData2.parse(fname):
+                #data = self.VolumericData.blocks
+                self.fill_volumeric_data(self.VolumericData2, self.ui.FormActionsPostTreeSurface2)
+
+            self.ui.FormActionsPostButSurfaceLoadData2.setEnabled(True)
+            self.ui.FormActionsPosEdit3DData2.setText(fname)
 
     def set_xsf_z_position(self):
         value = int(self.ui.FormActionsPostSliderContourXY.value())
@@ -1769,12 +1798,7 @@ class mainWindow(QMainWindow):
         getSelected = self.ui.FormActionsPostTreeSurface.selectedItems()
         if getSelected:
             if getSelected[0].parent() != None:
-                getChildNode = getSelected[0].text(0)
-                data = self.VolumericData.blocks
-                for dat in data:
-                    for da in dat:
-                        if da.title.find(getChildNode) > -1:
-                            return da.min, da.max
+                return self.VolumericData.min, self.VolumericData.max
 
     def volumeric_data_load(self):
         getSelected = self.ui.FormActionsPostTreeSurface.selectedItems()
@@ -1791,10 +1815,11 @@ class mainWindow(QMainWindow):
                 self.plot_model(-1)
                 self.ui.FormActionsPostButSurfaceAdd.setEnabled(True)
                 self.ui.FormActionsPostButContour.setEnabled(True)
+                self.ui.FormActionsPostButSurfaceParse2.setEnabled(True)
 
                 minv, maxv = self.volumeric_data_range()
-                self.ui.FormActionsPostLabelSurfaceMax.setText("Max: " + str(maxv))
-                self.ui.FormActionsPostLabelSurfaceMin.setText("Min: " + str(minv))
+                self.ui.FormActionsPostLabelSurfaceMax.setText("Max: " + str(round(maxv,5)))
+                self.ui.FormActionsPostLabelSurfaceMin.setText("Min: " + str(round(minv,5)))
                 self.ui.FormActionsPostLabelSurfaceValue.setRange(minv,maxv)
                 self.ui.FormActionsPostLabelSurfaceValue.setValue(round(0.5 * (maxv + minv), 5))
 
@@ -1802,6 +1827,28 @@ class mainWindow(QMainWindow):
                 self.ui.FormActionsPostSliderContourXZ.setMaximum(self.VolumericData.Ny)
                 self.ui.FormActionsPostSliderContourYZ.setMaximum(self.VolumericData.Nx)
 
+    def volumeric_data_load2(self):
+        getSelected = self.ui.FormActionsPostTreeSurface2.selectedItems()
+        if getSelected:
+            if getSelected[0].parent() != None:
+                getChildNode = getSelected[0].text(0)
+                atoms = self.VolumericData2.load_data(getChildNode)
+
+                self.ui.FormActionsPostLabelSurfaceNx.setText("Nx: " + str(self.VolumericData2.Nx))
+                self.ui.FormActionsPostLabelSurfaceNy.setText("Ny: " + str(self.VolumericData2.Ny))
+                self.ui.FormActionsPostLabelSurfaceNz.setText("Nz: " + str(self.VolumericData2.Nz))
+
+                if (self.VolumericData2.Nx == self.VolumericData.Nx) and (self.VolumericData2.Ny == self.VolumericData.Ny) and (self.VolumericData2.Nz == self.VolumericData.Nz):
+                    self.ui.VolumrricDataGridCorrect.setEnabled(True)
+
+    def volumeric_data_difference(self):
+        self.ui.CalculateTheVolumericDataDifference.setEnabled(False)
+        self.VolumericData.difference(self.VolumericData2)
+        minv, maxv = self.volumeric_data_range()
+        self.ui.FormActionsPostLabelSurfaceMax.setText("Max: " + str(round(maxv,5)))
+        self.ui.FormActionsPostLabelSurfaceMin.setText("Min: " + str(round(minv,5)))
+        self.ui.FormActionsPostLabelSurfaceValue.setRange(minv, maxv)
+        self.ui.FormActionsPostLabelSurfaceValue.setValue(round(0.5 * (maxv + minv), 5))
 
     def utf8_letter(self, let):
         if let == '\Gamma':

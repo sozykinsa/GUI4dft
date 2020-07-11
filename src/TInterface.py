@@ -194,12 +194,19 @@ class TVolumericData:
                 ind += 1
         row = f.readline()
         row = Helpers.spacedel(f.readline())
-        for i in range(0, len(self.blocks)):
-            for j in range(0, len(self.blocks[i])):
-                if self.blocks[i][j].title.find(getChildNode) > -1:
-                    self.blocks[i][j].min = np.min(self.data3D)
-                    self.blocks[i][j].max = np.max(self.data3D)
+
+        self.min = np.min(self.data3D)
+        self.max = np.max(self.data3D)
         self.data3D = self.data3D.reshape((self.Nx, self.Ny, self.Nz), order=orderData)
+
+    def difference(self, secondData):
+        if (self.Nx == secondData.Nx) and (self.Ny == secondData.Ny) and (self.Nz == secondData.Nz):
+            for i in range(0,self.Nx):
+                for j in range(0,self.Ny):
+                    for k in range(0, self.Nz):
+                        self.data3D[i][j][k] -= secondData.data3D[i][j][k]
+        self.min = np.min(self.data3D)
+        self.max = np.max(self.data3D)
 
     def isosurface(self, value):
         verts, faces, normals, values = marching_cubes_lewiner(self.data3D, level=value, spacing=self.spacing, gradient_direction='descent', step_size=1, allow_degenerate=True, use_classic=False)

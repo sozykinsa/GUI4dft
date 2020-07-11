@@ -351,10 +351,11 @@ class TPeriodTable:
         for i in range(0, self.table_size):
             row = []
             for j in range(0,self.table_size):
-                row.append(0)
+                row.append(1)
             self.Bonds.append(row)
 
         self.Bonds[1][6] = 1.0
+        self.Bonds[1][8] = 1.0
         self.Bonds[6][6] = 1.42
         self.Bonds[6][8] = 1.42
         self.Bonds[16][16] = 1.9
@@ -1551,7 +1552,10 @@ class TSIESTA:
     def lattice_constant(filename):
         """ Returns the LatticeConstant from SIESTA output file """
         mult = 1
-        property = (Helpers.fromFileProperty(filename,'LatticeConstant',1,'unformatted')).split()
+        latc = Helpers.fromFileProperty(filename,'LatticeConstant',1,'unformatted')
+        if latc == None:
+            return 1
+        property = (latc).split()
         if property[1].lower() == "bohr":
             mult = 0.52917720859
         return mult*float(property[0])
