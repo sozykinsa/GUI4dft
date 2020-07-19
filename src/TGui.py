@@ -187,10 +187,14 @@ class GuiOpenGL(object):
 
     def atomic_structure_to_file(self, fname):
         newModel = self.get_model()
+        if fname.find("POSCAR")>=0:
+            fname = fname.split(".")[0]
+            newModel.toVASPposcar(fname)
         if fname.endswith(".fdf"):
             newModel.toSIESTAfdf(fname)
         if fname.endswith(".xyz"):
             newModel.toSIESTAxyz(fname)
+
 
     def delete_selected_atom(self):
         if self.selected_atom >= 0:

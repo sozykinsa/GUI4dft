@@ -1245,7 +1245,7 @@ class TAtomicModel(object):
         bond = []
         for i in range(0, len(self.atoms)):
             for j in range(i+1, len(self.atoms)):
-                length = self.atom_atom_distance(i, j)
+                length = round(self.atom_atom_distance(i, j),4)
                 t1 = int(self.atoms[i].charge)
                 t2 = int(self.atoms[j].charge)
                 if (math.fabs(length - PeriodTable.Bonds[t1][t2]) < 0.2*PeriodTable.Bonds[t1][t2]):
@@ -1335,7 +1335,7 @@ class TAtomicModel(object):
     def toSIESTAfdf(self, filename):
         """ созадет входной файл для пакета SIESTA """
         f = open(filename,'w')
-        text = self.toSIESTAfdfdata()
+        text = self.toSIESTAfdfdata("Fractional", "LatticeVectors")
         print(text, file=f)
         f.close()
         
@@ -1377,14 +1377,7 @@ class TAtomicModel(object):
             data += 'AtomicCoordinatesFormat NotScaledCartesianAng\n'
             data+='%block Zmatrix\n'
             data+='cartesian\n'
-            for i in range(0, len(self.atoms)):
-                str1 = ' '
-                for j in range(0,len(types)):
-                    if types[j][0] == self.atoms[i].charge:
-                        str1 = ' ' + str(j+1)
-                str2 = '    ' + str(round(self.atoms[i].x, 7)) + '     ' + str(round(self.atoms[i].y, 7)) + '      ' + str(round(self.atoms[i].z, 7))
-                str3 = '      1  1  1'
-                data+= str1+str2+str3+"\n"
+            data += self.coords_for_export(coord_style)
             data+='%endblock Zmatrix\n'
 
         if coord_style == "Fractional":
@@ -1393,15 +1386,35 @@ class TAtomicModel(object):
             self.convert_from_cart_to_direct()
             data += 'AtomicCoordinatesFormat Fractional\n'
             data += '%block AtomicCoordinatesAndAtomicSpecies\n'
+            data += self.coords_for_export(coord_style)
+            data += '%endblock AtomicCoordinatesAndAtomicSpecies\n'
+        return data
+
+    def coords_for_export(self, coord_style):
+        data = ""
+        types = self.typesOfAtoms()
+        if coord_style == "Fractional":
             for i in range(0, len(self.atoms)):
                 str1 = ' '
                 for j in range(0, len(types)):
                     if types[j][0] == self.atoms[i].charge:
                         str1 = ' ' + str(j + 1)
-                str2 = '    ' + str(round(self.atoms[i].x, 7)) + '     ' + str(
-                        round(self.atoms[i].y, 7)) + '      ' + str(round(self.atoms[i].z, 7))
+                str2 = '    ' + str(round(self.atoms[i].x, 7)) + '     ' + str(round(self.atoms[i].y, 7)) + '      ' + str(round(self.atoms[i].z, 7))
                 data += str2 + str1 + "\n"
-            data += '%endblock AtomicCoordinatesAndAtomicSpecies\n'
+
+        if coord_style == "FractionalPOSCAR":
+            for i in range(0, len(self.atoms)):
+                data += '    ' + str(round(self.atoms[i].x, 7)) + '     ' + str(round(self.atoms[i].y, 7)) + '      ' + str(round(self.atoms[i].z, 7))+ "\n"
+
+        if coord_style == "Zmatrix Cartesian":
+            for i in range(0, len(self.atoms)):
+                str1 = ' '
+                for j in range(0,len(types)):
+                    if types[j][0] == self.atoms[i].charge:
+                        str1 = ' ' + str(j+1)
+                str2 = '    ' + str(round(self.atoms[i].x, 7)) + '     ' + str(round(self.atoms[i].y, 7)) + '      ' + str(round(self.atoms[i].z, 7))
+                str3 = '      1  1  1'
+                data+= str1+str2+str3+"\n"
         return data
 
     def toSIESTAxyzdata(self):
@@ -1412,6 +1425,43 @@ class TAtomicModel(object):
         for i in range(0, nAtoms):
             data+= "\n"+self.atoms[i].let + '       '+ str(round(self.atoms[i].x, 7)) + '     ' + str(round(self.atoms[i].y, 7)) + '      ' + str(round(self.atoms[i].z, 7))
         return data
+
+    def toVASPposcar(self,filename):
+        """ созадет файл формате VASP POSCAR """
+        f = open(filename, 'w')
+
+        data = ""
+        data += "model \n"
+        data +=' 1.0 \n'
+
+        data += '  ' + str(self.LatVect1[0]) + '  ' + str(self.LatVect1[1]) + '  ' + str(self.LatVect1[2]) + '\n'
+        data += '  ' + str(self.LatVect2[0]) + '  ' + str(self.LatVect2[1]) + '  ' + str(self.LatVect2[2]) + '\n'
+        data += '  ' + str(self.LatVect3[0]) + '  ' + str(self.LatVect3[1]) + '  ' + str(self.LatVect3[2]) + '\n'
+
+        PerTab = TPeriodTable()
+
+        types = self.typesOfAtoms()
+        for i in range(0, len(types)):
+            data += ' ' +  str(PerTab.get_let(int(types[i][0])))
+        data += "\n"
+
+        for i in range(0, len(types)):
+            count = 0
+            for atom in self.atoms:
+                if atom.charge == int(types[i][0]):
+                    count+=1
+            data += ' ' +  str(count)
+        data += "\n"
+
+        data += "Direct\n"
+
+        self.sort_atoms_by_type()
+        self.GoToPositiveCoordinates()
+        self.convert_from_cart_to_direct()
+        data += self.coords_for_export("FractionalPOSCAR")
+
+        print(data, file=f)
+        f.close()
   
 ##################################################################
 ########################### TSWNT ################################

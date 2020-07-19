@@ -196,6 +196,8 @@ class mainWindow(QMainWindow):
         self.ui.FormSettingsPreferredLattice.setCurrentText(self.LatticeType)
         self.ui.FormSettingsPreferredLattice.currentIndexChanged.connect(self.save_state_FormSettingsPreferredLattice)
 
+        self.ui.FormActionsPostComboBonds.currentIndexChanged.connect(self.fill_bonds)
+
         EnergyUnitsType = QStandardItemModel()
         EnergyUnitsType.appendRow(QStandardItem("eV"))
         #EnergyUnitsType.appendRow(QStandardItem("Ry"))
@@ -605,7 +607,7 @@ class mainWindow(QMainWindow):
         properties.append(["LatVect2", str(model.LatVect2)])
         properties.append(["LatVect3", str(model.LatVect3)])
 
-        self.ui.FormModelTableProperties.setRowCount(len(properties))  # и одну строку в таблице
+        self.ui.FormModelTableProperties.setRowCount(len(properties))
 
         for i in range(0, len(properties)):
             self.ui.FormModelTableProperties.setItem(i, 0, QTableWidgetItem(properties[i][0]))
@@ -620,6 +622,22 @@ class mainWindow(QMainWindow):
         self.ui.FormModifyCellEditC1.setText(str(model.LatVect3[0]))
         self.ui.FormModifyCellEditC2.setText(str(model.LatVect3[1]))
         self.ui.FormModifyCellEditC3.setText(str(model.LatVect3[2]))
+
+        BondsType = QStandardItemModel()
+        BondsType.appendRow(QStandardItem("All"))
+        bonds = self.MainForm.MainModel.Bonds()
+        items = []
+        for bond in bonds:
+            st1 = bond[3] + "-" + bond[5]
+            st2 = bond[5] + "-" + bond[3]
+            if (st1 not in items) and (st2 not in items):
+                items.append(st1)
+        items.sort()
+        for item in items:
+            BondsType.appendRow(QStandardItem(item))
+
+        self.ui.FormActionsPostComboBonds.setModel(BondsType)
+        self.fill_bonds()
 
     def file_brouser_selection(self, selected, deselected):
         self.IndexOfFileToOpen = selected.indexes()[0]
@@ -656,24 +674,32 @@ class mainWindow(QMainWindow):
         tree.show()
 
     def fill_bonds(self):
+        bonds_category = self.ui.FormActionsPostComboBonds.currentText()
+        if bonds_category == "All":
+            c1 = 0
+            c2 = 0
+        else:
+            bonds_category = bonds_category.split('-')
+            Mendeley = TPeriodTable()
+            print(bonds_category)
+            c1 = Mendeley.get_charge_by_letter(bonds_category[0])
+            c2 = Mendeley.get_charge_by_letter(bonds_category[1])
         bonds = self.MainForm.MainModel.Bonds()
-        self.ui.FormActionsPosTableBonds.setRowCount(len(bonds))  # и одну строку в таблице
-
-        BondsType = QStandardItemModel()
-        BondsType.appendRow(QStandardItem("All"))
-        self.ui.FormActionsPostComboBonds.setModel(BondsType)
+        self.ui.FormActionsPosTableBonds.setRowCount(0)
 
         mean = 0
         n = 0
 
-        for i in range(0, len(bonds)):
-            s = str(bonds[i][3]) + str(bonds[i][4]) + "-" + str(bonds[i][5]) + str(bonds[i][6])
-            self.ui.FormActionsPosTableBonds.setItem(i, 0, QTableWidgetItem(s))
-            self.ui.FormActionsPosTableBonds.setItem(i, 1, QTableWidgetItem(str(bonds[i][2])))
-            mean += bonds[i][2]
-            n += 1
+        for bond in bonds:
+            if ((c1 == 0) or (c2 == 0)) or ((c1 == bond[0]) and (c2 == bond[1])) or ((c1 == bonds[1]) and (c2 == bonds[2])):
+                self.ui.FormActionsPosTableBonds.setRowCount(self.ui.FormActionsPosTableBonds.rowCount()+1)
+                s = str(bond[3]) + str(bond[4]) + "-" + str(bond[5]) + str(bond[6])
+                self.ui.FormActionsPosTableBonds.setItem(n, 0, QTableWidgetItem(s))
+                self.ui.FormActionsPosTableBonds.setItem(n, 1, QTableWidgetItem(str(bond[2])))
+                mean += bond[2]
+                n += 1
         if n > 0:
-            self.ui.FormActionsPostLabelMeanBond.setText("Mean value: " + str(mean / n))
+            self.ui.FormActionsPostLabelMeanBond.setText("Mean value: " + str(round(mean / n,5)))
 
     def fill_cell_info(self, fname):
         Volume = TSIESTA.volume(fname)
@@ -838,7 +864,7 @@ class mainWindow(QMainWindow):
 
     def menu_export(self):
         if self.MainForm.MainModel.nAtoms()>0:
-            fname = QFileDialog.getSaveFileName(self, 'Save File', self.WorkDir, "FDF files (*.fdf);;XYZ files (*.xyz)")[0]
+            fname = QFileDialog.getSaveFileName(self, 'Save File', self.WorkDir, "All files (*);;FDF files (*.fdf);;XYZ files (*.xyz)")[0]
             self.MainForm.atomic_structure_to_file(fname)
             self.WorkDir = os.path.dirname(fname)
             self.save_active_Folder()
