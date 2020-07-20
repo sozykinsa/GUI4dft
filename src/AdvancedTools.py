@@ -1294,7 +1294,7 @@ class TAtomicModel(object):
             self.atoms[i].y += 0.1
             self.atoms[i].z -= zm
             self.atoms[i].z += 0.1
-        
+
     def grow(self):
         """ модель транслируется в трех измерениях и становится в 27 раз больше """
         newAtList = deepcopy(self.atoms)
@@ -1310,6 +1310,51 @@ class TAtomicModel(object):
         newModel = TAtomicModel(newAtList)
         v1 = 3 * self.LatVect1
         v2 = 3 * self.LatVect2
+        v3 = 3 * self.LatVect3
+        newModel.set_lat_vectors(v1,v2,v3)
+        return newModel
+
+    def growX(self):
+        """ модель транслируется в измерении X """
+        newAtList = deepcopy(self.atoms)
+        vect = self.LatVect1
+        copyOfModel = TAtomicModel(self.atoms)
+        copyOfModel.move(vect[0], vect[1], vect[2])
+        for atom in copyOfModel.atoms:
+            newAtList.append(atom)
+        newModel = TAtomicModel(newAtList)
+        v1 = 2 * self.LatVect1
+        v2 = self.LatVect2
+        v3 = self.LatVect3
+        newModel.set_lat_vectors(v1,v2,v3)
+        return newModel
+
+    def growY(self):
+        """ модель транслируется в измерении X """
+        newAtList = deepcopy(self.atoms)
+        vect = self.LatVect2
+        copyOfModel = TAtomicModel(self.atoms)
+        copyOfModel.move(vect[0], vect[1], vect[2])
+        for atom in copyOfModel.atoms:
+            newAtList.append(atom)
+        newModel = TAtomicModel(newAtList)
+        v1 = self.LatVect1
+        v2 = 3 * self.LatVect2
+        v3 = self.LatVect3
+        newModel.set_lat_vectors(v1,v2,v3)
+        return newModel
+
+    def growZ(self):
+        """ модель транслируется в измерении X """
+        newAtList = deepcopy(self.atoms)
+        vect = self.LatVect3
+        copyOfModel = TAtomicModel(self.atoms)
+        copyOfModel.move(vect[0], vect[1], vect[2])
+        for atom in copyOfModel.atoms:
+            newAtList.append(atom)
+        newModel = TAtomicModel(newAtList)
+        v1 = self.LatVect1
+        v2 = self.LatVect2
         v3 = 3 * self.LatVect3
         newModel.set_lat_vectors(v1,v2,v3)
         return newModel

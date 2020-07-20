@@ -86,7 +86,6 @@ class mainWindow(QMainWindow):
         
         #buttons
         self.ui.FileBrouserOpenFile.clicked.connect(self.menu_open)
-        self.ui.FormActionsPostButCreateBonds.clicked.connect(self.fill_bonds)
         self.ui.FormActionsPostButPlotBondsHistogram.clicked.connect(self.plot_bonds_histogram)
         self.ui.FormActionsPreButFDFGenerate.clicked.connect(self.fdf_data_to_form)
         self.ui.FormActionsPreButFDFToFile.clicked.connect(self.fdf_data_from_form_to_file)
@@ -132,7 +131,9 @@ class mainWindow(QMainWindow):
         self.ui.FormActionsPostButPlusDataCellParam.clicked.connect(self.add_data_cell_param)
 
         self.ui.FormModifyRotation.clicked.connect(self.model_rotation)
-        self.ui.FormModifyMove.clicked.connect(self.model_move)
+        self.ui.FormModifyGrowX.clicked.connect(self.model_grow_x)
+        self.ui.FormModifyGrowY.clicked.connect(self.model_grow_y)
+        self.ui.FormModifyGrowZ.clicked.connect(self.model_grow_z)
 
         self.ui.FormActionsPostButVoronoi.clicked.connect(self.plot_voronoi)
         
@@ -584,7 +585,6 @@ class mainWindow(QMainWindow):
         else:
             for i in range(0, len(self.models)):
                 model.appendRow(QStandardItem("model " + str(i)))
-
         self.ui.FormModelComboModels.setModel(model)
         self.ui.FormModelComboModels.setCurrentIndex(len(self.models) - 1)
 
@@ -674,16 +674,7 @@ class mainWindow(QMainWindow):
         tree.show()
 
     def fill_bonds(self):
-        bonds_category = self.ui.FormActionsPostComboBonds.currentText()
-        if bonds_category == "All":
-            c1 = 0
-            c2 = 0
-        else:
-            bonds_category = bonds_category.split('-')
-            Mendeley = TPeriodTable()
-            print(bonds_category)
-            c1 = Mendeley.get_charge_by_letter(bonds_category[0])
-            c2 = Mendeley.get_charge_by_letter(bonds_category[1])
+        c1, c2 = self.fill_bonds_charges()
         bonds = self.MainForm.MainModel.Bonds()
         self.ui.FormActionsPosTableBonds.setRowCount(0)
 
@@ -691,7 +682,7 @@ class mainWindow(QMainWindow):
         n = 0
 
         for bond in bonds:
-            if ((c1 == 0) or (c2 == 0)) or ((c1 == bond[0]) and (c2 == bond[1])) or ((c1 == bonds[1]) and (c2 == bonds[2])):
+            if ((c1 == 0) or (c2 == 0)) or ((c1 == bond[0]) and (c2 == bond[1])) or ((c1 == bond[1]) and (c2 == bond[2])):
                 self.ui.FormActionsPosTableBonds.setRowCount(self.ui.FormActionsPosTableBonds.rowCount()+1)
                 s = str(bond[3]) + str(bond[4]) + "-" + str(bond[5]) + str(bond[6])
                 self.ui.FormActionsPosTableBonds.setItem(n, 0, QTableWidgetItem(s))
@@ -700,6 +691,18 @@ class mainWindow(QMainWindow):
                 n += 1
         if n > 0:
             self.ui.FormActionsPostLabelMeanBond.setText("Mean value: " + str(round(mean / n,5)))
+
+    def fill_bonds_charges(self):
+        bonds_category = self.ui.FormActionsPostComboBonds.currentText()
+        if bonds_category == "All":
+            c1 = 0
+            c2 = 0
+        else:
+            bonds_category = bonds_category.split('-')
+            Mendeley = TPeriodTable()
+            c1 = Mendeley.get_charge_by_letter(bonds_category[0])
+            c2 = Mendeley.get_charge_by_letter(bonds_category[1])
+        return c1, c2
 
     def fill_cell_info(self, fname):
         Volume = TSIESTA.volume(fname)
@@ -957,12 +960,23 @@ class mainWindow(QMainWindow):
         self.fill_models_list()
         self.model_to_screen(-1)
 
-    def model_move(self):
-        dx = self.ui.MoveX.value()
-        dy = self.ui.MoveY.value()
-        dz = self.ui.MoveZ.value()
+    def model_grow_x(self):
         model = self.MainForm.MainModel
-        model.move(dx,dy,dz)
+        model = model.growX()
+        self.models.append(model)
+        self.fill_models_list()
+        self.model_to_screen(-1)
+
+    def model_grow_y(self):
+        model = self.MainForm.MainModel
+        model = model.growY()
+        self.models.append(model)
+        self.fill_models_list()
+        self.model_to_screen(-1)
+
+    def model_grow_z(self):
+        model = self.MainForm.MainModel
+        model = model.growZ()
         self.models.append(model)
         self.fill_models_list()
         self.model_to_screen(-1)
@@ -1020,6 +1034,9 @@ class mainWindow(QMainWindow):
         return isovalues
 
     def plot_contour(self):
+        print(self.VolumericData)
+        if self.VolumericData.Nx == None:
+            return
         self.MainForm.ViewContour = False
         self.MainForm.ViewContourFill = False
         cmap = plt.get_cmap(self.ui.FormSettingsColorsScale.currentText())
@@ -1110,13 +1127,15 @@ class mainWindow(QMainWindow):
 
 
     def plot_bonds_histogram(self):
+        c1, c2 = self.fill_bonds_charges()
         bonds = self.MainForm.MainModel.Bonds()
         self.ui.MplWidget.canvas.axes.clear()
         b = []
         for bond in bonds:
-            b.append(bond[2])
+            if ((c1 == 0) or (c2 == 0)) or ((c1 == bond[0]) and (c2 == bond[1])) or ((c1 == bond[1]) and (c2 == bond[2])):
+                b.append(bond[2])
 
-        num_bins = 5
+        num_bins = self.ui.FormActionsPostPlotBondsHistogramN.value()
         n, bins, patches = self.ui.MplWidget.canvas.axes.hist(b, num_bins, facecolor='blue', alpha=0.5)
         self.ui.MplWidget.canvas.axes.set_xlabel("Bond lenght")
         self.ui.MplWidget.canvas.axes.set_ylabel("Number of bonds")
@@ -1581,7 +1600,7 @@ class mainWindow(QMainWindow):
 
     def save_state_FormSettingsViewSpinBondWidth(self):
         self.save_property(SETTINGS_FormSettingsViewSpinBondWidth, self.ui.FormSettingsViewSpinBondWidth.text())
-        self.MainForm.set_bond_width(self.ui.FormSettingsViewSpinBondWidth.value()/100)
+        self.MainForm.set_bond_width(self.ui.FormSettingsViewSpinBondWidth.value()*0.005)
 
     def save_state_FormSettingsColorsFixedMax(self):
         self.save_property(SETTINGS_FormSettingsColorsFixedMax, self.ui.FormSettingsColorsFixedMax.text())
