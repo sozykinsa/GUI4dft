@@ -57,7 +57,7 @@ class mainWindow(QMainWindow):
         self.ui = Ui_form()
         self.ui.setupUi(self)
         self.models = []
-        selected_atom_info = [self.ui.FormActionsPreComboAtomsList, self.ui.FormActionsPreSpinAtomsCoordX, self.ui.FormActionsPreSpinAtomsCoordY, self.ui.FormActionsPreSpinAtomsCoordZ]
+        selected_atom_info = [self.ui.FormActionsPreComboAtomsList, self.ui.FormActionsPreSpinAtomsCoordX, self.ui.FormActionsPreSpinAtomsCoordY, self.ui.FormActionsPreSpinAtomsCoordZ, self.ui.AtomPropertiesText]
         self.MainForm = GuiOpenGL(self.ui.openGLWidget, self.ui.FormSettingsViewCheckAtomSelection, selected_atom_info, 1)
         self.FDFData = TFDFFile()
         self.VolumericData = TVolumericData()
@@ -708,8 +708,8 @@ class mainWindow(QMainWindow):
         Volume = TSIESTA.volume(fname)
         Energy = TSIESTA.Etot(fname)
 
-        model, FDFData = Importer.Import(fname)
-        model = model[-1]
+        """model, FDFData = Importer.Import(fname)"""
+        model = self.models[-1]
         a = model.get_LatVect1_norm()
         b = model.get_LatVect2_norm()
         c = model.get_LatVect3_norm()
@@ -791,6 +791,9 @@ class mainWindow(QMainWindow):
         state_FormSettingsOpeningCheckOnlyOptimal = settings.value(SETTINGS_FormSettingsOpeningCheckOnlyOptimal, False, type=bool)
         self.ui.FormSettingsOpeningCheckOnlyOptimal.setChecked(state_FormSettingsOpeningCheckOnlyOptimal)
         self.ui.FormSettingsOpeningCheckOnlyOptimal.clicked.connect(self.save_state_FormSettingsOpeningCheckOnlyOptimal)
+        state_FormSettingsParseAtomicProperties = settings.value(SETTINGS_FormSettingsParseAtomicProperties, False, type=bool)
+        self.ui.FormSettingsParseAtomicProperties.setChecked(state_FormSettingsParseAtomicProperties)
+        self.ui.FormSettingsParseAtomicProperties.clicked.connect(self.save_state_FormSettingsParseAtomicProperties)
         state_FormSettingsViewCheckShowAxes = settings.value(SETTINGS_FormSettingsViewCheckShowAxes, False, type=bool)
         self.ui.FormSettingsViewCheckShowAxes.setChecked(state_FormSettingsViewCheckShowAxes)
         self.ui.FormSettingsViewCheckShowAxes.clicked.connect(self.save_state_FormSettingsViewCheckShowAxes)
@@ -883,19 +886,20 @@ class mainWindow(QMainWindow):
         if os.path.exists(fname):
             self.filename = fname
             self.WorkDir = os.path.dirname(fname)
+            parse_properies = self.ui.FormSettingsParseAtomicProperties.isChecked()
             if self.ui.FormSettingsOpeningCheckOnlyOptimal.isChecked():
-                self.models, self.FDFData = Importer.Import(fname, 'opt')
+                self.models, self.FDFData = Importer.Import(fname, 'opt', parse_properies)
             else:
-                self.models, self.FDFData = Importer.Import(fname)
+                self.models, self.FDFData = Importer.Import(fname, 'all', parse_properies)
 
             problemAtoms = []
             for structure in self.models:
                 for at in structure:
-                    if at.charge >=200:
+                    if at.charge >= 200:
                         problemAtoms.append(at.charge)
             problemAtoms = set(problemAtoms)
 
-            if len(problemAtoms)>0:
+            if len(problemAtoms) > 0:
                 self.atomDialog = AtomsIdentifier(problemAtoms)
                 self.atomDialog.show()
                 ansv = self.atomDialog.ansv
@@ -940,6 +944,7 @@ class mainWindow(QMainWindow):
         self.plot_model(value)
         self.fill_atoms_table()
         self.fill_properties_table()
+        self.MainForm.selected_atom_properties.setText("select")
 
     def model_rotation(self):
         angle = self.ui.FormModifyRotationAngle.value()
@@ -1567,8 +1572,10 @@ class mainWindow(QMainWindow):
         self.save_property(SETTINGS_Folder, self.WorkDir)
 
     def save_state_FormSettingsOpeningCheckOnlyOptimal(self):
-        self.save_property(SETTINGS_FormSettingsOpeningCheckOnlyOptimal,
-                           self.ui.FormSettingsOpeningCheckOnlyOptimal.isChecked())
+        self.save_property(SETTINGS_FormSettingsOpeningCheckOnlyOptimal, self.ui.FormSettingsOpeningCheckOnlyOptimal.isChecked())
+
+    def save_state_FormSettingsParseAtomicProperties(self):
+        self.save_property(SETTINGS_FormSettingsParseAtomicProperties, self.ui.FormSettingsParseAtomicProperties.isChecked())
 
     def save_state_FormSettingsViewCheckShowAxes(self):
         self.save_property(SETTINGS_FormSettingsViewCheckShowAxes,
@@ -1921,6 +1928,7 @@ SETTINGS_FormSettingsColorsFixedMin = 'colors/ColorsFixedMin'
 SETTINGS_FormSettingsColorsFixedMax = 'colors/ColorsFixedMax'
 SETTINGS_FormSettingsColorsScaleType = 'colors/ColorsScaleType'
 SETTINGS_FormSettingsOpeningCheckOnlyOptimal = 'open/CheckOnlyOptimal'
+SETTINGS_FormSettingsParseAtomicProperties = 'open/ParseAtomicProperties'
 SETTINGS_FormSettingsViewCheckAtomSelection = 'view/CheckAtomSelection'
 SETTINGS_FormSettingsViewCheckShowBox = 'view/CheckShowBox'
 SETTINGS_FormSettingsViewCheckShowAxes = 'view/CheckShowAxes'

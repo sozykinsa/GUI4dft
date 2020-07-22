@@ -70,6 +70,7 @@ class GuiOpenGL(object):
         self.rotZ = 0
         self.CanSearch = False
         self.selected_atom = -1
+        self.history_of_atom_selection = []
         self.CheckAtomSelection = CheckAtomSelection
         self.openGLWidget.initializeGL()
         self.openGLWidget.paintGL = self.paintGL
@@ -79,11 +80,12 @@ class GuiOpenGL(object):
         self.openGLWidget.installEventFilter(self.filter)
         self.quality = quality
 
-        if len(selected_atom_info) == 4:
+        if len(selected_atom_info) == 5:
             self.selected_atom_type = selected_atom_info[0]
             self.selected_atom_X = selected_atom_info[1]
             self.selected_atom_Y = selected_atom_info[2]
             self.selected_atom_Z = selected_atom_info[3]
+            self.selected_atom_properties = selected_atom_info[4]
     def update(self):
         self.openGLWidget.update()
 
@@ -92,6 +94,7 @@ class GuiOpenGL(object):
             self.selected_atom_data_to_form(self.MainModel[self.selected_atom].charge, self.MainModel[self.selected_atom].x, self.MainModel[self.selected_atom].y, self.MainModel[self.selected_atom].z)
         else:
             self.selected_atom_data_to_form(0,0,0,0)
+        self.selected_atom_properties_to_form()
 
     def selected_atom_data_to_form(self,a,b,c,d):
         self.selected_atom_type.setCurrentIndex(a)
@@ -101,6 +104,59 @@ class GuiOpenGL(object):
         self.selected_atom_Y.update()
         self.selected_atom_Z.setValue(d)
         self.selected_atom_Z.update()
+
+    def selected_atom_properties_to_form(self):
+        if self.selected_atom >= 0:
+            text = "Selected atom: " + str(self.selected_atom) +"\n"
+            atom = self.MainModel.atoms[self.selected_atom]
+            text += "Element: " + atom.let + "\n"
+            for key in atom.properties:
+                text += str(key) + ": " + str(atom.properties[key]) +"\n"
+
+            if (len(self.history_of_atom_selection)>1):
+                text +="\n\nHistory of atoms selection: "+str(self.history_of_atom_selection)+"\n"
+                text +="Distance from atom " + str(self.history_of_atom_selection[-1]) + " to atom " + str(self.history_of_atom_selection[-2])+ " : "
+                dist = self.MainModel.atom_atom_distance(self.history_of_atom_selection[-1], self.history_of_atom_selection[-2])
+                text += str(round(dist/10,6)) + " nm\n"
+
+                if (len(self.history_of_atom_selection) > 2) and ( self.history_of_atom_selection[-1] != self.history_of_atom_selection[-2]) and ( self.history_of_atom_selection[-3] != self.history_of_atom_selection[-2]):
+                    x1 = self.MainModel.atoms[self.history_of_atom_selection[-1]].x
+                    y1 = self.MainModel.atoms[self.history_of_atom_selection[-1]].y
+                    z1 = self.MainModel.atoms[self.history_of_atom_selection[-1]].z
+
+                    x2 = self.MainModel.atoms[self.history_of_atom_selection[-2]].x
+                    y2 = self.MainModel.atoms[self.history_of_atom_selection[-2]].y
+                    z2 = self.MainModel.atoms[self.history_of_atom_selection[-2]].z
+
+                    x3 = self.MainModel.atoms[self.history_of_atom_selection[-3]].x
+                    y3 = self.MainModel.atoms[self.history_of_atom_selection[-3]].y
+                    z3 = self.MainModel.atoms[self.history_of_atom_selection[-3]].z
+
+                    vx1 = x1 - x2
+                    vy1 = y1 - y2
+                    vz1 = z1 - z2
+
+                    vx2 = x3 - x2
+                    vy2 = y3 - y2
+                    vz2 = z3 - z2
+
+                    a = vx1*vx2 + vy1*vy2 + vz1*vz2
+                    b = math.sqrt(vx1*vx1 + vy1*vy1 + vz1*vz1)
+                    c = math.sqrt(vx2 * vx2 + vy2 * vy2 + vz2 * vz2)
+
+                    arg = a/(b*c)
+                    if math.fabs(arg) > 1:
+                        arg = 1
+
+                    angle = math.acos(arg)
+
+                    text += "Angle " + str(self.history_of_atom_selection[-1]) + " - " + str(
+                        self.history_of_atom_selection[-2]) + " - " + str(
+                        self.history_of_atom_selection[-3]) + " : " + str(round(math.degrees(angle),3)) + " degrees\n"
+
+            self.selected_atom_properties.setText(text)
+        else:
+            self.selected_atom_properties.setText("select")
 
     def isActive(self):
         return self.active
@@ -710,6 +766,10 @@ class GuiOpenGL(object):
             self.add_atoms()
         self.CanSearch = False
         if oldSelected != self.selected_atom:
+            if self.selected_atom == -1:
+                self.history_of_atom_selection = []
+            else:
+                self.history_of_atom_selection.append(self.selected_atom)
             self.selected_atom_changed()
             self.openGLWidget.update()
 

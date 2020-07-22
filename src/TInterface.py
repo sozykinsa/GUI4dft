@@ -77,7 +77,7 @@ class Importer(object):
         return "unknown"
 
     @staticmethod
-    def Import(filename, fl='all'):
+    def Import(filename, fl='all', prop=False):
         """import file"""
         if os.path.exists(filename):
             models = []
@@ -96,6 +96,11 @@ class Importer(object):
                         models = TAtomicModel.atoms_from_output_cg(filename)
                     modelsopt = TAtomicModel.atoms_from_output_optim(filename)
                     if len(modelsopt) == 1:
+                        if prop:
+                            charge_voronoi = TSIESTA.get_charges_voronoi_for_atoms(filename)
+                            modelsopt[0].add_atoms_property("charge Voronoi", charge_voronoi)
+                            charge_hirshfeld = TSIESTA.get_charges_hirshfeld_for_atoms(filename)
+                            modelsopt[0].add_atoms_property("charge Hirshfeld", charge_hirshfeld)
                         models.append(modelsopt[0])
                 else:
                     models = TAtomicModel.atoms_from_output_md(filename)

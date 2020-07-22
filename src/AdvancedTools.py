@@ -419,6 +419,7 @@ class TAtom(object):
         self.let = atData[3]
         self.charge = int(atData[4])
         self.selected = False
+        self.properties = {}
         pass
 
     def setSelected(self, fl):
@@ -426,6 +427,12 @@ class TAtom(object):
 
     def isSelected(self):
         return self.selected
+
+    def setProperty(self, prop, val):
+        self.properties[prop] = val
+
+    def getProperty(self, prop):
+        return self.properties.get(prop)
         
 ##################################################################
 ################### The AtomicModel class ########################
@@ -950,6 +957,11 @@ class TAtomicModel(object):
     def edit_atom(self, ind, newAtom):
         if (ind>=0) and (ind<self.nAtoms()):
             self.atoms[ind] = newAtom
+
+    def add_atoms_property(self, prop, charge_voronoi):
+        if self.nAtoms() == len(charge_voronoi):
+            for i in range(0, self.nAtoms()):
+                self.atoms[i].setProperty(prop, charge_voronoi[i])
 
     def AddBond(self, bond):
         self.bonds.append(bond)
@@ -1800,6 +1812,40 @@ class TSIESTA:
         return charges
 
     @staticmethod
+    def get_charges_for_atoms(filename, method):
+        charges = []
+        if os.path.exists(filename):
+            NumberOfAtoms = TSIESTA.number_of_atoms(filename)
+
+            searchSTR = ""
+            if method == "Hirshfeld":
+                searchSTR = "Hirshfeld Net Atomic Populations:"
+
+            if method == "Voronoi":
+                searchSTR = "Voronoi Net Atomic Populations:"
+
+            MdSiestaFile = open(filename)
+            str1 = MdSiestaFile.readline()
+
+            while str1 != '':
+                if str1 != '' and (str1.find(searchSTR) >= 0):
+                    str1 = MdSiestaFile.readline()
+                    for i in range(0, NumberOfAtoms):
+                        str1 = Helpers.spacedel(MdSiestaFile.readline())
+                        charges.append(float(str1.split(' ')[1]))
+                str1 = MdSiestaFile.readline()
+        MdSiestaFile.close()
+        return charges
+
+    @staticmethod
+    def get_charges_voronoi_for_atoms(filename):
+        return TSIESTA.get_charges_for_atoms(filename, "Voronoi")
+
+    @staticmethod
+    def get_charges_hirshfeld_for_atoms(filename):
+        return TSIESTA.get_charges_for_atoms(filename, "Hirshfeld")
+
+    @staticmethod
     def ChargesSIESTA4(filename, method):
         """Заряды всех атомов в выходном файле SIESTA (Hirshfeld, Voronoi, Mulliken)"""
         charges = []
@@ -1857,30 +1903,8 @@ class TSIESTA:
                                     if(SpinPolarized == 2):
                                         neutral /= 2.0
 
-                            #if (AtomSort == "C"):
-                            #    skip = 2
-                            #    neutral = 4
-                            #    if (SpinPolarized == 2):
-                            #        neutral = neutral / 2.0
-                            #if (AtomSort == "S"):
-                            #    skip = 2
-                            #    neutral = 6
-                            #    if (SpinPolarized == 2):
-                            #        neutral = neutral / 2.0
-                            #if (AtomSort == "Li") or (AtomSort == "H"):
-                            #    skip = 1
-                            #    neutral = 1.0
-                            #    if (SpinPolarized == 2):
-                            #        neutral = neutral / 2.0
-
                             str1 = MdSiestaFile.readline()
 
-                            #if (AtomSort == "C") or (AtomSort == "Al") or (AtomSort == "Ti") or (AtomSort == "Ni") or (AtomSort == "Cr"):
-                            #    for i in range(0, skip - 1):
-                            #        str1 = MdSiestaFile.readline()
-                            #else:
-                            #    for i in range(0, skip):
-                            #        str1 = MdSiestaFile.readline()
                             ch = 0
 
                             while (str1 != '\n'):
