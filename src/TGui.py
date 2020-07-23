@@ -79,6 +79,7 @@ class GuiOpenGL(object):
         self.filter = MyFilter(self)
         self.openGLWidget.installEventFilter(self.filter)
         self.quality = quality
+        self.prop = "charge"
 
         if len(selected_atom_info) == 5:
             self.selected_atom_type = selected_atom_info[0]
@@ -86,8 +87,23 @@ class GuiOpenGL(object):
             self.selected_atom_Y = selected_atom_info[2]
             self.selected_atom_Z = selected_atom_info[3]
             self.selected_atom_properties = selected_atom_info[4]
+
     def update(self):
         self.openGLWidget.update()
+
+    def color_atoms_with_property(self, prop):
+        self.clean()
+        self.prop = prop
+        self.add_atoms()
+        self.add_bonds()
+        self.add_box()
+
+    def color_atoms_with_charge(self):
+        self.clean()
+        self.prop = "charge"
+        self.add_atoms()
+        self.add_bonds()
+        self.add_box()
 
     def selected_atom_changed(self):
         if self.selected_atom >=0:
@@ -187,6 +203,7 @@ class GuiOpenGL(object):
         self.color_of_bonds = GUI.color_of_bonds
         self.color_of_box = GUI.color_of_box
         self.contour_width = GUI.contour_width
+        self.prop = GUI.prop
         self.add_atoms()
         self.add_bonds()
         self.add_box()
@@ -207,6 +224,7 @@ class GuiOpenGL(object):
 
     def set_atomic_structure(self, structure, atomscolors, ViewBox, boxcolor, ViewBonds, bondscolor, bondWidth, ViewAxes, axescolor, contour_width):
         self.clean()
+        self.prop = "charge"
         self.MainModel = deepcopy(structure)
         cm = self.MainModel.centr_mass()
         self.x0 = -cm[0]
@@ -462,16 +480,40 @@ class GuiOpenGL(object):
         gl.glEndList()
         
     def add_atoms(self):
+        prop = self.prop
         Mendeley = TPeriodTable()
         gl.glNewList(self.object, gl.GL_COMPILE)
+
+        min_val = 0
+        max_val = 0
+        mean_val= 0
+
+        if (len(prop) > 0) and (prop != "charge"):
+            min_val = self.MainModel.atoms[0].properties[prop]
+            max_val = self.MainModel.atoms[0].properties[prop]
+            mean_val = self.MainModel.atoms[0].properties[prop]
+            for at in self.MainModel.atoms:
+                val = at.properties[prop]
+                if min_val > val: min_val = val
+                if max_val < val: max_val = val
+                mean_val += val
+            mean_val /= self.MainModel.nAtoms()
+
         for at in self.MainModel.atoms:            
             gl.glPushMatrix()
             gl.glTranslatef(at.x, at.y, at.z)
             self.QuadObjS.append(glu.gluNewQuadric())
             rad = Mendeley.Atoms[at.charge].radius/Mendeley.Atoms[6].radius
             if at.isSelected() == False:
-                color = self.color_of_atoms[at.charge]
-                gl.glColor3f(color[0], color[1], color[2])
+                if (len(prop)>0) and (prop != "charge"):
+                    val = at.properties[prop]
+                    if val > mean_val:
+                        gl.glColor3f(0, math.fabs((val-mean_val)/(max_val-mean_val)), 0)
+                    else:
+                        gl.glColor3f(0, 0, math.fabs((val-mean_val)/(min_val-mean_val)))
+                else:
+                    color = self.color_of_atoms[at.charge]
+                    gl.glColor3f(color[0], color[1], color[2])
                 glu.gluSphere(self.QuadObjS[-1], 0.3*rad, self.quality*70, self.quality*70)
             else:
                 gl.glColor3f(1, 0, 0)

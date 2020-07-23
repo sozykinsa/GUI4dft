@@ -79,6 +79,8 @@ class mainWindow(QMainWindow):
 
         self.ui.FormModelComboModels.currentIndexChanged.connect(self.model_to_screen)
         self.ui.FormActionsPostTreeSurface.itemSelectionChanged.connect(self.type_of_surface)
+        self.ui.PropertyForColorOfAtoms.currentIndexChanged.connect(self.color_atoms_with_property)
+        self.ui.ColorAtomsWithProperty.stateChanged.connect(self.color_atoms_with_property)
 
         self.ui.FormActionsPreRadioSWNT.toggled.connect(self.swnt_type1_selected)
         self.ui.FormActionsPreRadioSWNTcap.toggled.connect(self.swnt_type2_selected)
@@ -945,6 +947,24 @@ class mainWindow(QMainWindow):
         self.fill_atoms_table()
         self.fill_properties_table()
         self.MainForm.selected_atom_properties.setText("select")
+
+        if self.MainForm.MainModel.nAtoms() > 0:
+            atom = self.MainForm.MainModel.atoms[0]
+            AtomPropType = QStandardItemModel()
+            for key in atom.properties:
+                AtomPropType.appendRow(QStandardItem(str(key)))
+            self.ui.PropertyForColorOfAtoms.setModel(AtomPropType)
+
+    def color_atoms_with_property(self):
+        if self.ui.ColorAtomsWithProperty.isChecked():
+            prop = self.ui.PropertyForColorOfAtoms.currentText()
+            if len(prop)>0:
+                self.MainForm.color_atoms_with_property(prop)
+            else:
+                self.MainForm.color_atoms_with_charge()
+        else:
+            self.MainForm.color_atoms_with_charge()
+        self.MainForm.update()
 
     def model_rotation(self):
         angle = self.ui.FormModifyRotationAngle.value()
