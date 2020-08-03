@@ -113,6 +113,7 @@ class mainWindow(QMainWindow):
         self.ui.FormActionsButtonParseBANDS.clicked.connect(self.parse_bands)
         self.ui.FormActionsButtonPlotPDOSselected.clicked.connect(self.plot_selected_pdos)
         self.ui.FormModifyCellButton.clicked.connect(self.edit_cell)
+        self.ui.FormActionsPostButGetBonds.clicked.connect(self.get_bonds)
 
         self.ui.FormActionsPreButDeleteAtom.clicked.connect(self.atom_delete)
         self.ui.FormActionsPreButModifyAtom.clicked.connect(self.atom_modify)
@@ -274,8 +275,8 @@ class mainWindow(QMainWindow):
 
         self.ui.FormActionsPosTableBonds.setColumnCount(2)
         self.ui.FormActionsPosTableBonds.setHorizontalHeaderLabels(["Bond", "Lenght"])
-        self.ui.FormActionsPosTableBonds.setColumnWidth(0, 70)
-        self.ui.FormActionsPosTableBonds.setColumnWidth(1, 180)
+        self.ui.FormActionsPosTableBonds.setColumnWidth(0, 100)
+        self.ui.FormActionsPosTableBonds.setColumnWidth(1, 150)
         self.ui.FormActionsPosTableBonds.horizontalHeader().setStyleSheet(self.table_header_stylesheet)
         self.ui.FormActionsPosTableBonds.verticalHeader().setStyleSheet(self.table_header_stylesheet)
 
@@ -561,15 +562,10 @@ class mainWindow(QMainWindow):
             self.fill_file_name(fname)
         else:
             self.fill_file_name(title)
-        print("func1")
         self.fill_models_list()
-        print("func2")
         self.fill_atoms_table()
-        print("func3")
         self.fill_properties_table()
-        print("func4")
         self.check_volumeric_data(fname)
-        print("func5")
         if Importer.checkFormat(fname) == "SIESTAout":
             self.check_dos(fname)
             self.check_pdos(fname)
@@ -592,13 +588,11 @@ class mainWindow(QMainWindow):
         else:
             for i in range(0, len(self.models)):
                 model.appendRow(QStandardItem("model " + str(i)))
-        print("yes1")
-        self.ui.FormModelComboModels.clear()
-        self.ui.FormModelComboModels.addItem("1")
-        print("yes1-1")
+        self.ui.FormModelComboModels.currentIndexChanged.disconnect()
         self.ui.FormModelComboModels.setModel(model)
-        print("yes2")
         self.ui.FormModelComboModels.setCurrentIndex(len(self.models) - 1)
+        self.ui.FormModelComboModels.currentIndexChanged.connect(self.model_to_screen)
+
 
     def fill_atoms_table(self):
         model = self.MainForm.get_model().atoms
@@ -614,6 +608,7 @@ class mainWindow(QMainWindow):
         properties = []
 
         model = self.MainForm.get_model()
+
         properties.append(["Natoms", str(len(model.atoms))])
         properties.append(["LatVect1", str(model.LatVect1)])
         properties.append(["LatVect2", str(model.LatVect2)])
@@ -635,6 +630,7 @@ class mainWindow(QMainWindow):
         self.ui.FormModifyCellEditC2.setText(str(model.LatVect3[1]))
         self.ui.FormModifyCellEditC3.setText(str(model.LatVect3[2]))
 
+    def get_bonds(self):
         BondsType = QStandardItemModel()
         BondsType.appendRow(QStandardItem("All"))
         bonds = self.MainForm.MainModel.Bonds()
@@ -648,8 +644,12 @@ class mainWindow(QMainWindow):
         for item in items:
             BondsType.appendRow(QStandardItem(item))
 
+        self.ui.FormActionsPostComboBonds.currentIndexChanged.disconnect()
         self.ui.FormActionsPostComboBonds.setModel(BondsType)
+        self.ui.FormActionsPostComboBonds.currentIndexChanged.connect(self.fill_bonds)
+
         self.fill_bonds()
+        self.ui.FormActionsPostButPlotBondsHistogram.setEnabled(True)
 
     def file_brouser_selection(self, selected, deselected):
         self.IndexOfFileToOpen = selected.indexes()[0]
@@ -919,15 +919,10 @@ class mainWindow(QMainWindow):
                 for structure in self.models:
                     structure.ModifyAtomsTypes(ansv)
 
-            print("ready")
-
             if len(self.models)>0:
                 if len(self.models[-1].atoms) > 0:
-                    print("ready1")
                     self.plot_model(-1)
-                    print("ready2")
                     self.fill_gui()
-                    print("ready3")
                     self.save_active_Folder()
 
     def menu_ortho(self):
