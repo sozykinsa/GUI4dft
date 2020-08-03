@@ -561,10 +561,15 @@ class mainWindow(QMainWindow):
             self.fill_file_name(fname)
         else:
             self.fill_file_name(title)
+        print("func1")
         self.fill_models_list()
+        print("func2")
         self.fill_atoms_table()
+        print("func3")
         self.fill_properties_table()
+        print("func4")
         self.check_volumeric_data(fname)
+        print("func5")
         if Importer.checkFormat(fname) == "SIESTAout":
             self.check_dos(fname)
             self.check_pdos(fname)
@@ -587,7 +592,12 @@ class mainWindow(QMainWindow):
         else:
             for i in range(0, len(self.models)):
                 model.appendRow(QStandardItem("model " + str(i)))
+        print("yes1")
+        self.ui.FormModelComboModels.clear()
+        self.ui.FormModelComboModels.addItem("1")
+        print("yes1-1")
         self.ui.FormModelComboModels.setModel(model)
+        print("yes2")
         self.ui.FormModelComboModels.setCurrentIndex(len(self.models) - 1)
 
     def fill_atoms_table(self):
@@ -909,10 +919,15 @@ class mainWindow(QMainWindow):
                 for structure in self.models:
                     structure.ModifyAtomsTypes(ansv)
 
+            print("ready")
+
             if len(self.models)>0:
                 if len(self.models[-1].atoms) > 0:
+                    print("ready1")
                     self.plot_model(-1)
+                    print("ready2")
                     self.fill_gui()
+                    print("ready3")
                     self.save_active_Folder()
 
     def menu_ortho(self):

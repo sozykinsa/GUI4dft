@@ -2117,7 +2117,10 @@ class TSIESTA:
     @staticmethod
     def SystemLabel(filename):
         """ Returns the NumberOfAtomsfrom SIESTA output file """
-        return Helpers.fromFileProperty(filename,'SystemLabel',1,"string")      
+        res = Helpers.fromFileProperty(filename,'SystemLabel',1,"string")
+        if res == None:
+            res = "siesta"
+        return res
         
     @staticmethod
     def SpinPolarized(filename):
