@@ -264,6 +264,8 @@ class GuiOpenGL(object):
         if fname.find("POSCAR")>=0:
             fname = fname.split(".")[0]
             newModel.toVASPposcar(fname)
+        if fname.endswith(".inp"):
+            newModel.toFireflyINP(fname)
         if fname.endswith(".fdf"):
             newModel.toSIESTAfdf(fname)
         if fname.endswith(".xyz"):

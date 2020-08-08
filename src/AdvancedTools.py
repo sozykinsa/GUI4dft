@@ -864,19 +864,32 @@ class TAtomicModel(object):
             molecules.append(newModel)
         return molecules
 
+    @staticmethod
+    def atoms_from_XMOLxyz(filename):
+        """import from XMOL xyz file"""
+        periodTable = TPeriodTable()
+        molecules = []
+        if os.path.exists(filename):
+            f = open(filename)
+            NumberOfAtoms = int(f.readline())
+            newModel = TAtomicModel.atoms_from_xyz_structure(NumberOfAtoms, f, periodTable, [1,2,3,4])
+            molecules.append(newModel)
+        return molecules
+
 
 
     @staticmethod
-    def atoms_from_xyz_structure(NumberOfAtoms, ani_file, periodTable):
-        str1 = Helpers.spacedel(ani_file.readline())
+    def atoms_from_xyz_structure(NumberOfAtoms, ani_file, periodTable, indexes = [0,1,2,3]):
+        if indexes[0] == 0:
+            str1 = Helpers.spacedel(ani_file.readline())
         atoms = []
         for i1 in range(0, NumberOfAtoms):
             str1 = Helpers.spacedel(ani_file.readline())
             S = str1.split(' ')
-            d1 = float(S[1])
-            d2 = float(S[2])
-            d3 = float(S[3])
-            C = S[0]
+            d1 = float(S[indexes[1]])
+            d2 = float(S[indexes[2]])
+            d3 = float(S[indexes[3]])
+            C = S[indexes[0]]
             Charge = periodTable.get_charge_by_letter(C)
             A = [d1, d2, d3, C, Charge]
             atoms.append(A)
@@ -1468,10 +1481,17 @@ class TAtomicModel(object):
                 str1 = ' '
                 for j in range(0,len(types)):
                     if types[j][0] == self.atoms[i].charge:
-                        str1 = ' ' + str(j+1)
+                        str1 = ' ' + str(self.atoms[i].charge)
                 str2 = '    ' + str(round(self.atoms[i].x, 7)) + '     ' + str(round(self.atoms[i].y, 7)) + '      ' + str(round(self.atoms[i].z, 7))
                 str3 = '      1  1  1'
                 data+= str1+str2+str3+"\n"
+
+        if coord_style == "FireflyINP":
+            for i in range(0, len(self.atoms)):
+                str1 = ' ' + str(self.atoms[i].let) + '   ' + str(self.atoms[i].charge) + '.0  '
+                str2 = '    ' + str(round(self.atoms[i].x, 7)) + '     ' + str(round(self.atoms[i].y, 7)) + '      ' + str(round(self.atoms[i].z, 7))
+                data+= str1+str2+"\n"
+            data+= ' $END'
         return data
 
     def toSIESTAxyzdata(self):
@@ -1483,8 +1503,18 @@ class TAtomicModel(object):
             data+= "\n"+self.atoms[i].let + '       '+ str(round(self.atoms[i].x, 7)) + '     ' + str(round(self.atoms[i].y, 7)) + '      ' + str(round(self.atoms[i].z, 7))
         return data
 
-    def toVASPposcar(self,filename):
-        """ созадет файл формате VASP POSCAR """
+    def toFireflyINP(self, filename):
+        """ create file in Firefly *.inp format """
+        f = open(filename, 'w')
+        data = ""
+        data += "!model \n $DATA\njob\nCn 1\n\n"
+        data += self.coords_for_export("FireflyINP")
+
+        print(data, file=f)
+        f.close()
+
+    def toVASPposcar(self, filename):
+        """ create file in VASP POSCAR format """
         f = open(filename, 'w')
 
         data = ""
