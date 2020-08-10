@@ -419,6 +419,7 @@ class TAtom(object):
         self.let = atData[3]
         self.charge = int(atData[4])
         self.selected = False
+        self.fragment1 = False
         self.properties = {}
         pass
 

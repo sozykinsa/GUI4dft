@@ -80,6 +80,9 @@ class GuiOpenGL(object):
         self.openGLWidget.installEventFilter(self.filter)
         self.quality = quality
         self.prop = "charge"
+        self.SelectedFragmentMode = False
+        self.SelectedFragmentAtomsListView = None
+        self.SelectedFragmentAtomsTransp = 1.0
 
         if len(selected_atom_info) == 5:
             self.selected_atom_type = selected_atom_info[0]
@@ -90,6 +93,25 @@ class GuiOpenGL(object):
 
     def update(self):
         self.openGLWidget.update()
+
+    def setSelectedFragmentMode(self, SelectedFragmentAtomsListView, SelectedFragmentAtomsTransp):
+        if SelectedFragmentAtomsListView == None:
+            if self.SelectedFragmentMode == True:
+                self.SelectedFragmentAtomsListView.clear()
+            self.SelectedFragmentAtomsListView = None
+            self.SelectedFragmentMode = False
+        else:
+            self.SelectedFragmentMode = True
+            self.SelectedFragmentAtomsListView = SelectedFragmentAtomsListView
+            self.SelectedFragmentAtomsTransp = SelectedFragmentAtomsTransp
+            self.atoms_of_selected_fragment_to_form()
+
+    def atoms_of_selected_fragment_to_form(self):
+        self.SelectedFragmentAtomsListView.clear()
+        self.SelectedFragmentAtomsListView.addItems(['Atoms'])
+        for i in range(0, len(self.MainModel.atoms)):
+            if (self.MainModel.atoms[i]).fragment1 == True:
+                self.SelectedFragmentAtomsListView.addItems([str(i)])
 
     def color_atoms_with_property(self, prop):
         self.clean()
@@ -108,6 +130,9 @@ class GuiOpenGL(object):
     def selected_atom_changed(self):
         if self.selected_atom >=0:
             self.selected_atom_data_to_form(self.MainModel[self.selected_atom].charge, self.MainModel[self.selected_atom].x, self.MainModel[self.selected_atom].y, self.MainModel[self.selected_atom].z)
+            if self.SelectedFragmentMode == True:
+                self.MainModel[self.selected_atom].fragment1 = not self.MainModel[self.selected_atom].fragment1
+                self.atoms_of_selected_fragment_to_form()
         else:
             self.selected_atom_data_to_form(0,0,0,0)
         self.selected_atom_properties_to_form()
@@ -506,6 +531,7 @@ class GuiOpenGL(object):
             gl.glTranslatef(at.x, at.y, at.z)
             self.QuadObjS.append(glu.gluNewQuadric())
             rad = Mendeley.Atoms[at.charge].radius/Mendeley.Atoms[6].radius
+
             if at.isSelected() == False:
                 if (len(prop)>0) and (prop != "charge"):
                     val = at.properties[prop]
@@ -515,7 +541,10 @@ class GuiOpenGL(object):
                         gl.glColor3f(0, 0, math.fabs((val-mean_val)/(min_val-mean_val)))
                 else:
                     color = self.color_of_atoms[at.charge]
-                    gl.glColor3f(color[0], color[1], color[2])
+                    if (self.SelectedFragmentMode == True) and (at.fragment1 == True):
+                        gl.glColor4f(color[0], color[1], color[2], self.SelectedFragmentAtomsTransp)
+                    else:
+                        gl.glColor3f(color[0], color[1], color[2])
                 glu.gluSphere(self.QuadObjS[-1], 0.3*rad, self.quality*70, self.quality*70)
             else:
                 gl.glColor3f(1, 0, 0)
@@ -534,6 +563,10 @@ class GuiOpenGL(object):
             x2 = self.MainModel.atoms[bond[1]].x
             y2 = self.MainModel.atoms[bond[1]].y
             z2 = self.MainModel.atoms[bond[1]].z
+            if (self.SelectedFragmentMode == True) and ((self.MainModel.atoms[bond[0]].fragment1 == True) or (self.MainModel.atoms[bond[1]].fragment1 == True)):
+                gl.glColor4f(self.color_of_bonds[0], self.color_of_bonds[1], self.color_of_bonds[2], self.SelectedFragmentAtomsTransp)
+            else:
+                gl.glColor3f(self.color_of_bonds[0], self.color_of_bonds[1], self.color_of_bonds[2])
             self.add_bond([x1, y1, z1], [x2, y2, z2], self.bondWidth)
         gl.glEndList()
 
@@ -808,6 +841,7 @@ class GuiOpenGL(object):
                     self.MainModel.atoms[self.selected_atom].setSelected(False)
                 self.selected_atom = -1
             self.add_atoms()
+            self.add_bonds()
         self.CanSearch = False
         if oldSelected != self.selected_atom:
             if self.selected_atom == -1:

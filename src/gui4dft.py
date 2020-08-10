@@ -85,6 +85,9 @@ class mainWindow(QMainWindow):
         self.ui.FormActionsPreRadioSWNT.toggled.connect(self.swnt_type1_selected)
         self.ui.FormActionsPreRadioSWNTcap.toggled.connect(self.swnt_type2_selected)
         self.ui.FormActionsPreRadioSWNTcap_2.toggled.connect(self.swnt_type2_selected)
+
+        self.ui.ActivateFragmentSelectionModeCheckBox.toggled.connect(self.activate_fragment_selection_mode)
+        self.ui.ActivateFragmentSelectionTransp.valueChanged.connect(self.activate_fragment_selection_mode)
         
         #buttons
         self.ui.FileBrouserOpenFile.clicked.connect(self.menu_open)
@@ -114,6 +117,10 @@ class mainWindow(QMainWindow):
         self.ui.FormActionsButtonPlotPDOSselected.clicked.connect(self.plot_selected_pdos)
         self.ui.FormModifyCellButton.clicked.connect(self.edit_cell)
         self.ui.FormActionsPostButGetBonds.clicked.connect(self.get_bonds)
+
+        self.ui.changeFragment1StatusByX.clicked.connect(self.change_fragment1_status_by_X)
+        self.ui.changeFragment1StatusByY.clicked.connect(self.change_fragment1_status_by_Y)
+        self.ui.changeFragment1StatusByZ.clicked.connect(self.change_fragment1_status_by_Z)
 
         self.ui.FormActionsPreButDeleteAtom.clicked.connect(self.atom_delete)
         self.ui.FormActionsPreButModifyAtom.clicked.connect(self.atom_modify)
@@ -298,6 +305,12 @@ class mainWindow(QMainWindow):
         Save2DImageToFileAction.triggered.connect(self.save_data_from_figure2d)
         self.ui.toolBar.addAction(Save2DImageToFileAction)
 
+    def activate_fragment_selection_mode(self):
+        if self.ui.ActivateFragmentSelectionModeCheckBox.isChecked() == True:
+            self.MainForm.setSelectedFragmentMode(self.ui.AtomsInSelectedFragment, self.ui.ActivateFragmentSelectionTransp.value())
+        else:
+            self.MainForm.setSelectedFragmentMode(None, self.ui.ActivateFragmentSelectionTransp.value())
+
     def add_cell_param(self):
         """ add cell params"""
         fname = QFileDialog.getOpenFileName(self, 'Open file', self.WorkDir)[0]
@@ -459,6 +472,15 @@ class mainWindow(QMainWindow):
                 self.ui.FormActionsPostList3DData.addItems([file])
                 self.ui.FormActionsPostButSurfaceParse.setEnabled(True)
             self.ui.FormActionsPostList3DData.update()
+
+    def change_fragment1_status_by_X(self):
+        sd = 6
+
+    def change_fragment1_status_by_Y(self):
+        sd = 6
+
+    def change_fragment1_status_by_Z(self):
+        sd = 6
 
     def clearQTreeWidget(self, tree):
         iterator = QTreeWidgetItemIterator(tree, QTreeWidgetItemIterator.All)
