@@ -121,6 +121,7 @@ class mainWindow(QMainWindow):
         self.ui.changeFragment1StatusByX.clicked.connect(self.change_fragment1_status_by_X)
         self.ui.changeFragment1StatusByY.clicked.connect(self.change_fragment1_status_by_Y)
         self.ui.changeFragment1StatusByZ.clicked.connect(self.change_fragment1_status_by_Z)
+        self.ui.fragment1Clear.clicked.connect(self.fragment1_clear)
 
         self.ui.FormActionsPreButDeleteAtom.clicked.connect(self.atom_delete)
         self.ui.FormActionsPreButModifyAtom.clicked.connect(self.atom_modify)
@@ -308,8 +309,16 @@ class mainWindow(QMainWindow):
     def activate_fragment_selection_mode(self):
         if self.ui.ActivateFragmentSelectionModeCheckBox.isChecked() == True:
             self.MainForm.setSelectedFragmentMode(self.ui.AtomsInSelectedFragment, self.ui.ActivateFragmentSelectionTransp.value())
+            self.ui.changeFragment1StatusByX.setEnabled(True)
+            self.ui.changeFragment1StatusByY.setEnabled(True)
+            self.ui.changeFragment1StatusByZ.setEnabled(True)
+            self.ui.fragment1Clear.setEnabled(True)
         else:
             self.MainForm.setSelectedFragmentMode(None, self.ui.ActivateFragmentSelectionTransp.value())
+            self.ui.changeFragment1StatusByX.setEnabled(False)
+            self.ui.changeFragment1StatusByY.setEnabled(False)
+            self.ui.changeFragment1StatusByZ.setEnabled(False)
+            self.ui.fragment1Clear.setEnabled(False)
 
     def add_cell_param(self):
         """ add cell params"""
@@ -474,13 +483,33 @@ class mainWindow(QMainWindow):
             self.ui.FormActionsPostList3DData.update()
 
     def change_fragment1_status_by_X(self):
-        sd = 6
+        xmin = self.ui.xminborder.value()
+        xmax = self.ui.xmaxborder.value()
+        for at in self.MainForm.MainModel.atoms:
+            if (at.x >= xmin) and (at.x <= xmax):
+                at.fragment1 = True
+        self.MainForm.atoms_of_selected_fragment_to_form()
 
     def change_fragment1_status_by_Y(self):
-        sd = 6
+        ymin = self.ui.yminborder.value()
+        ymax = self.ui.ymaxborder.value()
+        for at in self.MainForm.MainModel.atoms:
+            if (at.y >= ymin) and (at.y <= ymax):
+                at.fragment1 = True
+        self.MainForm.atoms_of_selected_fragment_to_form()
 
     def change_fragment1_status_by_Z(self):
-        sd = 6
+        zmin = self.ui.zminborder.value()
+        zmax = self.ui.zmaxborder.value()
+        for at in self.MainForm.MainModel.atoms:
+            if (at.z >= zmin) and (at.z <= zmax):
+                at.fragment1 = True
+        self.MainForm.atoms_of_selected_fragment_to_form()
+
+    def fragment1_clear(self):
+        for at in self.MainForm.MainModel.atoms:
+            at.fragment1 = False
+        self.MainForm.atoms_of_selected_fragment_to_form()
 
     def clearQTreeWidget(self, tree):
         iterator = QTreeWidgetItemIterator(tree, QTreeWidgetItemIterator.All)
@@ -523,7 +552,7 @@ class mainWindow(QMainWindow):
         scat_rotation = self.ui.FormActionsPreSpinScatRotation.value()
 
         model = TAtomicModel()
-        model_left.move(0,0,0)
+        """model_left.move(0,0,0)"""
         model.add_atomic_model(model_left)
         model_scat.rotateZ(scat_rotation)
         model_scat.move(0, 0, -(left_bord - left_elec_max) + left_dist)
