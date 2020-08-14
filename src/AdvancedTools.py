@@ -197,7 +197,18 @@ class Helpers:
                 
                 str1 = MyFile.readline()
             MyFile.close()
-        return property            
+        return property
+
+    @staticmethod
+    def RoundToPlane(atom, R):
+        """ RoundToPlane  """
+
+        z = atom.z
+        fi = math.asin(atom.x/R)
+        if (atom.y<=-1e-3):
+            fi = 3.14 - fi
+        x = -R*fi
+        return [x,z]
 
 ##################################################################
 ######################## TPeriodTable ############################
@@ -1210,6 +1221,18 @@ class TAtomicModel(object):
                     self.atoms[j] = self.atoms[j+1]
                     self.atoms[j+1] = atom
 
+    def AngleToCenterOfAtoms(self, atomslist):
+        """The method AngleToCenterOfAtoms returns the Angle To Center Of atoms_from_fdf list atomslist in the molecule"""
+        angle = 0
+
+        for at in range(0, len(atomslist)):
+            x = self.atoms[atomslist[at]].x
+            y = self.atoms[atomslist[at]].y
+            fi = math.atan(x / y)
+            angle += fi
+        angle /= len(atomslist)
+        return angle
+
         
     def atom_atom_distance(self, at1, at2):
         """ atom_atom_distance
@@ -1482,7 +1505,7 @@ class TAtomicModel(object):
                 str1 = ' '
                 for j in range(0,len(types)):
                     if types[j][0] == self.atoms[i].charge:
-                        str1 = ' ' + str(self.atoms[i].charge)
+                        str1 = ' ' + str(j+1)
                 str2 = '    ' + str(round(self.atoms[i].x, 7)) + '     ' + str(round(self.atoms[i].y, 7)) + '      ' + str(round(self.atoms[i].z, 7))
                 str3 = '      1  1  1'
                 data+= str1+str2+str3+"\n"
@@ -2469,7 +2492,6 @@ class TFDFFile:
 
 
     def get_all_data(self, _structure, coordType, lattType):
-        #structure = TAtomicModel(atoms)
         structure = deepcopy(_structure)
 
         st = structure.toSIESTAfdfdata(coordType,lattType)
