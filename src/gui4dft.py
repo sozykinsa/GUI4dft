@@ -1009,6 +1009,9 @@ class mainWindow(QMainWindow):
         self.fill_properties_table()
         self.MainForm.selected_atom_properties.setText("select")
 
+        self.color_with_property_enabling()
+
+    def color_with_property_enabling(self):
         if self.MainForm.MainModel.nAtoms() > 0:
             atom = self.MainForm.MainModel.atoms[0]
             AtomPropType = QStandardItemModel()
@@ -1080,6 +1083,7 @@ class mainWindow(QMainWindow):
         self.MainForm.set_atomic_structure(self.models[value], atomscolor, ViewBox, boxcolor, ViewBonds, bondscolor, bondWidth, ViewAxes, axescolor, contour_width)
         self.prepare_FormActionsComboPDOSIndexes()
         self.prepare_FormActionsComboPDOSspecies()
+        self.color_with_property_enabling()
 
 
     def plot_surface(self):
