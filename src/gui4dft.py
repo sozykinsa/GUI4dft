@@ -489,6 +489,7 @@ class mainWindow(QMainWindow):
             if (at.x >= xmin) and (at.x <= xmax):
                 at.fragment1 = True
         self.MainForm.atoms_of_selected_fragment_to_form()
+        self.MainForm.update_view()
 
     def change_fragment1_status_by_Y(self):
         ymin = self.ui.yminborder.value()
@@ -497,6 +498,7 @@ class mainWindow(QMainWindow):
             if (at.y >= ymin) and (at.y <= ymax):
                 at.fragment1 = True
         self.MainForm.atoms_of_selected_fragment_to_form()
+        self.MainForm.update_view()
 
     def change_fragment1_status_by_Z(self):
         zmin = self.ui.zminborder.value()
@@ -505,11 +507,14 @@ class mainWindow(QMainWindow):
             if (at.z >= zmin) and (at.z <= zmax):
                 at.fragment1 = True
         self.MainForm.atoms_of_selected_fragment_to_form()
+        self.MainForm.update_view()
 
     def fragment1_clear(self):
         for at in self.MainForm.MainModel.atoms:
             at.fragment1 = False
         self.MainForm.atoms_of_selected_fragment_to_form()
+        self.MainForm.update_view()
+
 
     def clearQTreeWidget(self, tree):
         iterator = QTreeWidgetItemIterator(tree, QTreeWidgetItemIterator.All)

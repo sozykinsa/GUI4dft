@@ -225,6 +225,8 @@ class GuiOpenGL(object):
         self.selected_atom = GUI.selected_atom
         self.MainModel = GUI.MainModel
         self.color_of_atoms = GUI.color_of_atoms
+        self.SelectedFragmentMode = GUI.SelectedFragmentMode
+        self.SelectedFragmentAtomsTransp = GUI.SelectedFragmentAtomsTransp
         self.color_of_bonds = GUI.color_of_bonds
         self.color_of_box = GUI.color_of_box
         self.contour_width = GUI.contour_width
@@ -505,6 +507,14 @@ class GuiOpenGL(object):
                 glu.gluSphere(self.QuadObjS[-1], 0.35, 70, 70)
                 gl.glPopMatrix()
         gl.glEndList()
+
+    def update_view(self):
+        self.clean()
+        self.add_atoms()
+        self.add_bonds()
+        self.add_box()
+        self.add_axes()
+        self.update()
         
     def add_atoms(self):
         prop = self.prop
