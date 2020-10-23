@@ -102,6 +102,7 @@ class mainWindow(QMainWindow):
         self.ui.FormActionsPostButSurfaceLoadData.clicked.connect(self.volumeric_data_load)
         self.ui.FormActionsPostButSurfaceLoadData2.clicked.connect(self.volumeric_data_load2)
         self.ui.CalculateTheVolumericDataDifference.clicked.connect(self.volumeric_data_difference)
+        self.ui.ExportTheVolumericDataDifference.clicked.connect(self.export_volumeric_data_difference)
         self.ui.FormActionsPostButContour.clicked.connect(self.plot_contour)
         self.ui.ColorBondDialogButton.clicked.connect(self.select_bond_color)
         self.ui.ColorBoxDialogButton.clicked.connect(self.select_box_color)
@@ -612,6 +613,14 @@ class mainWindow(QMainWindow):
         self.models.append(self.MainForm.MainModel)
         self.model_to_screen(-1)
 
+
+    def export_volumeric_data_difference(self):
+        """ not implemented """
+        fname = QFileDialog.getSaveFileName(self, 'Save File', self.WorkDir,"XSF files (*.XSF)")[0]
+        self.MainForm.volumeric_data_to_file(fname,self.VolumericData)
+        self.WorkDir = os.path.dirname(fname)
+        self.save_active_Folder()
+
     def fill_gui(self, title = "" ):
         fname = self.filename
         if title == "":
@@ -685,27 +694,6 @@ class mainWindow(QMainWindow):
         self.ui.FormModifyCellEditC1.setText(str(model.LatVect3[0]))
         self.ui.FormModifyCellEditC2.setText(str(model.LatVect3[1]))
         self.ui.FormModifyCellEditC3.setText(str(model.LatVect3[2]))
-
-    def get_bonds(self):
-        BondsType = QStandardItemModel()
-        BondsType.appendRow(QStandardItem("All"))
-        bonds = self.MainForm.MainModel.Bonds()
-        items = []
-        for bond in bonds:
-            st1 = bond[3] + "-" + bond[5]
-            st2 = bond[5] + "-" + bond[3]
-            if (st1 not in items) and (st2 not in items):
-                items.append(st1)
-        items.sort()
-        for item in items:
-            BondsType.appendRow(QStandardItem(item))
-
-        self.ui.FormActionsPostComboBonds.currentIndexChanged.disconnect()
-        self.ui.FormActionsPostComboBonds.setModel(BondsType)
-        self.ui.FormActionsPostComboBonds.currentIndexChanged.connect(self.fill_bonds)
-
-        self.fill_bonds()
-        self.ui.FormActionsPostButPlotBondsHistogram.setEnabled(True)
 
     def file_brouser_selection(self, selected, deselected):
         self.IndexOfFileToOpen = selected.indexes()[0]
@@ -795,6 +783,27 @@ class mainWindow(QMainWindow):
         self.ui.FormActionsPostTableCellParam.setItem(i - 1, 3, QTableWidgetItem(str(b)))
         self.ui.FormActionsPostTableCellParam.setItem(i - 1, 4, QTableWidgetItem(str(c)))
 
+    def get_bonds(self):
+        BondsType = QStandardItemModel()
+        BondsType.appendRow(QStandardItem("All"))
+        bonds = self.MainForm.MainModel.Bonds()
+        items = []
+        for bond in bonds:
+            st1 = bond[3] + "-" + bond[5]
+            st2 = bond[5] + "-" + bond[3]
+            if (st1 not in items) and (st2 not in items):
+                items.append(st1)
+        items.sort()
+        for item in items:
+            BondsType.appendRow(QStandardItem(item))
+
+        self.ui.FormActionsPostComboBonds.currentIndexChanged.disconnect()
+        self.ui.FormActionsPostComboBonds.setModel(BondsType)
+        self.ui.FormActionsPostComboBonds.currentIndexChanged.connect(self.fill_bonds)
+
+        self.fill_bonds()
+        self.ui.FormActionsPostButPlotBondsHistogram.setEnabled(True)
+
     def get_colors_list(self, minv, maxv, values, cmap, color_scale):
         n = len(values)
         colors = []
@@ -868,12 +877,19 @@ class mainWindow(QMainWindow):
         state_FormSettingsViewCheckAtomSelection = settings.value(SETTINGS_FormSettingsViewCheckAtomSelection, False, type=bool)
         self.ui.FormSettingsViewCheckAtomSelection.setChecked(state_FormSettingsViewCheckAtomSelection)
         self.ui.FormSettingsViewCheckAtomSelection.clicked.connect(self.save_state_FormSettingsViewCheckAtomSelection)
+
+        state_FormSettingsViewCheckShowAtoms = settings.value(SETTINGS_FormSettingsViewCheckShowAtoms, True, type=bool)
+        self.ui.FormSettingsViewCheckShowAtoms.setChecked(state_FormSettingsViewCheckShowAtoms)
+        self.ui.FormSettingsViewCheckShowAtoms.clicked.connect(self.save_state_FormSettingsViewCheckShowAtoms)
+
         state_FormSettingsViewCheckShowBox = settings.value(SETTINGS_FormSettingsViewCheckShowBox, False, type=bool)
         self.ui.FormSettingsViewCheckShowBox.setChecked(state_FormSettingsViewCheckShowBox)
         self.ui.FormSettingsViewCheckShowBox.clicked.connect(self.save_state_FormSettingsViewCheckShowBox)
+
         state_FormSettingsViewCheckShowBonds = settings.value(SETTINGS_FormSettingsViewCheckShowBonds, True, type=bool)
         self.ui.FormSettingsViewCheckShowBonds.setChecked(state_FormSettingsViewCheckShowBonds)
         self.ui.FormSettingsViewCheckShowBonds.clicked.connect(self.save_state_FormSettingsViewCheckShowBonds)
+
         self.WorkDir = str(settings.value(SETTINGS_Folder, "/home"))
         self.ColorType = str(settings.value(SETTINGS_FormSettingsColorsScale, 'rainbow'))
         self.ui.FormSettingsColorsScale.currentIndexChanged.connect(self.save_state_FormSettingsColorsScale)
@@ -1076,6 +1092,7 @@ class mainWindow(QMainWindow):
         self.model_to_screen(-1)
 
     def plot_model(self, value):
+        ViewAtoms = self.ui.FormSettingsViewCheckShowAtoms.isChecked()
         ViewBox = self.ui.FormSettingsViewCheckShowBox.isChecked()
         ViewBonds = self.ui.FormSettingsViewCheckShowBonds.isChecked()
         bondWidth = 0.005*self.ui.FormSettingsViewSpinBondWidth.value()
@@ -1085,7 +1102,7 @@ class mainWindow(QMainWindow):
         boxcolor = self.get_color_from_SETTING(self.state_Color_Of_Box)
         atomscolor = self.colors_of_atoms()
         contour_width = (self.ui.FormSettingsViewSpinContourWidth.value())/1000.0
-        self.MainForm.set_atomic_structure(self.models[value], atomscolor, ViewBox, boxcolor, ViewBonds, bondscolor, bondWidth, ViewAxes, axescolor, contour_width)
+        self.MainForm.set_atomic_structure(self.models[value], atomscolor, ViewAtoms, ViewBox, boxcolor, ViewBonds, bondscolor, bondWidth, ViewAxes, axescolor, contour_width)
         self.prepare_FormActionsComboPDOSIndexes()
         self.prepare_FormActionsComboPDOSspecies()
         self.color_with_property_enabling()
@@ -1676,6 +1693,10 @@ class mainWindow(QMainWindow):
         self.save_property(SETTINGS_FormSettingsViewCheckAtomSelection,
                            self.ui.FormSettingsViewCheckAtomSelection.isChecked())
 
+    def save_state_FormSettingsViewCheckShowAtoms(self):
+        self.save_property(SETTINGS_FormSettingsViewCheckShowAtoms, self.ui.FormSettingsViewCheckShowAtoms.isChecked())
+        self.MainForm.set_atoms_visible(self.ui.FormSettingsViewCheckShowAtoms.isChecked())
+
     def save_state_FormSettingsViewCheckShowBox(self):
         self.save_property(SETTINGS_FormSettingsViewCheckShowBox, self.ui.FormSettingsViewCheckShowBox.isChecked())
         self.MainForm.set_box_visible(self.ui.FormSettingsViewCheckShowBox.isChecked())
@@ -1800,9 +1821,7 @@ class mainWindow(QMainWindow):
 
             self.clearQTreeWidget(self.ui.FormActionsPostTreeSurface2)
             self.ui.FormActionsPosEdit3DData2.setText("")
-            self.ui.FormActionsPostLabelSurfaceNx.setText("")
-            self.ui.FormActionsPostLabelSurfaceNy.setText("")
-            self.ui.FormActionsPostLabelSurfaceNz.setText("")
+            self.VolumericDataNClearInForm()
             self.ui.VolumrricDataGridCorrect.setEnabled(False)
             self.ui.FormActionsPostButSurfaceLoadData2.setEnabled(False)
 
@@ -1819,7 +1838,16 @@ class mainWindow(QMainWindow):
                 self.fill_volumeric_data(self.VolumericData2, self.ui.FormActionsPostTreeSurface2)
 
             self.ui.FormActionsPostButSurfaceLoadData2.setEnabled(True)
+            self.ui.CalculateTheVolumericDataDifference.setEnabled(True)
             self.ui.FormActionsPosEdit3DData2.setText(fname)
+            self.VolumericDataNClearInForm()
+            self.ui.VolumrricDataGridCorrect.setEnabled(False)
+            self.ui.CalculateTheVolumericDataDifference.setEnabled(False)
+
+    def VolumericDataNClearInForm(self):
+        self.ui.FormActionsPostLabelSurfaceNx.setText("")
+        self.ui.FormActionsPostLabelSurfaceNy.setText("")
+        self.ui.FormActionsPostLabelSurfaceNz.setText("")
 
     def set_xsf_z_position(self):
         value = int(self.ui.FormActionsPostSliderContourXY.value())
@@ -1982,15 +2010,18 @@ class mainWindow(QMainWindow):
 
                 if (self.VolumericData2.Nx == self.VolumericData.Nx) and (self.VolumericData2.Ny == self.VolumericData.Ny) and (self.VolumericData2.Nz == self.VolumericData.Nz):
                     self.ui.VolumrricDataGridCorrect.setEnabled(True)
+                    self.ui.CalculateTheVolumericDataDifference.setEnabled(True)
 
     def volumeric_data_difference(self):
         self.ui.CalculateTheVolumericDataDifference.setEnabled(False)
+        self.ui.FormActionsPostButSurfaceLoadData2.setEnabled(False)
         self.VolumericData.difference(self.VolumericData2)
         minv, maxv = self.volumeric_data_range()
         self.ui.FormActionsPostLabelSurfaceMax.setText("Max: " + str(round(maxv,5)))
         self.ui.FormActionsPostLabelSurfaceMin.setText("Min: " + str(round(minv,5)))
         self.ui.FormActionsPostLabelSurfaceValue.setRange(minv, maxv)
         self.ui.FormActionsPostLabelSurfaceValue.setValue(round(0.5 * (maxv + minv), 5))
+        self.ui.CalculateTheVolumericDataDifference.setEnabled(True)
 
     def utf8_letter(self, let):
         if let == '\Gamma':
@@ -2020,6 +2051,7 @@ SETTINGS_FormSettingsColorsScaleType = 'colors/ColorsScaleType'
 SETTINGS_FormSettingsOpeningCheckOnlyOptimal = 'open/CheckOnlyOptimal'
 SETTINGS_FormSettingsParseAtomicProperties = 'open/ParseAtomicProperties'
 SETTINGS_FormSettingsViewCheckAtomSelection = 'view/CheckAtomSelection'
+SETTINGS_FormSettingsViewCheckShowAtoms = 'view/CheckShowAtoms'
 SETTINGS_FormSettingsViewCheckShowBox = 'view/CheckShowBox'
 SETTINGS_FormSettingsViewCheckShowAxes = 'view/CheckShowAxes'
 SETTINGS_FormSettingsViewCheckShowBonds = 'view/CheckShowBonds'

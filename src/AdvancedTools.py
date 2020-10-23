@@ -1484,6 +1484,38 @@ class TAtomicModel(object):
             data += '%endblock AtomicCoordinatesAndAtomicSpecies\n'
         return data
 
+    def toXSFfile(self, fname, volumeric_data):
+        f = open(fname+".XSF", 'w')
+        text = "ATOMS\n"
+        for atom in self.atoms:
+            text += " " + str(atom.charge) + "    " + str(atom.x) + "    " + str(atom.y) + "    " + str(atom.z) + "\n"
+
+        text += "BEGIN_BLOCK_DATAGRID_3D\n "
+        text += "  DATA_from:GUI4DFT_diff\n"
+        text += "  BEGIN_DATAGRID_3D_RHO:spin_1\n"
+        text += " " + str(volumeric_data.Nx) + " " + str(volumeric_data.Ny) + " " + str(volumeric_data.Nz) + "\n"
+        text += " " + str(volumeric_data.origin[0]) + " " + str(volumeric_data.origin[1]) + " " + str(volumeric_data.origin[2]) + "\n"
+
+        text += " " + str(self.LatVect1[0]) + "   " + str(self.LatVect1[1]) + "   " + str(self.LatVect1[2]) + "\n"
+        text += " " + str(self.LatVect2[0]) + "   " + str(self.LatVect2[1]) + "   " + str(self.LatVect2[2]) + "\n"
+        text += " " + str(self.LatVect3[0]) + "   " + str(self.LatVect3[1]) + "   " + str(self.LatVect3[2]) + "\n"
+
+        orderData = 'F'
+
+        N = int(volumeric_data.Nx) * int(volumeric_data.Ny) * int(volumeric_data.Nz)
+
+        data3D = volumeric_data.data3D.reshape(N, orderData)
+
+        for i in range(0, N):
+            text += str(data3D[i]) +"   "
+
+        text += "\n"
+
+        text += " END_DATAGRID_3D\n"
+        text += "END_BLOCK_DATAGRID_3D\n"
+        print(text, file=f)
+        f.close()
+
     def coords_for_export(self, coord_style):
         data = ""
         types = self.typesOfAtoms()

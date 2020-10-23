@@ -47,6 +47,7 @@ class GuiOpenGL(object):
         self.openGLWidget = widget
         self.MainModel = TAtomicModel()
         self.ViewOrtho = True
+        self.ViewAtoms = True
         self.ViewBox = False
         self.ViewBonds = True
         self.ViewSurface = False
@@ -210,6 +211,7 @@ class GuiOpenGL(object):
         self.rotY = GUI.rotY
         self.rotZ = GUI.rotZ
         self.ViewOrtho = GUI.ViewOrtho
+        self.ViewAtoms = GUI.ViewAtoms
         self.ViewBox = GUI.ViewBox
         self.ViewBonds = GUI.ViewBonds
         self.bondWidth = GUI.bondWidth
@@ -249,7 +251,7 @@ class GuiOpenGL(object):
         radius = min(width, height)*float(self.Scale)
         return (2.*x-width)/radius, -(2.*y-height)/radius
 
-    def set_atomic_structure(self, structure, atomscolors, ViewBox, boxcolor, ViewBonds, bondscolor, bondWidth, ViewAxes, axescolor, contour_width):
+    def set_atomic_structure(self, structure, atomscolors, ViewAtoms, ViewBox, boxcolor, ViewBonds, bondscolor, bondWidth, ViewAxes, axescolor, contour_width):
         self.clean()
         self.prop = "charge"
         self.MainModel = deepcopy(structure)
@@ -258,6 +260,7 @@ class GuiOpenGL(object):
         self.y0 = -cm[1]
         self.MainModel.move(self.x0, self.y0, 0)
         self.ViewBox = ViewBox
+        self.ViewAtoms = ViewAtoms
         self.ViewBonds = ViewBonds
         self.bondWidth = bondWidth
         self.ViewAxes = ViewAxes
@@ -298,6 +301,11 @@ class GuiOpenGL(object):
         if fname.endswith(".xyz"):
             newModel.toSIESTAxyz(fname)
 
+    def volumeric_data_to_file(self, fname, volumeric_data):
+        newModel = self.get_model()
+        if fname.find("XSF")>=0:
+            fname = fname.split(".")[0]
+            newModel.toXSFfile(fname, volumeric_data)
 
     def delete_selected_atom(self):
         if self.selected_atom >= 0:
@@ -370,6 +378,10 @@ class GuiOpenGL(object):
 
     def set_contour_width(self, width):
         self.contour_width = width
+        self.openGLWidget.update()
+
+    def set_atoms_visible(self, state):
+        self.ViewAtoms= state
         self.openGLWidget.update()
 
     def set_box_visible(self, state):
@@ -762,7 +774,8 @@ class GuiOpenGL(object):
             self.prepere_scene()
             if self.active:
                     self.prepare_orientation()
-                    gl.glCallList(self.object)  # atoms
+                    if self.ViewAtoms:
+                        gl.glCallList(self.object)  # atoms
 
                     if self.CanSearch:
                         self.get_atom_on_screen()
