@@ -1504,7 +1504,7 @@ class TAtomicModel(object):
 
         N = int(volumeric_data.Nx) * int(volumeric_data.Ny) * int(volumeric_data.Nz)
 
-        data3D = volumeric_data.data3D.reshape(N, orderData)
+        data3D = np.reshape(volumeric_data.data3D, int(N), orderData)
 
         for i in range(0, N):
             text += str(data3D[i]) +"   "

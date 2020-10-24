@@ -428,6 +428,7 @@ class mainWindow(QMainWindow):
         self.ui.FormActionsListPDOS.clear()
         self.ui.FormActionsButtonPlotBANDS.setEnabled(False)
         self.ui.FormActionsPreTextFDF.setText("")
+        self.ui.FormActionsPostList3DData.clear()
 
     def check_pdos(self, fname):
         PDOSfile = Importer.CheckPDOSfile(fname)
@@ -587,7 +588,6 @@ class mainWindow(QMainWindow):
         QuantumNumbersList.appendRow(item)
 
 
-
     def delete_cell_param_row(self):
         row = self.ui.FormActionsPostTableCellParam.currentRow()
         self.ui.FormActionsPostTableCellParam.removeRow(row)
@@ -617,7 +617,7 @@ class mainWindow(QMainWindow):
     def export_volumeric_data_difference(self):
         """ not implemented """
         fname = QFileDialog.getSaveFileName(self, 'Save File', self.WorkDir,"XSF files (*.XSF)")[0]
-        self.MainForm.volumeric_data_to_file(fname,self.VolumericData)
+        self.MainForm.volumeric_data_to_file(fname, self.VolumericData)
         self.WorkDir = os.path.dirname(fname)
         self.save_active_Folder()
 
@@ -970,11 +970,7 @@ class mainWindow(QMainWindow):
         if os.path.exists(fname):
             self.filename = fname
             self.WorkDir = os.path.dirname(fname)
-            parse_properies = self.ui.FormSettingsParseAtomicProperties.isChecked()
-            if self.ui.FormSettingsOpeningCheckOnlyOptimal.isChecked():
-                self.models, self.FDFData = Importer.Import(fname, 'opt', parse_properies)
-            else:
-                self.models, self.FDFData = Importer.Import(fname, 'all', parse_properies)
+            self.get_TAtomicModel_and_FDF(fname)
 
             problemAtoms = []
             for structure in self.models:
@@ -991,11 +987,21 @@ class mainWindow(QMainWindow):
                 for structure in self.models:
                     structure.ModifyAtomsTypes(ansv)
 
-            if len(self.models)>0:
-                if len(self.models[-1].atoms) > 0:
-                    self.plot_model(-1)
-                    self.fill_gui()
-                    self.save_active_Folder()
+            self.plot_last_model()
+
+    def get_TAtomicModel_and_FDF(self, fname):
+        parse_properies = self.ui.FormSettingsParseAtomicProperties.isChecked()
+        if self.ui.FormSettingsOpeningCheckOnlyOptimal.isChecked():
+            self.models, self.FDFData = Importer.Import(fname, 'opt', parse_properies)
+        else:
+            self.models, self.FDFData = Importer.Import(fname, 'all', parse_properies)
+
+    def plot_last_model(self):
+        if len(self.models) > 0:
+            if len(self.models[-1].atoms) > 0:
+                self.plot_model(-1)
+                self.fill_gui()
+                self.save_active_Folder()
 
     def menu_ortho(self):
         self.MainForm.ViewOrtho = True
@@ -1814,11 +1820,9 @@ class mainWindow(QMainWindow):
             if Selected.endswith(".cube"):
                 self.VolumericData = TGaussianCube()
             if self.VolumericData.parse(Selected):
-                #data = self.VolumericData.blocks
                 self.fill_volumeric_data(self.VolumericData)
 
             self.ui.FormActionsPostButSurfaceLoadData.setEnabled(True)
-
             self.clearQTreeWidget(self.ui.FormActionsPostTreeSurface2)
             self.ui.FormActionsPosEdit3DData2.setText("")
             self.VolumericDataNClearInForm()
@@ -1975,14 +1979,12 @@ class mainWindow(QMainWindow):
         if getSelected:
             if getSelected[0].parent() != None:
                 getChildNode = getSelected[0].text(0)
-                atoms = self.VolumericData.load_data(getChildNode)
-                model = TAtomicModel()
-                atoms1 = TAtomicModel(atoms)
-                for at in atoms1:
-                    model.add_atom(at)
-                self.models = []
-                self.models.append(model)
-                self.plot_model(-1)
+                self.get_TAtomicModel_and_FDF(self.VolumericData.filename)
+                self.VolumericData.load_data(getChildNode)
+
+                self.clear_form()
+                self.plot_last_model()
+
                 self.ui.FormActionsPostButSurfaceAdd.setEnabled(True)
                 self.ui.FormActionsPostButContour.setEnabled(True)
                 self.ui.FormActionsPostButSurfaceParse2.setEnabled(True)
