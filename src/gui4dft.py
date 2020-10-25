@@ -96,6 +96,7 @@ class mainWindow(QMainWindow):
         self.ui.FormActionsPreButFDFToFile.clicked.connect(self.fdf_data_from_form_to_file)
         self.ui.FormActionsPreButFillSpace.clicked.connect(self.fill_space)
         self.ui.FormActionsPreButSWNTGenerate.clicked.connect(self.swnt_create)
+        self.ui.FormActionsPreButGrapheneGenerate.clicked.connect(self.graphene_create)
         self.ui.FormActionsPostButSurface.clicked.connect(self.plot_surface)
         self.ui.FormActionsPostButSurfaceParse.clicked.connect(self.parse_volumeric_data)
         self.ui.FormActionsPostButSurfaceParse2.clicked.connect(self.parse_volumeric_data2)
@@ -1904,12 +1905,15 @@ class mainWindow(QMainWindow):
         self.change_color(self.ui.ColorContour, SETTINGS_Color_Of_Contour)
         self.plot_contour()
 
+    def graphene_create(self):
+        er = 4
+
     def swnt_create(self):
         n=0
         m=0
         type = 0
         if self.ui.FormActionsPreRadioSWNT.isChecked():
-            n = int(self.ui.FormActionsPreLineSWNTn.text())
+            n = self.ui.FormActionsPreLineSWNTn.value()
             m = int(self.ui.FormActionsPreLineSWNTm.text())
         if self.ui.FormActionsPreRadioSWNTcap.isChecked() or self.ui.FormActionsPreRadioSWNTcap_2.isChecked():
             nm = self.ui.FormActionsPreComboSWNTind.currentText().split(",")
