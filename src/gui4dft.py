@@ -32,6 +32,7 @@ from AdvancedTools import TFDFFile
 from AdvancedTools import TPeriodTable
 from AdvancedTools import TSWNT
 from AdvancedTools import TCapedSWNT
+from AdvancedTools import TGraphene
 from AdvancedTools import TAtomicModel
 from AdvancedTools import TSIESTA
 from AdvancedTools import Helpers
@@ -95,8 +96,8 @@ class mainWindow(QMainWindow):
         self.ui.FormActionsPreButFDFGenerate.clicked.connect(self.fdf_data_to_form)
         self.ui.FormActionsPreButFDFToFile.clicked.connect(self.fdf_data_from_form_to_file)
         self.ui.FormActionsPreButFillSpace.clicked.connect(self.fill_space)
-        self.ui.FormActionsPreButSWNTGenerate.clicked.connect(self.swnt_create)
-        self.ui.FormActionsPreButGrapheneGenerate.clicked.connect(self.graphene_create)
+        self.ui.FormActionsPreButSWNTGenerate.clicked.connect(self.create_swnt)
+        self.ui.FormActionsPreButGrapheneGenerate.clicked.connect(self.create_graphene)
         self.ui.FormActionsPostButSurface.clicked.connect(self.plot_surface)
         self.ui.FormActionsPostButSurfaceParse.clicked.connect(self.parse_volumeric_data)
         self.ui.FormActionsPostButSurfaceParse2.clicked.connect(self.parse_volumeric_data2)
@@ -1905,16 +1906,25 @@ class mainWindow(QMainWindow):
         self.change_color(self.ui.ColorContour, SETTINGS_Color_Of_Contour)
         self.plot_contour()
 
-    def graphene_create(self):
-        er = 4
+    def create_graphene(self):
+        n = self.ui.FormActionsPreLineGraphene_n.value()
+        m = self.ui.FormActionsPreLineGraphene_m.value()
+        leng = self.ui.FormActionsPreLineGraphene_len.value()
 
-    def swnt_create(self):
+        model = TGraphene(n, m, leng)
+
+        self.models.append(model)
+        self.plot_model(-1)
+        self.MainForm.add_atoms()
+        self.fill_gui("Graphene-model")
+
+    def create_swnt(self):
         n=0
         m=0
         type = 0
         if self.ui.FormActionsPreRadioSWNT.isChecked():
             n = self.ui.FormActionsPreLineSWNTn.value()
-            m = int(self.ui.FormActionsPreLineSWNTm.text())
+            m = self.ui.FormActionsPreLineSWNTm.value()
         if self.ui.FormActionsPreRadioSWNTcap.isChecked() or self.ui.FormActionsPreRadioSWNTcap_2.isChecked():
             nm = self.ui.FormActionsPreComboSWNTind.currentText().split(",")
             n = int( nm[0].split("(")[1] )

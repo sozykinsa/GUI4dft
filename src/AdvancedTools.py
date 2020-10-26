@@ -1623,7 +1623,7 @@ class TGraphene(TAtomicModel):
         np1, pi, px, py, leng = self.graphene_positions(n, m, leng)
 
         for i_par in range(0, np1):
-            self.add_atom(TAtom([px, py, 0, "C", 6]))
+            self.add_atom(TAtom([px[i_par], py[i_par], 0, "C", 6]))
 
     def graphene_positions(self, n, m, leng):
         pi = math.pi
