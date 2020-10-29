@@ -10,7 +10,7 @@ from AdvancedTools import TPeriodTable
 from AdvancedTools import Helpers
 import numpy as np
 import math
-from skimage.measure import marching_cubes_lewiner
+from skimage.measure import marching_cubes
 from skimage.measure import find_contours
 from PyQt5.QtWidgets import QDialog, QTableWidgetItem, QComboBox, QMainWindow
 from PyQt5.QtCore import QSize
@@ -202,7 +202,8 @@ class TVolumericData:
         self.max = np.max(self.data3D)
 
     def isosurface(self, value):
-        verts, faces, normals, values = marching_cubes_lewiner(self.data3D, level=value, spacing=self.spacing, gradient_direction='descent', step_size=1, allow_degenerate=True, use_classic=False)
+        """verts, faces, normals, values = marching_cubes_lewiner(self.data3D, level=value, spacing=self.spacing, gradient_direction='descent', step_size=1, allow_degenerate=True, use_classic=False)"""
+        verts, faces, normals, values = marching_cubes(self.data3D, level=value, spacing=self.spacing, gradient_direction='descent', step_size=1, allow_degenerate=True, method='lewiner')
 
         for i in range(0,len(verts)):
             verts[i]+=self.origin

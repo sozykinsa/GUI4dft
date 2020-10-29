@@ -424,13 +424,39 @@ class mainWindow(QMainWindow):
         self.model_to_screen(-1)
 
     def clear_form(self):
+        self.clear_form_postprocessing()
+        self.clear_form_isosurface()
+
+    def clear_form_postprocessing(self):
         self.ui.FormActionsPostTableCellParam.setRowCount(0)
         self.ui.FormActionsPosTableBonds.setRowCount(0)
         self.ui.FormActionsTabeDOSProperty.setRowCount(0)
         self.ui.FormActionsListPDOS.clear()
         self.ui.FormActionsButtonPlotBANDS.setEnabled(False)
         self.ui.FormActionsPreTextFDF.setText("")
+
+    def clear_form_isosurface(self):
+        self.clear_form_isosurface_data1()
+        self.clear_form_isosurface_data2()
+        self.clear_form_isosurface_isosurface()
+
+    def clear_form_isosurface_data1(self):
         self.ui.FormActionsPostList3DData.clear()
+        self.ui.FormActionsPostTreeSurface.clear()
+        self.ui.FormActionsPostLabelSurfaceMin.setText("")
+        self.ui.FormActionsPostLabelSurfaceMax.setText("")
+
+    def clear_form_isosurface_data2(self):
+        self.clear_form_isosurface_data2_N()
+
+    def clear_form_isosurface_data2_N(self):
+        self.ui.FormActionsPostLabelSurfaceNx.setText("")
+        self.ui.FormActionsPostLabelSurfaceNy.setText("")
+        self.ui.FormActionsPostLabelSurfaceNz.setText("")
+
+    def clear_form_isosurface_isosurface(self):
+        self.ui.IsosurfaceColorsTable.setRowCount(0)
+
 
     def check_pdos(self, fname):
         PDOSfile = Importer.CheckPDOSfile(fname)
@@ -1154,7 +1180,6 @@ class mainWindow(QMainWindow):
         return isovalues
 
     def plot_contour(self):
-        print(self.VolumericData)
         if self.VolumericData.Nx == None:
             return
         self.MainForm.ViewContour = False
@@ -1827,7 +1852,7 @@ class mainWindow(QMainWindow):
             self.ui.FormActionsPostButSurfaceLoadData.setEnabled(True)
             self.clearQTreeWidget(self.ui.FormActionsPostTreeSurface2)
             self.ui.FormActionsPosEdit3DData2.setText("")
-            self.VolumericDataNClearInForm()
+            self.clear_form_isosurface_data2_N()
             self.ui.VolumrricDataGridCorrect.setEnabled(False)
             self.ui.FormActionsPostButSurfaceLoadData2.setEnabled(False)
 
@@ -1846,14 +1871,9 @@ class mainWindow(QMainWindow):
             self.ui.FormActionsPostButSurfaceLoadData2.setEnabled(True)
             self.ui.CalculateTheVolumericDataDifference.setEnabled(True)
             self.ui.FormActionsPosEdit3DData2.setText(fname)
-            self.VolumericDataNClearInForm()
+            self.clear_form_isosurface_data2_N()
             self.ui.VolumrricDataGridCorrect.setEnabled(False)
             self.ui.CalculateTheVolumericDataDifference.setEnabled(False)
-
-    def VolumericDataNClearInForm(self):
-        self.ui.FormActionsPostLabelSurfaceNx.setText("")
-        self.ui.FormActionsPostLabelSurfaceNy.setText("")
-        self.ui.FormActionsPostLabelSurfaceNz.setText("")
 
     def set_xsf_z_position(self):
         value = int(self.ui.FormActionsPostSliderContourXY.value())
@@ -1996,7 +2016,8 @@ class mainWindow(QMainWindow):
                 self.get_TAtomicModel_and_FDF(self.VolumericData.filename)
                 self.VolumericData.load_data(getChildNode)
 
-                self.clear_form()
+                self.clear_form_postprocessing()
+                self.ui.FormActionsPostList3DData.clear()
                 self.plot_last_model()
 
                 self.ui.FormActionsPostButSurfaceAdd.setEnabled(True)
