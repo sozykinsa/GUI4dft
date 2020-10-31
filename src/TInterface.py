@@ -3,7 +3,7 @@
 from copy import deepcopy
 import os
 from AdvancedTools import TAtomicModel
-#from AdvancedTools import TCalculators
+from AdvancedTools import TVASP
 from AdvancedTools import TFDFFile
 from AdvancedTools import TSIESTA
 from AdvancedTools import TPeriodTable
@@ -127,13 +127,18 @@ class Importer(object):
 
     @staticmethod
     def CheckDOSfile(filename):
+        if filename.endswith("DOSCAR"):
+            eFermy = TVASP.fermi_energy_from_doscar(filename)
+            return filename, eFermy
+
         """Check DOS file for fdf/out filename"""
         SystemLabel = TSIESTA.SystemLabel(filename)
         file = os.path.dirname(filename) + "/" + str(SystemLabel) + ".DOS"
         if os.path.exists(file):
-            return file
+            eFermy = TSIESTA.FermiEnergy(filename)
+            return file, eFermy
         else:
-            return False
+            return False, 0
 
     @staticmethod
     def CheckPDOSfile(filename):

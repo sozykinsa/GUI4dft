@@ -35,6 +35,7 @@ from AdvancedTools import TCapedSWNT
 from AdvancedTools import TGraphene
 from AdvancedTools import TAtomicModel
 from AdvancedTools import TSIESTA
+from AdvancedTools import TVASP
 from AdvancedTools import Helpers
 from AdvancedTools import TCalculators as Calculator
 from TGui import GuiOpenGL
@@ -471,15 +472,11 @@ class mainWindow(QMainWindow):
             self.ui.FormActionsButtonParseBANDS.setEnabled(True)
 
     def check_dos(self, fname):
-        DOSfile = Importer.CheckDOSfile(fname)
+        DOSfile, eFermy = Importer.CheckDOSfile(fname)
         if DOSfile != False:
-            eFermy = TSIESTA.FermiEnergy(fname)
             self.ui.FormActionsEditPDOSefermi.setText(str(eFermy))
-
             i = self.ui.FormActionsTabeDOSProperty.rowCount() + 1
-
             self.ui.FormActionsTabeDOSProperty.setRowCount(i)
-
             line = "..." + str(DOSfile)[-15:]
             QTabWidg = QTableWidgetItem(line)
             QTabWidg.setToolTip(DOSfile)
@@ -1577,7 +1574,10 @@ class mainWindow(QMainWindow):
             eF = float(self.ui.FormActionsTabeDOSProperty.item(index,1).text())
 
             if os.path.exists(path):
-                spinUp, spinDown, energy = TSIESTA.DOSsiesta(path)
+                if path.endswith("DOSCAR"):
+                    spinUp, spinDown, energy = TVASP.DOS(path)
+                else:
+                    spinUp, spinDown, energy = TSIESTA.DOS(path)
                 shift = 0
                 if self.ui.FormActionsCheckBANDSfermyShift_3.isChecked():
                     shift = eF

@@ -210,6 +210,44 @@ class Helpers:
         x = -R*fi
         return [x,z]
 
+    @staticmethod
+    def dos_from_file(filename, n, nlines = 0):
+        DOSFile = open(filename)
+        strDOS = DOSFile.readline()
+        energy = []
+        spinUp = []
+        spinDown = []
+
+        if nlines > 0:
+            MyFile = open(filename)
+            for i in range(0, 6):
+                strDOS = DOSFile.readline()
+
+            for i in range(0, nlines):
+                strDOS = Helpers.read_row_of_dos_file(DOSFile, energy, n, spinDown, spinUp, strDOS)
+
+        if nlines == 0:
+            while strDOS != '':
+                strDOS = Helpers.read_row_of_dos_file(DOSFile, energy, n, spinDown, spinUp, strDOS)
+        return energy, spinDown, spinUp
+
+    @staticmethod
+    def read_row_of_dos_file(DOSFile, energy, n, spinDown, spinUp, strDOS):
+        line = strDOS.split(' ')
+        line1 = []
+        for i in range(0, len(line)):
+            if line[i] != '':
+                line1.append(line[i])
+        energy.append(float(line1[0]))
+        spinUp.append(float(line1[1]))
+        if len(line1) > n:
+            spinDown.append(float(line1[2]))
+        else:
+            spinDown.append(0)
+        strDOS = DOSFile.readline()
+        return strDOS
+
+
 ##################################################################
 ######################## TPeriodTable ############################
 ##################################################################    
@@ -2080,27 +2118,10 @@ class TSIESTA:
         return TSIESTA.ChargesSIESTA4(filename, "Mulliken")
 
     @staticmethod
-    def DOSsiesta(filename):
+    def DOS(filename):
         """DOS"""
         if os.path.exists(filename):
-            DOSFile = open(filename)
-            strDOS = DOSFile.readline()
-            energy = []
-            spinUp = []
-            spinDown = []
-            while strDOS!='':
-                line = strDOS.split(' ')
-                line1 = []
-                for i in range(0, len(line)):
-                    if line[i] != '':
-                        line1.append(line[i])
-                energy.append(float(line1[0]))
-                spinUp.append(float(line1[1]))
-                if len(line1)>2:
-                    spinDown.append(float(line1[2]))
-                else:
-                    spinDown.append(0)
-                strDOS = DOSFile.readline()
+            energy, spinDown, spinUp = Helpers.dos_from_file(filename, 2)
             return np.array(spinUp), np.array(spinDown), np.array(energy)
 
     @staticmethod
@@ -3211,3 +3232,41 @@ class TCapedSWNT(TAtomicModel):
     };
     
 """
+
+
+##################################################################
+####################  The VASP properties class  #################
+##################################################################
+
+
+class TVASP:
+
+    def __init__(self):
+        """Not documented"""
+
+    @staticmethod
+    def fermi_energy_from_doscar(filename):
+        if os.path.exists(filename):
+            MyFile = open(filename)
+            str1 = MyFile.readline()
+            for i in range(0,5):
+                str1 = MyFile.readline()
+            MyFile.close()
+            eFermy = float(str1.split()[3])
+            return eFermy
+
+    @staticmethod
+    def DOS(filename):
+        """DOS"""
+        MyFile = open(filename)
+        str1 = MyFile.readline()
+        for i in range(0, 5):
+            str1 = MyFile.readline()
+        MyFile.close()
+        nlines = int(str1.split()[2])
+        if os.path.exists(filename):
+            energy, spinDown, spinUp = Helpers.dos_from_file(filename, 3, nlines)
+            return np.array(spinUp), np.array(spinDown), np.array(energy)
+
+
+
