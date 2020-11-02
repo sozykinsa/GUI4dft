@@ -1319,7 +1319,6 @@ class mainWindow(QMainWindow):
                 number_l = range(0, 8)
             if self.ui.FormActionsComboPDOSl.currentText() == 'Selected':
                 self.list_of_selected_items_in_combo(number_l, self.ui.FormActionsComboPDOSl)
-            print(number_l)
 
             number_m = []
             if self.ui.FormActionsComboPDOSm.currentText() == 'All':

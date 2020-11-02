@@ -79,7 +79,7 @@ def figure_edit(axes, parent=None):
         _draggable = old_legend._draggable is not None
         _ncol = old_legend._ncol
         _fontsize = int(old_legend._fontsize)
-        _frameon = old_legend._drawFrame
+        _frameon = True
         _shadow = old_legend.shadow
         _fancybox = type(old_legend.legendPatch.get_boxstyle()) == matplotlib.patches.BoxStyle.Round
         _framealpha = old_legend.get_frame().get_alpha()
@@ -278,7 +278,7 @@ def figure_edit(axes, parent=None):
             rgba = mcolors.to_rgba(color)
             line.set_alpha(None)
             line.set_color(rgba)
-            if marker is not 'none':
+            if marker != 'none':
                 line.set_marker(marker)
                 line.set_markersize(markersize)
                 line.set_markerfacecolor(markerfacecolor)
