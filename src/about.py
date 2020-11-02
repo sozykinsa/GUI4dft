@@ -2,13 +2,11 @@
 
 # Form implementation generated from reading ui file 'about.ui'
 #
-# Created by: PyQt5 UI code generator 5.14.1
+# Created by: PyQt5 UI code generator 5.9.2
 #
 # WARNING! All changes made in this file will be lost!
 
-
 from PyQt5 import QtCore, QtGui, QtWidgets
-
 
 class Ui_DialogAbout(object):
     def setupUi(self, DialogAbout):
@@ -41,3 +39,4 @@ class Ui_DialogAbout(object):
 "<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">GUI4dft, the SIESTA visualisation tool <br />was writen by Sergey Sozykin from South Ural State University, </p>\n"
 "<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Chelabinsk, Russia </p>\n"
 "<p align=\"justify\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">If you use the results of the program in your publications, please look at GITHUB https://github.com/sozykinsa/GUI4dft how to cite. E-mail: sozykinsa@susu.ru.</p></body></html>"))
+
