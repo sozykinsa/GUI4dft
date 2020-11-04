@@ -1937,6 +1937,8 @@ class TSIESTA:
                             str1 = Helpers.spacedel(MdSiestaFile.readline())
                             while not Helpers.is_integer(str1.split()[0]):
                                 str1 = Helpers.spacedel(MdSiestaFile.readline())
+                                if len(str1) == 0:
+                                    str1 = Helpers.spacedel(MdSiestaFile.readline())
                                 skip += 1
 
                             while (str1 != '\n'):

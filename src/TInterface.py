@@ -85,9 +85,11 @@ class Importer(object):
                             #print(charge_mulliken)
                             modelsopt[0].add_atoms_property("charge Mulliken", charge_mulliken)
                             charge_voronoi = TSIESTA.get_charges_voronoi_for_atoms(filename)
-                            modelsopt[0].add_atoms_property("charge Voronoi", charge_voronoi)
+                            if len(charge_voronoi[0])>0:
+                                modelsopt[0].add_atoms_property("charge Voronoi", charge_voronoi)
                             charge_hirshfeld = TSIESTA.get_charges_hirshfeld_for_atoms(filename)
-                            modelsopt[0].add_atoms_property("charge Hirshfeld", charge_hirshfeld)
+                            if len(charge_hirshfeld[0]) > 0:
+                                modelsopt[0].add_atoms_property("charge Hirshfeld", charge_hirshfeld)
                         models.append(modelsopt[0])
                 else:
                     models = TAtomicModel.atoms_from_output_md(filename)
