@@ -81,6 +81,9 @@ class Importer(object):
                     modelsopt = TAtomicModel.atoms_from_output_optim(filename)
                     if len(modelsopt) == 1:
                         if prop:
+                            charge_mulliken = TSIESTA.get_charges_mulliken_for_atoms(filename)
+                            #print(charge_mulliken)
+                            modelsopt[0].add_atoms_property("charge Mulliken", charge_mulliken)
                             charge_voronoi = TSIESTA.get_charges_voronoi_for_atoms(filename)
                             modelsopt[0].add_atoms_property("charge Voronoi", charge_voronoi)
                             charge_hirshfeld = TSIESTA.get_charges_hirshfeld_for_atoms(filename)
@@ -489,7 +492,7 @@ class AtomsIdentifier(QDialog):
         self.ansv = []
 
         self.ui.TheTable.setColumnCount(2)
-        self.ui.TheTable.setHorizontalHeaderLabels(["Atom Type", "Species"])
+        self.ui.TheTable.setHorizontalHeaderLabels(["Atom Type", "get_species"])
         self.ui.TheTable.setColumnWidth(0, 90)
         self.ui.TheTable.setColumnWidth(1, 90)
 

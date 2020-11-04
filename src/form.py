@@ -2450,7 +2450,7 @@ class Ui_MainWindow(object):
         self.toolBox_2.setItemText(self.toolBox_2.indexOf(self.page_2), _translate("MainWindow", "Isosurface and Contours"))
         self.groupBox_11.setTitle(_translate("MainWindow", "PDOS filter"))
         self.label_34.setText(_translate("MainWindow", "Indexes:"))
-        self.label_35.setText(_translate("MainWindow", "Species:"))
+        self.label_35.setText(_translate("MainWindow", "get_species:"))
         self.label_36.setText(_translate("MainWindow", "Quantum numbers:"))
         self.label_29.setText(_translate("MainWindow", "n"))
         self.label_30.setText(_translate("MainWindow", "l"))
