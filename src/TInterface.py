@@ -109,19 +109,15 @@ class Importer(object):
 
             if fileFormat == "SIESTAXSF":
                 models = TXSF.get_atoms(filename)
-                #fdf = TFDFFile()
 
             if fileFormat == "GAUSSIAN_cube":
                 models = TGaussianCube.get_atoms(filename)
-                #fdf = TFDFFile()
 
             if fileFormat == "SiestaXYZ":
                 models = TAtomicModel.atoms_from_xyz(filename)
-                #fdf = TFDFFile()
 
             if fileFormat == "XMolXYZ":
                 models = TAtomicModel.atoms_from_XMOLxyz(filename)
-                #fdf = TFDFFile()
 
             if fileFormat == "VASPposcar":
                 models = TAtomicModel.atoms_from_POSCAR(filename)

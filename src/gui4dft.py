@@ -53,6 +53,15 @@ from form import Ui_MainWindow as Ui_form
 from about import Ui_DialogAbout as Ui_about
 import xml.etree.ElementTree as ET
 
+is_with_figure = True
+
+
+def resource_path(relative_path):
+    if hasattr(sys, '_MEIPASS'):
+        return os.path.join(sys._MEIPASS, relative_path)
+    return os.path.join(os.path.abspath("."), relative_path)
+
+
 class mainWindow(QMainWindow):
     def __init__(self, *args):
         super(mainWindow, self).__init__(*args)
@@ -170,7 +179,7 @@ class mainWindow(QMainWindow):
         self.ui.FormActionsPostSliderContourYZ.valueChanged.connect(self.set_xsf_x_position)
 
         self.ui.FormModelTableAtoms.setColumnCount(4)
-        self.ui.FormModelTableAtoms.setHorizontalHeaderLabels(["Atom", "x", "y","z"])
+        self.ui.FormModelTableAtoms.setHorizontalHeaderLabels(["Atom", "x", "y", "z"])
         self.ui.FormModelTableAtoms.setColumnWidth(0, 40)
         self.ui.FormModelTableAtoms.setColumnWidth(1, 80)
         self.ui.FormModelTableAtoms.setColumnWidth(2, 80)
@@ -292,7 +301,11 @@ class mainWindow(QMainWindow):
         self.ui.FormActionsPosTableBonds.horizontalHeader().setStyleSheet(self.table_header_stylesheet)
         self.ui.FormActionsPosTableBonds.verticalHeader().setStyleSheet(self.table_header_stylesheet)
 
-        openAction = QAction(QIcon('./images/Open.jpg'), 'Open', self)
+        if is_with_figure:
+            openAction = QAction(QIcon('./images/Open.jpg'), 'Open', self)
+            resource_path('./images/Open.jpg')
+        else:
+            openAction = QAction('Open', self)
         openAction.setShortcut('Ctrl+O')
         openAction.triggered.connect(self.menu_open)
         self.ui.toolBar.addAction(openAction)
@@ -302,11 +315,19 @@ class mainWindow(QMainWindow):
         self.ui.FileBrouserTree.setModel(modelFile)
         self.ui.FileBrouserTree.selectionModel().selectionChanged.connect(self.file_brouser_selection)
 
-        SaveImageToFileAction = QAction(QIcon('./images/Save3D.jpg'), 'SaveFigure3D', self)
+        if is_with_figure:
+            SaveImageToFileAction = QAction(QIcon('./images/Save3D.jpg'), 'SaveFigure3D', self)
+            resource_path('./images/Save3D.jpg')
+        else:
+            SaveImageToFileAction = QAction('SaveFigure3D', self)
         SaveImageToFileAction.triggered.connect(self.save_image_to_file)
         self.ui.toolBar.addAction(SaveImageToFileAction)
 
-        Save2DImageToFileAction = QAction(QIcon('./images/Save2D.jpg'), 'SaveDataFromFigure', self)
+        if is_with_figure:
+            Save2DImageToFileAction = QAction(QIcon('./images/Save2D.jpg'), 'SaveDataFromFigure', self)
+            resource_path('./images/Save2D.jpg')
+        else:
+            Save2DImageToFileAction = QAction('SaveDataFromFigure', self)
         Save2DImageToFileAction.triggered.connect(self.save_data_from_figure2d)
         self.ui.toolBar.addAction(Save2DImageToFileAction)
 
@@ -2112,7 +2133,10 @@ QCoreApplication.setAttribute(Qt.AA_ShareOpenGLContexts)
 app = QApplication(sys.argv)
 window = mainWindow()
 window.setupUI()
-window.setWindowIcon(QIcon('./images/ico.png'))
+
+if is_with_figure:
+    window.setWindowIcon(QIcon('./images/ico.png'))
+    resource_path('./images/ico.png')
 window.show()
 
 sys.exit(app.exec_())

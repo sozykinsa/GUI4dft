@@ -1051,7 +1051,7 @@ class TAtomicModel(object):
                                                                               2) + math.pow(
                         self.atoms[i].z - self.atoms[j].z, 2))
                 rTab = Mendeley.Bonds[self.atoms[i].charge][self.atoms[j].charge]
-                if r < 1.2 * rTab:
+                if (r>1e-4) and (r < 1.2 * rTab):
                     self.bonds.append([i, j])
 
     def __getitem__(self, i):

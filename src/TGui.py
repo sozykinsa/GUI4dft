@@ -487,21 +487,21 @@ class GuiOpenGL(object):
             Radius2 = 0
         Rel = [Atom2Pos[0]-Atom1Pos[0], Atom2Pos[1]-Atom1Pos[1], Atom2Pos[2]-Atom1Pos[2]]
         BindingLen = math.sqrt(math.pow(Rel[0],2) + math.pow(Rel[1],2) + math.pow(Rel[2],2)) # высота цилиндра
-        assert(BindingLen != 0)
-        Fall = 180.0/math.pi*math.acos(Rel[2] / BindingLen)
-        Yaw = 180.0/math.pi*math.atan2(Rel[1], Rel[0])
+        if (BindingLen != 0):
+            Fall = 180.0/math.pi*math.acos(Rel[2] / BindingLen)
+            Yaw = 180.0/math.pi*math.atan2(Rel[1], Rel[0])
        
-        gl.glPushMatrix()
-        gl.glTranslated(Atom1Pos[0], Atom1Pos[1], Atom1Pos[2])
-        gl.glRotated(Yaw, 0, 0, 1)
-        gl.glRotated(Fall, 0, 1, 0)
-        glu.gluCylinder(glu.gluNewQuadric(),
-            Radius, # /*baseRadius:*/
-            Radius2, # /*topRadius:*/
-            BindingLen, # /*height:*/
-            self.quality*15, # /*slices:*/
-            1) #/*stacks:*/
-        gl.glPopMatrix()
+            gl.glPushMatrix()
+            gl.glTranslated(Atom1Pos[0], Atom1Pos[1], Atom1Pos[2])
+            gl.glRotated(Yaw, 0, 0, 1)
+            gl.glRotated(Fall, 0, 1, 0)
+            glu.gluCylinder(glu.gluNewQuadric(),
+                Radius, # /*baseRadius:*/
+                Radius2, # /*topRadius:*/
+                BindingLen, # /*height:*/
+                self.quality*15, # /*slices:*/
+                1) #/*stacks:*/
+            gl.glPopMatrix()
 
     def clean(self):
         if self.active == True:
@@ -585,6 +585,7 @@ class GuiOpenGL(object):
             x2 = self.MainModel.atoms[bond[1]].x
             y2 = self.MainModel.atoms[bond[1]].y
             z2 = self.MainModel.atoms[bond[1]].z
+            #print(str(bond[0])+"   "+str(bond[1]))
             if (self.SelectedFragmentMode == True) and ((self.MainModel.atoms[bond[0]].fragment1 == True) or (self.MainModel.atoms[bond[1]].fragment1 == True)):
                 gl.glColor4f(self.color_of_bonds[0], self.color_of_bonds[1], self.color_of_bonds[2], self.SelectedFragmentAtomsTransp)
             else:
