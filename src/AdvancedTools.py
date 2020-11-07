@@ -1531,6 +1531,38 @@ class TAtomicModel(object):
             data += '%endblock AtomicCoordinatesAndAtomicSpecies\n'
         return data
 
+
+    def toCUBEfile(self, fname, volumeric_data):
+        f = open(fname+".cube", 'w')
+        text = "DATA.cube\n"
+        text += "DATA.cube\n"
+        mult = 0.52917720859
+        multx = mult * volumeric_data.Nx
+        multy = mult * volumeric_data.Ny
+        multz = mult * volumeric_data.Nz
+        text += str(self.nAtoms())+"     " + str(volumeric_data.origin_to_export[0]) + "    " + str(volumeric_data.origin_to_export[1]) + "    " + str(volumeric_data.origin_to_export[2]) + "\n"
+        text += " " + str(volumeric_data.Nx) + " "
+        text += " " + str(self.LatVect1[0]/multx) + "   " + str(self.LatVect1[1]/multx) + "   " + str(self.LatVect1[2]/multx) + "\n"
+        text += " " + str(volumeric_data.Ny) + " "
+        text += " " + str(self.LatVect2[0]/multy) + "   " + str(self.LatVect2[1]/multy) + "   " + str(self.LatVect2[2]/multy) + "\n"
+        text += " " + str(volumeric_data.Nz) + " "
+        text += " " + str(self.LatVect3[0]/multz) + "   " + str(self.LatVect3[1]/multz) + "   " + str(self.LatVect3[2]/multz) + "\n"
+
+        for atom in self.atoms:
+            text += " " + str(atom.charge) + "     0.000000     " + str(atom.x/mult) + "    " + str(atom.y/mult) + "    " + str(atom.z/mult) + "\n"
+
+        orderData = 'C'
+
+        N = int(volumeric_data.Nx) * int(volumeric_data.Ny) * int(volumeric_data.Nz)
+
+        data3D = np.reshape(volumeric_data.data3D, int(N), orderData)
+
+        for i in range(0, N):
+            text += str(data3D[i]) +"   "
+
+        print(text, file=f)
+        f.close()
+
     def toXSFfile(self, fname, volumeric_data):
         f = open(fname+".XSF", 'w')
         text = "ATOMS\n"
@@ -1541,7 +1573,7 @@ class TAtomicModel(object):
         text += "  DATA_from:GUI4DFT_diff\n"
         text += "  BEGIN_DATAGRID_3D_RHO:spin_1\n"
         text += " " + str(volumeric_data.Nx) + " " + str(volumeric_data.Ny) + " " + str(volumeric_data.Nz) + "\n"
-        text += " " + str(volumeric_data.origin[0]) + " " + str(volumeric_data.origin[1]) + " " + str(volumeric_data.origin[2]) + "\n"
+        text += " " + str(volumeric_data.origin_to_export[0]) + " " + str(volumeric_data.origin_to_export[1]) + " " + str(volumeric_data.origin_to_export[2]) + "\n"
 
         text += " " + str(self.LatVect1[0]) + "   " + str(self.LatVect1[1]) + "   " + str(self.LatVect1[2]) + "\n"
         text += " " + str(self.LatVect2[0]) + "   " + str(self.LatVect2[1]) + "   " + str(self.LatVect2[2]) + "\n"

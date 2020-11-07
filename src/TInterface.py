@@ -182,6 +182,7 @@ class TVolumericData:
         self.data3D = np.zeros((1, 1))
         self.spacing = (0, 0, 0)
         self.origin = np.zeros((3))
+        self.origin_to_export = np.zeros((3))
         self.type = "TVolumericData"
 
     def volumeric_data_read(self, f, getChildNode, orderData):
@@ -198,14 +199,15 @@ class TVolumericData:
         self.max = np.max(self.data3D)
         self.data3D = self.data3D.reshape((self.Nx, self.Ny, self.Nz), order=orderData)
 
-    def difference(self, secondData):
+    def difference(self, secondData, mult = 1):
         if (self.Nx == secondData.Nx) and (self.Ny == secondData.Ny) and (self.Nz == secondData.Nz):
             for i in range(0,self.Nx):
                 for j in range(0,self.Ny):
                     for k in range(0, self.Nz):
-                        self.data3D[i][j][k] -= secondData.data3D[i][j][k]
+                        self.data3D[i][j][k] -= mult * secondData.data3D[i][j][k]
         self.min = np.min(self.data3D)
         self.max = np.max(self.data3D)
+
 
     def isosurface(self, value):
         """verts, faces, normals, values = marching_cubes_lewiner(self.data3D, level=value, spacing=self.spacing, gradient_direction='descent', step_size=1, allow_degenerate=True, use_classic=False)"""
@@ -369,6 +371,7 @@ class TXSF(TVolumericData):
 
                     origin = Helpers.list_str_to_float(f.readline().split())
                     self.origin = np.array(origin)
+                    self.origin_to_export = deepcopy(self.origin)
                     tmp_model = TAtomicModel(self.atoms)
                     center_mass = tmp_model.centr_mass()
                     self.origin -= np.array([center_mass[0], center_mass[1], 0])
@@ -464,6 +467,7 @@ class TGaussianCube(TVolumericData):
 
             self.data3D = np.zeros((1, self.Nx * self.Ny * self.Nz))
             self.origin = mult*np.array(origin)
+            self.origin_to_export = deepcopy(self.origin)
             tmp_model = TAtomicModel(self.atoms)
             center_mass = tmp_model.centr_mass()
             self.origin -= np.array([center_mass[0], center_mass[1], 0])

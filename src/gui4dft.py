@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import sys
+sys.path.append('.')
 import os
 import math
 from copy import deepcopy
@@ -114,7 +115,9 @@ class mainWindow(QMainWindow):
         self.ui.FormActionsPostButSurfaceLoadData.clicked.connect(self.volumeric_data_load)
         self.ui.FormActionsPostButSurfaceLoadData2.clicked.connect(self.volumeric_data_load2)
         self.ui.CalculateTheVolumericDataDifference.clicked.connect(self.volumeric_data_difference)
-        self.ui.ExportTheVolumericDataDifference.clicked.connect(self.export_volumeric_data_difference)
+        self.ui.CalculateTheVolumericDataSum.clicked.connect(self.volumeric_data_sum)
+        self.ui.ExportTheVolumericDataXSF.clicked.connect(self.export_volumeric_data_to_xsf)
+        self.ui.ExportTheVolumericDataCube.clicked.connect(self.export_volumeric_data_to_cube)
         self.ui.FormActionsPostButContour.clicked.connect(self.plot_contour)
         self.ui.ColorBondDialogButton.clicked.connect(self.select_bond_color)
         self.ui.ColorBoxDialogButton.clicked.connect(self.select_box_color)
@@ -180,7 +183,7 @@ class mainWindow(QMainWindow):
 
         self.ui.FormModelTableAtoms.setColumnCount(4)
         self.ui.FormModelTableAtoms.setHorizontalHeaderLabels(["Atom", "x", "y", "z"])
-        self.ui.FormModelTableAtoms.setColumnWidth(0, 40)
+        self.ui.FormModelTableAtoms.setColumnWidth(0, 50)
         self.ui.FormModelTableAtoms.setColumnWidth(1, 80)
         self.ui.FormModelTableAtoms.setColumnWidth(2, 80)
         self.ui.FormModelTableAtoms.setColumnWidth(3, 80)
@@ -230,19 +233,16 @@ class mainWindow(QMainWindow):
 
         LengUnitsType = QStandardItemModel()
         LengUnitsType.appendRow(QStandardItem("A"))
-        #LengUnitsType.appendRow(QStandardItem("Bohr"))
-        #LengUnitsType.appendRow(QStandardItem("nm"))
         self.ui.FormActionsPostComboCellParamLen.setModel(LengUnitsType)
 
-        SWNTindType = QStandardItemModel()
-        SWNTindType.appendRow(QStandardItem("(6,6)"))
-        SWNTindType.appendRow(QStandardItem("(10,0)"))
-        self.ui.FormActionsPreComboSWNTind.setModel(SWNTindType)
+        swnt_ind_type = QStandardItemModel()
+        swnt_ind_type.appendRow(QStandardItem("(6,6)"))
+        swnt_ind_type.appendRow(QStandardItem("(10,0)"))
+        self.ui.FormActionsPreComboSWNTind.setModel(swnt_ind_type)
 
-        FillSpaceModel = QStandardItemModel()
-        FillSpaceModel.appendRow(QStandardItem("cylinder"))
-        #FillSpaceModel.appendRow(QStandardItem("parallelepiped"))
-        self.ui.FormActionsPreComboFillSpace.setModel(FillSpaceModel)
+        fill_space_model = QStandardItemModel()
+        fill_space_model.appendRow(QStandardItem("cylinder"))
+        self.ui.FormActionsPreComboFillSpace.setModel(fill_space_model)
 
         self.prepare_FormActionsComboPDOSIndexes()
         self.prepare_FormActionsComboPDOSspecies()
@@ -263,11 +263,11 @@ class mainWindow(QMainWindow):
         self.ui.FormSettingsColorsScale.setModel(ColorType)
         self.ui.FormSettingsColorsScale.setCurrentText(self.ColorType)
 
-        ColorTypeScale = QStandardItemModel()
-        ColorTypeScale.appendRow(QStandardItem("Linear"))
-        ColorTypeScale.appendRow(QStandardItem("Log"))
-        self.ui.FormSettingsColorsScaleType.setModel(ColorTypeScale)
-        self.ui.FormSettingsColorsScaleType.setCurrentText(self.ColorTypeScale)
+        color_type_scale = QStandardItemModel()
+        color_type_scale.appendRow(QStandardItem("Linear"))
+        color_type_scale.appendRow(QStandardItem("Log"))
+        self.ui.FormSettingsColorsScaleType.setModel(color_type_scale)
+        self.ui.FormSettingsColorsScaleType.setCurrentText(self.color_type_scale)
 
         self.ui.FormActionsPostTableCellParam.setColumnCount(5)
         self.ui.FormActionsPostTableCellParam.setHorizontalHeaderLabels(["volume", "Energy","a","b","c"])
@@ -660,9 +660,15 @@ class mainWindow(QMainWindow):
         self.model_to_screen(-1)
 
 
-    def export_volumeric_data_difference(self):
-        """ not implemented """
+    def export_volumeric_data_to_xsf(self):
         fname = QFileDialog.getSaveFileName(self, 'Save File', self.WorkDir,"XSF files (*.XSF)")[0]
+        self.export_volumeric_data_to_file(fname)
+
+    def export_volumeric_data_to_cube(self):
+        fname = QFileDialog.getSaveFileName(self, 'Save File', self.WorkDir, "cube files (*.cube)")[0]
+        self.export_volumeric_data_to_file(fname)
+
+    def export_volumeric_data_to_file(self, fname):
         self.MainForm.volumeric_data_to_file(fname, self.VolumericData)
         self.WorkDir = os.path.dirname(fname)
         self.save_active_Folder()
@@ -940,7 +946,7 @@ class mainWindow(QMainWindow):
         self.ColorType = str(settings.value(SETTINGS_FormSettingsColorsScale, 'rainbow'))
         self.ui.FormSettingsColorsScale.currentIndexChanged.connect(self.save_state_FormSettingsColorsScale)
         self.ui.FormSettingsColorsScale.currentTextChanged.connect(self.state_changed_FormSettingsColorsScale)
-        self.ColorTypeScale = str(settings.value(SETTINGS_FormSettingsColorsScaleType, 'Log'))
+        self.color_type_scale = str(settings.value(SETTINGS_FormSettingsColorsScaleType, 'Log'))
         self.ui.FormSettingsColorsScaleType.currentIndexChanged.connect(self.save_state_FormSettingsColorsScaleType)
         state_FormSettingsColorsFixed = settings.value(SETTINGS_FormSettingsColorsFixed, False, type=bool)
         self.ui.FormSettingsColorsFixed.setChecked(state_FormSettingsColorsFixed)
@@ -1873,7 +1879,12 @@ class mainWindow(QMainWindow):
             self.clearQTreeWidget(self.ui.FormActionsPostTreeSurface2)
             self.ui.FormActionsPosEdit3DData2.setText("")
             self.clear_form_isosurface_data2_N()
-            self.ui.VolumrricDataGridCorrect.setEnabled(False)
+            self.ui.CalculateTheVolumericDataDifference.setEnabled(False)
+            self.ui.CalculateTheVolumericDataSum.setEnabled(False)
+            self.ui.VolumrricDataGridExport.setEnabled(False)
+            self.ui.ExportTheVolumericDataXSF.setEnabled(False)
+            self.ui.ExportTheVolumericDataCube.setEnabled(False)
+            self.ui.VolumrricDataGrid2.setTitle("Grid")
             self.ui.FormActionsPostButSurfaceLoadData2.setEnabled(False)
 
     def parse_volumeric_data2(self):
@@ -1889,11 +1900,16 @@ class mainWindow(QMainWindow):
                 self.fill_volumeric_data(self.VolumericData2, self.ui.FormActionsPostTreeSurface2)
 
             self.ui.FormActionsPostButSurfaceLoadData2.setEnabled(True)
-            self.ui.CalculateTheVolumericDataDifference.setEnabled(True)
+            #self.ui.CalculateTheVolumericDataDifference.setEnabled(True)
             self.ui.FormActionsPosEdit3DData2.setText(fname)
             self.clear_form_isosurface_data2_N()
-            self.ui.VolumrricDataGridCorrect.setEnabled(False)
             self.ui.CalculateTheVolumericDataDifference.setEnabled(False)
+            self.ui.CalculateTheVolumericDataSum.setEnabled(False)
+            self.ui.VolumrricDataGridExport.setEnabled(False)
+            self.ui.ExportTheVolumericDataXSF.setEnabled(False)
+            self.ui.ExportTheVolumericDataCube.setEnabled(False)
+            self.ui.VolumrricDataGrid2.setTitle("Grid")
+            #self.ui.VolumrricDataGridCalculate.setEnabled(False)
 
     def set_xsf_z_position(self):
         value = int(self.ui.FormActionsPostSliderContourXY.value())
@@ -2044,11 +2060,12 @@ class mainWindow(QMainWindow):
                 self.ui.FormActionsPostButContour.setEnabled(True)
                 self.ui.FormActionsPostButSurfaceParse2.setEnabled(True)
 
-                minv, maxv = self.volumeric_data_range()
-                self.ui.FormActionsPostLabelSurfaceMax.setText("Max: " + str(round(maxv,5)))
-                self.ui.FormActionsPostLabelSurfaceMin.setText("Min: " + str(round(minv,5)))
-                self.ui.FormActionsPostLabelSurfaceValue.setRange(minv,maxv)
-                self.ui.FormActionsPostLabelSurfaceValue.setValue(round(0.5 * (maxv + minv), 5))
+                #minv, maxv = self.volumeric_data_range()
+                #self.ui.FormActionsPostLabelSurfaceMax.setText("Max: " + str(round(maxv,5)))
+                #self.ui.FormActionsPostLabelSurfaceMin.setText("Min: " + str(round(minv,5)))
+                #self.ui.FormActionsPostLabelSurfaceValue.setRange(minv,maxv)
+                #self.ui.FormActionsPostLabelSurfaceValue.setValue(round(0.5 * (maxv + minv), 5))
+                self.volumeric_data_max_min_to_form()
 
                 self.ui.FormActionsPostSliderContourXY.setMaximum(self.VolumericData.Nz)
                 self.ui.FormActionsPostSliderContourXZ.setMaximum(self.VolumericData.Ny)
@@ -2059,26 +2076,47 @@ class mainWindow(QMainWindow):
         if getSelected:
             if getSelected[0].parent() != None:
                 getChildNode = getSelected[0].text(0)
-                atoms = self.VolumericData2.load_data(getChildNode)
+                self.VolumericData2.load_data(getChildNode)
 
                 self.ui.FormActionsPostLabelSurfaceNx.setText("Nx: " + str(self.VolumericData2.Nx))
                 self.ui.FormActionsPostLabelSurfaceNy.setText("Ny: " + str(self.VolumericData2.Ny))
                 self.ui.FormActionsPostLabelSurfaceNz.setText("Nz: " + str(self.VolumericData2.Nz))
 
                 if (self.VolumericData2.Nx == self.VolumericData.Nx) and (self.VolumericData2.Ny == self.VolumericData.Ny) and (self.VolumericData2.Nz == self.VolumericData.Nz):
-                    self.ui.VolumrricDataGridCorrect.setEnabled(True)
+                    self.ui.VolumrricDataGridCalculate.setEnabled(True)
                     self.ui.CalculateTheVolumericDataDifference.setEnabled(True)
+                    self.ui.CalculateTheVolumericDataSum.setEnabled(True)
+                    self.ui.VolumrricDataGridExport.setEnabled(True)
+                    self.ui.ExportTheVolumericDataXSF.setEnabled(True)
+                    self.ui.ExportTheVolumericDataCube.setEnabled(True)
+                    self.ui.VolumrricDataGrid2.setTitle("Grid: correct")
+                else:
+                    self.ui.VolumrricDataGrid2.setTitle("Grid: incorrect")
 
     def volumeric_data_difference(self):
         self.ui.CalculateTheVolumericDataDifference.setEnabled(False)
+        self.ui.CalculateTheVolumericDataSum.setEnabled(False)
         self.ui.FormActionsPostButSurfaceLoadData2.setEnabled(False)
         self.VolumericData.difference(self.VolumericData2)
+        self.volumeric_data_max_min_to_form()
+
+
+    def volumeric_data_sum(self):
+        self.ui.CalculateTheVolumericDataDifference.setEnabled(False)
+        self.ui.CalculateTheVolumericDataSum.setEnabled(False)
+        self.ui.FormActionsPostButSurfaceLoadData2.setEnabled(False)
+        self.VolumericData.difference(self.VolumericData2, mult = -1)
+        self.volumeric_data_max_min_to_form()
+
+
+    def volumeric_data_max_min_to_form(self):
         minv, maxv = self.volumeric_data_range()
-        self.ui.FormActionsPostLabelSurfaceMax.setText("Max: " + str(round(maxv,5)))
-        self.ui.FormActionsPostLabelSurfaceMin.setText("Min: " + str(round(minv,5)))
+        self.ui.FormActionsPostLabelSurfaceMax.setText("Max: " + str(round(maxv, 5)))
+        self.ui.FormActionsPostLabelSurfaceMin.setText("Min: " + str(round(minv, 5)))
         self.ui.FormActionsPostLabelSurfaceValue.setRange(minv, maxv)
         self.ui.FormActionsPostLabelSurfaceValue.setValue(round(0.5 * (maxv + minv), 5))
-        self.ui.CalculateTheVolumericDataDifference.setEnabled(True)
+        #self.ui.CalculateTheVolumericDataDifference.setEnabled(True)
+
 
     def utf8_letter(self, let):
         if let == '\Gamma':

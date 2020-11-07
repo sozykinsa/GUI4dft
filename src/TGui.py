@@ -306,6 +306,9 @@ class GuiOpenGL(object):
         if fname.find("XSF")>=0:
             fname = fname.split(".")[0]
             newModel.toXSFfile(fname, volumeric_data)
+        if fname.find("cube")>=0:
+            fname = fname.split(".")[0]
+            newModel.toCUBEfile(fname, volumeric_data)
 
     def delete_selected_atom(self):
         if self.selected_atom >= 0:
