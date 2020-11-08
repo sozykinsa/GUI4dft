@@ -348,7 +348,7 @@ class mainWindow(QMainWindow):
     def add_cell_param(self):
         """ add cell params"""
         fname = QFileDialog.getOpenFileName(self, 'Open file', self.WorkDir)[0]
-        if Importer.checkFormat(fname) == "SIESTAout":
+        if Importer.check_format(fname) == "SIESTAout":
             self.fill_cell_info(fname)
 
     def add_cell_param_row(self):
@@ -481,19 +481,19 @@ class mainWindow(QMainWindow):
 
 
     def check_pdos(self, fname):
-        PDOSfile = Importer.CheckPDOSfile(fname)
+        PDOSfile = Importer.check_pdos_file(fname)
         if PDOSfile != False:
             self.ui.FormActionsLinePDOSfile.setText(PDOSfile)
             self.ui.FormActionsButtonPlotPDOS.setEnabled(True)
 
     def check_bands(self, fname):
-        BANDSfile = Importer.CheckBANDSfile(fname)
+        BANDSfile = Importer.check_bands_file(fname)
         if BANDSfile != False:
             self.ui.FormActionsLineBANDSfile.setText(BANDSfile)
             self.ui.FormActionsButtonParseBANDS.setEnabled(True)
 
     def check_dos(self, fname):
-        DOSfile, eFermy = Importer.CheckDOSfile(fname)
+        DOSfile, eFermy = Importer.check_dos_file(fname)
         if DOSfile != False:
             self.ui.FormActionsEditPDOSefermi.setText(str(eFermy))
             i = self.ui.FormActionsTabeDOSProperty.rowCount() + 1
@@ -683,13 +683,13 @@ class mainWindow(QMainWindow):
         self.fill_atoms_table()
         self.fill_properties_table()
         self.check_volumeric_data(fname)
-        if Importer.checkFormat(fname) == "SIESTAout":
+        if Importer.check_format(fname) == "SIESTAout":
             self.check_dos(fname)
             self.check_pdos(fname)
             self.check_bands(fname)
             self.fill_cell_info(fname)
 
-        if Importer.checkFormat(fname) == "SIESTAfdf":
+        if Importer.check_format(fname) == "SIESTAfdf":
             c = self.MainForm.MainModel.get_LatVect3_norm()
             self.ui.FormActionsPreZSizeFillSpace.setValue(c)
 
@@ -2059,12 +2059,6 @@ class mainWindow(QMainWindow):
                 self.ui.FormActionsPostButSurfaceAdd.setEnabled(True)
                 self.ui.FormActionsPostButContour.setEnabled(True)
                 self.ui.FormActionsPostButSurfaceParse2.setEnabled(True)
-
-                #minv, maxv = self.volumeric_data_range()
-                #self.ui.FormActionsPostLabelSurfaceMax.setText("Max: " + str(round(maxv,5)))
-                #self.ui.FormActionsPostLabelSurfaceMin.setText("Min: " + str(round(minv,5)))
-                #self.ui.FormActionsPostLabelSurfaceValue.setRange(minv,maxv)
-                #self.ui.FormActionsPostLabelSurfaceValue.setValue(round(0.5 * (maxv + minv), 5))
                 self.volumeric_data_max_min_to_form()
 
                 self.ui.FormActionsPostSliderContourXY.setMaximum(self.VolumericData.Nz)

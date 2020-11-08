@@ -11,7 +11,7 @@ from AdvancedTools import Helpers
 import numpy as np
 import math
 import skimage
-if (skimage.__version__)>='0.19':
+if skimage.__version__ >= '0.17.2':
     from skimage.measure import marching_cubes
 else:
     from skimage.measure import marching_cubes_lewiner
@@ -25,10 +25,11 @@ from image3D import Ui_MainWindow as Ui_image3D
 from atomsidentify import Ui_Dialog as Ui_Dialog_Atoms
 from TGui import GuiOpenGL
 
+
 class Importer(object):
 
     @staticmethod
-    def checkFormat(filename):
+    def check_format(filename):
         """check file format"""
         if filename.endswith(".fdf") or filename.endswith(".FDF"):
             return "SIESTAfdf"
@@ -67,10 +68,10 @@ class Importer(object):
     @staticmethod
     def Import(filename, fl='all', prop=False):
         """import file"""
+        models = []
+        fdf = TFDFFile()
         if os.path.exists(filename):
-            models = []
-            fdf = TFDFFile()
-            fileFormat = Importer.checkFormat(filename)
+            fileFormat = Importer.check_format(filename)
 
             if fileFormat == "SIESTAfdf":
                 models = TAtomicModel.atoms_from_fdf(filename)
@@ -86,10 +87,9 @@ class Importer(object):
                     if len(modelsopt) == 1:
                         if prop:
                             charge_mulliken = TSIESTA.get_charges_mulliken_for_atoms(filename)
-                            #print(charge_mulliken)
                             modelsopt[0].add_atoms_property("charge Mulliken", charge_mulliken)
                             charge_voronoi = TSIESTA.get_charges_voronoi_for_atoms(filename)
-                            if len(charge_voronoi[0])>0:
+                            if len(charge_voronoi[0]) > 0:
                                 modelsopt[0].add_atoms_property("charge Voronoi", charge_voronoi)
                             charge_hirshfeld = TSIESTA.get_charges_hirshfeld_for_atoms(filename)
                             if len(charge_hirshfeld[0]) > 0:
@@ -101,15 +101,12 @@ class Importer(object):
 
             if fileFormat == "SIESTAANI":
                 models = TAtomicModel.atoms_from_ani(filename)
-                #fdf = TFDFFile()
 
             if fileFormat == "SIESTASTRUCT_OUT":
                 models = TAtomicModel.atoms_from_struct_out(filename)
-                #fdf = TFDFFile()
 
             if fileFormat == "SIESTAMD_CAR":
                 models = TAtomicModel.atoms_from_md_car(filename)
-                #fdf = TFDFFile()
 
             if fileFormat == "SIESTAXSF":
                 models = TXSF.get_atoms(filename)
@@ -125,13 +122,11 @@ class Importer(object):
 
             if fileFormat == "VASPposcar":
                 models = TAtomicModel.atoms_from_POSCAR(filename)
-                #fdf.from_POSCAR_file(filename)
 
         return models, fdf
 
-
     @staticmethod
-    def CheckDOSfile(filename):
+    def check_dos_file(filename):
         if filename.endswith("DOSCAR"):
             eFermy = TVASP.fermi_energy_from_doscar(filename)
             return filename, eFermy
@@ -146,7 +141,7 @@ class Importer(object):
             return False, 0
 
     @staticmethod
-    def CheckPDOSfile(filename):
+    def check_pdos_file(filename):
         """Check PDOS file for fdf/out filename"""
         SystemLabel = TSIESTA.SystemLabel(filename)
         file = os.path.dirname(filename) + "/" + str(SystemLabel) + ".PDOS"
@@ -156,7 +151,7 @@ class Importer(object):
             return False
 
     @staticmethod
-    def CheckBANDSfile(filename):
+    def check_bands_file(filename):
         """Check PDOS file for fdf/out filename"""
         SystemLabel = TSIESTA.SystemLabel(filename)
         file = os.path.dirname(filename) + "/" + str(SystemLabel) + ".bands"
@@ -169,11 +164,14 @@ class Importer(object):
 ############################ TXSF ################################
 ##################################################################
 
+
 class TVolumericDataBlock:
+
     def __init__(self, title):
         self.title = title
         self.max = None
         self.min = None
+
 
 class TVolumericData:
     def __init__(self):
@@ -189,50 +187,51 @@ class TVolumericData:
         self.origin_to_export = np.zeros((3))
         self.type = "TVolumericData"
 
-    def volumeric_data_read(self, f, getChildNode, orderData):
+    def volumeric_data_read(self, f, orderData):
         ind = 0
-        while ind < self.Nx * self.Ny * self.Nz:
+        N = self.Nx * self.Ny * self.Nz
+        while ind < N:
             row = f.readline().split()
             for data in row:
                 self.data3D[0, ind] = float(data)
                 ind += 1
-        row = f.readline()
-        row = Helpers.spacedel(f.readline())
+        f.readline()
+        Helpers.spacedel(f.readline())
 
         self.min = np.min(self.data3D)
         self.max = np.max(self.data3D)
         self.data3D = self.data3D.reshape((self.Nx, self.Ny, self.Nz), order=orderData)
 
-    def difference(self, secondData, mult = 1):
+    def difference(self, secondData, mult=1):
         if (self.Nx == secondData.Nx) and (self.Ny == secondData.Ny) and (self.Nz == secondData.Nz):
-            for i in range(0,self.Nx):
-                for j in range(0,self.Ny):
+            for i in range(0, self.Nx):
+                for j in range(0, self.Ny):
                     for k in range(0, self.Nz):
                         self.data3D[i][j][k] -= mult * secondData.data3D[i][j][k]
         self.min = np.min(self.data3D)
         self.max = np.max(self.data3D)
 
-
     def isosurface(self, value):
-        if (skimage.__version__) < '0.19':
+        if skimage.__version__ < '0.17.2':
             verts, faces, normals, values = marching_cubes_lewiner(self.data3D, level=value, spacing=self.spacing, gradient_direction='descent', step_size=1, allow_degenerate=True, use_classic=False)
         else:
             verts, faces, normals, values = marching_cubes(self.data3D, level=value, spacing=self.spacing, gradient_direction='descent', step_size=1, allow_degenerate=True, method='lewiner')
 
-        for i in range(0,len(verts)):
-            verts[i]+=self.origin
+        for i in range(0, len(verts)):
+            verts[i] += self.origin
         return verts, faces
 
-    def contours(self, values, type_of_plane = "xy", slice = 5):
+    def contours(self, values, type_of_plane="xy", _slice=5):
         conts = []
         spacing = self.spacing
         origin = self.origin
+        r = []
         if type_of_plane == "xy":
-            r = self.data3D[:, :, slice]
+            r = self.data3D[:, :, _slice]
         if type_of_plane == "xz":
-            r = self.data3D[:, slice, :]
+            r = self.data3D[:, _slice, :]
         if type_of_plane == "yz":
-            r = self.data3D[ slice, :,:]
+            r = self.data3D[_slice, :, :]
         for value in values:
             cont = find_contours(r, value)
             contours = []
@@ -240,30 +239,32 @@ class TVolumericData:
                 contour = []
                 for j in range(0, len(cont[i])):
                     if type_of_plane == "xy":
-                        contour.append([ origin[0] + cont[i][j][0]*spacing[0], origin[1] + cont[i][j][1]*spacing[1], origin[2] + slice*spacing[2] ])
+                        contour.append([origin[0] + cont[i][j][0] * spacing[0], origin[1] + cont[i][j][1] * spacing[1], origin[2] + _slice * spacing[2]])
                     if type_of_plane == "xz":
-                        contour.append([ origin[0] + cont[i][j][0]*spacing[0], origin[1] + slice*spacing[1], origin[2] + cont[i][j][1]*spacing[2] ])
+                        contour.append([origin[0] + cont[i][j][0] * spacing[0], origin[1] + _slice * spacing[1], origin[2] + cont[i][j][1] * spacing[2]])
                     if type_of_plane == "yz":
-                        contour.append([ origin[0] + slice*spacing[0], origin[1] + cont[i][j][0]*spacing[1], origin[2] + cont[i][j][1]*spacing[2] ])
+                        contour.append([origin[0] + _slice * spacing[0], origin[1] + cont[i][j][0] * spacing[1], origin[2] + cont[i][j][1] * spacing[2]])
                 contours.append(contour)
             conts.append(contours)
         return conts
 
-    def plane(self, type_of_plane = "xy", slice = 5):
+    def plane(self, type_of_plane="xy", _slice=5):
         origin = deepcopy(self.origin)
+        r = []
+        spacing = [0, 0]
         if type_of_plane == "xy":
-            r = self.data3D[:, :, slice]
-            origin[2] = self.origin[2] + slice * self.spacing[2]
+            r = self.data3D[:, :, _slice]
+            origin[2] = self.origin[2] + _slice * self.spacing[2]
             spacing = [self.spacing[0], self.spacing[1]]
 
         if type_of_plane == "xz":
-            r = self.data3D[:, slice, :]
-            origin[1] = self.origin[1] + slice * self.spacing[1]
+            r = self.data3D[:, _slice, :]
+            origin[1] = self.origin[1] + _slice * self.spacing[1]
             spacing = [self.spacing[0], self.spacing[2]]
 
         if type_of_plane == "yz":
-            r = self.data3D[ slice,:, :]
-            origin[0] = self.origin[0] + slice * self.spacing[0]
+            r = self.data3D[_slice, :, :]
+            origin[0] = self.origin[0] + _slice * self.spacing[0]
             spacing = [self.spacing[0], self.spacing[2]]
 
         Nx = len(r)
@@ -285,6 +286,7 @@ class TVolumericData:
                 row.append([x, y, z, r[i][j]])
             points.append(row)
         return points
+
 
 class TXSF(TVolumericData):
     def __init__(self):
@@ -354,7 +356,7 @@ class TXSF(TVolumericData):
                         while row.find("BEGIN_DATAGRID_3D") > -1:
                             row = Helpers.spacedel(row)
                             data3D = TVolumericDataBlock(row)
-                            while row.find("END_") == -1:  #END_DATAGRID_3D
+                            while row.find("END_") == -1:
                                 row = f.readline()
                             datas.append(data3D)
                             row = f.readline()
@@ -368,31 +370,32 @@ class TXSF(TVolumericData):
         f = open(self.filename)
         row = f.readline()
         while row != '':
-                if row.find(getChildNode) > -1:
-                    row = Helpers.spacedel(f.readline()).split()
-                    self.Nx = int(row[0])
-                    self.Ny = int(row[1])
-                    self.Nz = int(row[2])
-                    self.data3D = np.zeros((1, self.Nx*self.Ny*self.Nz))
+            if row.find(getChildNode) > -1:
+                row = Helpers.spacedel(f.readline()).split()
+                self.Nx = int(row[0])
+                self.Ny = int(row[1])
+                self.Nz = int(row[2])
+                self.data3D = np.zeros((1, self.Nx*self.Ny*self.Nz))
 
-                    origin = Helpers.list_str_to_float(f.readline().split())
-                    self.origin = np.array(origin)
-                    self.origin_to_export = deepcopy(self.origin)
-                    tmp_model = TAtomicModel(self.atoms)
-                    center_mass = tmp_model.centr_mass()
-                    self.origin -= np.array([center_mass[0], center_mass[1], 0])
-                    vec1 = float(f.readline().split()[0])
-                    vec2 = float(f.readline().split()[1])
-                    vec3 = float(f.readline().split()[2])
-                    self.spacing = (vec1 / self.Nx, vec2 / self.Ny, vec3 / self.Nz)
+                origin = Helpers.list_str_to_float(f.readline().split())
+                self.origin = np.array(origin)
+                self.origin_to_export = deepcopy(self.origin)
+                tmp_model = TAtomicModel(self.atoms)
+                center_mass = tmp_model.centr_mass()
+                self.origin -= np.array([center_mass[0], center_mass[1], 0])
+                vec1 = float(f.readline().split()[0])
+                vec2 = float(f.readline().split()[1])
+                vec3 = float(f.readline().split()[2])
+                self.spacing = (vec1 / self.Nx, vec2 / self.Ny, vec3 / self.Nz)
 
-                    orderData = 'F'
+                orderData = 'F'
 
-                    self.volumeric_data_read(f, getChildNode, orderData)
-                    f.close()
-                    return self.atoms
-                row = f.readline()
+                self.volumeric_data_read(f, orderData)
+                f.close()
+                return self.atoms
+            row = f.readline()
         f.close()
+
 
 class TGaussianCube(TVolumericData):
     def __init__(self):
@@ -420,7 +423,7 @@ class TGaussianCube(TVolumericData):
             for i in range(0, nAtoms):
                 row = f.readline().split()
                 charge = int(row[0])
-                atoms.append([ float(row[2]), float(row[3]), float(row[4]), periodTable.get_let(charge), charge ])
+                atoms.append([float(row[2]), float(row[3]), float(row[4]), periodTable.get_let(charge), charge])
             f.close()
             AllAtoms = TAtomicModel(atoms)
             AllAtoms.set_lat_vectors(vec1, vec2, vec3)
@@ -454,8 +457,6 @@ class TGaussianCube(TVolumericData):
         return False
 
     def load_data(self, getChildNode):
-        periodTable = TPeriodTable()
-        Molecules = []
         if os.path.exists(self.filename):
             f = open(self.filename)
             row = f.readline()
@@ -477,18 +478,15 @@ class TGaussianCube(TVolumericData):
             tmp_model = TAtomicModel(self.atoms)
             center_mass = tmp_model.centr_mass()
             self.origin -= np.array([center_mass[0], center_mass[1], 0])
-            #print(self.origin)
             vec1 = float(vec1[0])
             vec2 = float(vec2[1])
             vec3 = float(vec3[2])
             self.spacing = (vec1 / self.Nx, vec2 / self.Ny, vec3 / self.Nz)
-
             orderData = 'C'
-
-            self.volumeric_data_read(f, getChildNode, orderData)
-
+            self.volumeric_data_read(f, orderData)
             f.close()
-            return self.atoms
+        return self.atoms
+
 
 class AtomsIdentifier(QDialog):
     def __init__(self, problemAtoms):
@@ -523,7 +521,7 @@ class AtomsIdentifier(QDialog):
 
             atom_cell.setModel(model)
             atom_cell.setCurrentIndex(0)
-            self.ui.TheTable.setCellWidget(self.ui.TheTable.rowCount() - 1, 1,atom_cell )
+            self.ui.TheTable.setCellWidget(self.ui.TheTable.rowCount() - 1, 1, atom_cell)
 
     def okButtonClick(self):
         self.ansv = []
@@ -534,14 +532,14 @@ class AtomsIdentifier(QDialog):
         if len(self.ansv) == self.ui.TheTable.rowCount():
             self.close()
 
+
 class Image3Dexporter(QMainWindow):
     def __init__(self, windowsWidth, windowsHeight, quality):
-            super(Image3Dexporter, self).__init__()
-            self.ui = Ui_image3D()
-            self.ui.setupUi(self)
-            self.setFixedSize(QSize(windowsWidth, windowsHeight))
+        super(Image3Dexporter, self).__init__()
+        self.ui = Ui_image3D()
+        self.ui.setupUi(self)
+        self.setFixedSize(QSize(windowsWidth, windowsHeight))
 
-            self.MainForm = GuiOpenGL(self.ui.openGLWidget, None, quality = quality)
-            self.MainForm.filter = None
-
-            self.show()
+        self.MainForm = GuiOpenGL(self.ui.openGLWidget, None, quality=quality)
+        self.MainForm.filter = None
+        self.show()
