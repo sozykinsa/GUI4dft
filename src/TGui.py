@@ -130,7 +130,9 @@ class GuiOpenGL(object):
 
     def selected_atom_changed(self):
         if self.selected_atom >=0:
-            self.selected_atom_data_to_form(self.MainModel[self.selected_atom].charge, self.MainModel[self.selected_atom].x, self.MainModel[self.selected_atom].y, self.MainModel[self.selected_atom].z)
+            x = self.MainModel[self.selected_atom].x - self.x0
+            y = self.MainModel[self.selected_atom].y - self.y0
+            self.selected_atom_data_to_form(self.MainModel[self.selected_atom].charge, x, y, self.MainModel[self.selected_atom].z)
             if self.SelectedFragmentMode == True:
                 self.MainModel[self.selected_atom].fragment1 = not self.MainModel[self.selected_atom].fragment1
                 self.atoms_of_selected_fragment_to_form()
@@ -324,8 +326,8 @@ class GuiOpenGL(object):
         charge = self.selected_atom_type.currentIndex()
         if charge > 0:
             let = self.selected_atom_type.currentText()
-            x = self.selected_atom_X.value()
-            y = self.selected_atom_Y.value()
+            x = self.selected_atom_X.value() + self.x0
+            y = self.selected_atom_Y.value() + self.y0
             z = self.selected_atom_Z.value()
             newAtom = TAtom([x,y,z,let,charge])
             self.MainModel.add_atom(newAtom)
@@ -341,11 +343,11 @@ class GuiOpenGL(object):
             charge = self.selected_atom_type.currentIndex()
             if charge > 0:
                 let = self.selected_atom_type.currentText()
-                x = self.selected_atom_X.value()
-                y = self.selected_atom_Y.value()
+                x = self.selected_atom_X.value() + self.x0
+                y = self.selected_atom_Y.value() + self.y0
                 z = self.selected_atom_Z.value()
                 newAtom = TAtom([x, y, z, let, charge])
-                self.MainModel.edit_atom(self.selected_atom,newAtom)
+                self.MainModel.edit_atom(self.selected_atom, newAtom)
                 self.ViewContour = False
                 self.ViewContourFill = False
                 self.ViewSurface = False

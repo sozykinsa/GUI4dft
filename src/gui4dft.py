@@ -870,6 +870,8 @@ class mainWindow(QMainWindow):
         minv = float(minv)
         maxv = float(maxv)
         colors = []
+        if maxv == minv:
+            return colors
         for i in range(0, Nx):
             row = []
             for j in range(0, Ny):
@@ -1190,6 +1192,8 @@ class mainWindow(QMainWindow):
 
     def plot_contous_isovalues(self, n_contours, scale = "Log"):
         minv, maxv = self.volumeric_data_range()
+        if minv == maxv:
+            return []
         if scale =="Linear":
             isovalues = np.linspace(minv, maxv, n_contours + 2)
         if scale == "Log":
@@ -1217,6 +1221,9 @@ class mainWindow(QMainWindow):
             minv, maxv = self.volumeric_data_range()
         params = []
         params_colored_plane = []
+
+        if maxv == minv:
+            return
 
         planes = []
         if self.ui.FormActionsPostCheckContourXY.isChecked():
