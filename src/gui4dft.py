@@ -133,6 +133,7 @@ class mainWindow(QMainWindow):
         self.ui.FormActionsButtonPlotPDOSselected.clicked.connect(self.plot_selected_pdos)
         self.ui.FormModifyCellButton.clicked.connect(self.edit_cell)
         self.ui.FormActionsPostButGetBonds.clicked.connect(self.get_bonds)
+        self.ui.PropertyAtomAtomDistanceGet.clicked.connect(self.get_bond)
 
         self.ui.changeFragment1StatusByX.clicked.connect(self.change_fragment1_status_by_X)
         self.ui.changeFragment1StatusByY.clicked.connect(self.change_fragment1_status_by_Y)
@@ -246,11 +247,6 @@ class mainWindow(QMainWindow):
 
         self.prepare_FormActionsComboPDOSIndexes()
         self.prepare_FormActionsComboPDOSspecies()
-
-        self.prepare_q_numbers_combo(self.ui.FormActionsComboPDOSn, 0, 8)
-        self.prepare_q_numbers_combo(self.ui.FormActionsComboPDOSl, 0, 7)
-        self.prepare_q_numbers_combo(self.ui.FormActionsComboPDOSm, -7, 7)
-        self.prepare_q_numbers_combo(self.ui.FormActionsComboPDOSz, 1, 5)
 
         ColorType = QStandardItemModel()
         ColorTypes = [ 'flag', 'prism', 'ocean', 'gist_earth', 'terrain', 'gist_stern',
@@ -674,6 +670,7 @@ class mainWindow(QMainWindow):
         self.save_active_Folder()
 
     def fill_gui(self, title = "" ):
+        self.clear_form()
         fname = self.filename
         if title == "":
             self.fill_file_name(fname)
@@ -683,6 +680,11 @@ class mainWindow(QMainWindow):
         self.fill_atoms_table()
         self.fill_properties_table()
         self.check_volumeric_data(fname)
+
+        self.ui.PropertyAtomAtomDistanceAt1.setMaximum(self.MainForm.MainModel.nAtoms())
+        self.ui.PropertyAtomAtomDistanceAt2.setMaximum(self.MainForm.MainModel.nAtoms())
+        self.ui.PropertyAtomAtomDistance.setText("")
+
         if Importer.check_format(fname) == "SIESTAout":
             self.check_dos(fname)
             self.check_pdos(fname)
@@ -783,7 +785,7 @@ class mainWindow(QMainWindow):
 
     def fill_bonds(self):
         c1, c2 = self.fill_bonds_charges()
-        bonds = self.MainForm.MainModel.Bonds()
+        bonds = self.MainForm.MainModel.find_bonds_exact()
         self.ui.FormActionsPosTableBonds.setRowCount(0)
 
         mean = 0
@@ -838,7 +840,7 @@ class mainWindow(QMainWindow):
     def get_bonds(self):
         BondsType = QStandardItemModel()
         BondsType.appendRow(QStandardItem("All"))
-        bonds = self.MainForm.MainModel.Bonds()
+        bonds = self.MainForm.MainModel.find_bonds_exact()
         items = []
         for bond in bonds:
             st1 = bond[3] + "-" + bond[5]
@@ -848,13 +850,20 @@ class mainWindow(QMainWindow):
         items.sort()
         for item in items:
             BondsType.appendRow(QStandardItem(item))
-
         self.ui.FormActionsPostComboBonds.currentIndexChanged.disconnect()
         self.ui.FormActionsPostComboBonds.setModel(BondsType)
         self.ui.FormActionsPostComboBonds.currentIndexChanged.connect(self.fill_bonds)
 
         self.fill_bonds()
         self.ui.FormActionsPostButPlotBondsHistogram.setEnabled(True)
+
+
+    def get_bond(self):
+        i = self.ui.PropertyAtomAtomDistanceAt1.value()
+        j = self.ui.PropertyAtomAtomDistanceAt2.value()
+        bond = round(self.MainForm.MainModel.atom_atom_distance(i - 1, j - 1), 4)
+        self.ui.PropertyAtomAtomDistance.setText(str(bond) + " A")
+
 
     def get_colors_list(self, minv, maxv, values, cmap, color_scale):
         n = len(values)
@@ -1163,8 +1172,9 @@ class mainWindow(QMainWindow):
         atomscolor = self.colors_of_atoms()
         contour_width = (self.ui.FormSettingsViewSpinContourWidth.value())/1000.0
         self.MainForm.set_atomic_structure(self.models[value], atomscolor, ViewAtoms, ViewBox, boxcolor, ViewBonds, bondscolor, bondWidth, ViewAxes, axescolor, contour_width)
-        self.prepare_FormActionsComboPDOSIndexes()
         self.prepare_FormActionsComboPDOSspecies()
+        self.prepare_FormActionsComboPDOSIndexes()
+
         self.color_with_property_enabling()
 
 
@@ -1277,34 +1287,38 @@ class mainWindow(QMainWindow):
         model.appendRow(QStandardItem("All"))
         model.appendRow(QStandardItem("Selected atom (3D View)"))
         model.appendRow(QStandardItem("Selected in list below"))
-        for i in range(1, self.MainForm.MainModel.nAtoms() + 1):
-            self.create_checkable_item(model, str(i))
         self.ui.FormActionsComboPDOSIndexes.setModel(model)
 
+
     def prepare_FormActionsComboPDOSspecies(self):
-        Mendeley = TPeriodTable()
-        atoms_list = Mendeley.get_all_letters()
         model = QStandardItemModel()
         model.appendRow(QStandardItem("All"))
-        model.appendRow(QStandardItem("Selected atom (3D View)"))
         model.appendRow(QStandardItem("Selected in list below"))
-        typesOfAtoms = self.MainForm.MainModel.typesOfAtoms()
-        for i in range(0, len(typesOfAtoms)):
-            self.create_checkable_item(model, str(atoms_list[typesOfAtoms[i][0]]))
         self.ui.FormActionsComboPDOSspecies.setModel(model)
 
-    def prepare_q_numbers_combo(self, FormActionsComboPDOSn, start, stop):
-        QuantumNumbersList = QStandardItemModel()
-        QuantumNumbersList.appendRow(QStandardItem("All"))
-        QuantumNumbersList.appendRow(QStandardItem("Selected"))
-        for i in range(start, stop+1):
-            self.create_checkable_item(QuantumNumbersList, str(i))
-        FormActionsComboPDOSn.setModel(QuantumNumbersList)
+
+    #def prepare_indexes(self, list_of_ind):
+    #    model = QStandardItemModel()
+    #    model.appendRow(QStandardItem("All"))
+    #    model.appendRow(QStandardItem("Selected atom (3D View)"))
+    #    model.appendRow(QStandardItem("Selected in list below"))
+    #    for i in list_of_ind:
+    #        self.create_checkable_item(model, str(i))
+    #    return model
+
+
+    #def prepare_q_numbers_combo(self, FormActionsComboPDOSn, start, stop):
+    #    QuantumNumbersList = QStandardItemModel()
+    #    QuantumNumbersList.appendRow(QStandardItem("All"))
+    #    QuantumNumbersList.appendRow(QStandardItem("Selected"))
+    #    for i in range(start, stop+1):
+    #        self.create_checkable_item(QuantumNumbersList, str(i))
+    #    FormActionsComboPDOSn.setModel(QuantumNumbersList)
 
 
     def plot_bonds_histogram(self):
         c1, c2 = self.fill_bonds_charges()
-        bonds = self.MainForm.MainModel.Bonds()
+        bonds = self.MainForm.MainModel.find_bonds_exact()
         self.ui.MplWidget.canvas.axes.clear()
         b = []
         for bond in bonds:
@@ -1329,7 +1343,7 @@ class mainWindow(QMainWindow):
             if self.ui.FormActionsComboPDOSIndexes.currentText() == 'Selected atom (3D View)':
                 atom_index = [self.MainForm.MainModel.selected_atom+1]
             if self.ui.FormActionsComboPDOSIndexes.currentText() == 'Selected in list below':
-                self.list_of_selected_items_in_combo(atom_index, self.ui.FormActionsComboPDOSIndexes)
+                atom_index = (self.ui.FormActionsPDOSIndexes.text()).split()
 
             species = []
             if self.ui.FormActionsComboPDOSspecies.currentText() == 'All':
@@ -1338,32 +1352,88 @@ class mainWindow(QMainWindow):
                 typesOfAtoms = self.MainForm.MainModel.typesOfAtoms()
                 for i in range(0, len(typesOfAtoms)):
                     species.append(str(atoms_list[typesOfAtoms[i][0]]))
-            if self.ui.FormActionsComboPDOSspecies.currentText() == 'Selected atom (3D View)':
-                species = [self.MainForm.MainModel.atoms[self.MainForm.MainModel.selected_atom].let]
             if self.ui.FormActionsComboPDOSspecies.currentText() == 'Selected in list below':
-                self.list_of_selected_items_in_combo(species, self.ui.FormActionsComboPDOSspecies)
+                species = (self.ui.FormActionsPDOSSpecieces.text()).split()
 
             number_n = []
-            if self.ui.FormActionsComboPDOSn.currentText() == 'All':
-                number_n = range(0, 9)
-            if self.ui.FormActionsComboPDOSn.currentText() == 'Selected':
-                self.list_of_selected_items_in_combo(number_n, self.ui.FormActionsComboPDOSn)
+            if self.ui.FormActionsComboPDOSn1.isChecked():
+                number_n.append(1)
+            if self.ui.FormActionsComboPDOSn2.isChecked():
+                number_n.append(2)
+            if self.ui.FormActionsComboPDOSn3.isChecked():
+                number_n.append(3)
+            if self.ui.FormActionsComboPDOSn4.isChecked():
+                number_n.append(4)
+            if self.ui.FormActionsComboPDOSn5.isChecked():
+                number_n.append(5)
+            if self.ui.FormActionsComboPDOSn6.isChecked():
+                number_n.append(6)
+            if self.ui.FormActionsComboPDOSn7.isChecked():
+                number_n.append(7)
+            if self.ui.FormActionsComboPDOSn8.isChecked():
+                number_n.append(8)
+
             number_l = []
-            if self.ui.FormActionsComboPDOSl.currentText() == 'All':
-                number_l = range(0, 8)
-            if self.ui.FormActionsComboPDOSl.currentText() == 'Selected':
-                self.list_of_selected_items_in_combo(number_l, self.ui.FormActionsComboPDOSl)
+            if self.ui.FormActionsComboPDOSL0.isChecked():
+                number_l.append(0)
+            if self.ui.FormActionsComboPDOSL1.isChecked():
+                number_l.append(1)
+            if self.ui.FormActionsComboPDOSL2.isChecked():
+                number_l.append(2)
+            if self.ui.FormActionsComboPDOSL3.isChecked():
+                number_l.append(3)
+            if self.ui.FormActionsComboPDOSL4.isChecked():
+                number_l.append(4)
+            if self.ui.FormActionsComboPDOSL5.isChecked():
+                number_l.append(5)
+            if self.ui.FormActionsComboPDOSL6.isChecked():
+                number_l.append(6)
+            if self.ui.FormActionsComboPDOSL7.isChecked():
+                number_l.append(7)
 
             number_m = []
-            if self.ui.FormActionsComboPDOSm.currentText() == 'All':
-                number_m = range(-7, 8)
-            if self.ui.FormActionsComboPDOSm.currentText() == 'Selected':
-                self.list_of_selected_items_in_combo(number_m, self.ui.FormActionsComboPDOSm)
+            if self.ui.FormActionsComboPDOSMm7.isChecked():
+                number_m.append(-7)
+            if self.ui.FormActionsComboPDOSMm6.isChecked():
+                number_m.append(-6)
+            if self.ui.FormActionsComboPDOSMm5.isChecked():
+                number_m.append(-5)
+            if self.ui.FormActionsComboPDOSMm4.isChecked():
+                number_m.append(-4)
+            if self.ui.FormActionsComboPDOSMm3.isChecked():
+                number_m.append(-3)
+            if self.ui.FormActionsComboPDOSMm2.isChecked():
+                number_m.append(-2)
+            if self.ui.FormActionsComboPDOSMm1.isChecked():
+                number_m.append(-1)
+            if self.ui.FormActionsComboPDOSMp0.isChecked():
+                number_m.append(0)
+            if self.ui.FormActionsComboPDOSMp1.isChecked():
+                number_m.append(1)
+            if self.ui.FormActionsComboPDOSMp2.isChecked():
+                number_m.append(2)
+            if self.ui.FormActionsComboPDOSMp3.isChecked():
+                number_m.append(3)
+            if self.ui.FormActionsComboPDOSMp4.isChecked():
+                number_m.append(4)
+            if self.ui.FormActionsComboPDOSMp5.isChecked():
+                number_m.append(5)
+            if self.ui.FormActionsComboPDOSMp6.isChecked():
+                number_m.append(6)
+            if self.ui.FormActionsComboPDOSMp7.isChecked():
+                number_m.append(7)
+
             number_z = []
-            if self.ui.FormActionsComboPDOSz.currentText() == 'All':
-                number_z = range(1, 8)
-            if self.ui.FormActionsComboPDOSz.currentText() == 'Selected':
-                self.list_of_selected_items_in_combo(number_z, self.ui.FormActionsComboPDOSz)
+            if self.ui.FormActionsComboPDOSz1.isChecked():
+                number_z.append(1)
+            if self.ui.FormActionsComboPDOSz2.isChecked():
+                number_z.append(2)
+            if self.ui.FormActionsComboPDOSz3.isChecked():
+                number_z.append(3)
+            if self.ui.FormActionsComboPDOSz4.isChecked():
+                number_z.append(4)
+            if self.ui.FormActionsComboPDOSz5.isChecked():
+                number_z.append(5)
 
             pdos, energy = TSIESTA.calc_pdos(root, atom_index, species, number_l, number_m, number_n, number_z)
             EF = TSIESTA.FermiEnergy(self.filename)

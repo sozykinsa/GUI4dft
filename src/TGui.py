@@ -151,15 +151,15 @@ class GuiOpenGL(object):
 
     def selected_atom_properties_to_form(self):
         if self.selected_atom >= 0:
-            text = "Selected atom: " + str(self.selected_atom) +"\n"
+            text = "Selected atom: " + str(self.selected_atom + 1) +"\n"
             atom = self.MainModel.atoms[self.selected_atom]
             text += "Element: " + atom.let + "\n"
             for key in atom.properties:
                 text += str(key) + ": " + str(atom.properties[key]) +"\n"
 
-            if (len(self.history_of_atom_selection)>1):
+            if (len(self.history_of_atom_selection) > 1):
                 text +="\n\nHistory of atoms selection: "+str(self.history_of_atom_selection)+"\n"
-                text +="Distance from atom " + str(self.history_of_atom_selection[-1]) + " to atom " + str(self.history_of_atom_selection[-2])+ " : "
+                text +="Distance from atom " + str(self.history_of_atom_selection[-1] + 1) + " to atom " + str(self.history_of_atom_selection[-2] + 1) + " : "
                 dist = self.MainModel.atom_atom_distance(self.history_of_atom_selection[-1], self.history_of_atom_selection[-2])
                 text += str(round(dist/10,6)) + " nm\n"
 
@@ -194,9 +194,9 @@ class GuiOpenGL(object):
 
                     angle = math.acos(arg)
 
-                    text += "Angle " + str(self.history_of_atom_selection[-1]) + " - " + str(
-                        self.history_of_atom_selection[-2]) + " - " + str(
-                        self.history_of_atom_selection[-3]) + " : " + str(round(math.degrees(angle),3)) + " degrees\n"
+                    text += "Angle " + str(self.history_of_atom_selection[-1] + 1) + " - " + str(
+                        self.history_of_atom_selection[-2] + 1) + " - " + str(
+                        self.history_of_atom_selection[-3] + 1) + " : " + str(round(math.degrees(angle), 3)) + " degrees\n"
 
             self.selected_atom_properties.setText(text)
         else:
@@ -275,7 +275,7 @@ class GuiOpenGL(object):
         self.add_atoms()
         self.color_of_bonds = bondscolor
         self.color_of_box = boxcolor
-        self.MainModel.FindBonds()
+        self.MainModel.find_bonds_fast()
         self.contour_width = contour_width
         self.add_bonds()
         self.add_box()
@@ -787,7 +787,7 @@ class GuiOpenGL(object):
                         self.get_atom_on_screen()
 
                     if self.ViewBonds:
-                        gl.glCallList(self.object + 2)  # Bonds
+                        gl.glCallList(self.object + 2)  # find_bonds_exact
 
                     if self.ViewVoronoi:
                         gl.glCallList(self.object + 1)  # Voronoi

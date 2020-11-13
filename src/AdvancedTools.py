@@ -501,6 +501,7 @@ class TAtomicModel(object):
     def __init__(self, newatoms=[]):
         self.atoms = []
         self.bonds = []
+        self.bonds_per = [] # for exact calculation in form
         self.name = ""
         self.LatVect1 = np.array([100, 0, 0])
         self.LatVect2 = np.array([0, 100, 0])
@@ -1004,7 +1005,7 @@ class TAtomicModel(object):
     def delete_atom(self, ind):
         if (ind>=0) and (ind<self.nAtoms()):
             self.atoms.pop(ind)
-            self.FindBonds()
+            self.find_bonds_fast()
 
     def add_atom(self, atom, minDist = 0):
         """ Adds atom to the molecule is minimal distance to other atoms more then minDist """
@@ -1038,21 +1039,10 @@ class TAtomicModel(object):
     def AddBond(self, bond):
         self.bonds.append(bond)
 
+
     def nBonds(self):
         return len(self.bonds)
 
-    def FindBonds(self):
-        self.bonds = []
-        Mendeley = TPeriodTable()
-        for i in range(0, len(self.atoms)):
-            for j in range(i + 1, len(self.atoms)):
-                r = math.sqrt(
-                    math.pow(self.atoms[i].x - self.atoms[j].x, 2) + math.pow(self.atoms[i].y - self.atoms[j].y,
-                                                                              2) + math.pow(
-                        self.atoms[i].z - self.atoms[j].z, 2))
-                rTab = Mendeley.Bonds[self.atoms[i].charge][self.atoms[j].charge]
-                if (r>1e-4) and (r < 1.2 * rTab):
-                    self.bonds.append([i, j])
 
     def __getitem__(self, i):
         return self.atoms[i]
@@ -1287,14 +1277,15 @@ class TAtomicModel(object):
         """
         pos1 = np.array([self.atoms[at1].x, self.atoms[at1].y, self.atoms[at1].z])
         pos2 = np.array([self.atoms[at2].x, self.atoms[at2].y, self.atoms[at2].z])
+        delta_pos = pos2 - pos1
 
-        ro = norm(pos2 - pos1)
+        ro = norm(delta_pos)
         values = [-1, 0, 1]
         for i in values:
             for j in values:
                 for k in values:
-                    if abs(i)+abs(j)+abs(k)!=0:
-                        ro1 = norm(pos2 - pos1 + i*self.LatVect1 + j*self.LatVect2 + k*self.LatVect3)
+                    if abs(i) + abs(j) + abs(k) != 0:
+                        ro1 = norm(delta_pos + i*self.LatVect1 + j*self.LatVect2 + k*self.LatVect3)
                         if ro1 < ro:
                             ro = ro1
         return ro
@@ -1335,18 +1326,33 @@ class TAtomicModel(object):
             neighbo.append(neighbor[i][0])
         return neighbo
 
-    def Bonds(self):
+    def find_bonds_exact(self):
         """The method returns list of bonds of the molecule"""
+        if self.bonds_per != []:
+            return self.bonds_per
         PeriodTable = TPeriodTable()
-        bond = []
         for i in range(0, len(self.atoms)):
             for j in range(i+1, len(self.atoms)):
-                length = round(self.atom_atom_distance(i, j),4)
+                length = round(self.atom_atom_distance(i, j), 4)
                 t1 = int(self.atoms[i].charge)
                 t2 = int(self.atoms[j].charge)
                 if (math.fabs(length - PeriodTable.Bonds[t1][t2]) < 0.2*PeriodTable.Bonds[t1][t2]):
-                    bond.append([t1, t2, length, self.atoms[i].let, i, self.atoms[j].let, j])
-        return bond
+                    self.bonds_per.append([t1, t2, length, self.atoms[i].let, i, self.atoms[j].let, j])
+        return self.bonds_per
+
+
+    def find_bonds_fast(self):
+        self.bonds = []
+        Mendeley = TPeriodTable()
+        for i in range(0, len(self.atoms)):
+            for j in range(i + 1, len(self.atoms)):
+                rx2 = math.pow(self.atoms[i].x - self.atoms[j].x, 2)
+                ry2 = math.pow(self.atoms[i].y - self.atoms[j].y, 2)
+                rz2 = math.pow(self.atoms[i].z - self.atoms[j].z, 2)
+                r = math.sqrt(rx2 + ry2 + rz2)
+                rTab = Mendeley.Bonds[self.atoms[i].charge][self.atoms[j].charge]
+                if (r>1e-4) and (r < 1.2 * rTab):
+                    self.bonds.append([i, j])
     
     def Delta(self, newMolecula):
         """ maximum distance from atoms in self to the atoms in the newMolecula"""
