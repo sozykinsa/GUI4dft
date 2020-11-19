@@ -406,20 +406,21 @@ class TPeriodTable:
         self.Atoms.append(TPeriodTableAtom(127,170, 'Ubs', self.default_color))
 
         self.Bonds = []
-        for i in range(0, self.table_size):
+        rang = range(0, self.table_size)
+        for i in rang:
             row = []
-            for j in range(0,self.table_size):
+            for j in rang:
                 row.append(1)
             self.Bonds.append(row)
 
-        self.Bonds[1][6] = 1.0
-        self.Bonds[1][8] = 1.0
-        self.Bonds[6][6] = 1.42
-        self.Bonds[6][8] = 1.42
-        self.Bonds[16][16] = 1.9
-        self.Bonds[46][46] = 2.5
-        self.Bonds[78][78] = 2.5
-        self.Bonds[79][79] = 2.5
+        self.Bonds[1][int(6)] = 1.0
+        self.Bonds[1][int(8)] = 1.0
+        self.Bonds[6][int(6)] = 1.42
+        self.Bonds[6][int(8)] = 1.42
+        self.Bonds[16][int(16)] = 1.9
+        self.Bonds[46][int(46)] = 2.5
+        self.Bonds[78][int(78)] = 2.5
+        self.Bonds[79][int(79)] = 2.5
 
 
         for i in range(0, self.table_size):
@@ -939,7 +940,7 @@ class TAtomicModel(object):
 
 
     @staticmethod
-    def atoms_from_xyz_structure(NumberOfAtoms, ani_file, periodTable, indexes = [0,1,2,3]):
+    def atoms_from_xyz_structure(NumberOfAtoms, ani_file, periodTable, indexes=[0,1,2,3]):
         if indexes[0] == 0:
             str1 = Helpers.spacedel(ani_file.readline())
         atoms = []
@@ -956,7 +957,6 @@ class TAtomicModel(object):
         newModel = TAtomicModel(atoms)
         newModel.set_lat_vectors_default()
         return newModel
-
 
 
     def get_LatVect1_norm(self):
@@ -998,14 +998,25 @@ class TAtomicModel(object):
             print("Wrong vectors")
 
     def set_lat_vectors_default(self):
-        self.LatVect1 = np.array([ 1.4*self.sizeX(), 0, 0 ])
-        self.LatVect2 = np.array([ 0, 1.4*self.sizeY(), 0 ])
-        self.LatVect3 = np.array([ 0, 0, 1.4*self.sizeZ() ])
+        sx = self.sizeX()
+        if sx < 0.3:
+            sx = 5
+        sy = self.sizeY()
+        if sy < 0.3:
+            sy = 5
+        sz = self.sizeZ()
+        if sz < 0.3:
+            sz = 5
+        self.LatVect1 = np.array([1.4*sx, 0, 0])
+        self.LatVect2 = np.array([0, 1.4*sy, 0])
+        self.LatVect3 = np.array([0, 0, 1.4*sz])
+
 
     def delete_atom(self, ind):
         if (ind>=0) and (ind<self.nAtoms()):
             self.atoms.pop(ind)
             self.find_bonds_fast()
+
 
     def add_atom(self, atom, minDist = 0):
         """ Adds atom to the molecule is minimal distance to other atoms more then minDist """
@@ -1959,6 +1970,7 @@ class TSIESTA:
 
                         while nsp < number_of_species:
                             atoms = 0
+                            AtomSort = -1
                             while (str1.find("mulliken:") >= 0 or len(str1) < 2 or str1.find("Species:") >= 0):
                                 if str1.find("Species:") >= 0:
                                     str1 = Helpers.spacedel(str1)
@@ -2156,14 +2168,11 @@ class TSIESTA:
     @staticmethod    
     def get_species(filename):
         """ Returns the LIST of Speciecies from SIESTA output or fdf file """
-        
+        Species = []
         if os.path.exists(filename):
             NumberOfSpecies = TSIESTA.number_of_species(filename)
-
             MdSiestaFile = open(filename)
             str1 = MdSiestaFile.readline()
-            Species = []
-            
             while str1!='':
                 if str1 != '' and (str1.find("block ChemicalSpeciesLabel")>=0):
                     str1 = MdSiestaFile.readline()
