@@ -79,7 +79,7 @@ def figure_edit(axes, parent=None):
         _draggable = old_legend._draggable is not None
         _ncol = old_legend._ncol
         _fontsize = int(old_legend._fontsize)
-        _frameon = True
+        _frameon = True #old_legend._drawFrame
         _shadow = old_legend.shadow
         _fancybox = type(old_legend.legendPatch.get_boxstyle()) == matplotlib.patches.BoxStyle.Round
         _framealpha = old_legend.get_frame().get_alpha()
@@ -126,12 +126,10 @@ def figure_edit(axes, parent=None):
 
     def prepare_data(d, init):
         """Prepare entry for FormLayout.
-
         `d` is a mapping of shorthands to style names (a single style may
         have multiple shorthands, in particular the shorthands `None`,
         `"None"`, `"none"` and `""` are synonyms); `init` is one shorthand
         of the initial style.
-
         This function returns an list suitable for initializing a
         FormLayout combobox, namely `[initial_name, (shorthand,
         style_name), (shorthand, style_name), ...]`.

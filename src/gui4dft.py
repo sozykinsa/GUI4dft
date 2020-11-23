@@ -1448,7 +1448,7 @@ class mainWindow(QMainWindow):
             sign = 1
             if self.ui.FormActionsCheckPDOS_2.isChecked():
                 sign = -1
-            if len(pdos)>1:
+            if len(pdos) > 1:
                 ys2 = sign*pdos[1]
             else:
                 ys2 = np.zeros((len(pdos[0])))
@@ -1469,22 +1469,27 @@ class mainWindow(QMainWindow):
             else:
                 self.PDOSdata.append([energy, pdos[0], np.zeros((len(pdos[0])))])
 
-            self.ui.FormActionsListPDOS.addItems([str(len(self.PDOSdata))+": "+str(self.ui.FormActionsComboPDOSIndexes.currentText())+";  "+str(self.ui.FormActionsComboPDOSspecies.currentText())+" : "+ self.ui.FormActionsEditPDOSLabel.text()])
+            title = self.ui.FormActionsEditPDOSLabel.text()
+            if(len(title) == 0):
+                title = str(self.ui.FormActionsComboPDOSIndexes.currentText())+";  "+str(self.ui.FormActionsComboPDOSspecies.currentText())
+
+            self.ui.FormActionsListPDOS.addItems([str(len(self.PDOSdata)) + ": " + title])
             self.ui.FormActionsButtonPlotPDOSselected.setEnabled(True)
+
 
     def plot_selected_pdos(self):
         EF = TSIESTA.FermiEnergy(self.filename)
         shift = 0
-        labels = []
+        #labels = []
+        plots = []
         if self.ui.FormActionsCheckBANDSfermyShift_2.isChecked():
             shift = EF
-            #energy -= EF
 
         selected = self.ui.FormActionsListPDOS.selectedItems()
         self.ui.MplWidget.canvas.axes.clear()
         for item in selected:
             ind = int(item.text().split(':')[0])-1
-            labels.append(item.text())
+            #labels.append(item.text())
 
             energy = self.PDOSdata[ind][0]
             spinUp = self.PDOSdata[ind][1]
@@ -1493,18 +1498,24 @@ class mainWindow(QMainWindow):
             if self.ui.FormActionsCheckPDOS_2.isChecked():
                 spinDown *=-1
 
-            self.ui.MplWidget.canvas.axes.plot(energy, spinUp)
+            add_srt = ""
+
             if self.ui.FormActionsCheckPDOS.isChecked():
-                self.ui.MplWidget.canvas.axes.plot(energy, spinDown)
+                add_srt = ' up'
+
+            pl1, = self.ui.MplWidget.canvas.axes.plot(energy, spinUp, label=item.text()+add_srt)
+            plots += [pl1]
+            if self.ui.FormActionsCheckPDOS.isChecked():
+                pl2, = self.ui.MplWidget.canvas.axes.plot(energy, spinDown, label=item.text()+' down')
+                plots += [pl2]
 
         self.ui.MplWidget.canvas.axes.set_xlabel("Energy, eV")
         self.ui.MplWidget.canvas.axes.set_ylabel("PDOS, states/eV")
         if self.ui.FormActionsCheckBANDSfermyShow_2.isChecked():
-                self.ui.MplWidget.canvas.axes.axvline(x=EF - shift, linestyle="--")
+            self.ui.MplWidget.canvas.axes.axvline(x=EF - shift, linestyle="--")
         self.ui.MplWidget.canvas.axes.axhline(y=0, linestyle="-.")
 
-        self.ui.MplWidget.canvas.axes.legend(labels)
-
+        self.ui.MplWidget.canvas.axes.legend(handles=plots)
         self.ui.MplWidget.canvas.draw()
 
     def list_of_selected_items_in_combo(self, atom_index, combo):
