@@ -2127,10 +2127,7 @@ class mainWindow(QMainWindow):
         return newcolor
 
     def volumeric_data_range(self):
-        getSelected = self.ui.FormActionsPostTreeSurface.selectedItems()
-        if getSelected:
-            if getSelected[0].parent() != None:
-                return self.VolumericData.min, self.VolumericData.max
+        return self.VolumericData.min, self.VolumericData.max
 
     def volumeric_data_load(self):
         getSelected = self.ui.FormActionsPostTreeSurface.selectedItems()
@@ -2140,14 +2137,15 @@ class mainWindow(QMainWindow):
                 self.get_TAtomicModel_and_FDF(self.VolumericData.filename)
                 self.VolumericData.load_data(getChildNode)
 
-                self.clear_form_postprocessing()
-                self.ui.FormActionsPostList3DData.clear()
+                #self.clear_form_postprocessing()
+                #self.ui.FormActionsPostList3DData.clear()
+                self.clear_form_isosurface_isosurface()
                 self.plot_last_model()
 
+                self.volumeric_data_max_min_to_form()
                 self.ui.FormActionsPostButSurfaceAdd.setEnabled(True)
                 self.ui.FormActionsPostButContour.setEnabled(True)
                 self.ui.FormActionsPostButSurfaceParse2.setEnabled(True)
-                self.volumeric_data_max_min_to_form()
 
                 self.ui.FormActionsPostSliderContourXY.setMaximum(self.VolumericData.Nz)
                 self.ui.FormActionsPostSliderContourXZ.setMaximum(self.VolumericData.Ny)
@@ -2253,7 +2251,6 @@ QCoreApplication.setAttribute(Qt.AA_ShareOpenGLContexts)
 app = QApplication(sys.argv)
 window = mainWindow()
 window.setupUI()
-
 if is_with_figure:
     window.setWindowIcon(QIcon('./images/ico.png'))
     resource_path('./images/ico.png')
