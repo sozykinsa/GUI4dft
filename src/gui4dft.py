@@ -3,11 +3,10 @@ import sys
 sys.path.append('.')
 import os
 import math
+from io import BytesIO
 from copy import deepcopy
 from operator import itemgetter
-from PyQt5.QtCore import Qt
-from PyQt5.QtCore import QDir
-from PyQt5.QtCore import QSize
+from PyQt5.QtCore import Qt, QDir, QSize, QFile, QIODevice
 from PyQt5.QtCore import QCoreApplication
 from PyQt5.QtCore import QSettings
 from PyQt5.QtCore import QVariant
@@ -57,13 +56,6 @@ from about import Ui_DialogAbout as Ui_about
 import xml.etree.ElementTree as ET
 
 is_with_figure = True
-
-
-def resource_path(relative_path):
-    if hasattr(sys, '_MEIPASS'):
-        return os.path.join(sys._MEIPASS, relative_path)
-    return os.path.join(os.path.abspath("."), relative_path)
-
 
 class mainWindow(QMainWindow):
     def __init__(self, *args):
@@ -304,7 +296,6 @@ class mainWindow(QMainWindow):
 
         if is_with_figure:
             openAction = QAction(QIcon('./images/Open.jpg'), 'Open', self)
-            resource_path('./images/Open.jpg')
         else:
             openAction = QAction('Open', self)
         openAction.setShortcut('Ctrl+O')
@@ -318,7 +309,6 @@ class mainWindow(QMainWindow):
 
         if is_with_figure:
             SaveImageToFileAction = QAction(QIcon('./images/Save3D.jpg'), 'SaveFigure3D', self)
-            resource_path('./images/Save3D.jpg')
         else:
             SaveImageToFileAction = QAction('SaveFigure3D', self)
         SaveImageToFileAction.triggered.connect(self.save_image_to_file)
@@ -326,7 +316,6 @@ class mainWindow(QMainWindow):
 
         if is_with_figure:
             Save2DImageToFileAction = QAction(QIcon('./images/Save2D.jpg'), 'SaveDataFromFigure', self)
-            resource_path('./images/Save2D.jpg')
         else:
             Save2DImageToFileAction = QAction('SaveDataFromFigure', self)
         Save2DImageToFileAction.triggered.connect(self.save_data_from_figure2d)
@@ -2258,7 +2247,6 @@ window = mainWindow()
 window.setupUI()
 if is_with_figure:
     window.setWindowIcon(QIcon('./images/ico.png'))
-    resource_path('./images/ico.png')
 window.show()
 
 sys.exit(app.exec_())
