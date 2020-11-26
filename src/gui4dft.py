@@ -12,6 +12,8 @@ from PyQt5.QtCore import QCoreApplication
 from PyQt5.QtCore import QSettings
 from PyQt5.QtCore import QVariant
 from PyQt5.QtCore import QLocale
+from PyQt5.QtGui import QKeySequence
+from PyQt5.QtWidgets import QShortcut
 from PyQt5.QtWidgets import QAction
 from PyQt5.QtWidgets import QApplication
 from PyQt5.QtWidgets import QColorDialog
@@ -78,6 +80,9 @@ class mainWindow(QMainWindow):
         self.filename = ""
         self.colors_cash = {}
         self.table_header_stylesheet = "::section{Background-color:rgb(194,169,226)}"
+
+        self.shortcut = QShortcut(QKeySequence("Ctrl+D"), self)
+        self.shortcut.activated.connect(self.atom_delete)
 
     def setupUI(self):
         self.load_settings()

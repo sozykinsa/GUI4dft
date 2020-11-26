@@ -43,7 +43,7 @@ class Importer(object):
         if (filename.lower()).endswith(".xyz"):
             f = open(filename)
             f.readline()
-            str1 = f.readline()
+            str1 = Helpers.spacedel(f.readline())
             if len(str1) > 0:
                 return "XMolXYZ"
             return "SiestaXYZ"
@@ -72,6 +72,7 @@ class Importer(object):
         fdf = TFDFFile()
         if os.path.exists(filename):
             fileFormat = Importer.check_format(filename)
+            print("File " + str(filename) + " : " +str(fileFormat) )
 
             if fileFormat == "SIESTAfdf":
                 models = TAtomicModel.atoms_from_fdf(filename)
