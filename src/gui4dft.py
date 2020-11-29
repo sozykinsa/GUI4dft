@@ -812,8 +812,8 @@ class mainWindow(QMainWindow):
         Volume = TSIESTA.volume(fname)
         Energy = TSIESTA.Etot(fname)
 
-        """model, FDFData = Importer.Import(fname)"""
-        model = self.models[-1]
+        models, FDFData = Importer.Import(fname)
+        model = models[-1]
         a = model.get_LatVect1_norm()
         b = model.get_LatVect2_norm()
         c = model.get_LatVect3_norm()
@@ -1733,7 +1733,10 @@ class mainWindow(QMainWindow):
                 ys.append(items[i][1])
             self.ui.MplWidget.canvas.axes.scatter(xs, ys, color='orange', s=40, marker='o')
 
-            if method == "Murnaghan":
+            is_plot = 0
+
+            if (method == "Murnaghan") and (len(items)>4):
+                is_plot = 1
                 aprox, xs2, ys2 = Calculator.ApproxMurnaghan(items)
                 image_path = '.\images\murnaghan.png' #path to your image file
                 self.ui.FormActionsPostLabelCellParamOptimExpr.setText("E(V0)="+str(round(float(aprox[0]),2)))
@@ -1741,7 +1744,8 @@ class mainWindow(QMainWindow):
                 self.ui.FormActionsPostLabelCellParamOptimExpr3.setText("B0'="+str(round(float(aprox[2]),2)))
                 self.ui.FormActionsPostLabelCellParamOptimExpr4.setText("V0="+str(round(float(aprox[3]),2)))
 
-            if method == "BirchMurnaghan":
+            if (method == "BirchMurnaghan") and (len(items)>4):
+                is_plot = 1
                 aprox, xs2, ys2 = Calculator.ApproxBirchMurnaghan(items)
                 image_path = '.\images\murnaghanbirch.png'  # path to your image file
                 self.ui.FormActionsPostLabelCellParamOptimExpr.setText("E(V0)="+str(round(float(aprox[0]),2)))
@@ -1749,7 +1753,8 @@ class mainWindow(QMainWindow):
                 self.ui.FormActionsPostLabelCellParamOptimExpr3.setText("B0'="+str(round(float(aprox[2]),2)))
                 self.ui.FormActionsPostLabelCellParamOptimExpr4.setText("V0="+str(round(float(aprox[3]),2)))
 
-            if method == "Parabola":
+            if (method == "Parabola") and (len(items)>2):
+                is_plot = 1
                 aprox, xs2, ys2 = Calculator.ApproxParabola(items)
                 image_path = '.\images\parabola.png' #path to your image file
                 self.ui.FormActionsPostLabelCellParamOptimExpr.setText("a=" + str(round(float(aprox[2]), 2)))
@@ -1757,21 +1762,19 @@ class mainWindow(QMainWindow):
                 self.ui.FormActionsPostLabelCellParamOptimExpr3.setText("x0="+str(round(-float(aprox[1])/float(2*aprox[2]),2)))
                 self.ui.FormActionsPostLabelCellParamOptimExpr4.setText("c="+str(round(float(aprox[0]),2)))
 
-            self.ui.MplWidget.canvas.axes.plot(xs2, ys2)
+            if is_plot == 1:
+                self.ui.MplWidget.canvas.axes.plot(xs2, ys2)
+                self.ui.MplWidget.canvas.axes.set_ylabel("Energy, "+self.ui.FormActionsPostComboCellParamEnergy.currentText())
+                if LabelX == "V":
+                    self.ui.MplWidget.canvas.axes.set_xlabel(LabelX+", "+self.ui.FormActionsPostComboCellParamLen.currentText()+"^3")
+                else:
+                    self.ui.MplWidget.canvas.axes.set_xlabel(LabelX + ", " + self.ui.FormActionsPostComboCellParamLen.currentText())
 
-            self.ui.MplWidget.canvas.axes.set_ylabel("Energy, "+self.ui.FormActionsPostComboCellParamEnergy.currentText())
-            if LabelX == "V":
-                self.ui.MplWidget.canvas.axes.set_xlabel(LabelX+", "+self.ui.FormActionsPostComboCellParamLen.currentText()+"^3")
-            else:
-                self.ui.MplWidget.canvas.axes.set_xlabel(LabelX + ", " + self.ui.FormActionsPostComboCellParamLen.currentText())
+                image_profile = QImage(image_path)
+                image_profile = image_profile.scaled(320, 320, aspectRatioMode=Qt.KeepAspectRatio, transformMode=Qt.SmoothTransformation)
+                self.ui.FormActionsPostLabelCellParamFig.setPixmap(QPixmap.fromImage(image_profile))
 
             self.ui.MplWidget.canvas.draw()
-
-            image_profile = QImage(image_path)
-            #print(image_profile)
-            image_profile = image_profile.scaled(320,320, aspectRatioMode=Qt.KeepAspectRatio, transformMode=Qt.SmoothTransformation) # To scale image for example and keep its Aspect Ration
-            self.ui.FormActionsPostLabelCellParamFig.setPixmap(QPixmap.fromImage(image_profile))
-
 
     def save_data_from_figure2d(self):
         DATA = []
