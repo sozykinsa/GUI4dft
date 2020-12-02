@@ -44,9 +44,11 @@ class Importer(object):
             f = open(filename)
             f.readline()
             str1 = Helpers.spacedel(f.readline())
-            if len(str1) > 0:
+            if len(str1.split()) > 4:
                 return "XMolXYZ"
-            return "SiestaXYZ"
+            if len(str1.split()) == 0:
+                return "SiestaXYZ"
+            return "unknown"
 
         if filename.endswith(".STRUCT_OUT"):
             return "SIESTASTRUCT_OUT"
