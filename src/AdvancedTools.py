@@ -33,6 +33,16 @@ class Helpers:
         return stroka
 
     @staticmethod
+    def float_to_string(fl):
+        res = ""
+        res = '{0:12.8f}'.format(fl)
+        if res == "-0.00000000":
+            res = " 0.00000000"
+
+        return res
+
+
+    @staticmethod
     def is_integer(n):
         try:
             float(n)
@@ -542,7 +552,7 @@ class TAtomicModel(object):
     def atoms_from_fdf(filename):
         """Return a AtList from fdf file"""
         NumberOfAtoms = TSIESTA.number_of_atoms(filename)
-        NumberOfSpecies = TSIESTA.number_of_species(filename)
+        #NumberOfSpecies = TSIESTA.number_of_species(filename)
         AtomicCoordinatesFormat = TSIESTA.atomic_coordinates_format(filename)
 
         lat_vect_1, lat_vect_2, lat_vect_3 = TSIESTA.lattice_vectors(filename)
@@ -1402,11 +1412,29 @@ class TAtomicModel(object):
         zm = self.minZ()
         for i in range(0, self.nAtoms()):
             self.atoms[i].x -= xm
-            self.atoms[i].x += 0.1
+            self.atoms[i].x = self.minus0(self.atoms[i].x)
+            #self.atoms[i].x += 0.1
             self.atoms[i].y -= ym
-            self.atoms[i].y += 0.1
+            self.atoms[i].y = self.minus0(self.atoms[i].y)
+            #self.atoms[i].y += 0.1
             self.atoms[i].z -= zm
-            self.atoms[i].z += 0.1
+            self.atoms[i].z = self.minus0(self.atoms[i].z)
+            #self.atoms[i].z += 0.1
+
+
+    def minus0(self, fl):
+        res = fl
+
+        #if math.fabs(fl) < 1e-8:
+        #    print("!")
+        #    res = 0
+        #if str(fl) == "-0.0":
+        #    res = 0
+        #    print("!!")
+        if fl < 0:
+            res = 0
+
+        return res
 
     def grow(self):
         """ модель транслируется в трех измерениях и становится в 27 раз больше """
@@ -1621,12 +1649,11 @@ class TAtomicModel(object):
                 for j in range(0, len(types)):
                     if types[j][0] == self.atoms[i].charge:
                         str1 = ' ' + str(j + 1)
-                str2 = '    ' + str(round(self.atoms[i].x, 7)) + '     ' + str(round(self.atoms[i].y, 7)) + '      ' + str(round(self.atoms[i].z, 7))
-                data += str2 + str1 + "\n"
+                data += self.xyz_string(i) + str1 + "\n"
 
         if coord_style == "FractionalPOSCAR":
             for i in range(0, len(self.atoms)):
-                data += '    ' + str(round(self.atoms[i].x, 7)) + '     ' + str(round(self.atoms[i].y, 7)) + '      ' + str(round(self.atoms[i].z, 7))+ "\n"
+                data += ' ' + self.xyz_string(i) + "\n"
 
         if coord_style == "Zmatrix Cartesian":
             for i in range(0, len(self.atoms)):
@@ -1634,17 +1661,24 @@ class TAtomicModel(object):
                 for j in range(0,len(types)):
                     if types[j][0] == self.atoms[i].charge:
                         str1 = ' ' + str(j+1)
-                str2 = '    ' + str(round(self.atoms[i].x, 7)) + '     ' + str(round(self.atoms[i].y, 7)) + '      ' + str(round(self.atoms[i].z, 7))
+                str2 = '    ' + self.xyz_string(i)
                 str3 = '      1  1  1'
-                data+= str1+str2+str3+"\n"
+                data += str1+str2+str3+"\n"
 
         if coord_style == "FireflyINP":
             for i in range(0, len(self.atoms)):
                 str1 = ' ' + str(self.atoms[i].let) + '   ' + str(self.atoms[i].charge) + '.0  '
-                str2 = '    ' + str(round(self.atoms[i].x, 7)) + '     ' + str(round(self.atoms[i].y, 7)) + '      ' + str(round(self.atoms[i].z, 7))
-                data+= str1+str2+"\n"
+                str2 = '    ' + self.xyz_string(i)
+                data += str1+str2+"\n"
             data+= ' $END'
         return data
+
+    def xyz_string(self, i):
+        sx = Helpers.float_to_string(self.atoms[i].x)
+        sy = Helpers.float_to_string(self.atoms[i].y)
+        sz = Helpers.float_to_string(self.atoms[i].z)
+        str2 = '  ' + sx + '  ' + sy + '  ' + sz
+        return str2
 
     def toSIESTAxyzdata(self):
         """ возвращает данные для xyz файла """
@@ -2252,13 +2286,15 @@ class TSIESTA:
         lines = []
         flag = 0
         f = open(filename)
+        blockname = blockname.lower()
         for line in f:
-            if (line.find(blockname)<0) and (flag == 1):
+            line1 = line.lower()
+            if (line1.find(blockname)<0) and (flag == 1):
                 lines.append(line)
-            if (line.find(blockname)>=0) and (flag == 1):
+            if (line1.find(blockname)>=0) and (flag == 1):
                 f.close()
                 return lines
-            if (line.find(blockname)>=0) and (flag == 0):
+            if (line1.find(blockname)>=0) and (flag == 0):
                 flag = 1
         return []
 
@@ -2531,6 +2567,8 @@ class TFDFFile:
             if ((block.name).lower().find("chemicalspecieslabel")>=0): f = False
             if ((block.name).lower().find("latticeparameters") >=0): f = False
             if ((block.name).lower().find("latticevectors") >=0): f = False
+            if ((block.name).lower().find("atomiccoordinatesandatomicspecies") >= 0): f = False
+
 
             if f:
                 st +="%block "+block.name+"\n"
