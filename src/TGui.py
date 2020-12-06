@@ -417,8 +417,8 @@ class GuiOpenGL(object):
     def move(self, x, y, width, height):
         if self.active == True:
             xs, ys = self.screen2space(x, y, width, height)
-            self.x +=xs-self.xsOld
-            self.y +=ys-self.ysOld
+            self.x += xs - self.xsOld
+            self.y += ys - self.ysOld
             self.xsOld = xs
             self.ysOld = ys
             return True
@@ -535,12 +535,12 @@ class GuiOpenGL(object):
         
     def add_atoms(self):
         prop = self.prop
-        Mendeley = TPeriodTable()
+        mendeley = TPeriodTable()
         gl.glNewList(self.object, gl.GL_COMPILE)
 
         min_val = 0
         max_val = 0
-        mean_val= 0
+        mean_val = 0
 
         if (len(prop) > 0) and (prop != "charge"):
             min_val = self.MainModel.atoms[0].properties[prop]
@@ -557,7 +557,7 @@ class GuiOpenGL(object):
             gl.glPushMatrix()
             gl.glTranslatef(at.x, at.y, at.z)
             self.QuadObjS.append(glu.gluNewQuadric())
-            rad = Mendeley.Atoms[at.charge].radius/Mendeley.Atoms[6].radius
+            rad = mendeley.Atoms[at.charge].radius/mendeley.Atoms[6].radius
 
             if at.isSelected() == False:
                 if (len(prop)>0) and (prop != "charge"):

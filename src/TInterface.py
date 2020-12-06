@@ -89,14 +89,18 @@ class Importer(object):
                     modelsopt = TAtomicModel.atoms_from_output_optim(filename)
                     if len(modelsopt) == 1:
                         if prop:
-                            charge_mulliken = TSIESTA.get_charges_mulliken_for_atoms(filename)
-                            modelsopt[0].add_atoms_property("charge Mulliken", charge_mulliken)
-                            charge_voronoi = TSIESTA.get_charges_voronoi_for_atoms(filename)
-                            if len(charge_voronoi[0]) > 0:
-                                modelsopt[0].add_atoms_property("charge Voronoi", charge_voronoi)
-                            charge_hirshfeld = TSIESTA.get_charges_hirshfeld_for_atoms(filename)
-                            if len(charge_hirshfeld[0]) > 0:
-                                modelsopt[0].add_atoms_property("charge Hirshfeld", charge_hirshfeld)
+                            try:
+                                charge_mulliken = TSIESTA.get_charges_mulliken_for_atoms(filename)
+                                if len(charge_mulliken[0]) > 0:
+                                    modelsopt[0].add_atoms_property("charge Mulliken", charge_mulliken)
+                                charge_voronoi = TSIESTA.get_charges_voronoi_for_atoms(filename)
+                                if len(charge_voronoi[0]) > 0:
+                                    modelsopt[0].add_atoms_property("charge Voronoi", charge_voronoi)
+                                charge_hirshfeld = TSIESTA.get_charges_hirshfeld_for_atoms(filename)
+                                if len(charge_hirshfeld[0]) > 0:
+                                    modelsopt[0].add_atoms_property("charge Hirshfeld", charge_hirshfeld)
+                            except Exception:
+                                print("Properties failed")
                         models.append(modelsopt[0])
                 else:
                     models = TAtomicModel.atoms_from_output_md(filename)

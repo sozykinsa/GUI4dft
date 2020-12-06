@@ -12,7 +12,7 @@ import numpy as np
 from numpy.linalg import inv
 from numpy.linalg import norm
 from numpy import polyfit
-from scipy.optimize import curve_fit
+#from scipy.optimize import curve_fit
 from scipy.optimize import leastsq
 from scipy.spatial import ConvexHull
 from scipy.spatial import Voronoi
@@ -81,6 +81,7 @@ class Helpers:
     @staticmethod
     def NextLat(latEn, eps):
         """ This example shows how to """
+        nextLat = 0
         if len(latEn) == 1:
             nextLat = float(latEn[0][0]) + 0.5
         if len(latEn) == 2:
@@ -91,7 +92,7 @@ class Helpers:
         if len(latEn) > 2:
             latEn.sort(key=lambda x: x[0])
             imin = Helpers.mini(latEn)
-            tmList = []
+            #tmList = []
             start = imin - 1
             if imin == 0:
                 start = 0
@@ -423,22 +424,21 @@ class TPeriodTable:
                 row.append(1)
             self.Bonds.append(row)
 
-        self.Bonds[1][int(6)] = 1.0
-        self.Bonds[1][int(8)] = 1.0
-        self.Bonds[6][int(6)] = 1.42
-        self.Bonds[6][int(8)] = 1.42
-        self.Bonds[16][int(16)] = 1.9
-        self.Bonds[46][int(46)] = 2.5
-        self.Bonds[78][int(78)] = 2.5
-        self.Bonds[79][int(79)] = 2.5
-
+        self.Bonds[1][6] = 1.0
+        self.Bonds[1][8] = 1.0
+        self.Bonds[6][6] = 1.42
+        self.Bonds[6][8] = 1.42
+        self.Bonds[16][16] = 1.9
+        self.Bonds[46][46] = 2.5
+        self.Bonds[78][78] = 2.5
+        self.Bonds[79][79] = 2.5
 
         for i in range(0, self.table_size):
             for j in range(i+1, self.table_size):
                 self.Bonds[j][i] = self.Bonds[i][j]
 
     def get_rad(self, charge):
-        if int(charge)< self.table_size:
+        if int(charge) < self.table_size:
             return self.Atoms[int(charge)].radius
         else:
             return self.default_radius
@@ -446,7 +446,7 @@ class TPeriodTable:
     def get_let(self, charge):
         if int(charge) < self.table_size:
             return self.Atoms[int(charge)].let
-        if int(charge)>=200:
+        if int(charge) >= 200:
             return "Direct"
 
     def get_color(self, charge):
@@ -543,10 +543,6 @@ class TAtomicModel(object):
                 else:
                     NumberOfAtoms = 0
         return molecules
-
-
-
-
 
     @staticmethod
     def atoms_from_fdf(filename):
@@ -795,9 +791,7 @@ class TAtomicModel(object):
     def atoms_from_output_optim(filename):
         """Return the relaxed AtList from output file"""
         NumberOfAtoms = TSIESTA.number_of_atoms(filename)
-        NumberOfSpecies = TSIESTA.number_of_species(filename)
         Species = TSIESTA.get_species(filename)
-
         AtList = []
         f1 = False
         f2 = False
@@ -812,13 +806,13 @@ class TAtomicModel(object):
                 f2 = True
                 n_vec = 0
             else:
-                if (n_vec == 0) and (f2 == True):
+                if (n_vec == 0) and f2:
                     lat_vect_1 = line.split()
                     lat_vect_1 = Helpers.list_str_to_float(lat_vect_1)
-                if (n_vec == 1) and (f2 == True):
+                if (n_vec == 1) and f2:
                     lat_vect_2 = line.split()
                     lat_vect_2 = Helpers.list_str_to_float(lat_vect_2)
-                if (n_vec == 2) and (f2 == True):
+                if (n_vec == 2) and f2:
                     lat_vect_3 = line.split()
                     lat_vect_3 = Helpers.list_str_to_float(lat_vect_3)
                     f2 = False
@@ -828,26 +822,29 @@ class TAtomicModel(object):
             if (line.find("outcoor: Relaxed atomic coordinates (Ang)") > -1):
                 f1 = True
             else:
-                if (len(AtList) < NumberOfAtoms) and (f1 == True):
+                if (len(AtList) < NumberOfAtoms) and f1:
                     line1 = line.split()
                     line2 = [float(line1[0]), float(line1[1]), float(line1[2]), line1[5], Species[int(line1[3]) - 1][1]]
                     AtList.append(line2)
                 if len(AtList) == NumberOfAtoms:
-                    f1 = False
                     AllAtoms = TAtomicModel(AtList)
                     AllAtoms.set_lat_vectors(lat_vect_1, lat_vect_2, lat_vect_3)
                     return [AllAtoms]
-            if (line.find("outcoor: Relaxed atomic coordinates (fractional)") > -1):
+            if line.find("outcoor: Relaxed atomic coordinates (fractional)") > -1:
                 f3 = True
             else:
-                if (len(AtList) < NumberOfAtoms) and (f3 == True):
+                if (len(AtList) < NumberOfAtoms) and f3:
                     line1 = line.split()
                     line2 = [float(line1[0]), float(line1[1]), float(line1[2]), line1[5], Species[int(line1[3]) - 1][1]]
                     AtList.append(line2)
                 if len(AtList) == NumberOfAtoms:
-                    f3 = False
+                    print(str(len(AtList)) + "   " + str(NumberOfAtoms))
+                    print(AtList)
                     AllAtoms = TAtomicModel(AtList)
                     AllAtoms.set_lat_vectors(lat_vect_1, lat_vect_2, lat_vect_3)
+                    print(lat_vect_1)
+                    print(lat_vect_2)
+                    print(lat_vect_3)
                     AllAtoms.convert_from_direct_to_cart()
                     return [AllAtoms]
         return []
@@ -1101,26 +1098,18 @@ class TAtomicModel(object):
                 n+=m
         else:
             for j in range(0, len(self.atoms)):
-                if (int(self.atoms[j].charge) == int(charge)):
-                    cx+=self.atoms[j].x
-                    cy+=self.atoms[j].y
-                    cz+=self.atoms[j].z
-                    n+=1
+                if int(self.atoms[j].charge) == int(charge):
+                    cx += self.atoms[j].x
+                    cy += self.atoms[j].y
+                    cz += self.atoms[j].z
+                    n += 1
         
-        return [cx/n,cy/n,cz/n]
-
-    def reformat(self,charge):
-        """The half of molecule moves"""        
-        for j in range(0, len(self.atoms)):
-            if (int(self.atoms[j].charge) == int(charge)):
-                if (self.atoms[j].z<0):
-                    self.atoms[j].z+=self.boxZ
-        return self
+        return [cx/n, cy/n, cz/n]
 
 
     def rotateX(self, alpha):
         """The method RotateAtList rotate the AtList on alpha Angle"""
-        alpha*= math.pi / 180
+        alpha *= math.pi / 180
         # ox
         for i in range(0, len(self.atoms)):
             xnn = float(self.atoms[i].y) * math.cos(alpha) - float(self.atoms[i].z) * math.sin(alpha)
@@ -1130,7 +1119,7 @@ class TAtomicModel(object):
 
     def rotateY(self, alpha):
         """The method RotateAtList rotate the AtList on alpha Angle"""
-        alpha*= math.pi / 180
+        alpha *= math.pi / 180
         # oy
         for i in range(0, len(self.atoms)):
             xnn = float(self.atoms[i].x) * math.cos(alpha) + float(self.atoms[i].z) * math.sin(alpha)
@@ -1140,7 +1129,7 @@ class TAtomicModel(object):
 
     def rotateZ(self, alpha):
         """The method RotateAtList rotate the AtList on alpha Angle"""
-        alpha*= math.pi / 180
+        alpha *= math.pi / 180
         # oz
         for i in range(0, len(self.atoms)):
             xnn = float(self.atoms[i].x) * math.cos(alpha) - float(self.atoms[i].y) * math.sin(alpha)
@@ -1164,7 +1153,7 @@ class TAtomicModel(object):
         """ IndexesOfAtomsWithCharge """
         Indexes = []
         for j in range(0, len(self.atoms)):
-            if (int(self.atoms[j].charge) == int(charge)):
+            if int(self.atoms[j].charge) == int(charge):
                 Indexes.append(j)
         return Indexes
 
@@ -1175,7 +1164,7 @@ class TAtomicModel(object):
         """
         newatoms = [atom]
         for at in ats:
-            if at!=atom:
+            if at != atom:
                 if self.atom_atom_distance(at, atom) < R:
                     newatoms.append(at)
         return newatoms
@@ -1231,7 +1220,7 @@ class TAtomicModel(object):
         miny = self.atoms[0].y
 
         for atom in self.atoms:
-            if (float(atom.y) < float(miny)):
+            if float(atom.y) < float(miny):
                 miny = atom.y
         return float(miny)
 
@@ -1240,7 +1229,7 @@ class TAtomicModel(object):
         maxy = self.atoms[0].y
 
         for atom in self.atoms:
-            if (float(atom.y) > float(maxy)):
+            if float(atom.y) > float(maxy):
                 maxy = atom.y
         return float(maxy)
 
@@ -1253,7 +1242,7 @@ class TAtomicModel(object):
         minz = self.atoms[0].z
         
         for atom in self.atoms:
-            if (float(atom.z)<float(minz)):
+            if float(atom.z)<float(minz):
                 minz = atom.z
         return float(minz)        
 
@@ -1262,7 +1251,7 @@ class TAtomicModel(object):
         maxz = self.atoms[0].z
         
         for atom in self.atoms:
-            if (float(atom.z)>float(maxz)):
+            if float(atom.z)>float(maxz):
                 maxz = atom.z
         return float(maxz)
         
@@ -1271,7 +1260,6 @@ class TAtomicModel(object):
         return self.maxZ() - self.minZ()
 
     def sort_atoms_by_type(self):
-        #atom = TAtom()
         for i in range(0, self.nAtoms()):
             for j in range(0, self.nAtoms()-i-1):
                 if self.atoms[j].charge > self.atoms[j+1].charge:
@@ -1312,7 +1300,6 @@ class TAtomicModel(object):
         return ro
 
     def move_atoms_to_cell(self):
-        """ ... """
         a = np.array([self.LatVect1, self.LatVect2, self.LatVect3])
         ainv = inv(a)
 
@@ -1374,7 +1361,8 @@ class TAtomicModel(object):
                 rTab = Mendeley.Bonds[self.atoms[i].charge][self.atoms[j].charge]
                 if (r>1e-4) and (r < 1.2 * rTab):
                     self.bonds.append([i, j])
-    
+
+
     def Delta(self, newMolecula):
         """ maximum distance from atoms in self to the atoms in the newMolecula"""
         DeltaMolecula1 = 0
@@ -1658,7 +1646,7 @@ class TAtomicModel(object):
         if coord_style == "Zmatrix Cartesian":
             for i in range(0, len(self.atoms)):
                 str1 = ' '
-                for j in range(0,len(types)):
+                for j in range(0, len(types)):
                     if types[j][0] == self.atoms[i].charge:
                         str1 = ' ' + str(j+1)
                 str2 = '    ' + self.xyz_string(i)
@@ -1901,7 +1889,7 @@ class TSIESTA:
         """ returns data from LatticeParameters block of file """
         LatticeParameters = TSIESTA.get_block_from_siesta_fdf(filename, 'LatticeParameters')
         LatConstant = float(TSIESTA.lattice_constant(filename))
-        if len(LatticeParameters)>0:
+        if len(LatticeParameters) > 0:
             data = Helpers.spacedel(LatticeParameters[0]).split()
             a = LatConstant*float(data[0])
             b = LatConstant*float(data[1])
@@ -1918,11 +1906,16 @@ class TSIESTA:
             lat_vect_2 = [b * math.cos(gamma), b * math.sin(gamma), 0]
             lat_vect_3 = [c * math.cos(beta), c * math.cos(alpha) * math.sin(gamma), h]
 
-            if lat_vect_2[0] < 1e-8: lat_vect_2[0] = 0
-            if lat_vect_2[1] < 1e-8: lat_vect_2[1] = 0
-            if lat_vect_3[0] < 1e-8: lat_vect_3[0] = 0
-            if lat_vect_3[1] < 1e-8: lat_vect_3[1] = 0
-            if lat_vect_3[2] < 1e-8: lat_vect_3[2] = 0
+            if math.fabs(lat_vect_2[0]) < 1e-8:
+                lat_vect_2[0] = 0
+            if math.fabs(lat_vect_2[1]) < 1e-8:
+                lat_vect_2[1] = 0
+            if math.fabs(lat_vect_3[0]) < 1e-8:
+                lat_vect_3[0] = 0
+            if math.fabs(lat_vect_3[1]) < 1e-8:
+                lat_vect_3[1] = 0
+            if math.fabs(lat_vect_3[2]) < 1e-8:
+                lat_vect_3[2] = 0
 
             return lat_vect_1, lat_vect_2, lat_vect_3
         else:
@@ -2065,7 +2058,7 @@ class TSIESTA:
                         atom_sort = mendeley.get_charge_by_letter(data[2])
                         charges[i] = [atom_sort, charge]
                 str1 = MdSiestaFile.readline()
-        MdSiestaFile.close()
+            MdSiestaFile.close()
         return charges
 
     @staticmethod
@@ -2089,19 +2082,19 @@ class TSIESTA:
             return np.array(spinUp), np.array(spinDown), np.array(energy)
 
     @staticmethod
-    def DOSsiestaV(filename,Ef = 0):
+    def DOSsiestaV(filename, Ef = 0):
         """DOS Vertical. Spin up only"""
         if os.path.exists(filename):
             DOSFile = open(filename)
             strDOS = DOSFile.readline()            
             DOS = []
-            while strDOS!='':
+            while strDOS != '':
                 line = strDOS.split(' ')
                 line1 = []
                 for i in range(0, len(line)):
                     if line[i] != '':
                         line1.append(line[i])                
-                DOS.append([float(line1[1]),round(float(line1[0])-Ef,5)])
+                DOS.append([float(line1[1]), round(float(line1[0]) - Ef ,5)])
                 strDOS = DOSFile.readline()
             return DOS
 
@@ -2125,13 +2118,12 @@ class TSIESTA:
             MdSiestaFile = open(filename)
             str1 = MdSiestaFile.readline()
             Energy = 0
-            while str1!='':
+            while str1 != '':
                 if str1 != '' and (str1.find("siesta: iscf   Eharris(eV)      E_KS(eV)   FreeEng(eV)   dDmax  Ef(eV)")>=0) or (str1.find("scf: iscf   Eharris(eV)      E_KS(eV)   FreeEng(eV)    dDmax  Ef(eV)")>=0) or (str1.find("iscf     Eharris(eV)        E_KS(eV)     FreeEng(eV)     dDmax    Ef(eV) dHmax(eV)")>=0):
                     str1 = MdSiestaFile.readline()
-                    while (str1.find('siesta')>=0) or (str1.find('timer')>=0) or (str1.find('elaps')>=0) or (str1.find('scf:')>=0) or (str1.find('spin moment:')>=0):
+                    while (str1.find('siesta') >= 0) or (str1.find('timer') >= 0) or (str1.find('elaps') >= 0) or (str1.find('scf:') >= 0) or (str1.find('spin moment:')>=0):
                         str1 = Helpers.spacedel(str1)
-                        #print(str1)
-                        if (str1.find('siesta')>=0) or (str1.find('scf:')>=0):
+                        if (str1.find('siesta') >= 0) or (str1.find('scf:') >= 0):
                             Energy = float(str1.split(' ')[6])
                         str1 = MdSiestaFile.readline()
                 str1 = MdSiestaFile.readline()
@@ -2153,7 +2145,7 @@ class TSIESTA:
     @staticmethod
     def number_of_species(filename):
         """ Returns the NumberOfSpecies from SIESTA output file """
-        return Helpers.fromFileProperty(filename,'NumberOfSpecies')
+        return Helpers.fromFileProperty(filename, 'NumberOfSpecies')
 
     @staticmethod
     def pseudo_charge_of_species(filename):
@@ -2216,10 +2208,10 @@ class TSIESTA:
                         row[1] = int(row[1])
                         Species.append(row)
                         str1 = MdSiestaFile.readline()
-                    Species.sort(key = lambda line: line[0])
+                    Species.sort(key=lambda line: line[0])
                     return Species
                 str1 = MdSiestaFile.readline()
-        Species.sort(key = lambda line: line[0])
+        Species.sort(key=lambda line: line[0])
         return Species
     
     @staticmethod
@@ -2250,9 +2242,9 @@ class TSIESTA:
     @staticmethod
     def Replaceatominsiestafdf(filename,atom,string):
         """ not documented """
-        NumberOfAtoms = Helpers.fromFileProperty(filename,'number_of_atoms')
-        NumberOfSpecies = Helpers.fromFileProperty(filename,'number_of_species')
-        lines = []
+        NumberOfAtoms = Helpers.fromFileProperty(filename, 'number_of_atoms')
+        NumberOfSpecies = Helpers.fromFileProperty(filename, 'number_of_species')
+        #lines = []
         f = open(filename)
         lines = f.readlines()    
     
@@ -2260,17 +2252,17 @@ class TSIESTA:
         newlines = []
         
         while i < len(lines):    
-            if (lines[i].find("%block ChemicalSpeciesLabel")>=0):
+            if (lines[i].find("%block ChemicalSpeciesLabel") >= 0):
                 for j in range(0,NumberOfSpecies):
                     newlines.append(lines[i])
                     i += 1
     
-            if (lines[i].find("%block Zmatrix")>=0):
+            if (lines[i].find("%block Zmatrix") >= 0):
                 newlines.append(lines[i])
                 i += 1
-                if (lines[i].find("cartesian")>=0):
+                if (lines[i].find("cartesian") >= 0):
                     for j in range(0, NumberOfAtoms):
-                        if (j==atom):
+                        if (j == atom):
                             newlines.append(string+'\n')
                         else:
                             newlines.append(lines[i])
@@ -2289,12 +2281,12 @@ class TSIESTA:
         blockname = blockname.lower()
         for line in f:
             line1 = line.lower()
-            if (line1.find(blockname)<0) and (flag == 1):
+            if (line1.find(blockname) < 0) and (flag == 1):
                 lines.append(line)
-            if (line1.find(blockname)>=0) and (flag == 1):
+            if (line1.find(blockname) >= 0) and (flag == 1):
                 f.close()
                 return lines
-            if (line1.find(blockname)>=0) and (flag == 0):
+            if (line1.find(blockname) >= 0) and (flag == 0):
                 flag = 1
         return []
 
@@ -2348,7 +2340,7 @@ class TCalculators:
                 if myDelta > delta:
                     Models.append(Molecula)
                     print("Iter " + str(i) + "/" + str(nPrompts) + "| we found "+str(len(Models))+" structures")
-                if len(Models)==0:
+                if len(Models) == 0:
                     Models.append(Molecula)
         return Models
 
@@ -2362,9 +2354,6 @@ class TCalculators:
         xdata, ydata = Helpers.ListN2Split(DATA)
         # y = ax^2 + bx + c
         a, b, c = polyfit(xdata, ydata, 2)
-
-        #beta_opt, beta_cov = curve_fit(TCalculators.fParabola, xdata, ydata)
-        #print(str(a)+"  "+str(b)+"  "+str(c))
 
         xmin = xdata.min()
         xmax = xdata.max()
@@ -2389,14 +2378,14 @@ class TCalculators:
         BP = parameters[2]
         V0 = parameters[3]
         alpha = pow(V0/vol, 2.0/3.0)
-        return E0 + 9*V0*B0/16*(  ((alpha-1)**3)*BP + (alpha-1)**2*(6-4*alpha)   )
+        return E0 + 9*V0*B0/16*(((alpha-1)**3)*BP + (alpha-1)**2*(6-4*alpha))
 
     def objectiveMurnaghan(pars, y, x):
-        err = y - TCalculators.fMurnaghan(pars,x)
+        err = y - TCalculators.fMurnaghan(pars, x)
         return err
 
     def objectiveBirchMurnaghan(pars, y, x):
-        err = y - TCalculators.fBirchMurnaghan(pars,x)
+        err = y - TCalculators.fBirchMurnaghan(pars, x)
         return err
 
     @staticmethod
@@ -2431,7 +2420,7 @@ class TCalculators:
         b0 = 2*a*v0
         bP = 4
 
-        x0 = [e0, b0, bP, v0]
+        x0 = np.array([e0, b0, bP, v0])
         murnpars, ier = leastsq(TCalculators.objectiveBirchMurnaghan, x0, args=(e, v))
         return murnpars, vfit.tolist(), TCalculators.fMurnaghan(murnpars, vfit).tolist()
 
@@ -2441,12 +2430,12 @@ class TCalculators:
         newMolecula.move_atoms_to_cell()
         atoms_to_analise = newMolecula.indexes_of_atoms_in_ball(range(0, len(newMolecula.atoms)), selectedAtom, maxDist)
         points = np.empty((len(atoms_to_analise), 3))
-        k=0
+        k = 0
         for i in atoms_to_analise:
             points[k][0] = newMolecula[i].x
             points[k][1] = newMolecula[i].y
             points[k][2] = newMolecula[i].z
-            k+=1
+            k += 1
 
         vor = Voronoi(points)
 
