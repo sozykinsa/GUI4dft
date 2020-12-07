@@ -302,6 +302,8 @@ class mainWindow(QMainWindow):
         self.ui.FormActionsPosTableBonds.horizontalHeader().setStyleSheet(self.table_header_stylesheet)
         self.ui.FormActionsPosTableBonds.verticalHeader().setStyleSheet(self.table_header_stylesheet)
 
+        self.ui.toolBar.setIconSize(QSize(500, 500))
+
         if is_with_figure:
             openAction = QAction(QIcon('./images/Open.png'), 'Open', self)
         else:
@@ -391,9 +393,17 @@ class mainWindow(QMainWindow):
 
     def add_cell_param(self):
         """ add cell params"""
-        fname = QFileDialog.getOpenFileName(self, 'Open file', self.WorkDir)[0]
-        if Importer.check_format(fname) == "SIESTAout":
-            self.fill_cell_info(fname)
+        try:
+            fname = QFileDialog.getOpenFileName(self, 'Open file', self.WorkDir)[0]
+            if Importer.check_format(fname) == "SIESTAout":
+                self.fill_cell_info(fname)
+        except Exception:
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Critical)
+            msg.setText("Unknown error")
+            msg.setInformativeText('An unknown error has occurred. Try again.')
+            msg.setWindowTitle("Unknown error")
+            msg.exec_()
 
     def add_cell_param_row(self):
         i = self.ui.FormActionsPostTableCellParam.rowCount() + 1
@@ -401,34 +411,50 @@ class mainWindow(QMainWindow):
 
     def add_data_cell_param(self):
         """ add cell params from file"""
-        fname = QFileDialog.getOpenFileName(self, 'Open file', self.WorkDir)[0]
-        self.WorkDir = os.path.dirname(fname)
+        try:
+            fname = QFileDialog.getOpenFileName(self, 'Open file', self.WorkDir)[0]
+            self.WorkDir = os.path.dirname(fname)
 
-        if os.path.exists(fname):
-            f = open(fname)
-            rows = f.readlines()
+            if os.path.exists(fname):
+                f = open(fname)
+                rows = f.readlines()
 
-            for i in range(2, len(rows)):
-                row = rows[i].split()
-                if len(row) > 1:
-                    Energy = row[1]
-                    Volume = row[0]
-                    a = 0
-                    if len(row) > 2:
-                        a = row[2]
-                    b = 0
-                    if len(row) > 3:
-                        b = row[3]
-                    c = 0
-                    if len(row) > 4:
-                        c = row[4]
-                    self.fill_cell_info_row(Energy, Volume, a, b, c)
-            f.close()
+                for i in range(2, len(rows)):
+                    row = rows[i].split()
+                    if len(row) > 1:
+                        Energy = row[1]
+                        Volume = row[0]
+                        a = 0
+                        if len(row) > 2:
+                            a = row[2]
+                        b = 0
+                        if len(row) > 3:
+                            b = row[3]
+                        c = 0
+                        if len(row) > 4:
+                            c = row[4]
+                        self.fill_cell_info_row(Energy, Volume, a, b, c)
+                f.close()
+        except Exception:
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Critical)
+            msg.setText("Unknown error")
+            msg.setInformativeText('An unknown error has occurred. Try again.')
+            msg.setWindowTitle("Unknown error")
+            msg.exec_()
 
     def add_dos_file(self):
-        fname = QFileDialog.getOpenFileName(self, 'Open file', self.WorkDir)[0]
-        self.WorkDir = os.path.dirname(fname)
-        self.check_dos(fname)
+        try:
+            fname = QFileDialog.getOpenFileName(self, 'Open file', self.WorkDir)[0]
+            self.WorkDir = os.path.dirname(fname)
+            self.check_dos(fname)
+        except Exception:
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Critical)
+            msg.setText("Unknown error")
+            msg.setInformativeText('An unknown error has occurred. Try again.')
+            msg.setWindowTitle("Unknown error")
+            msg.exec_()
 
     def add_isosurface_color_to_table(self):
         cmap = plt.get_cmap(self.ui.FormSettingsColorsScale.currentText())
@@ -701,12 +727,28 @@ class mainWindow(QMainWindow):
         self.model_to_screen(-1)
 
     def export_volumeric_data_to_xsf(self):
-        fname = QFileDialog.getSaveFileName(self, 'Save File', self.WorkDir, "XSF files (*.XSF)")[0]
-        self.export_volumeric_data_to_file(fname)
+        try:
+            fname = QFileDialog.getSaveFileName(self, 'Save File', self.WorkDir, "XSF files (*.XSF)")[0]
+            self.export_volumeric_data_to_file(fname)
+        except Exception:
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Critical)
+            msg.setText("Unknown error")
+            msg.setInformativeText('An unknown error has occurred. Try again.')
+            msg.setWindowTitle("Unknown error")
+            msg.exec_()
 
     def export_volumeric_data_to_cube(self):
-        fname = QFileDialog.getSaveFileName(self, 'Save File', self.WorkDir, "cube files (*.cube)")[0]
-        self.export_volumeric_data_to_file(fname)
+        try:
+            fname = QFileDialog.getSaveFileName(self, 'Save File', self.WorkDir, "cube files (*.cube)")[0]
+            self.export_volumeric_data_to_file(fname)
+        except Exception:
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Critical)
+            msg.setText("Unknown error")
+            msg.setInformativeText('An unknown error has occurred. Try again.')
+            msg.setWindowTitle("Unknown error")
+            msg.exec_()
 
     def export_volumeric_data_to_file(self, fname):
         self.MainForm.volumeric_data_to_file(fname, self.VolumericData)
@@ -1060,11 +1102,19 @@ class mainWindow(QMainWindow):
 
     def menu_export(self):
         if self.MainForm.MainModel.nAtoms() > 0:
-            fname = QFileDialog.getSaveFileName(self, 'Save File', self.WorkDir,
+            try:
+                fname = QFileDialog.getSaveFileName(self, 'Save File', self.WorkDir,
                                                 "All files (*);;FDF files (*.fdf);;XYZ files (*.xyz)")[0]
-            self.MainForm.atomic_structure_to_file(fname)
-            self.WorkDir = os.path.dirname(fname)
-            self.save_active_folder()
+                self.MainForm.atomic_structure_to_file(fname)
+                self.WorkDir = os.path.dirname(fname)
+                self.save_active_folder()
+            except Exception:
+                msg = QMessageBox()
+                msg.setIcon(QMessageBox.Critical)
+                msg.setText("Unknown error")
+                msg.setInformativeText('An unknown error has occurred. Try again.')
+                msg.setWindowTitle("Unknown error")
+                msg.exec_()
 
     def menu_open(self):
         if len(self.models) > 0:
@@ -1819,44 +1869,60 @@ class mainWindow(QMainWindow):
         self.ui.FormActionsPostLabelCellParamFig.setPixmap(QPixmap.fromImage(image_profile))
 
     def save_data_from_figure2d(self):
-        data = []
-        lines = self.ui.MplWidget.canvas.axes.lines
+        try:
+            data = []
+            lines = self.ui.MplWidget.canvas.axes.lines
 
-        for line in lines:
-            data.append(line.get_xydata())
+            for line in lines:
+                data.append(line.get_xydata())
 
-        if len(data) > 0:
-            name = QFileDialog.getSaveFileName(self, 'Save File')[0]
-            file = open(name, 'w')
-            for line in data:
-                file.write("Data: \n")
-                for row in line:
-                    s = ""
-                    for number in row:
-                        s += str(number) + " "
-                    file.write(s + "\n")
-            file.close()
+            if len(data) > 0:
+                name = QFileDialog.getSaveFileName(self, 'Save File')[0]
+                file = open(name, 'w')
+                for line in data:
+                    file.write("Data: \n")
+                    for row in line:
+                        s = ""
+                        for number in row:
+                            s += str(number) + " "
+                        file.write(s + "\n")
+                file.close()
+        except Exception:
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Critical)
+            msg.setText("Unknown error")
+            msg.setInformativeText('An unknown error has occurred. Try again.')
+            msg.setWindowTitle("Unknown error")
+            msg.exec_()
 
     def save_image_to_file(self):
-        name = QFileDialog.getSaveFileName(self, 'Save File', self.WorkDir,
+        try:
+            name = QFileDialog.getSaveFileName(self, 'Save File', self.WorkDir,
                                            "PNG files (*.png);;JPG files (*.jpg);;BMP files (*.bmp)")
-        fname = name[0]
-        ext = ""
-        if name[1] == "PNG files (*.png)":
-            ext = "png"
-        if name[1] == "JPG files (*.jpg)":
-            ext = "jpg"
-        if name[1] == "BMP files (*.bmp)":
-            ext = "bmp"
-        if not fname.endswith(ext):
-            fname += "." + ext
+            fname = name[0]
+            ext = ""
+            if name[1] == "PNG files (*.png)":
+                ext = "png"
+            if name[1] == "JPG files (*.jpg)":
+                ext = "jpg"
+            if name[1] == "BMP files (*.bmp)":
+                ext = "bmp"
+            if not fname.endswith(ext):
+                fname += "." + ext
 
-        new_window = Image3Dexporter(5 * self.ui.openGLWidget.width(), 5 * self.ui.openGLWidget.height(), 5)
-        new_window.MainForm.copy_state(self.MainForm)
+            new_window = Image3Dexporter(5 * self.ui.openGLWidget.width(), 5 * self.ui.openGLWidget.height(), 5)
+            new_window.MainForm.copy_state(self.MainForm)
 
-        new_window.MainForm.image3D_to_file(fname)
-        self.WorkDir = os.path.dirname(fname)
-        self.save_active_folder()
+            new_window.MainForm.image3D_to_file(fname)
+            self.WorkDir = os.path.dirname(fname)
+            self.save_active_folder()
+        except Exception:
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Critical)
+            msg.setText("Unknown error")
+            msg.setInformativeText('An unknown error has occurred. Try again.')
+            msg.setWindowTitle("Unknown error")
+            msg.exec_()
 
     def rotate_model_xp(self):
         self.MainForm.rotX += self.rotation_step
@@ -1982,12 +2048,19 @@ class mainWindow(QMainWindow):
         self.ui.FormActionsPreTextFDF.setText(text)
 
     def fdf_data_from_form_to_file(self):
-        text = self.ui.FormActionsPreTextFDF.toPlainText()
-
-        name = QFileDialog.getSaveFileName(self, 'Save File')[0]
-        if len(name) > 0:
-            with open(name, 'w') as f:
-                f.write(text)
+        try:
+            text = self.ui.FormActionsPreTextFDF.toPlainText()
+            name = QFileDialog.getSaveFileName(self, 'Save File')[0]
+            if len(name) > 0:
+                with open(name, 'w') as f:
+                    f.write(text)
+        except Exception:
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Critical)
+            msg.setText("Unknown error")
+            msg.setInformativeText('An unknown error has occurred. Try again.')
+            msg.setWindowTitle("Unknown error")
+            msg.exec_()
 
     def fill_space(self):
         mendeley = TPeriodTable()
@@ -2002,9 +2075,17 @@ class mainWindow(QMainWindow):
         models = Calculator.FillTube(radTube, length, nAtoms, 0.01 * radAtom, delta, n_prompts, let, charge)
 
         filename = "."
-        if self.ui.FormActionsPreSaveToFileFillSpace.isChecked():
-            filename = QFileDialog.getSaveFileName(self, 'Save File')[0]
-            filename = filename.split(".fdf")[0]
+        try:
+            if self.ui.FormActionsPreSaveToFileFillSpace.isChecked():
+                filename = QFileDialog.getSaveFileName(self, 'Save File')[0]
+                filename = filename.split(".fdf")[0]
+        except Exception:
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Critical)
+            msg.setText("Unknown error")
+            msg.setInformativeText('An unknown error has occurred. Try again.')
+            msg.setWindowTitle("Unknown error")
+            msg.exec_()
 
         myiter = 0
         for model in models:
@@ -2042,25 +2123,33 @@ class mainWindow(QMainWindow):
             self.ui.FormActionsPostButSurfaceLoadData2.setEnabled(False)
 
     def parse_volumeric_data2(self):
-        fname = QFileDialog.getOpenFileName(self, 'Open file', self.WorkDir)
-        if len(fname) > 0:
-            fname = fname[0]
-            if fname.endswith(".XSF"):
-                self.VolumericData2 = TXSF()
-            if fname.endswith(".cube"):
-                self.VolumericData2 = TGaussianCube()
-            if self.VolumericData2.parse(fname):
-                self.fill_volumeric_data(self.VolumericData2, self.ui.FormActionsPostTreeSurface2)
+        try:
+            fname = QFileDialog.getOpenFileName(self, 'Open file', self.WorkDir)
+            if len(fname) > 0:
+                fname = fname[0]
+                if fname.endswith(".XSF"):
+                    self.VolumericData2 = TXSF()
+                if fname.endswith(".cube"):
+                    self.VolumericData2 = TGaussianCube()
+                if self.VolumericData2.parse(fname):
+                    self.fill_volumeric_data(self.VolumericData2, self.ui.FormActionsPostTreeSurface2)
 
-            self.ui.FormActionsPostButSurfaceLoadData2.setEnabled(True)
-            self.ui.FormActionsPosEdit3DData2.setText(fname)
-            self.clear_form_isosurface_data2_N()
-            self.ui.CalculateTheVolumericDataDifference.setEnabled(False)
-            self.ui.CalculateTheVolumericDataSum.setEnabled(False)
-            self.ui.VolumrricDataGridExport.setEnabled(False)
-            self.ui.ExportTheVolumericDataXSF.setEnabled(False)
-            self.ui.ExportTheVolumericDataCube.setEnabled(False)
-            self.ui.VolumrricDataGrid2.setTitle("Grid")
+                self.ui.FormActionsPostButSurfaceLoadData2.setEnabled(True)
+                self.ui.FormActionsPosEdit3DData2.setText(fname)
+                self.clear_form_isosurface_data2_N()
+                self.ui.CalculateTheVolumericDataDifference.setEnabled(False)
+                self.ui.CalculateTheVolumericDataSum.setEnabled(False)
+                self.ui.VolumrricDataGridExport.setEnabled(False)
+                self.ui.ExportTheVolumericDataXSF.setEnabled(False)
+                self.ui.ExportTheVolumericDataCube.setEnabled(False)
+                self.ui.VolumrricDataGrid2.setTitle("Grid")
+        except Exception:
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Critical)
+            msg.setText("Unknown error")
+            msg.setInformativeText('An unknown error has occurred. Try again.')
+            msg.setWindowTitle("Unknown error")
+            msg.exec_()
 
     def set_xsf_z_position(self):
         value = int(self.ui.FormActionsPostSliderContourXY.value())
