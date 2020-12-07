@@ -1,54 +1,54 @@
 # -*- coding: utf-8 -*-
-import sys
-import os
 import math
+import os
+import sys
+import xml.etree.ElementTree as ET
 from copy import deepcopy
 from operator import itemgetter
-from PyQt5.QtCore import Qt, QDir, QSize
+
+import matplotlib.pyplot as plt
+import numpy as np
+from AdvancedTools import Helpers
+from AdvancedTools import TAtomicModel
+from AdvancedTools import TCalculators as Calculator
+from AdvancedTools import TCapedSWNT
+from AdvancedTools import TFDFFile
+from AdvancedTools import TGraphene
+from AdvancedTools import TPeriodTable
+from AdvancedTools import TSIESTA
+from AdvancedTools import TSWNT
+from AdvancedTools import TVASP
 from PyQt5.QtCore import QCoreApplication
+from PyQt5.QtCore import QLocale
 from PyQt5.QtCore import QSettings
 from PyQt5.QtCore import QVariant
-from PyQt5.QtCore import QLocale
+from PyQt5.QtCore import Qt, QSize
+from PyQt5.QtGui import QColor
+from PyQt5.QtGui import QIcon
+from PyQt5.QtGui import QImage
 from PyQt5.QtGui import QKeySequence
-from PyQt5.QtWidgets import QShortcut
+from PyQt5.QtGui import QPixmap
+from PyQt5.QtGui import QStandardItem
+from PyQt5.QtGui import QStandardItemModel
 from PyQt5.QtWidgets import QAction
 from PyQt5.QtWidgets import QApplication
 from PyQt5.QtWidgets import QDialog, QFileDialog, QMessageBox, QColorDialog
 from PyQt5.QtWidgets import QDoubleSpinBox
 from PyQt5.QtWidgets import QMainWindow
+from PyQt5.QtWidgets import QShortcut
 from PyQt5.QtWidgets import QTableWidgetItem
 from PyQt5.QtWidgets import QTreeWidgetItem
 from PyQt5.QtWidgets import QTreeWidgetItemIterator
-from PyQt5.QtGui import QIcon
-from PyQt5.QtGui import QStandardItemModel
-from PyQt5.QtGui import QStandardItem
-from PyQt5.QtGui import QImage
-from PyQt5.QtGui import QPixmap
-from PyQt5.QtGui import QColor
-from AdvancedTools import TFDFFile
-from AdvancedTools import TPeriodTable
-from AdvancedTools import TSWNT
-from AdvancedTools import TCapedSWNT
-from AdvancedTools import TGraphene
-from AdvancedTools import TAtomicModel
-from AdvancedTools import TSIESTA
-from AdvancedTools import TVASP
-from AdvancedTools import Helpers
-from AdvancedTools import TCalculators as Calculator
 from TGui import GuiOpenGL
-from matplotlib.backends.backend_qt5agg import (NavigationToolbar2QT as NavigationToolbar)
-import myfigureoptions
-import numpy as np
-import matplotlib.pyplot as plt
-from TInterface import Importer
-from TInterface import TXSF
-from TInterface import TVolumericData
-from TInterface import TGaussianCube
-from TInterface import Image3Dexporter
 from TInterface import AtomsIdentifier
-from form import Ui_MainWindow as Ui_form
+from TInterface import Image3Dexporter
+from TInterface import Importer
+from TInterface import TGaussianCube
+from TInterface import TVolumericData
+from TInterface import TXSF
 from about import Ui_DialogAbout as Ui_about
-import xml.etree.ElementTree as ET
+from form import Ui_MainWindow as Ui_form
+from matplotlib.backends.backend_qt5agg import (NavigationToolbar2QT as NavigationToolbar)
 
 sys.path.append('.')
 
@@ -171,12 +171,11 @@ class mainWindow(QMainWindow):
         self.ui.FormActionsPostButVoronoi.clicked.connect(self.plot_voronoi)
         self.ui.FormActionsPostButOptimizeCellParam.clicked.connect(self.plot_volume_param_energy)
 
-        if is_with_figure:
+        if is_with_figure and os.path.exists('./images/Save2D.png'):
             action = QAction(QIcon('./images/Save2D.png'), 'SaveDataFromFigure', self)
         else:
             action = QAction('SaveDataFromFigure', self)
         action.triggered.connect(self.save_data_from_figure2d)
-        #self.ui.MplWidget.addAction(save2d_image_to_file_action)
         self.ui.MplWidget.addToolBar(NavigationToolbar(self.ui.MplWidget.canvas, self), action)
 
         model = QStandardItemModel()
@@ -312,7 +311,7 @@ class mainWindow(QMainWindow):
         openAction.triggered.connect(self.menu_open)
         self.ui.toolBar.addAction(openAction)
 
-        if is_with_figure:
+        if is_with_figure and os.path.exists('./images/Close.png'):
             openAction = QAction(QIcon('./images/Close.png'), 'Export', self)
         else:
             openAction = QAction('Export', self)
@@ -321,7 +320,7 @@ class mainWindow(QMainWindow):
         self.ui.toolBar.addAction(openAction)
         self.ui.toolBar.addSeparator()
 
-        if is_with_figure:
+        if is_with_figure and os.path.exists('./images/Save3D.png'):
             save_image_to_file_action = QAction(QIcon('./images/Save3D.png'), 'SaveFigure3D', self)
         else:
             save_image_to_file_action = QAction('SaveFigure3D', self)
@@ -329,14 +328,14 @@ class mainWindow(QMainWindow):
         self.ui.toolBar.addAction(save_image_to_file_action)
         self.ui.toolBar.addSeparator()
 
-        if is_with_figure:
+        if is_with_figure and os.path.exists('./images/UndoX.png'):
             openAction = QAction(QIcon('./images/UndoX.png'), 'RotateX-', self)
         else:
             openAction = QAction('RotateX-', self)
         openAction.triggered.connect(self.rotate_model_xm)
         self.ui.toolBar.addAction(openAction)
 
-        if is_with_figure:
+        if is_with_figure and os.path.exists('./images/RedoX.png'):
             openAction = QAction(QIcon('./images/RedoX.png'), 'RotateX+', self)
         else:
             openAction = QAction('RotateX+', self)
@@ -344,14 +343,14 @@ class mainWindow(QMainWindow):
         self.ui.toolBar.addAction(openAction)
         self.ui.toolBar.addSeparator()
 
-        if is_with_figure:
+        if is_with_figure and os.path.exists('./images/UndoY.png'):
             openAction = QAction(QIcon('./images/UndoY.png'), 'RotateY-', self)
         else:
             openAction = QAction('RotateY-', self)
         openAction.triggered.connect(self.rotate_model_ym)
         self.ui.toolBar.addAction(openAction)
 
-        if is_with_figure:
+        if is_with_figure and os.path.exists('./images/RedoY.png'):
             openAction = QAction(QIcon('./images/RedoY.png'), 'RotateY+', self)
         else:
             openAction = QAction('RotateY+', self)
@@ -359,22 +358,20 @@ class mainWindow(QMainWindow):
         self.ui.toolBar.addAction(openAction)
         self.ui.toolBar.addSeparator()
 
-        if is_with_figure:
+        if is_with_figure and os.path.exists('./images/UndoZ.png'):
             openAction = QAction(QIcon('./images/UndoZ.png'), 'RotateZ-', self)
         else:
             openAction = QAction('RotateZ-', self)
         openAction.triggered.connect(self.rotate_model_zm)
         self.ui.toolBar.addAction(openAction)
 
-        if is_with_figure:
+        if is_with_figure and os.path.exists('./images/RedoZ.png'):
             openAction = QAction(QIcon('./images/RedoZ.png'), 'RotateZ+', self)
         else:
             openAction = QAction('RotateZ+', self)
         openAction.triggered.connect(self.rotate_model_zp)
         self.ui.toolBar.addAction(openAction)
         self.ui.toolBar.addSeparator()
-
-
 
     def activate_fragment_selection_mode(self):
         if self.ui.ActivateFragmentSelectionModeCheckBox.isChecked() == True:
@@ -507,43 +504,13 @@ class mainWindow(QMainWindow):
 
     def atom_delete(self):
         self.MainForm.delete_selected_atom()
+        self.models[-1] = self.MainForm.MainModel
+        self.model_to_screen(-1)
 
     def atom_modify(self):
         self.MainForm.modify_selected_atom()
         self.models.append(self.MainForm.MainModel)
         self.model_to_screen(-1)
-
-    """def clear_form(self):
-        self.clear_form_postprocessing()
-        self.clear_form_isosurface()
-
-    def clear_form_postprocessing(self):
-        self.ui.FormActionsPostTableCellParam.setRowCount(0)
-        self.ui.FormActionsPosTableBonds.setRowCount(0)
-        self.ui.FormActionsTabeDOSProperty.setRowCount(0)
-        self.ui.FormActionsListPDOS.clear()
-        self.ui.FormActionsButtonPlotBANDS.setEnabled(False)
-        self.ui.FormActionsPreTextFDF.setText("")
-
-    def clear_form_isosurface(self):
-        self.clear_form_isosurface_data1()
-        self.clear_form_isosurface_data2()
-        self.clear_form_isosurface_isosurface()
-
-    def clear_form_isosurface_data1(self):
-        self.ui.FormActionsPostList3DData.clear()
-        self.ui.FormActionsPostTreeSurface.clear()
-        self.ui.FormActionsPostLabelSurfaceMin.setText("")
-        self.ui.FormActionsPostLabelSurfaceMax.setText("")
-
-    def clear_form_isosurface_data2(self):
-        self.clear_form_isosurface_data2_N()
-
-    
-
-    def clear_form_isosurface_isosurface(self):
-        self.ui.IsosurfaceColorsTable.setRowCount(0)
-        """
 
     def clear_form_isosurface_data2_N(self):
         self.ui.FormActionsPostLabelSurfaceNx.setText("")
@@ -651,42 +618,49 @@ class mainWindow(QMainWindow):
         ColorUi.setStyleSheet("background-color:rgb(" + r + "," + g + "," + b + ")")
 
     def create_model_with_electrodes(self):
-        left_file = self.ui.FormActionsPreLeftElectrode.text()
-        scat_file = self.ui.FormActionsPreScatRegion.text()
-        righ_file = self.ui.FormActionsPreRightElectrode.text()
+        try:
+            left_file = self.ui.FormActionsPreLeftElectrode.text()
+            scat_file = self.ui.FormActionsPreScatRegion.text()
+            righ_file = self.ui.FormActionsPreRightElectrode.text()
 
-        model_left, fdf_left = Importer.Import(left_file)
-        model_scat, fdf_scat = Importer.Import(scat_file)
-        model_righ, fdf_righ = Importer.Import(righ_file)
+            model_left, fdf_left = Importer.Import(left_file)
+            model_scat, fdf_scat = Importer.Import(scat_file)
+            model_righ, fdf_righ = Importer.Import(righ_file)
 
-        model_left = model_left[0]
-        model_scat = model_scat[0]
-        model_righ = model_righ[0]
+            model_left = model_left[0]
+            model_scat = model_scat[0]
+            model_righ = model_righ[0]
 
-        left_elec_max = model_left.maxZ()
-        left_bord = model_scat.minZ()
+            left_elec_max = model_left.maxZ()
+            left_bord = model_scat.minZ()
 
-        right_elec_min = model_righ.minZ()
+            right_elec_min = model_righ.minZ()
 
-        left_dist = self.ui.FormActionsPreSpinLeftElectrodeDist.value()
-        righ_dist = self.ui.FormActionsPreSpinRightElectrodeDist.value()
+            left_dist = self.ui.FormActionsPreSpinLeftElectrodeDist.value()
+            righ_dist = self.ui.FormActionsPreSpinRightElectrodeDist.value()
 
-        scat_rotation = self.ui.FormActionsPreSpinScatRotation.value()
+            scat_rotation = self.ui.FormActionsPreSpinScatRotation.value()
 
-        model = TAtomicModel()
-        """model_left.move(0,0,0)"""
-        model.add_atomic_model(model_left)
-        model_scat.rotateZ(scat_rotation)
-        model_scat.move(0, 0, -(left_bord - left_elec_max) + left_dist)
-        model.add_atomic_model(model_scat)
-        righ_bord = model.maxZ()
-        model_righ.move(0, 0, (righ_bord - right_elec_min) + righ_dist)
-        model.add_atomic_model(model_righ)
+            model = TAtomicModel()
+            model.add_atomic_model(model_left)
+            model_scat.rotateZ(scat_rotation)
+            model_scat.move(0, 0, -(left_bord - left_elec_max) + left_dist)
+            model.add_atomic_model(model_scat)
+            righ_bord = model.maxZ()
+            model_righ.move(0, 0, (righ_bord - right_elec_min) + righ_dist)
+            model.add_atomic_model(model_righ)
 
-        self.models.append(model)
-        self.plot_model(-1)
-        self.MainForm.add_atoms()
-        self.fill_gui("SWNT-model")
+            self.models.append(model)
+            self.plot_model(-1)
+            self.MainForm.add_atoms()
+            self.fill_gui("SWNT-model")
+        except Exception:
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Critical)
+            msg.setText("Unknown error")
+            msg.setInformativeText('An error occurred while trying to create the model. Check the correctness of the input files.')
+            msg.setWindowTitle("Unknown error")
+            msg.exec_()
 
     def colors_of_atoms(self):
         atomscolor = [QTableWidgetItem(self.ui.ColorsOfAtomsTable.item(1, 0)).background().color().getRgbF()]
@@ -823,21 +797,21 @@ class mainWindow(QMainWindow):
             self.ui.FormModelTableProperties.setItem(i, 0, QTableWidgetItem(properties[i][0]))
             self.ui.FormModelTableProperties.setItem(i, 1, QTableWidgetItem(properties[i][1]))
 
-        self.ui.FormModifyCellEditA1.setText(str(model.LatVect1[0]))
-        self.ui.FormModifyCellEditA2.setText(str(model.LatVect1[1]))
-        self.ui.FormModifyCellEditA3.setText(str(model.LatVect1[2]))
-        self.ui.FormModifyCellEditB1.setText(str(model.LatVect2[0]))
-        self.ui.FormModifyCellEditB2.setText(str(model.LatVect2[1]))
-        self.ui.FormModifyCellEditB3.setText(str(model.LatVect2[2]))
-        self.ui.FormModifyCellEditC1.setText(str(model.LatVect3[0]))
-        self.ui.FormModifyCellEditC2.setText(str(model.LatVect3[1]))
-        self.ui.FormModifyCellEditC3.setText(str(model.LatVect3[2]))
+        self.ui.FormModifyCellEditA1.setValue(model.LatVect1[0])
+        self.ui.FormModifyCellEditA2.setValue(model.LatVect1[1])
+        self.ui.FormModifyCellEditA3.setValue(model.LatVect1[2])
+        self.ui.FormModifyCellEditB1.setValue(model.LatVect2[0])
+        self.ui.FormModifyCellEditB2.setValue(model.LatVect2[1])
+        self.ui.FormModifyCellEditB3.setValue(model.LatVect2[2])
+        self.ui.FormModifyCellEditC1.setValue(model.LatVect3[0])
+        self.ui.FormModifyCellEditC2.setValue(model.LatVect3[1])
+        self.ui.FormModifyCellEditC3.setValue(model.LatVect3[2])
 
-    def file_brouser_selection(self, selected, deselected):
-        self.IndexOfFileToOpen = selected.indexes()[0]
-        text = str(self.ui.FileBrouserTree.model().filePath(self.IndexOfFileToOpen))
-        self.ui.FileBrouserOpenLine.setText(text)
-        self.ui.FileBrouserOpenLine.update()
+    #def file_brouser_selection(self, selected, deselected):
+    #    self.IndexOfFileToOpen = selected.indexes()[0]
+    #    text = str(self.ui.FileBrouserTree.model().filePath(self.IndexOfFileToOpen))
+    #    self.ui.FileBrouserOpenLine.setText(text)
+    #    self.ui.FileBrouserOpenLine.update()
 
     def fill_volumeric_data(self, data, tree=" "):
         if tree == " ":
@@ -2043,17 +2017,21 @@ class mainWindow(QMainWindow):
         self.ui.FormActionsPostButContour.setEnabled(False)
 
     def fdf_data_to_form(self):
-        model = self.MainForm.get_model()
-        text = self.FDFData.get_all_data(model, self.CoordType, self.LatticeType)
-        self.ui.FormActionsPreTextFDF.setText(text)
+        try:
+            model = self.MainForm.get_model()
+            text = self.FDFData.get_all_data(model, self.CoordType, self.LatticeType)
+            self.ui.FormActionsPreTextFDF.setText(text)
+        except Exception:
+            print("There are no atoms in the model")
 
     def fdf_data_from_form_to_file(self):
         try:
             text = self.ui.FormActionsPreTextFDF.toPlainText()
-            name = QFileDialog.getSaveFileName(self, 'Save File')[0]
-            if len(name) > 0:
-                with open(name, 'w') as f:
-                    f.write(text)
+            if len(text)>0:
+                name = QFileDialog.getSaveFileName(self, 'Save File')[0]
+                if len(name) > 0:
+                    with open(name, 'w') as f:
+                        f.write(text)
         except Exception:
             msg = QMessageBox()
             msg.setIcon(QMessageBox.Critical)

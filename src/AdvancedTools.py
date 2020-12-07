@@ -548,7 +548,6 @@ class TAtomicModel(object):
     def atoms_from_fdf(filename):
         """Return a AtList from fdf file"""
         NumberOfAtoms = TSIESTA.number_of_atoms(filename)
-        #NumberOfSpecies = TSIESTA.number_of_species(filename)
         AtomicCoordinatesFormat = TSIESTA.atomic_coordinates_format(filename)
 
         lat_vect_1, lat_vect_2, lat_vect_3 = TSIESTA.lattice_vectors(filename)
@@ -655,9 +654,10 @@ class TAtomicModel(object):
                     lat_vect_3 = siesta_file.readline().split()
                     lat_vect_3 = Helpers.list_str_to_float(lat_vect_3)
 
-                    AllAtoms = TAtomicModel(atoms)
-                    AllAtoms.set_lat_vectors(lat_vect_1, lat_vect_2, lat_vect_3)
-                    molecules.append(AllAtoms)
+                    if len(atoms)>0:
+                        AllAtoms = TAtomicModel(atoms)
+                        AllAtoms.set_lat_vectors(lat_vect_1, lat_vect_2, lat_vect_3)
+                        molecules.append(AllAtoms)
 
                 if (str1 != '') and (str1.find("zmatrix: Z-matrix coordinates: (Ang ; rad )") >= 0) and (isSpesF == 1):
                     for j in range(0, 2):
@@ -838,13 +838,8 @@ class TAtomicModel(object):
                     line2 = [float(line1[0]), float(line1[1]), float(line1[2]), line1[5], Species[int(line1[3]) - 1][1]]
                     AtList.append(line2)
                 if len(AtList) == NumberOfAtoms:
-                    print(str(len(AtList)) + "   " + str(NumberOfAtoms))
-                    print(AtList)
                     AllAtoms = TAtomicModel(AtList)
                     AllAtoms.set_lat_vectors(lat_vect_1, lat_vect_2, lat_vect_3)
-                    print(lat_vect_1)
-                    print(lat_vect_2)
-                    print(lat_vect_3)
                     AllAtoms.convert_from_direct_to_cart()
                     return [AllAtoms]
         return []
@@ -1020,10 +1015,12 @@ class TAtomicModel(object):
 
 
     def delete_atom(self, ind):
-        if (ind>=0) and (ind<self.nAtoms()):
+        if self.nAtoms() == 1:
+            return
+        if (ind >= 0) and (ind < self.nAtoms()):
+            self.selected_atom = -1
             self.atoms.pop(ind)
             self.find_bonds_fast()
-
 
     def add_atom(self, atom, minDist = 0):
         """ Adds atom to the molecule is minimal distance to other atoms more then minDist """
@@ -1083,19 +1080,19 @@ class TAtomicModel(object):
     
     def centr_mass(self, charge=0):
         """The method returns the center of mass of the molecule"""
-        cx= 0
-        cy= 0
-        cz= 0
+        cx = 0
+        cy = 0
+        cz = 0
         n = 0
         
-        if (charge==0):
-            Mendeley = TPeriodTable()
+        if charge == 0:
+            mendeley = TPeriodTable()
             for j in range(0, len(self.atoms)):
-                m = Mendeley.Atoms[self.atoms[j].charge].mass
-                cx+=self.atoms[j].x*m
-                cy+=self.atoms[j].y*m
-                cz+=self.atoms[j].z*m
-                n+=m
+                m = mendeley.Atoms[self.atoms[j].charge].mass
+                cx += self.atoms[j].x * m
+                cy += self.atoms[j].y * m
+                cz += self.atoms[j].z * m
+                n += m
         else:
             for j in range(0, len(self.atoms)):
                 if int(self.atoms[j].charge) == int(charge):
@@ -1103,9 +1100,13 @@ class TAtomicModel(object):
                     cy += self.atoms[j].y
                     cz += self.atoms[j].z
                     n += 1
+        try:
+            res = [cx/n, cy/n, cz/n]
+        except Exception:
+            print("ZeroDivisionError")
+            return [0, 0, 0]
         
-        return [cx/n, cy/n, cz/n]
-
+        return res
 
     def rotateX(self, alpha):
         """The method RotateAtList rotate the AtList on alpha Angle"""

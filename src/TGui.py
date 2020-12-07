@@ -129,18 +129,18 @@ class GuiOpenGL(object):
         self.add_box()
 
     def selected_atom_changed(self):
-        if self.selected_atom >=0:
+        if self.selected_atom >= 0:
             x = self.MainModel[self.selected_atom].x - self.x0
             y = self.MainModel[self.selected_atom].y - self.y0
             self.selected_atom_data_to_form(self.MainModel[self.selected_atom].charge, x, y, self.MainModel[self.selected_atom].z)
-            if self.SelectedFragmentMode == True:
+            if self.SelectedFragmentMode:
                 self.MainModel[self.selected_atom].fragment1 = not self.MainModel[self.selected_atom].fragment1
                 self.atoms_of_selected_fragment_to_form()
         else:
-            self.selected_atom_data_to_form(0,0,0,0)
+            self.selected_atom_data_to_form(0, 0, 0, 0)
         self.selected_atom_properties_to_form()
 
-    def selected_atom_data_to_form(self,a,b,c,d):
+    def selected_atom_data_to_form(self, a, b, c, d):
         self.selected_atom_type.setCurrentIndex(a)
         self.selected_atom_X.setValue(b)
         self.selected_atom_X.update()
@@ -293,7 +293,7 @@ class GuiOpenGL(object):
 
     def atomic_structure_to_file(self, fname):
         newModel = self.get_model()
-        if fname.find("POSCAR")>=0:
+        if fname.find("POSCAR") >= 0:
             fname = fname.split(".")[0]
             newModel.toVASPposcar(fname)
         if fname.endswith(".inp"):
@@ -305,19 +305,22 @@ class GuiOpenGL(object):
 
     def volumeric_data_to_file(self, fname, volumeric_data):
         newModel = self.get_model()
-        if fname.find("XSF")>=0:
+        if fname.find("XSF") >= 0:
             fname = fname.split(".")[0]
             newModel.toXSFfile(fname, volumeric_data)
-        if fname.find("cube")>=0:
+        if fname.find("cube") >= 0:
             fname = fname.split(".")[0]
             newModel.toCUBEfile(fname, volumeric_data)
 
     def delete_selected_atom(self):
         if self.selected_atom >= 0:
             self.MainModel.delete_atom(self.selected_atom)
+            self.selected_atom = -1
+            self.history_of_atom_selection = []
             self.ViewContour = False
             self.ViewContourFill = False
             self.ViewSurface = False
+            self.MainModel.find_bonds_fast()
             self.add_atoms()
             self.add_bonds()
             self.openGLWidget.update()
@@ -329,7 +332,7 @@ class GuiOpenGL(object):
             x = self.selected_atom_X.value() + self.x0
             y = self.selected_atom_Y.value() + self.y0
             z = self.selected_atom_Z.value()
-            newAtom = TAtom([x,y,z,let,charge])
+            newAtom = TAtom([x, y, z, let, charge])
             self.MainModel.add_atom(newAtom)
             self.ViewContour = False
             self.ViewContourFill = False
@@ -786,7 +789,7 @@ class GuiOpenGL(object):
                     if self.CanSearch:
                         self.get_atom_on_screen()
 
-                    if self.ViewBonds:
+                    if self.ViewBonds and (len(self.MainModel.bonds) > 0):
                         gl.glCallList(self.object + 2)  # find_bonds_exact
 
                     if self.ViewVoronoi:
@@ -850,27 +853,29 @@ class GuiOpenGL(object):
         minr = 10000
         ind = -1
         for at in range(0, len(self.MainModel.atoms)):
-            r = math.sqrt( (point[0]-self.MainModel.atoms[at].x)**2 + (-point[1]-self.MainModel.atoms[at].y)**2 + (point[2]-self.MainModel.atoms[at].z)**2 )
+            rx2 = (point[0] - self.MainModel.atoms[at].x)**2
+            ry2 = (-point[1] - self.MainModel.atoms[at].y)**2
+            rz2 = (point[2] - self.MainModel.atoms[at].z)**2
+            r = math.sqrt(rx2 + ry2 + rz2)
             if r < minr:
                 minr = r
                 ind = at
 
         if minr < 2:
-            if self.selected_atom >=0:
+            if self.selected_atom >= 0:
                 self.ViewVoronoi = False
             if self.selected_atom != ind:
-                #print("Point 1")
                 if self.selected_atom >= 0:
                     self.MainModel.atoms[self.selected_atom].setSelected(False)
                 self.selected_atom = ind
                 self.MainModel.atoms[self.selected_atom].setSelected(True)
             else:
-                #print("Point 2")
                 if self.selected_atom >= 0:
                     self.MainModel.atoms[self.selected_atom].setSelected(False)
                 self.selected_atom = -1
             self.add_atoms()
             self.add_bonds()
+
         self.CanSearch = False
         if oldSelected != self.selected_atom:
             if self.selected_atom == -1:
