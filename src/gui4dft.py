@@ -302,9 +302,9 @@ class mainWindow(QMainWindow):
         self.ui.FormActionsPosTableBonds.horizontalHeader().setStyleSheet(self.table_header_stylesheet)
         self.ui.FormActionsPosTableBonds.verticalHeader().setStyleSheet(self.table_header_stylesheet)
 
-        self.ui.toolBar.setIconSize(QSize(500, 500))
+        #self.ui.toolBar.setIconSize(QSize(500, 500))
 
-        if is_with_figure:
+        if is_with_figure and os.path.exists('./images/Open.png'):
             openAction = QAction(QIcon('./images/Open.png'), 'Open', self)
         else:
             openAction = QAction('Open', self)
