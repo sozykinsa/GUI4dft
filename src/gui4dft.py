@@ -1018,11 +1018,11 @@ class mainWindow(QMainWindow):
         state_form_settings_colors_fixed = settings.value(SETTINGS_FormSettingsColorsFixed, False, type=bool)
         self.ui.FormSettingsColorsFixed.setChecked(state_form_settings_colors_fixed)
         self.ui.FormSettingsColorsFixed.clicked.connect(self.save_state_colors_fixed)
-        state_form_settings_colors_fixed_min = settings.value(SETTINGS_FormSettingsColorsFixedMin, '0.0')
-        self.ui.FormSettingsColorsFixedMin.setText(state_form_settings_colors_fixed_min)
+        state_form_settings_colors_fixed_min = settings.value(SETTINGS_FormSettingsColorsFixedMin, '0.1')
+        self.ui.FormSettingsColorsFixedMin.setValue(float(state_form_settings_colors_fixed_min))
         self.ui.FormSettingsColorsFixedMin.textChanged.connect(self.save_state_colors_fixed_min)
         state_form_settings_colors_fixed_max = settings.value(SETTINGS_FormSettingsColorsFixedMax, '0.2')
-        self.ui.FormSettingsColorsFixedMax.setText(state_form_settings_colors_fixed_max)
+        self.ui.FormSettingsColorsFixedMax.setValue(float(state_form_settings_colors_fixed_max))
         self.ui.FormSettingsColorsFixedMax.textChanged.connect(self.save_state_colors_fixed_max)
         state_form_settings_view_spin_bond_width = int(settings.value(SETTINGS_FormSettingsViewSpinBondWidth, '20'))
         self.ui.FormSettingsViewSpinBondWidth.setValue(state_form_settings_view_spin_bond_width)
@@ -1167,6 +1167,7 @@ class mainWindow(QMainWindow):
         about_win.show()
 
     def model_to_screen(self, value):
+        self.ui.Form3Dand2DTabs.setCurrentIndex(0)
         self.plot_model(value)
         self.fill_atoms_table()
         self.fill_properties_table()
@@ -1234,6 +1235,7 @@ class mainWindow(QMainWindow):
         self.model_to_screen(-1)
 
     def plot_model(self, value):
+        self.ui.Form3Dand2DTabs.setCurrentIndex(0)
         view_atoms = self.ui.FormSettingsViewCheckShowAtoms.isChecked()
         view_box = self.ui.FormSettingsViewCheckShowBox.isChecked()
         view_bonds = self.ui.FormSettingsViewCheckShowBonds.isChecked()
@@ -1252,6 +1254,7 @@ class mainWindow(QMainWindow):
         self.color_with_property_enabling()
 
     def plot_surface(self):
+        self.ui.Form3Dand2DTabs.setCurrentIndex(0)
         self.MainForm.ViewSurface = False
         cmap = plt.get_cmap(self.ui.FormSettingsColorsScale.currentText())
         color_scale = self.ui.FormSettingsColorsScaleType.currentText()
@@ -1296,6 +1299,7 @@ class mainWindow(QMainWindow):
         return isovalues
 
     def plot_contour(self):
+        self.ui.Form3Dand2DTabs.setCurrentIndex(0)
         if self.VolumericData.Nx is None:
             return
         self.MainForm.ViewContour = False
@@ -1724,6 +1728,7 @@ class mainWindow(QMainWindow):
             self.ui.MplWidget.canvas.draw()
 
     def plot_voronoi(self):
+        self.ui.Form3Dand2DTabs.setCurrentIndex(0)
         if self.MainForm.isActive():
             r = self.state_Color_Of_Voronoi.split()[0]
             g = self.state_Color_Of_Voronoi.split()[1]
@@ -1775,6 +1780,7 @@ class mainWindow(QMainWindow):
         self.ui.FormActionsTabeDOSProperty.update()
 
     def plot_volume_param_energy(self):
+        self.ui.Form3Dand2DTabs.setCurrentIndex(1)
         items = []
         method = self.ui.FormActionsPostComboCellParam.currentText()
         xi = self.ui.FormActionsPostComboCellParamX.currentIndex()
@@ -1830,13 +1836,8 @@ class mainWindow(QMainWindow):
 
     def plot_cell_approx(self, label_x, image_path, xs2, ys2):
         self.ui.MplWidget.canvas.axes.plot(xs2, ys2)
-        self.ui.MplWidget.canvas.axes.set_ylabel("Energy, " + self.ui.FormActionsPostComboCellParamEnergy.currentText())
-        if label_x == "V":
-            self.ui.MplWidget.canvas.axes.set_xlabel(
-                label_x + ", " + self.ui.FormActionsPostComboCellParamLen.currentText() + "^3")
-        else:
-            self.ui.MplWidget.canvas.axes.set_xlabel(
-                label_x + ", " + self.ui.FormActionsPostComboCellParamLen.currentText())
+        self.ui.MplWidget.canvas.axes.set_ylabel("Energy")
+        self.ui.MplWidget.canvas.axes.set_xlabel(label_x)
         image_profile = QImage(image_path)
         image_profile = image_profile.scaled(320, 320, aspectRatioMode=Qt.KeepAspectRatio,
                                              transformMode=Qt.SmoothTransformation)

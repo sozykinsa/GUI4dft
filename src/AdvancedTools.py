@@ -1818,16 +1818,14 @@ class TGraphene(TAtomicModel):
 
 class TSWNT(TGraphene):
     """The TSWNT class provides """
-    def __init__(self, n, m, leng = 0, ncell = 1):
-
-        if (leng == 0):
+    def __init__(self, n, m, leng=0, ncell=1):
+        if leng == 0:
             leng = ncell * TSWNT.unitlength(n, m, 1.43)
 
         TGraphene.__init__(self)
 
         rad = TSWNT.radius(n, m)
         self.set_lat_vectors([10 * rad, 0, 0], [0, 10 * rad, 0], [0, 0, leng])
-
         np1, pi, px, py, leng = self.graphene_positions(n, m, leng)
 
         """ output """
@@ -2647,8 +2645,9 @@ class TFDFFile:
 
 
 class TCapedSWNT(TAtomicModel):
-
-    def __init__(self, n, m, leng, cells, type, dist1, angle1, dist2, angle2):
+    def __init__(self, n, m, leng, ncell, type, dist1, angle1, dist2, angle2):
+        if leng == 0:
+            leng = ncell * TSWNT.unitlength(n, m, 1.43)
         TAtomicModel.__init__(self)
         self.availableind = np.zeros((8))
         self.available = False
