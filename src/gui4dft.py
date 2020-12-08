@@ -500,14 +500,20 @@ class mainWindow(QMainWindow):
             self.ui.FormActionsPreScatRegion.setText(fname)
 
     def atom_add(self):
+        if len(self.models) == 0:
+            return
         self.MainForm.add_new_atom()
 
     def atom_delete(self):
+        if len(self.models) == 0:
+            return
         self.MainForm.delete_selected_atom()
         self.models[-1] = self.MainForm.MainModel
         self.model_to_screen(-1)
 
     def atom_modify(self):
+        if len(self.models) == 0:
+            return
         self.MainForm.modify_selected_atom()
         self.models.append(self.MainForm.MainModel)
         self.model_to_screen(-1)
@@ -684,6 +690,8 @@ class mainWindow(QMainWindow):
         self.ui.IsosurfaceColorsTable.removeRow(row)
 
     def edit_cell(self):
+        if len(self.models) == 0:
+            return
         a1 = float(self.ui.FormModifyCellEditA1.text())
         a2 = float(self.ui.FormModifyCellEditA2.text())
         a3 = float(self.ui.FormModifyCellEditA3.text())
@@ -2041,6 +2049,8 @@ class mainWindow(QMainWindow):
             msg.exec_()
 
     def fill_space(self):
+        if len(self.models) == 0:
+            return
         mendeley = TPeriodTable()
         nAtoms = int(self.ui.FormActionsPreNAtomsFillSpace.value())
         charge = int(self.ui.FormActionsPreAtomChargeFillSpace.value())
