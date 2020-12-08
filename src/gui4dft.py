@@ -1205,18 +1205,15 @@ class mainWindow(QMainWindow):
     def model_rotation(self):
         angle = self.ui.FormModifyRotationAngle.value()
         model = self.MainForm.MainModel
-
         if self.ui.FormModifyRotationCenter.isChecked():
             center = model.centr_mass()
             model.move(center[0], center[1], center[2])
-
         if self.ui.FormModifyRotationX.isChecked():
             model.rotateX(angle)
         if self.ui.FormModifyRotationY.isChecked():
             model.rotateY(angle)
         if self.ui.FormModifyRotationZ.isChecked():
             model.rotateZ(angle)
-
         self.models.append(model)
         self.fill_models_list()
         self.model_to_screen(-1)
