@@ -1203,6 +1203,8 @@ class mainWindow(QMainWindow):
         self.MainForm.update()
 
     def model_rotation(self):
+        if self.MainForm.MainModel.nAtoms() == 0:
+            return
         angle = self.ui.FormModifyRotationAngle.value()
         model = self.MainForm.MainModel
         if self.ui.FormModifyRotationCenter.isChecked():
@@ -1219,6 +1221,8 @@ class mainWindow(QMainWindow):
         self.model_to_screen(-1)
 
     def model_grow_x(self):
+        if self.MainForm.MainModel.nAtoms() == 0:
+            return
         model = self.MainForm.MainModel
         model = model.growX()
         self.models.append(model)
@@ -1226,6 +1230,8 @@ class mainWindow(QMainWindow):
         self.model_to_screen(-1)
 
     def model_grow_y(self):
+        if self.MainForm.MainModel.nAtoms() == 0:
+            return
         model = self.MainForm.MainModel
         model = model.growY()
         self.models.append(model)
@@ -1233,6 +1239,8 @@ class mainWindow(QMainWindow):
         self.model_to_screen(-1)
 
     def model_grow_z(self):
+        if self.MainForm.MainModel.nAtoms() == 0:
+            return
         model = self.MainForm.MainModel
         model = model.growZ()
         self.models.append(model)
