@@ -5,7 +5,7 @@ import sys
 import xml.etree.ElementTree as ET
 from copy import deepcopy
 from operator import itemgetter
-
+import myfigureoptions
 import matplotlib.pyplot as plt
 import numpy as np
 from AdvancedTools import Helpers
@@ -785,9 +785,9 @@ class mainWindow(QMainWindow):
 
         for i in range(0, len(model)):
             self.ui.FormModelTableAtoms.setItem(i, 0, QTableWidgetItem(model[i].let))
-            self.ui.FormModelTableAtoms.setItem(i, 1, QTableWidgetItem(str(round(model[i].x, 5))))
-            self.ui.FormModelTableAtoms.setItem(i, 2, QTableWidgetItem(str(round(model[i].y, 5))))
-            self.ui.FormModelTableAtoms.setItem(i, 3, QTableWidgetItem(str(round(model[i].z, 5))))
+            self.ui.FormModelTableAtoms.setItem(i, 1, QTableWidgetItem(Helpers.float_to_string(model[i].x)))
+            self.ui.FormModelTableAtoms.setItem(i, 2, QTableWidgetItem(Helpers.float_to_string(model[i].y)))
+            self.ui.FormModelTableAtoms.setItem(i, 3, QTableWidgetItem(Helpers.float_to_string(model[i].z)))
 
     def fill_properties_table(self):
         properties = []

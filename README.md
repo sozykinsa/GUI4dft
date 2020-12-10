@@ -8,7 +8,7 @@ In Ubuntu, do extra:
 
 sudo apt-get install qt5-default
 
-These commands are suitable for Windows 10, Ubuntu 20, Mas OS Majave. For other distributions and operating systems, the command and set of required packages will be different.
+These commands are suitable for Windows 10, Ubuntu 20, Mas OS Majave. For other distributions and operating systems, the command and set of required packages may differ.
 
 To run the program, type
 
