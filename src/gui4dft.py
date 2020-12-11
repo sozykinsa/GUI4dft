@@ -1028,10 +1028,10 @@ class mainWindow(QMainWindow):
         self.ui.FormSettingsColorsFixed.clicked.connect(self.save_state_colors_fixed)
         state_form_settings_colors_fixed_min = settings.value(SETTINGS_FormSettingsColorsFixedMin, '0.1')
         self.ui.FormSettingsColorsFixedMin.setValue(float(state_form_settings_colors_fixed_min))
-        self.ui.FormSettingsColorsFixedMin.textChanged.connect(self.save_state_colors_fixed_min)
+        self.ui.FormSettingsColorsFixedMin.valueChanged.connect(self.save_state_colors_fixed_min)
         state_form_settings_colors_fixed_max = settings.value(SETTINGS_FormSettingsColorsFixedMax, '0.2')
         self.ui.FormSettingsColorsFixedMax.setValue(float(state_form_settings_colors_fixed_max))
-        self.ui.FormSettingsColorsFixedMax.textChanged.connect(self.save_state_colors_fixed_max)
+        self.ui.FormSettingsColorsFixedMax.valueChanged.connect(self.save_state_colors_fixed_max)
         state_form_settings_view_spin_bond_width = int(settings.value(SETTINGS_FormSettingsViewSpinBondWidth, '20'))
         self.ui.FormSettingsViewSpinBondWidth.setValue(state_form_settings_view_spin_bond_width)
         self.ui.FormSettingsViewSpinBondWidth.valueChanged.connect(self.save_state_view_spin_bond_width)
@@ -1884,6 +1884,8 @@ class mainWindow(QMainWindow):
             msg.exec_()
 
     def save_image_to_file(self):
+        if len(self.models) == 0:
+            return
         try:
             name = QFileDialog.getSaveFileName(self, 'Save File', self.WorkDir,
                                            "PNG files (*.png);;JPG files (*.jpg);;BMP files (*.bmp)")
