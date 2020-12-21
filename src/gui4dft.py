@@ -1027,7 +1027,11 @@ class mainWindow(QMainWindow):
         self.ui.FormSettingsColorsFixed.setChecked(state_form_settings_colors_fixed)
         self.ui.FormSettingsColorsFixed.clicked.connect(self.save_state_colors_fixed)
         state_form_settings_colors_fixed_min = settings.value(SETTINGS_FormSettingsColorsFixedMin, '0.1')
-        self.ui.FormSettingsColorsFixedMin.setValue(float(state_form_settings_colors_fixed_min))
+        try:
+            min_val = float(state_form_settings_colors_fixed_min)
+        except Exception:
+            min_val = 0.0001
+        self.ui.FormSettingsColorsFixedMin.setValue(min_val)
         self.ui.FormSettingsColorsFixedMin.valueChanged.connect(self.save_state_colors_fixed_min)
         state_form_settings_colors_fixed_max = settings.value(SETTINGS_FormSettingsColorsFixedMax, '0.2')
         self.ui.FormSettingsColorsFixedMax.setValue(float(state_form_settings_colors_fixed_max))
@@ -1904,6 +1908,7 @@ class mainWindow(QMainWindow):
             new_window.MainForm.copy_state(self.MainForm)
 
             new_window.MainForm.image3D_to_file(fname)
+            new_window.destroy()
             self.WorkDir = os.path.dirname(fname)
             self.save_active_folder()
         except Exception:
