@@ -654,12 +654,18 @@ class TAtomicModel(object):
                     lat_vect_3 = siesta_file.readline().split()
                     lat_vect_3 = Helpers.list_str_to_float(lat_vect_3)
 
-                    if len(atoms)>0:
+                    if len(atoms) > 0:
                         AllAtoms = TAtomicModel(atoms)
                         AllAtoms.set_lat_vectors(lat_vect_1, lat_vect_2, lat_vect_3)
                         molecules.append(AllAtoms)
 
-                if (str1 != '') and (str1.find("zmatrix: Z-matrix coordinates: (Ang ; rad )") >= 0) and (isSpesF == 1):
+                isAngfound = str1.find("zmatrix: Z-matrix coordinates: (Ang ; rad )") >= 0
+                isBohfound = str1.find("zmatrix: Z-matrix coordinates: (Bohr; rad )") >= 0
+                mult = 1.0
+                if isBohfound:
+                    mult = 0.52917720859
+
+                if (str1 != '') and (isAngfound or isBohfound) and (isSpesF == 1):
                     for j in range(0, 2):
                         str1 = siesta_file.readline()
                     atoms = []
@@ -667,9 +673,9 @@ class TAtomicModel(object):
                     for i1 in range(0, number_of_atoms):
                         str1 = Helpers.spacedel(siesta_file.readline())
                         S = str1.split(' ')
-                        d1 = float(S[0])
-                        d2 = float(S[1])
-                        d3 = float(S[2])
+                        d1 = float(S[0]) * mult
+                        d2 = float(S[1]) * mult
+                        d3 = float(S[2]) * mult
                         Charge = species_label_charges[sl[len(atoms)]]
                         C = periodTable.get_let(Charge)
                         A = [d1, d2, d3, C, Charge]
