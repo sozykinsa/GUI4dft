@@ -928,7 +928,7 @@ class TAtomicModel(object):
         molecules = []
         if os.path.exists(filename):
             f = open(filename)
-            NumberOfAtoms = int(f.readline())
+            NumberOfAtoms = int(math.fabs(int(f.readline())))
             newModel = TAtomicModel.atoms_from_xyz_structure(NumberOfAtoms, f, periodTable)
             molecules.append(newModel)
         return molecules
@@ -940,7 +940,7 @@ class TAtomicModel(object):
         molecules = []
         if os.path.exists(filename):
             f = open(filename)
-            NumberOfAtoms = int(f.readline())
+            NumberOfAtoms = int(math.fabs(int(f.readline())))
             newModel = TAtomicModel.atoms_from_xyz_structure(NumberOfAtoms, f, periodTable, [1,2,3,4])
             molecules.append(newModel)
         return molecules
