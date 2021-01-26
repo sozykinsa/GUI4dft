@@ -620,6 +620,7 @@ class TAtomicModel(object):
         Molecules = [AllAtoms]
         return Molecules
 
+
     @staticmethod
     def atoms_from_output_cg(filename):
         """import from CG output"""
@@ -635,6 +636,7 @@ class TAtomicModel(object):
             siesta_file = open(filename)
             sl = []
             isSpesF = 0
+            need_to_convert1 = 0
             str1 = siesta_file.readline()
             atoms = []
             while str1 != '':
@@ -653,11 +655,19 @@ class TAtomicModel(object):
                     lat_vect_2 = Helpers.list_str_to_float(lat_vect_2)
                     lat_vect_3 = siesta_file.readline().split()
                     lat_vect_3 = Helpers.list_str_to_float(lat_vect_3)
+                    isFectF = 1
 
                     if len(atoms) > 0:
                         AllAtoms = TAtomicModel(atoms)
                         AllAtoms.set_lat_vectors(lat_vect_1, lat_vect_2, lat_vect_3)
+                        if need_to_convert1:
+                            AllAtoms.convert_from_direct_to_cart()
+                            need_to_convert1 = 0
                         molecules.append(AllAtoms)
+
+                isFractionalfound = str1.find("outcoor: Atomic coordinates (fractional)") >= 0
+                if isFractionalfound:
+                    need_to_convert1 = 1
 
                 isAngfound = str1.find("zmatrix: Z-matrix coordinates: (Ang ; rad )") >= 0
                 isBohfound = str1.find("zmatrix: Z-matrix coordinates: (Bohr; rad )") >= 0
@@ -665,9 +675,10 @@ class TAtomicModel(object):
                 if isBohfound:
                     mult = 0.52917720859
 
-                if (str1 != '') and (isAngfound or isBohfound) and (isSpesF == 1):
-                    for j in range(0, 2):
-                        str1 = siesta_file.readline()
+                if (str1 != '') and (isAngfound or isBohfound or isFractionalfound) and (isSpesF == 1):
+                    if not isFractionalfound:
+                        for j in range(0, 2):
+                            str1 = siesta_file.readline()
                     atoms = []
 
                     for i1 in range(0, number_of_atoms):
@@ -2297,6 +2308,10 @@ class TSIESTA:
 
     @staticmethod
     def type_of_run(filename):
+        #steps = Helpers.fromFileProperty(filename, 'MD.NumCGsteps', 1, 'int')
+        #if steps == 0:
+        #    """ single point"""
+        #    return "sp"
         """ MD or CG? """
         return Helpers.fromFileProperty(filename, 'MD.TypeOfRun', 1, 'string')
 
