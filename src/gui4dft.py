@@ -1175,7 +1175,7 @@ class mainWindow(QMainWindow):
         about_win = QDialog(self)
         about_win.ui = Ui_about()
         about_win.ui.setupUi(about_win)
-        about_win.setFixedSize(QSize(532, 149))
+        about_win.setFixedSize(QSize(550, 250))
         about_win.show()
 
     def model_to_screen(self, value):
