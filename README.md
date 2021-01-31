@@ -13,3 +13,5 @@ These commands are suitable for Windows 10, Ubuntu 20, Mas OS Majave. For other 
 To run the program, type
 
 python3 gui4dft.py
+
+If the program was helpful in your research, please cite the article https://doi.org/10.1016/j.cpc.2021.107843
