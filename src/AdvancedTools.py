@@ -547,28 +547,44 @@ class TAtomicModel(object):
     @staticmethod
     def atoms_from_fdf(filename):
         """Return a AtList from fdf file"""
-        NumberOfAtoms = TSIESTA.number_of_atoms(filename)
-        AtomicCoordinatesFormat = TSIESTA.atomic_coordinates_format(filename)
-
-        lat_vect_1, lat_vect_2, lat_vect_3 = TSIESTA.lattice_vectors(filename)
-        if lat_vect_1[0] == False:
-            lat_vect_1, lat_vect_2, lat_vect_3 = TSIESTA.lattice_parameters_abc_angles(filename)
-
-        tmp_ar = {}
-        ChemicalSpeciesLabel = TSIESTA.get_block_from_siesta_fdf(filename, "ChemicalSpeciesLabel")
-        for j in range(0, len(ChemicalSpeciesLabel)):
-            tmp_ar[(ChemicalSpeciesLabel[j].split())[0]] = (ChemicalSpeciesLabel[j].split())[1:3]
+        AtomicCoordinatesFormat, NumberOfAtoms, chem_spec_info, lat, lat_vect_1, lat_vect_2, lat_vect_3, units = TAtomicModel.atoms_from_fdf_prepare(
+            filename)
 
         f = open(filename)
         lines = f.readlines()
         f.close()
+        AllAtoms = TAtomicModel.atoms_from_fdf_text(AtomicCoordinatesFormat, NumberOfAtoms, chem_spec_info, lat,
+                                                    lat_vect_1, lat_vect_2, lat_vect_3, lines, units)
+
+        Molecules = [AllAtoms]
+        return Molecules
+
+    @staticmethod
+    def atoms_from_fdf_prepare(filename):
+        NumberOfAtoms = TSIESTA.number_of_atoms(filename)
+        AtomicCoordinatesFormat = TSIESTA.atomic_coordinates_format(filename)
+        lat = ""
+        if AtomicCoordinatesFormat == "ScaledCartesian":
+            lat = TSIESTA.lattice_constant(filename)
+        units = Helpers.fromFileProperty(filename, 'ZM.UnitsLength', 1, 'string')
+        lat_vect_1, lat_vect_2, lat_vect_3 = TSIESTA.lattice_vectors(filename)
+        if lat_vect_1[0] == False:
+            lat_vect_1, lat_vect_2, lat_vect_3 = TSIESTA.lattice_parameters_abc_angles(filename)
+        chem_spec_info = {}
+        ChemicalSpeciesLabel = TSIESTA.get_block_from_siesta_fdf(filename, "ChemicalSpeciesLabel")
+        for j in range(0, len(ChemicalSpeciesLabel)):
+            chem_spec_info[(ChemicalSpeciesLabel[j].split())[0]] = (ChemicalSpeciesLabel[j].split())[1:3]
+        return AtomicCoordinatesFormat, NumberOfAtoms, chem_spec_info, lat, lat_vect_1, lat_vect_2, lat_vect_3, units
+
+    @staticmethod
+    def atoms_from_fdf_text(AtomicCoordinatesFormat, NumberOfAtoms, chem_spec_info, lat, lat_vect_1, lat_vect_2,
+                            lat_vect_3, lines, units):
         AllAtoms = TAtomicModel()
         AtList = []
         AtList1 = []
         i = 0
         isBlockAtomicCoordinates = False
         isBlockZMatrix = False
-
         while i < len(lines):
             if (lines[i].find("%block Zmatrix") >= 0):
                 isBlockZMatrix = True
@@ -579,7 +595,7 @@ class TAtomicModel(object):
                         i += 1
                         Atom_full = lines[i].split()
                         AtList.append([float(Atom_full[1]), float(Atom_full[2]), float(Atom_full[3]),
-                                       (tmp_ar[str(Atom_full[0])])[1], (tmp_ar[str(Atom_full[0])])[0]])
+                                       (chem_spec_info[str(Atom_full[0])])[1], (chem_spec_info[str(Atom_full[0])])[0]])
             if (lines[i].find("%block AtomicCoordinatesAndAtomicSpecies") >= 0):
                 isBlockAtomicCoordinates = True
                 mult = 1
@@ -588,25 +604,21 @@ class TAtomicModel(object):
                 for j in range(0, NumberOfAtoms):
                     i += 1
                     Atom_full = lines[i].split()
-                    AtList1.append([mult*float(Atom_full[0]), mult*float(Atom_full[1]), mult*float(Atom_full[2]),
-                                   (tmp_ar[str(Atom_full[3])])[1], (tmp_ar[str(Atom_full[3])])[0]])
+                    AtList1.append([mult * float(Atom_full[0]), mult * float(Atom_full[1]), mult * float(Atom_full[2]),
+                                    (chem_spec_info[str(Atom_full[3])])[1], (chem_spec_info[str(Atom_full[3])])[0]])
 
             i += 1
-
         if isBlockZMatrix == True:
             AllAtoms = TAtomicModel(AtList)
         else:
             if isBlockAtomicCoordinates == True:
                 AllAtoms = TAtomicModel(AtList1)
-
         if lat_vect_1[0] == False:
             AllAtoms.set_lat_vectors_default()
 
         else:
             AllAtoms.set_lat_vectors(lat_vect_1, lat_vect_2, lat_vect_3)
-
         if isBlockZMatrix == True:
-            units = Helpers.fromFileProperty(filename, 'ZM.UnitsLength', 1, 'string')
             if units.lower() == "bohr":
                 AllAtoms.convert_from_scaled_to_cart(0.52917720859)
         else:
@@ -614,12 +626,8 @@ class TAtomicModel(object):
                 if AtomicCoordinatesFormat == "ScaledByLatticeVectors":
                     AllAtoms.convert_from_direct_to_cart()
                 if AtomicCoordinatesFormat == "ScaledCartesian":
-                    lat = TSIESTA.lattice_constant(filename)
                     AllAtoms.convert_from_scaled_to_cart(lat)
-
-        Molecules = [AllAtoms]
-        return Molecules
-
+        return AllAtoms
 
     @staticmethod
     def atoms_from_output_cg(filename):
@@ -802,6 +810,20 @@ class TAtomicModel(object):
                     newStr.set_lat_vectors(lat1, lat2, lat3)
                     newStr.convert_from_direct_to_cart()
                     molecules.append(newStr)
+        return molecules
+
+    @staticmethod
+    def atoms_from_output_sp(filename):
+        """Return the initial AtList from single point output file"""
+        AtomicCoordinatesFormat, NumberOfAtoms, chem_spec_info, lat, lat_vect_1, lat_vect_2, lat_vect_3, units = TAtomicModel.atoms_from_fdf_prepare(
+            filename)
+
+        lines  = TFDFFile.fdf_data_dump(filename)
+
+        AllAtoms = TAtomicModel.atoms_from_fdf_text(AtomicCoordinatesFormat, NumberOfAtoms, chem_spec_info, lat,
+                                                    lat_vect_1, lat_vect_2, lat_vect_3, lines, units)
+
+        molecules = [AllAtoms]
         return molecules
 
     @staticmethod
@@ -2308,10 +2330,10 @@ class TSIESTA:
 
     @staticmethod
     def type_of_run(filename):
-        #steps = Helpers.fromFileProperty(filename, 'MD.NumCGsteps', 1, 'int')
-        #if steps == 0:
-        #    """ single point"""
-        #    return "sp"
+        steps = Helpers.fromFileProperty(filename, 'MD.NumCGsteps', 1, 'int')
+        if steps == 0:
+            """ single point"""
+            return "sp"
         """ MD or CG? """
         return Helpers.fromFileProperty(filename, 'MD.TypeOfRun', 1, 'string')
 
@@ -2541,20 +2563,24 @@ class TFDFFile:
 
     def from_out_file(self, filename):
         if os.path.exists(filename):
-            MyFile = open(filename)
-            str1 = MyFile.readline()
-            while str1.find("Dump of input data file") == -1:
-                str1 = MyFile.readline()
-            str1 = MyFile.readline()
-            fdf = []
-            while str1.find("End of input data file") == -1:
-                if str1!="":
-                    fdf.append(str1)
-                str1 = MyFile.readline()
-            MyFile.close()
+            fdf = TFDFFile.fdf_data_dump(filename)
             self.fdf_parser(fdf)
             return self
 
+    @staticmethod
+    def fdf_data_dump(filename):
+        MyFile = open(filename)
+        str1 = MyFile.readline()
+        while str1.find("Dump of input data file") == -1:
+            str1 = MyFile.readline()
+        str1 = MyFile.readline()
+        fdf = []
+        while str1.find("End of input data file") == -1:
+            if str1 != "":
+                fdf.append(str1)
+            str1 = MyFile.readline()
+        MyFile.close()
+        return fdf
 
     def get_all_data(self, _structure, coordType, lattType):
         structure = deepcopy(_structure)

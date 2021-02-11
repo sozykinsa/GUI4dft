@@ -82,11 +82,14 @@ class Importer(object):
 
             if fileFormat == "SIESTAout":
                 type_of_run = (TSIESTA.type_of_run(filename).split())[0].lower()
-                if type_of_run == 'cg':
+                if (type_of_run == 'cg') or (type_of_run == 'sp'):
                     models = []
-                    if fl != 'opt':
-                        models = TAtomicModel.atoms_from_output_cg(filename)
-                    modelsopt = TAtomicModel.atoms_from_output_optim(filename)
+                    if type_of_run !="sp":
+                        if fl != 'opt':
+                            models = TAtomicModel.atoms_from_output_cg(filename)
+                        modelsopt = TAtomicModel.atoms_from_output_optim(filename)
+                    else:
+                        modelsopt = TAtomicModel.atoms_from_output_sp(filename)
                     if len(modelsopt) == 1:
                         models.append(modelsopt[0])
                     if prop and (len(models) > 0):
