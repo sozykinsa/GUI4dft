@@ -1425,7 +1425,8 @@ class mainWindow(QMainWindow):
             if self.ui.FormActionsComboPDOSIndexes.currentText() == 'Selected atom (3D View)':
                 atom_index = [self.MainForm.MainModel.selected_atom + 1]
             if self.ui.FormActionsComboPDOSIndexes.currentText() == 'Selected in list below':
-                atom_index = (self.ui.FormActionsPDOSIndexes.text()).split()
+                atom_index = (self.ui.FormActionsPDOSIndexes.toPlainText()).split()
+                atom_index = Helpers.list_str_to_int(atom_index)
 
             species = []
             if self.ui.FormActionsComboPDOSspecies.currentText() == 'All':
