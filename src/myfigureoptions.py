@@ -63,7 +63,6 @@ def figure_edit(axes, parent=None):
                (None, "<b>Axes settings</b>"),
                ('Label Size', int(axes.xaxis.label.get_fontsize())),
                ('Tick Size', _ticksize),
-               ('Show grid', axes.xaxis._gridOnMajor),
                sep,
                (None, "<b>X-Axis</b>"),
                ('Label', axes.get_xlabel()),
