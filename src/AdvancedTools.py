@@ -2096,7 +2096,7 @@ class TSIESTA:
                     for i in range(0, number_of_atoms):
                         data = (Helpers.spacedel(MdSiestaFile.readline())).split(' ')
                         charge = float(data[1])
-                        atom_sort = mendeley.get_charge_by_letter(data[2])
+                        atom_sort = mendeley.get_charge_by_letter(data[-1])
                         charges[i] = [atom_sort, charge]
                 str1 = MdSiestaFile.readline()
             MdSiestaFile.close()
