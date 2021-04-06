@@ -2076,19 +2076,22 @@ class TSIESTA:
                     charges[i][1] = round(charges[i][1],3)
                 return charges
 
-            searchSTR = ""
+            searchSTR1 = ""
+            searchSTR2 = ""
             if method == "Hirshfeld":
-                searchSTR = "Hirshfeld Net Atomic Populations:"
+                searchSTR1 = "Hirshfeld Net Atomic Populations:"
+                searchSTR2 = "Hirshfeld Atomic Populations:"
 
             if method == "Voronoi":
-                searchSTR = "Voronoi Net Atomic Populations:"
+                searchSTR1 = "Voronoi Net Atomic Populations:"
+                searchSTR2 = "Voronoi Atomic Populations:"
 
             MdSiestaFile = open(filename)
             str1 = MdSiestaFile.readline()
             mendeley = TPeriodTable()
 
             while str1 != '':
-                if str1 != '' and (str1.find(searchSTR) >= 0):
+                if str1 != '' and ((str1.find(searchSTR1) >= 0) or (str1.find(searchSTR2) >= 0)):
                     str1 = MdSiestaFile.readline()
                     for i in range(0, number_of_atoms):
                         data = (Helpers.spacedel(MdSiestaFile.readline())).split(' ')
