@@ -101,6 +101,9 @@ class mainWindow(QMainWindow):
         self.ui.PropertyForColorOfAtoms.currentIndexChanged.connect(self.color_atoms_with_property)
         self.ui.ColorAtomsWithProperty.stateChanged.connect(self.color_atoms_with_property)
 
+        self.ui.FormAtomsList1.currentIndexChanged.connect(self.bond_len_to_screen)
+        self.ui.FormAtomsList2.currentIndexChanged.connect(self.bond_len_to_screen)
+
         self.ui.FormActionsPreRadioSWNT.toggled.connect(self.swnt_type1_selected)
         self.ui.FormActionsPreRadioSWNTcap.toggled.connect(self.swnt_type2_selected)
         self.ui.FormActionsPreRadioSWNTcap_2.toggled.connect(self.swnt_type2_selected)
@@ -185,6 +188,8 @@ class mainWindow(QMainWindow):
         for i in range(1, len(atoms_list)):
             model.appendRow(QStandardItem(atoms_list[i]))
         self.ui.FormActionsPreComboAtomsList.setModel(model)
+        self.ui.FormAtomsList1.setModel(model)
+        self.ui.FormAtomsList2.setModel(model)
 
         # sliders
         self.ui.FormActionsPostSliderContourXY.valueChanged.connect(self.set_xsf_z_position)
@@ -517,6 +522,17 @@ class mainWindow(QMainWindow):
         self.MainForm.modify_selected_atom()
         self.models.append(self.MainForm.MainModel)
         self.model_to_screen(-1)
+
+    def bond_len_to_screen(self):
+        let1 = self.ui.FormAtomsList1.currentIndex()
+        let2 = self.ui.FormAtomsList2.currentIndex()
+
+        if not ((let1 == 0) or (let2 == 0)):
+            mendeley = TPeriodTable()
+            bond = mendeley.Bonds[let1][let2]
+        else:
+            bond = 0
+        self.ui.FormBondLenSpinBox.setValue(bond)
 
     def clear_form_isosurface_data2_N(self):
         self.ui.FormActionsPostLabelSurfaceNx.setText("")

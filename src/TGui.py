@@ -14,9 +14,9 @@ from AdvancedTools import TPeriodTable
 import math
 import numpy as np
 
-class MyFilter(QObject):
+class mouse_events_filter(QObject):
     def __init__(self, wind):
-        super(MyFilter, self).__init__()
+        super(mouse_events_filter, self).__init__()
         self.window = wind
 
     def eventFilter(self, obj, event):
@@ -77,7 +77,7 @@ class GuiOpenGL(object):
         self.openGLWidget.paintGL = self.paintGL
         self.openGLWidget.initializeGL = self.initializeGL
         self.openGLWidget.setMouseTracking(True)
-        self.filter = MyFilter(self)
+        self.filter = mouse_events_filter(self)
         self.openGLWidget.installEventFilter(self.filter)
         self.quality = quality
         self.prop = "charge"
@@ -111,7 +111,7 @@ class GuiOpenGL(object):
         self.SelectedFragmentAtomsListView.clear()
         self.SelectedFragmentAtomsListView.addItems(['Atoms'])
         for i in range(0, len(self.MainModel.atoms)):
-            if (self.MainModel.atoms[i]).fragment1 == True:
+            if (self.MainModel.atoms[i]).fragment1:
                 self.SelectedFragmentAtomsListView.addItems([str(i)])
 
     def color_atoms_with_property(self, prop):
@@ -593,8 +593,8 @@ class GuiOpenGL(object):
             x2 = self.MainModel.atoms[bond[1]].x
             y2 = self.MainModel.atoms[bond[1]].y
             z2 = self.MainModel.atoms[bond[1]].z
-            #print(str(bond[0])+"   "+str(bond[1]))
-            if (self.SelectedFragmentMode == True) and ((self.MainModel.atoms[bond[0]].fragment1 == True) or (self.MainModel.atoms[bond[1]].fragment1 == True)):
+
+            if self.SelectedFragmentMode and (self.MainModel.atoms[bond[0]].fragment1 or self.MainModel.atoms[bond[1]].fragment1):
                 gl.glColor4f(self.color_of_bonds[0], self.color_of_bonds[1], self.color_of_bonds[2], self.SelectedFragmentAtomsTransp)
             else:
                 gl.glColor3f(self.color_of_bonds[0], self.color_of_bonds[1], self.color_of_bonds[2])

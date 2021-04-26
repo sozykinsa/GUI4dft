@@ -421,7 +421,9 @@ class TPeriodTable:
         for i in rang:
             row = []
             for j in rang:
-                row.append(1)
+                tab_rad_i = self.Atoms[i].radius / 100.0
+                tab_rad_j = self.Atoms[j].radius / 100.0
+                row.append(tab_rad_i+tab_rad_j)
             self.Bonds.append(row)
 
         self.Bonds[1][6] = 1.0
@@ -1384,10 +1386,9 @@ class TAtomicModel(object):
                 length = round(self.atom_atom_distance(i, j), 4)
                 t1 = int(self.atoms[i].charge)
                 t2 = int(self.atoms[j].charge)
-                if (math.fabs(length - PeriodTable.Bonds[t1][t2]) < 0.2*PeriodTable.Bonds[t1][t2]):
+                if math.fabs(length - PeriodTable.Bonds[t1][t2]) < 0.2*PeriodTable.Bonds[t1][t2]:
                     self.bonds_per.append([t1, t2, length, self.atoms[i].let, i, self.atoms[j].let, j])
         return self.bonds_per
-
 
     def find_bonds_fast(self):
         self.bonds = []
@@ -1398,10 +1399,9 @@ class TAtomicModel(object):
                 ry2 = math.pow(self.atoms[i].y - self.atoms[j].y, 2)
                 rz2 = math.pow(self.atoms[i].z - self.atoms[j].z, 2)
                 r = math.sqrt(rx2 + ry2 + rz2)
-                rTab = Mendeley.Bonds[self.atoms[i].charge][self.atoms[j].charge]
-                if (r>1e-4) and (r < 1.2 * rTab):
+                r_tab = Mendeley.Bonds[self.atoms[i].charge][self.atoms[j].charge]
+                if (r > 1e-4) and (r < 1.2 * r_tab):
                     self.bonds.append([i, j])
-
 
     def Delta(self, newMolecula):
         """ maximum distance from atoms in self to the atoms in the newMolecula"""
