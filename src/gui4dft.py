@@ -637,6 +637,29 @@ class mainWindow(QMainWindow):
             model_scat = model_scat[0]
             model_righ = model_righ[0]
 
+            """ start: parts transformation"""
+            left_move_x = self.ui.FormActionsPreMoveLeftElectrodeX.value()
+            left_move_y = self.ui.FormActionsPreMoveLeftElectrodeY.value()
+            model_left.move(left_move_x, left_move_y, 0)
+
+            righ_move_x = self.ui.FormActionsPreMoveRightElectrodeX.value()
+            righ_move_y = self.ui.FormActionsPreMoveRightElectrodeY.value()
+            model_righ.move(righ_move_x, righ_move_y, 0)
+
+            scat_rotationX = self.ui.FormActionsPreSpinScatRotX.value()
+            scat_rotationY = self.ui.FormActionsPreSpinScatRotY.value()
+            scat_rotationZ = self.ui.FormActionsPreSpinScatRotZ.value()
+
+            model_scat.rotateX(scat_rotationX)
+            model_scat.rotateY(scat_rotationY)
+            model_scat.rotateZ(scat_rotationZ)
+
+            scat_move_x = self.ui.FormActionsPreMoveScatX.value()
+            scat_move_y = self.ui.FormActionsPreMoveScatY.value()
+            model_scat.move(scat_move_x, scat_move_y, 0)
+
+            """ end: parts transformation"""
+
             left_elec_max = model_left.maxZ()
             left_bord = model_scat.minZ()
 
@@ -645,11 +668,8 @@ class mainWindow(QMainWindow):
             left_dist = self.ui.FormActionsPreSpinLeftElectrodeDist.value()
             righ_dist = self.ui.FormActionsPreSpinRightElectrodeDist.value()
 
-            scat_rotation = self.ui.FormActionsPreSpinScatRotation.value()
-
             model = TAtomicModel()
             model.add_atomic_model(model_left)
-            model_scat.rotateZ(scat_rotation)
             model_scat.move(0, 0, -(left_bord - left_elec_max) + left_dist)
             model.add_atomic_model(model_scat)
             righ_bord = model.maxZ()

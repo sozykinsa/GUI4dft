@@ -1531,9 +1531,9 @@ class TAtomicModel(object):
     def move(self, Lx, Ly, Lz):
         """ смещает модель на указанный вектор """
         for atom in self.atoms:
-            atom.x+=Lx
-            atom.y+=Ly
-            atom.z+=Lz
+            atom.x += Lx
+            atom.y += Ly
+            atom.z += Lz
         return self.atoms
     
     def typesOfAtoms(self):
