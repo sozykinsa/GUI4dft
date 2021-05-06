@@ -2147,6 +2147,8 @@ class TSIESTA:
         else:
             return None
 
+
+
     @staticmethod
     def Energies(filename):
         """ Energy from each step """
@@ -2156,27 +2158,14 @@ class TSIESTA:
     def FermiEnergy(filename):
         """ Fermy Energy from SIESTA output file """
         if os.path.exists(filename):
-            MdSiestaFile = open(filename)
-            str1 = MdSiestaFile.readline()
-            Energy = 0
-            while str1 != '':
-                if str1 != '' and (str1.find("siesta: iscf   Eharris(eV)      E_KS(eV)   FreeEng(eV)   dDmax  Ef(eV)")>=0) or (str1.find("scf: iscf   Eharris(eV)      E_KS(eV)   FreeEng(eV)    dDmax  Ef(eV)")>=0) or (str1.find("iscf     Eharris(eV)        E_KS(eV)     FreeEng(eV)     dDmax    Ef(eV) dHmax(eV)")>=0):
-                    str1 = MdSiestaFile.readline()
-                    while (str1.find('siesta') >= 0) or (str1.find('timer') >= 0) or (str1.find('elaps') >= 0) or (str1.find('scf:') >= 0) or (str1.find('spin moment:')>=0):
-                        str1 = Helpers.spacedel(str1)
-                        if (str1.find('siesta') >= 0) or (str1.find('scf:') >= 0):
-                            Energy = float(str1.split(' ')[6])
-                        str1 = MdSiestaFile.readline()
-                str1 = MdSiestaFile.readline()
-            MdSiestaFile.close()
-            return Energy
+            return Helpers.fromFileProperty(filename, 'siesta:         Fermi =', 2, 'float')
         else:
             return None
 
     @staticmethod
     def number_of_atoms(filename):
         """ Returns the NumberOfAtoms from SIESTA output file """
-        number = Helpers.fromFileProperty(filename,'NumberOfAtoms')
+        number = Helpers.fromFileProperty(filename, 'NumberOfAtoms')
         if number == None:
             block = TSIESTA.get_block_from_siesta_fdf(filename, "AtomicCoordinatesAndAtomicSpecies")
             if len(block) > 0:

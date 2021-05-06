@@ -50,16 +50,26 @@ from about import Ui_DialogAbout as Ui_about
 from form import Ui_MainWindow as Ui_form
 from matplotlib.backends.backend_qt5agg import (NavigationToolbar2QT as NavigationToolbar)
 
+is_sisl_enable = False
+try:
+    import sisl
+    is_sisl_enable = True
+    print("module 'sisl' is installed")
+except ModuleNotFoundError:
+    print("module 'sisl' is not installed")
+
 sys.path.append('.')
 
 is_with_figure = True
-
 
 class mainWindow(QMainWindow):
     def __init__(self, *args):
         super(mainWindow, self).__init__(*args)
         self.ui = Ui_form()
         self.ui.setupUi(self)
+
+        self.ui.sisl_area.setEnabled(is_sisl_enable)
+
         self.models = []
         selected_atom_info = [self.ui.FormActionsPreComboAtomsList, self.ui.FormActionsPreSpinAtomsCoordX,
                               self.ui.FormActionsPreSpinAtomsCoordY, self.ui.FormActionsPreSpinAtomsCoordZ,
@@ -553,7 +563,7 @@ class mainWindow(QMainWindow):
 
     def check_dos(self, fname):
         DOSfile, eFermy = Importer.check_dos_file(fname)
-        if DOSfile != False:
+        if DOSfile:
             self.ui.FormActionsEditPDOSefermi.setText(str(eFermy))
             i = self.ui.FormActionsTabeDOSProperty.rowCount() + 1
             self.ui.FormActionsTabeDOSProperty.setRowCount(i)
