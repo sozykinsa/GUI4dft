@@ -905,24 +905,24 @@ class TAtomicModel(object):
             NumbersOfAtoms = Helpers.list_str_to_int(NumbersOfAtoms)
             NumberOfAtoms = 0
             for number in NumbersOfAtoms:
-                NumberOfAtoms+=number
+                NumberOfAtoms += number
 
             if Helpers.spacedel(struct_file.readline()).lower() == "direct":
-                newStr = TAtomicModel()
+                new_str = TAtomicModel()
                 for i in range(0, len(NumbersOfAtoms)):
                     number = NumbersOfAtoms[i]
                     for j in range(0, number):
                         str1 = Helpers.spacedel(struct_file.readline())
-                        S = str1.split(' ')
-                        x = float(S[0])
-                        y = float(S[1])
-                        z = float(S[2])
+                        s = str1.split(' ')
+                        x = float(s[0])
+                        y = float(s[1])
+                        z = float(s[2])
                         charge = periodTable.get_charge_by_letter(SortsOfAtoms[i])
                         let = SortsOfAtoms[i]
-                        newStr.add_atom(TAtom([x, y, z, let, charge]))
-                newStr.set_lat_vectors(lat1, lat2, lat3)
-                newStr.convert_from_direct_to_cart()
-                molecules.append(newStr)
+                        new_str.add_atom(TAtom([x, y, z, let, charge]))
+                new_str.set_lat_vectors(lat1, lat2, lat3)
+                new_str.convert_from_direct_to_cart()
+                molecules.append(new_str)
         return molecules
 
 
@@ -2158,7 +2158,28 @@ class TSIESTA:
     def FermiEnergy(filename):
         """ Fermy Energy from SIESTA output file """
         if os.path.exists(filename):
-            return Helpers.fromFileProperty(filename, 'siesta:         Fermi =', 2, 'float')
+            energy = 0
+            try:
+                energy = float(Helpers.fromFileProperty(filename, 'siesta:         Fermi =', 2, 'float'))
+            except Exception:
+                MdSiestaFile = open(filename)
+                str1 = MdSiestaFile.readline()
+                while str1 != '':
+                    if str1 != '' and (str1.find(
+                            "siesta: iscf   Eharris(eV)      E_KS(eV)   FreeEng(eV)   dDmax  Ef(eV)") >= 0) or (
+                            str1.find("scf: iscf   Eharris(eV)      E_KS(eV)   FreeEng(eV)    dDmax  Ef(eV)") >= 0) or (
+                            str1.find(
+                                    "iscf     Eharris(eV)        E_KS(eV)     FreeEng(eV)     dDmax    Ef(eV) dHmax(eV)") >= 0):
+                        str1 = MdSiestaFile.readline()
+                        while (str1.find('siesta') >= 0) or (str1.find('timer') >= 0) or (str1.find('elaps') >= 0) or (
+                                str1.find('scf:') >= 0) or (str1.find('spin moment:') >= 0):
+                            str1 = Helpers.spacedel(str1)
+                            if (str1.find('siesta') >= 0) or (str1.find('scf:') >= 0):
+                                energy = float(str1.split(' ')[6])
+                            str1 = MdSiestaFile.readline()
+                    str1 = MdSiestaFile.readline()
+                MdSiestaFile.close()
+            return energy
         else:
             return None
 
