@@ -194,14 +194,13 @@ class TVolumericData:
         self.atoms = []
         self.data3D = np.zeros((1, 1))
         self.spacing = (0, 0, 0)
-        self.origin = np.zeros((3))
-        self.origin_to_export = np.zeros((3))
+        self.origin = np.zeros(3)
+        self.origin_to_export = np.zeros(3)
         self.type = "TVolumericData"
 
     def volumeric_data_read(self, f, orderData):
         ind = 0
-        N = self.Nx * self.Ny * self.Nz
-        while ind < N:
+        while ind < self.Nx * self.Ny * self.Nz:
             row = f.readline().split()
             for data in row:
                 self.data3D[0, ind] = float(data)
@@ -325,11 +324,11 @@ class TXSF(TVolumericData):
                             z = float(row1[3])
                             atoms.append([x, y, z, periodTable.get_let(charge), charge])
 
-                if row.find("BEGIN_BLOCK_DATAGRID_3D") > -1:
+                if row.find("BEGIN_BLOCK_DATAGRID") > -1:
                     row = f.readline()
                     while row.find("DATA_from:") > -1:
                         row = Helpers.spacedel(f.readline())
-                        while row.find("BEGIN_DATAGRID_3D") > -1:
+                        while row.find("BEGIN_DATAGRID") > -1:
                             row = f.readline()
                             origin = f.readline()
                             vec1 = f.readline().split()
@@ -338,9 +337,6 @@ class TXSF(TVolumericData):
                             vec2 = Helpers.list_str_to_float(vec2)
                             vec3 = f.readline().split()
                             vec3 = Helpers.list_str_to_float(vec3)
-                            bx = vec1[0]
-                            by = vec2[1]
-                            bz = vec3[2]
                             f.close()
 
                             AllAtoms = TAtomicModel(atoms)
@@ -359,12 +355,12 @@ class TXSF(TVolumericData):
             f = open(self.filename)
             row = f.readline()
             while row != '':
-                if row.find("BEGIN_BLOCK_DATAGRID_3D") > -1:
+                if row.find("BEGIN_BLOCK_DATAGRID") > -1:
                     row = f.readline()
                     while row.find("DATA_from:") > -1:
                         datas = []
                         row = f.readline()
-                        while row.find("BEGIN_DATAGRID_3D") > -1:
+                        while row.find("BEGIN_DATAGRID") > -1:
                             row = Helpers.spacedel(row)
                             data3D = TVolumericDataBlock(row)
                             while row.find("END_") == -1:
@@ -394,9 +390,12 @@ class TXSF(TVolumericData):
                 tmp_model = TAtomicModel(self.atoms)
                 center_mass = tmp_model.centr_mass()
                 self.origin -= np.array([center_mass[0], center_mass[1], 0])
-                vec1 = float(f.readline().split()[0])
-                vec2 = float(f.readline().split()[1])
-                vec3 = float(f.readline().split()[2])
+                vec1 = f.readline().split()
+                vec2 = f.readline().split()
+                vec3 = f.readline().split()
+                vec1 = float(vec1[0])
+                vec2 = float(vec2[1])
+                vec3 = float(vec3[2])
                 self.spacing = (vec1 / self.Nx, vec2 / self.Ny, vec3 / self.Nz)
 
                 orderData = 'F'

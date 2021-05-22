@@ -2164,9 +2164,6 @@ class mainWindow(QMainWindow):
             self.clear_form_isosurface_data2_N()
             self.ui.CalculateTheVolumericDataDifference.setEnabled(False)
             self.ui.CalculateTheVolumericDataSum.setEnabled(False)
-            self.ui.VolumrricDataGridExport.setEnabled(False)
-            self.ui.ExportTheVolumericDataXSF.setEnabled(False)
-            self.ui.ExportTheVolumericDataCube.setEnabled(False)
             self.ui.VolumrricDataGrid2.setTitle("Grid")
             self.ui.FormActionsPostButSurfaceLoadData2.setEnabled(False)
 
@@ -2187,7 +2184,6 @@ class mainWindow(QMainWindow):
                 self.clear_form_isosurface_data2_N()
                 self.ui.CalculateTheVolumericDataDifference.setEnabled(False)
                 self.ui.CalculateTheVolumericDataSum.setEnabled(False)
-                self.ui.VolumrricDataGridExport.setEnabled(False)
                 self.ui.ExportTheVolumericDataXSF.setEnabled(False)
                 self.ui.ExportTheVolumericDataCube.setEnabled(False)
                 self.ui.VolumrricDataGrid2.setTitle("Grid")
@@ -2383,8 +2379,6 @@ class mainWindow(QMainWindow):
                     self.ui.CalculateTheVolumericDataDifference.setEnabled(True)
                     self.ui.CalculateTheVolumericDataSum.setEnabled(True)
                     self.ui.VolumrricDataGridExport.setEnabled(True)
-                    self.ui.ExportTheVolumericDataXSF.setEnabled(True)
-                    self.ui.ExportTheVolumericDataCube.setEnabled(True)
                     self.ui.VolumrricDataGrid2.setTitle("Grid: correct")
                 else:
                     self.ui.VolumrricDataGrid2.setTitle("Grid: incorrect")
