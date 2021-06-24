@@ -5,7 +5,6 @@ import sys
 import xml.etree.ElementTree as ET
 from copy import deepcopy
 from operator import itemgetter
-import myfigureoptions
 import matplotlib.pyplot as plt
 import numpy as np
 from AdvancedTools import Helpers
