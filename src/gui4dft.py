@@ -1788,7 +1788,11 @@ class mainWindow(QMainWindow):
             self.ui.MplWidget.canvas.axes.set_xlabel("k")
             self.ui.MplWidget.canvas.axes.set_ylabel("Energy, eV")
 
+            #plt.rcParams.update({'font.size': 44})
+            self.ui.MplWidget.canvas.axes.labelsize = 10
+
             self.ui.MplWidget.canvas.draw()
+
 
     def plot_voronoi(self):
         self.ui.Form3Dand2DTabs.setCurrentIndex(0)
