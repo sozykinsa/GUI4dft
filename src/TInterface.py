@@ -82,17 +82,18 @@ class Importer(object):
 
             if fileFormat == "SIESTAout":
                 type_of_run = (TSIESTA.type_of_run(filename).split())[0].lower()
-                if (type_of_run == 'cg') or (type_of_run == 'sp'):
-                    models = []
-                    if type_of_run !="sp":
+                models = []
+                if type_of_run != "sp":
                         if fl != 'opt':
                             models = TAtomicModel.atoms_from_output_cg(filename)
+                            if len(models) == 0:
+                                models = TAtomicModel.atoms_from_output_md(filename)
                         modelsopt = TAtomicModel.atoms_from_output_optim(filename)
-                    else:
+                else:
                         modelsopt = TAtomicModel.atoms_from_output_sp(filename)
-                    if len(modelsopt) == 1:
+                if len(modelsopt) == 1:
                         models.append(modelsopt[0])
-                    if prop and (len(models) > 0):
+                if prop and (len(models) > 0):
                         try:
                             charge_mulliken = TSIESTA.get_charges_mulliken_for_atoms(filename)
                             if len(charge_mulliken[0]) > 0:
@@ -105,9 +106,6 @@ class Importer(object):
                                 models[-1].add_atoms_property("charge Hirshfeld", charge_hirshfeld)
                         except Exception:
                             print("Properties failed")
-
-                else:
-                    models = TAtomicModel.atoms_from_output_md(filename)
                 fdf.from_out_file(filename)
 
             if fileFormat == "SIESTAANI":

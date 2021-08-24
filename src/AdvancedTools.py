@@ -737,18 +737,20 @@ class TAtomicModel(object):
 
                 atoms = []
 
-                if (str1 != '') and (str1.find("Begin CG move") >= 0 or str1.find("Begin MD step") >= 0):
+                if (str1 != '') and (str1.find("Begin CG move") >= 0 or str1.find("Begin MD step") >= 0 or str1.find("Begin CG opt. move") >= 0):
                     if (str1 != '') and str1.find("Begin MD step") >= 0:
                         for j in range(0, 3):
                             MdSiestaFile.readline()
                     else:
-                        if str1.find("Begin CG move") >= 0:
-                            while (str1 != '') and (str1.find("block") == -1) and (str1.find("outcoor") == -1):
+                        if (str1.find("Begin CG move") >= 0) or (str1.find("Begin CG opt. move") >= 0):
+                            while (str1 != '') and (str1.find("block") == -1) and (str1.find("outcoor: Atomic coordinates (Ang)") == -1):
                                 str1 = MdSiestaFile.readline()
 
                     atoms = []
                     for i1 in range(0, NumberOfAtoms):
                         str1 = Helpers.spacedel(MdSiestaFile.readline())
+                        if str1 == "":
+                            return []
                         S = str1.split(' ')
                         d1 = float(S[0])
                         d2 = float(S[1])
@@ -758,7 +760,7 @@ class TAtomicModel(object):
                         A = [d1, d2, d3, C, Charge]
                         atoms.append(A)
                     str1 = MdSiestaFile.readline()
-                    while str1.find("outcell: Unit cell vectors (Ang):")==-1:
+                    while str1.find("outcell: Unit cell vectors (Ang):") == -1:
                         str1 = MdSiestaFile.readline()
                     vec1 = MdSiestaFile.readline().split()
                     vec1 = Helpers.list_str_to_float(vec1)
@@ -2348,7 +2350,15 @@ class TSIESTA:
             """ single point"""
             return "sp"
         """ MD or CG? """
-        return Helpers.fromFileProperty(filename, 'MD.TypeOfRun', 1, 'string')
+        res = Helpers.fromFileProperty(filename, 'MD.TypeOfRun', 1, 'string')
+        if res == None:
+            res = Helpers.fromFileProperty(filename, "Begin CG opt. move =", 1, 'string')
+            if res == "0":
+                return "cg"
+            res = Helpers.fromFileProperty(filename, "Begin MD step =", 1, 'string')
+            if res == "1":
+                return "mg"
+        return res
 
     @staticmethod
     def volume(filename):
