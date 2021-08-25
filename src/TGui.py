@@ -604,13 +604,18 @@ class GuiOpenGL(object):
     def add_box(self):
         gl.glNewList(self.object + 3, gl.GL_COMPILE)
         gl.glColor3f(self.color_of_box[0], self.color_of_box[1], self.color_of_box[2])
-        minX = self.MainModel.minX()
-        minY = self.MainModel.minY()
-        minZ = self.MainModel.minZ()
-        origin = np.array([minX, minY, minZ])
+        #minX = self.MainModel.minX()
+        #minY = self.MainModel.minY()
+        #minZ = self.MainModel.minZ()
+        #origin = np.array([minX, minY, minZ])
+
         v1 = self.MainModel.LatVect1
         v2 = self.MainModel.LatVect2
         v3 = self.MainModel.LatVect3
+
+        origin = - (v1 + v2 + v3) / 2
+        origin[2] = 0
+
         p1 = origin
         p2 = origin + v1
         p3 = origin + v2
