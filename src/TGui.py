@@ -54,6 +54,8 @@ class GuiOpenGL(object):
         self.ViewContour = False
         self.ViewContourFill = False
         self.ViewVoronoi = False
+        self.ViewBCP = False
+        self.ViewBondpath = False
         self.active = False
         self.QuadObjS = []
         self.object = None
@@ -71,6 +73,7 @@ class GuiOpenGL(object):
         self.rotZ = 0
         self.CanSearch = False
         self.selected_atom = -1
+        self.selected_cp = -1
         self.history_of_atom_selection = []
         self.CheckAtomSelection = CheckAtomSelection
         self.openGLWidget.initializeGL()
@@ -150,20 +153,21 @@ class GuiOpenGL(object):
         self.selected_atom_Z.update()
 
     def selected_atom_properties_to_form(self):
+        text = ""
         if self.selected_atom >= 0:
-            text = "Selected atom: " + str(self.selected_atom + 1) +"\n"
+            text += "Selected atom: " + str(self.selected_atom + 1) + "\n"
             atom = self.MainModel.atoms[self.selected_atom]
             text += "Element: " + atom.let + "\n"
             for key in atom.properties:
-                text += str(key) + ": " + str(atom.properties[key]) +"\n"
+                text += str(key) + ": " + str(atom.properties[key]) + "\n"
 
-            if (len(self.history_of_atom_selection) > 1):
-                text +="\n\nHistory of atoms selection: "+str(self.history_of_atom_selection)+"\n"
-                text +="Distance from atom " + str(self.history_of_atom_selection[-1] + 1) + " to atom " + str(self.history_of_atom_selection[-2] + 1) + " : "
+            if len(self.history_of_atom_selection) > 1:
+                text += "\n\nHistory of atoms selection: "+str(self.history_of_atom_selection)+"\n"
+                text += "Distance from atom " + str(self.history_of_atom_selection[-1] + 1) + " to atom " + str(self.history_of_atom_selection[-2] + 1) + " : "
                 dist = self.MainModel.atom_atom_distance(self.history_of_atom_selection[-1], self.history_of_atom_selection[-2])
-                text += str(round(dist/10,6)) + " nm\n"
+                text += str(round(dist/10, 6)) + " nm\n"
 
-                if (len(self.history_of_atom_selection) > 2) and ( self.history_of_atom_selection[-1] != self.history_of_atom_selection[-2]) and ( self.history_of_atom_selection[-3] != self.history_of_atom_selection[-2]):
+                if (len(self.history_of_atom_selection) > 2) and (self.history_of_atom_selection[-1] != self.history_of_atom_selection[-2]) and (self.history_of_atom_selection[-3] != self.history_of_atom_selection[-2]):
                     x1 = self.MainModel.atoms[self.history_of_atom_selection[-1]].x
                     y1 = self.MainModel.atoms[self.history_of_atom_selection[-1]].y
                     z1 = self.MainModel.atoms[self.history_of_atom_selection[-1]].z
@@ -198,15 +202,55 @@ class GuiOpenGL(object):
                         self.history_of_atom_selection[-2] + 1) + " - " + str(
                         self.history_of_atom_selection[-3] + 1) + " : " + str(round(math.degrees(angle), 3)) + " degrees\n"
 
-            self.selected_atom_properties.setText(text)
-        else:
-            self.selected_atom_properties.setText("select")
+        if self.selected_cp >= 0:
+            SysCoord = np.array([self.MainModel.LatVect1, self.MainModel.LatVect2, self.MainModel.LatVect3])
+            obr = np.linalg.inv(SysCoord).transpose()
+            text += "\nSelected critical point: " + str(self.selected_cp) + " "
+            cp = self.MainModel.bcp[self.selected_cp]
+            atoms = self.MainModel.atoms
+
+            bond1 = cp.getProperty("bond1")
+            bond2 = cp.getProperty("bond2")
+
+            ind1, ind2 = self.MainModel.atoms_of_bond_path(self.selected_cp)
+
+            text += atoms[ind1].let + str(ind1) + "-" + atoms[ind2].let + str(ind2)
+
+            text += "\nCartesian: [" + str(cp.x) + "; " + str(cp.y) + "; " + str(cp.z) + "]\n"
+
+            Coord = np.array([cp.x, cp.y, cp.z])
+            res = obr.dot(Coord)
+            x = res[0]
+            y = res[1]
+            z = res[2]
+            text += "Fractional: [" + str(x) + "; " + str(y) + "; " + str(z) + "]\n"
+
+            text += "Bond critical path: " + str(len(bond1)+len(bond2)) + " points (fractional):\n"
+            for i in range(0, len(bond1)):
+                Coord = np.array([bond1[len(bond1) - i - 1].x, bond1[len(bond1) - i - 1].y, bond1[len(bond1) - i - 1].z])
+                res = obr.dot(Coord)
+                x = res[0]
+                y = res[1]
+                z = res[2]
+                text += str(x) + " " + str(y) + " " + str(z) + "\n"
+            for i in range(0, len(bond2)):
+                Coord = np.array([bond2[i].x, bond2[i].y, bond2[i].z])
+                res = obr.dot(Coord)
+                x = res[0]
+                y = res[1]
+                z = res[2]
+                text += str(x) + " " + str(y) + " " + str(z) + "\n"
+
+        if (self.selected_atom < 0) and (self.selected_cp < 0):
+            text += "Select any atom or critical point"
+
+        self.selected_atom_properties.setText(text)
 
     def isActive(self):
         return self.active
 
     def isAtomSelected(self):
-        return self.selected_atom >=0
+        return self.selected_atom >= 0
 
     def copy_state(self, GUI):
         self.rotX = GUI.rotX
@@ -280,6 +324,8 @@ class GuiOpenGL(object):
         self.add_bonds()
         self.add_box()
         self.add_axes()
+        self.add_bcp()
+        self.add_bondpath()
         self.openGLWidget.update()
 
     def get_model(self):
@@ -418,7 +464,7 @@ class GuiOpenGL(object):
             return True
     
     def move(self, x, y, width, height):
-        if self.active == True:
+        if self.active:
             xs, ys = self.screen2space(x, y, width, height)
             self.x += xs - self.xsOld
             self.y += ys - self.ysOld
@@ -427,14 +473,14 @@ class GuiOpenGL(object):
             return True
    
     def setXY(self, x, y, width, height):
-        if self.active == True:
+        if self.active:
             self.xsOld, self.ysOld = self.screen2space(x, y, width, height)
             self.xScene, self.yScene = x, y
             self.openGLWidget.update()
             return True
 
     def move_atom(self, x, y, width, height):
-        if self.active == True:
+        if self.active:
                 dx = x - self.xScene
                 dy = y - self.yScene
                 mult = 0.01*self.Scale
@@ -488,7 +534,6 @@ class GuiOpenGL(object):
         vect = Mx.dot(vect)
         return vect
 
-
     def add_bond(self, Atom1Pos, Atom2Pos, Radius=0.1, type = 'cylinder'):
         Radius2 = Radius
         if type == 'conus':
@@ -519,7 +564,7 @@ class GuiOpenGL(object):
     def add_selected_atom(self):
         gl.glNewList(self.object+7, gl.GL_COMPILE)
         for at in self.MainModel.atoms:
-            if at.isSelected() == True:
+            if at.isSelected():
                 gl.glPushMatrix()
                 gl.glTranslatef(at.x, at.y, at.z)
                 self.QuadObjS.append(glu.gluNewQuadric())
@@ -562,8 +607,8 @@ class GuiOpenGL(object):
             self.QuadObjS.append(glu.gluNewQuadric())
             rad = mendeley.Atoms[at.charge].radius/mendeley.Atoms[6].radius
 
-            if at.isSelected() == False:
-                if (len(prop)>0) and (prop != "charge"):
+            if not at.isSelected():
+                if (len(prop) > 0) and (prop != "charge"):
                     val = at.properties[prop]
                     if val > mean_val:
                         gl.glColor3f(0, math.fabs((val-mean_val)/(max_val-mean_val)), 0)
@@ -571,7 +616,7 @@ class GuiOpenGL(object):
                         gl.glColor3f(0, 0, math.fabs((val-mean_val)/(min_val-mean_val)))
                 else:
                     color = self.color_of_atoms[at.charge]
-                    if (self.SelectedFragmentMode == True) and (at.fragment1 == True):
+                    if self.SelectedFragmentMode and at.fragment1:
                         gl.glColor4f(color[0], color[1], color[2], self.SelectedFragmentAtomsTransp)
                     else:
                         gl.glColor3f(color[0], color[1], color[2])
@@ -604,10 +649,6 @@ class GuiOpenGL(object):
     def add_box(self):
         gl.glNewList(self.object + 3, gl.GL_COMPILE)
         gl.glColor3f(self.color_of_box[0], self.color_of_box[1], self.color_of_box[2])
-        #minX = self.MainModel.minX()
-        #minY = self.MainModel.minY()
-        #minZ = self.MainModel.minZ()
-        #origin = np.array([minX, minY, minZ])
 
         v1 = self.MainModel.LatVect1
         v2 = self.MainModel.LatVect2
@@ -706,12 +747,54 @@ class GuiOpenGL(object):
         self.ViewSurface = True
         self.openGLWidget.update()
 
+    def add_bcp(self):
+        gl.glNewList(self.object + 8, gl.GL_COMPILE)
+        for at in self.MainModel.bcp:
+            gl.glPushMatrix()
+            gl.glTranslatef(at.x, at.y, at.z)
+            self.QuadObjS.append(glu.gluNewQuadric())
+            gl.glColor3f(1, 0, 0)
+            mult = 1
+            if at.isSelected():
+                gl.glColor3f(0, 0, 1)
+                mult = 1.3
+            glu.gluSphere(self.QuadObjS[-1], 0.15*mult, self.quality*70, self.quality*70)
+            gl.glPopMatrix()
+
+        gl.glEndList()
+        self.ViewBCP = True
+        self.openGLWidget.update()
+
+    def add_bondpath(self):
+        gl.glNewList(self.object + 9, gl.GL_COMPILE)
+
+        for cp in self.MainModel.bcp:
+            self.add_critical_path(cp.getProperty("bond1opt"))
+            self.add_critical_path(cp.getProperty("bond2opt"))
+
+        gl.glEndList()
+        self.ViewBondpath = True
+        self.openGLWidget.update()
+
+    def add_critical_path(self, bond):
+        if not bond:
+            return
+        for i in range(1, len(bond)):
+            x1 = bond[i - 1].x
+            y1 = bond[i - 1].y
+            z1 = bond[i - 1].z
+            x2 = bond[i].x
+            y2 = bond[i].y
+            z2 = bond[i].z
+
+            gl.glColor3f(0, 1, 0)
+            self.add_bond([x1, y1, z1], [x2, y2, z2], 0.03)
+
     def add_contour(self, params):
         self.data_contour = params
         gl.glDeleteLists(self.object + 5, 1)
         gl.glNewList(self.object + 5, gl.GL_COMPILE)
         for param in params:
-            values = param[0]
             conts = param[1]
             colors = param[2]
             it = 0
@@ -720,7 +803,7 @@ class GuiOpenGL(object):
                 it += 1
                 gl.glColor3f(color[0], color[1], color[2])
                 for contour in cont:
-                    for i in range(0,len(contour)-1):
+                    for i in range(0, len(contour)-1):
                         p1 = contour[i]
                         p2 = contour[i+1]
                         self.add_bond(p1, p2, self.contour_width)
@@ -760,7 +843,7 @@ class GuiOpenGL(object):
     def add_voronoi(self, color, maxDist):
         self.color_of_voronoi = color
         volume = np.inf
-        if self.selected_atom >=0:
+        if self.selected_atom >= 0:
             ListOfPoligons, volume = TCalculators.VoronoiAnalisis(self.MainModel, self.selected_atom, maxDist)
             gl.glNewList(self.object+1, gl.GL_COMPILE)
             gl.glColor4f(color[0], color[1], color[2], 0.7)
@@ -791,6 +874,9 @@ class GuiOpenGL(object):
                     if self.ViewAtoms:
                         gl.glCallList(self.object)  # atoms
 
+                    if self.ViewBCP:
+                        gl.glCallList(self.object + 8)  # BCP
+
                     if self.CanSearch:
                         self.get_atom_on_screen()
 
@@ -814,6 +900,9 @@ class GuiOpenGL(object):
 
                     if self.ViewAxes:
                         gl.glCallList(self.object + 7)  # Axes
+
+                    if self.ViewBondpath:
+                        gl.glCallList(self.object + 9)  # Bondpath
 
         except Exception as exc:
             print(exc)
@@ -855,18 +944,22 @@ class GuiOpenGL(object):
         point = self.get_point_in_3D(self.xScene, self.yScene)
 
         oldSelected = self.selected_atom
-        minr = 10000
-        ind = -1
-        for at in range(0, len(self.MainModel.atoms)):
-            rx2 = (point[0] - self.MainModel.atoms[at].x)**2
-            ry2 = (-point[1] - self.MainModel.atoms[at].y)**2
-            rz2 = (point[2] - self.MainModel.atoms[at].z)**2
-            r = math.sqrt(rx2 + ry2 + rz2)
-            if r < minr:
-                minr = r
-                ind = at
+        need_for_update = False
 
-        if minr < 2:
+        ind, minr = self.nearest_point(self.MainModel.atoms, point)
+        cp_ind, cp_minr = self.nearest_point(self.MainModel.bcp, point)
+
+        if cp_minr < 0.5:
+            if self.selected_cp == cp_ind:
+                self.MainModel.bcp[self.selected_cp].setSelected(False)
+                self.selected_cp = -1
+            else:
+                self.selected_cp = cp_ind
+                self.MainModel.bcp[self.selected_cp].setSelected(True)
+            need_for_update = True
+            self.add_bcp()
+
+        if minr < 0.5:
             if self.selected_atom >= 0:
                 self.ViewVoronoi = False
             if self.selected_atom != ind:
@@ -887,8 +980,24 @@ class GuiOpenGL(object):
                 self.history_of_atom_selection = []
             else:
                 self.history_of_atom_selection.append(self.selected_atom)
+            need_for_update = True
+
+        if need_for_update:
             self.selected_atom_changed()
             self.openGLWidget.update()
+
+    def nearest_point(self, ats, point):
+        minr1 = 10000
+        ind1 = -1
+        for at in range(0, len(ats)):
+            rx2 = (point[0] - ats[at].x) ** 2
+            ry2 = (-point[1] - ats[at].y) ** 2
+            rz2 = (point[2] - ats[at].z) ** 2
+            r = math.sqrt(rx2 + ry2 + rz2)
+            if r < minr1:
+                minr1 = r
+                ind1 = at
+        return ind1, minr1
 
     def get_point_in_3D(self, x, y):
         model = gl.glGetDoublev(gl.GL_MODELVIEW_MATRIX)

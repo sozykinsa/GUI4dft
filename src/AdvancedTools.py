@@ -515,6 +515,12 @@ class TAtomicModel(object):
         self.atoms = []
         self.bonds = []
         self.bonds_per = [] # for exact calculation in form
+
+        self.bcp = []
+        self.rcp = []
+        self.ccp = []
+        self.bondpath = []
+
         self.name = ""
         self.LatVect1 = np.array([100, 0, 0])
         self.LatVect2 = np.array([0, 100, 0])
@@ -526,7 +532,6 @@ class TAtomicModel(object):
             else:
                 atom = TAtom(at)
             self.add_atom(atom)
-
 
     @staticmethod
     def atoms_from_ani(filename):
@@ -959,7 +964,7 @@ class TAtomicModel(object):
         return molecules
 
     @staticmethod
-    def atoms_from_xyz(filename):
+    def atoms_from_xyz(filename, xyzcritic2):
         """import from xyz file"""
         periodTable = TPeriodTable()
         molecules = []
@@ -967,6 +972,54 @@ class TAtomicModel(object):
             f = open(filename)
             NumberOfAtoms = int(math.fabs(int(f.readline())))
             newModel = TAtomicModel.atoms_from_xyz_structure(NumberOfAtoms, f, periodTable)
+            if xyzcritic2:
+                fl = False
+                for atom in newModel.atoms:
+                    if (atom.let.lower() == "xn") or (atom.let.lower() == "xr") or (atom.let.lower() == "xb") or (atom.let.lower() == "xc") or (atom.let.lower() == "xz"):
+                        fl = True
+
+                if fl:
+                    newModel2 = TAtomicModel()
+                    critic_data = {"xn", "xr", "xb", "xc", "xz"}
+                    xz_points = []
+
+                    for atom in newModel.atoms:
+                        if atom.let.lower() not in critic_data:
+                            newModel2.add_atom(atom)
+                        if atom.let.lower() == "xb":
+                            newModel2.add_critical_point_bond(atom)
+                        if atom.let.lower() == "xz":
+                            xz_points.append(atom)
+
+                    points = []
+
+                    for i in range(0, len(xz_points)):
+                        if len(points) == 0:
+                            points.append(xz_points[i])
+                        else:
+                            px = points[-1].x
+                            py = points[-1].y
+                            pz = points[-1].z
+
+                            nx = xz_points[i].x
+                            ny = xz_points[i].y
+                            nz = xz_points[i].z
+
+                            d = math.sqrt((px-nx)*(px-nx)+(py-ny)*(py-ny)+(pz-nz)*(pz-nz))
+
+                            if d < 0.09:
+                                points.append(xz_points[i])
+                            else:
+                                newModel2.add_bond_path_point(points)
+                                points = [xz_points[i]]
+
+                    if len(points) > 0:
+                        newModel2.add_bond_path_point(points)
+
+                    newModel2.bond_path_points_optimize()
+
+                    molecules.append(newModel2)
+                    return molecules
             molecules.append(newModel)
         return molecules
 
@@ -981,8 +1034,6 @@ class TAtomicModel(object):
             newModel = TAtomicModel.atoms_from_xyz_structure(NumberOfAtoms, f, periodTable, [1,2,3,4])
             molecules.append(newModel)
         return molecules
-
-
 
     @staticmethod
     def atoms_from_xyz_structure(NumberOfAtoms, ani_file, periodTable, indexes=[0,1,2,3]):
@@ -1002,7 +1053,6 @@ class TAtomicModel(object):
         newModel = TAtomicModel(atoms)
         newModel.set_lat_vectors_default()
         return newModel
-
 
     def get_LatVect1_norm(self):
         return norm(self.LatVect1)
@@ -1056,7 +1106,6 @@ class TAtomicModel(object):
         self.LatVect2 = np.array([0, 1.4*sy, 0])
         self.LatVect3 = np.array([0, 0, 1.4*sz])
 
-
     def delete_atom(self, ind):
         if self.nAtoms() == 1:
             return
@@ -1065,10 +1114,10 @@ class TAtomicModel(object):
             self.atoms.pop(ind)
             self.find_bonds_fast()
 
-    def add_atom(self, atom, minDist = 0):
+    def add_atom(self, atom, min_dist = 0):
         """ Adds atom to the molecule is minimal distance to other atoms more then minDist """
         Dist = 10000
-        if minDist > 0:
+        if min_dist > 0:
             model = TAtomicModel(self.atoms)
             model.set_lat_vectors(self.LatVect1, self.LatVect2, self.LatVect3)
             model.add_atom(atom)
@@ -1077,16 +1126,110 @@ class TAtomicModel(object):
                 if r < Dist:
                     Dist = r
 
-        if Dist>minDist:
+        if Dist > min_dist:
             newAt = deepcopy(atom)
             self.atoms.append(newAt)
+
+    def add_critical_point_bond(self, atom):
+        newAt = deepcopy(atom)
+        self.bcp.append(newAt)
+
+    def add_bond_path_point(self, points):
+        for cp in self.bcp:
+            if (cp.x == points[0].x) and (cp.y == points[0].y) and (cp.z == points[0].z):
+                if cp.getProperty("bond1") == None:
+                    cp.setProperty("bond1", deepcopy(points))
+                else:
+                    cp.setProperty("bond2", deepcopy(points))
+        #newPoints = deepcopy(points)
+        #self.bondpath.append(newPoints)
+
+    def atoms_of_bond_path(self, ind):
+        atoms = self.atoms
+        cp = self.bcp[ind]
+        bond1 = cp.getProperty("bond1")
+        bond2 = cp.getProperty("bond2")
+        cpx1 = bond1[-1].x
+        cpy1 = bond1[-1].y
+        cpz1 = bond1[-1].z
+        cpx2 = bond2[-1].x
+        cpy2 = bond2[-1].y
+        cpz2 = bond2[-1].z
+        x1 = atoms[0].x
+        y1 = atoms[0].y
+        z1 = atoms[0].z
+        minr1 = math.sqrt((cpx1 - x1) * (cpx1 - x1) + (cpy1 - y1) * (cpy1 - y1) + (cpz1 - z1) * (cpz1 - z1))
+        minr2 = math.sqrt((cpx2 - x1) * (cpx2 - x1) + (cpy2 - y1) * (cpy2 - y1) + (cpz2 - z1) * (cpz2 - z1))
+        ind1 = 0
+        ind2 = 0
+        for i in range(0, len(atoms)):
+            x1 = atoms[i].x
+            y1 = atoms[i].y
+            z1 = atoms[i].z
+
+            dx1 = cpx1 - x1
+            dx2 = cpx2 - x1
+
+            dy1 = cpy1 - y1
+            dy2 = cpy2 - y1
+
+            dz1 = cpz1 - z1
+            dz2 = cpz2 - z1
+
+            d1 = math.sqrt(dx1 * dx1 + dy1 * dy1 + dz1 * dz1)
+            d2 = math.sqrt(dx2 * dx2 + dy2 * dy2 + dz2 * dz2)
+
+            if d1 < minr1:
+                minr1 = d1
+                ind1 = i
+
+            if d2 < minr2:
+                minr2 = d2
+                ind2 = i
+        return ind1, ind2
+
+    def bond_path_points_optimize(self):
+        i = 0
+
+        while i < len(self.bcp):
+            bond1 = self.bcp[i].getProperty("bond1")
+            bond2 = self.bcp[i].getProperty("bond2")
+            if (bond1 == None) or (bond2 == None):
+                self.bcp.pop(i)
+                i -= 1
+            else:
+                if ((bond1[-1].x == bond2[-1].x) and (bond1[-1].y == bond2[-1].y) and (bond1[-1].z == bond2[-1].z)):
+                    self.bcp.pop(i)
+                    i -= 1
+            i += 1
+
+        for cp in self.bcp:
+            self.critical_path_simplifier("bond1", cp)
+            self.critical_path_simplifier("bond2", cp)
+
+
+    def critical_path_simplifier(self, b, cp):
+        bond = deepcopy(cp.getProperty(b))
+        if bond == None:
+            print(b)
+            return
+        i = 2
+        while (i < len(bond)) and (len(bond) > 1):
+            l = (bond[i].x - bond[i - 1].x) * (bond[i - 2].y - bond[i - 1].y) * (bond[i - 2].z - bond[i - 1].z)
+            j = (bond[i].y - bond[i - 1].y) * (bond[i - 2].x - bond[i - 1].x) * (bond[i - 2].z - bond[i - 1].z)
+            k = (bond[i].z - bond[i - 1].z) * (bond[i - 2].x - bond[i - 1].x) * (bond[i - 2].y - bond[i - 1].y)
+            i += 1
+            if (math.fabs(l - j) < 1e-6) and (math.fabs(l - k) < 1e-6):
+                bond.pop(i - 2)
+                i -= 1
+        cp.setProperty(b + "opt", bond)
 
     def add_atomic_model(self, atomic_model, minDist = 0):
         for at in atomic_model:
             self.add_atom(at, minDist)
 
     def edit_atom(self, ind, newAtom):
-        if (ind>=0) and (ind<self.nAtoms()):
+        if (ind >= 0) and (ind < self.nAtoms()):
             self.atoms[ind] = newAtom
 
     def add_atoms_property(self, prop, value):
@@ -1536,16 +1679,34 @@ class TAtomicModel(object):
             atom.x += Lx
             atom.y += Ly
             atom.z += Lz
+
+        for point in self.bcp:
+            point.x += Lx
+            point.y += Ly
+            point.z += Lz
+
+            self.move_bond_path(Lx, Ly, Lz, point.getProperty("bond1"))
+            self.move_bond_path(Lx, Ly, Lz, point.getProperty("bond2"))
+
+            self.move_bond_path(Lx, Ly, Lz, point.getProperty("bond1opt"))
+            self.move_bond_path(Lx, Ly, Lz, point.getProperty("bond2opt"))
         return self.atoms
-    
+
+    def move_bond_path(self, Lx, Ly, Lz, bond):
+        if bond:
+            for bp in bond:
+                bp.x += Lx
+                bp.y += Ly
+                bp.z += Lz
+
     def typesOfAtoms(self):
         elements = np.zeros((200))
         for atom in self.atoms:
-            elements[atom.charge]+=1
+            elements[atom.charge] += 1
         types = []
-        for i in range(0,200):
+        for i in range(0, 200):
             if elements[i] > 0:
-                types.append([i,elements[i]])            
+                types.append([i, elements[i]])
         return types
     
     def toSIESTAfdf(self, filename):
@@ -1557,7 +1718,7 @@ class TAtomicModel(object):
         
     def toSIESTAxyz(self, filename):
         """ созадет xyz файл, совместимый с XMol """
-        f = open(filename,'w')
+        f = open(filename, 'w')
         text = self.toSIESTAxyzdata()
         print(text, file=f)
         f.close()     
@@ -1938,28 +2099,31 @@ class TSIESTA:
             beta = math.radians(float(data[4]))
             gamma = math.radians(float(data[5]))
 
-            tm = math.pow(math.cos(alpha), 2) + math.pow(math.cos(beta), 2) + math.pow(math.cos(gamma), 2)
-            tmp = math.sqrt(1 + 2 * math.cos(alpha) * math.cos(beta) * math.cos(gamma) - tm)
-            h = c * tmp / math.sin(gamma)
-
-            lat_vect_1 = [a, 0, 0]
-            lat_vect_2 = [b * math.cos(gamma), b * math.sin(gamma), 0]
-            lat_vect_3 = [c * math.cos(beta), c * math.cos(alpha) * math.sin(gamma), h]
-
-            if math.fabs(lat_vect_2[0]) < 1e-8:
-                lat_vect_2[0] = 0
-            if math.fabs(lat_vect_2[1]) < 1e-8:
-                lat_vect_2[1] = 0
-            if math.fabs(lat_vect_3[0]) < 1e-8:
-                lat_vect_3[0] = 0
-            if math.fabs(lat_vect_3[1]) < 1e-8:
-                lat_vect_3[1] = 0
-            if math.fabs(lat_vect_3[2]) < 1e-8:
-                lat_vect_3[2] = 0
+            lat_vect_1, lat_vect_2, lat_vect_3 = TSIESTA.lat_vectors_from_params(a, b, c, alpha, beta, gamma)
 
             return lat_vect_1, lat_vect_2, lat_vect_3
         else:
             return [False, False, False], [False, False, False], [False, False, False]
+
+    @staticmethod
+    def lat_vectors_from_params(a, b, c, alpha, beta, gamma):
+        tm = math.pow(math.cos(alpha), 2) + math.pow(math.cos(beta), 2) + math.pow(math.cos(gamma), 2)
+        tmp = math.sqrt(1 + 2 * math.cos(alpha) * math.cos(beta) * math.cos(gamma) - tm)
+        h = c * tmp / math.sin(gamma)
+        lat_vect_1 = [a, 0, 0]
+        lat_vect_2 = [b * math.cos(gamma), b * math.sin(gamma), 0]
+        lat_vect_3 = [c * math.cos(beta), c * math.cos(alpha) * math.sin(gamma), h]
+        if math.fabs(lat_vect_2[0]) < 1e-8:
+            lat_vect_2[0] = 0
+        if math.fabs(lat_vect_2[1]) < 1e-8:
+            lat_vect_2[1] = 0
+        if math.fabs(lat_vect_3[0]) < 1e-8:
+            lat_vect_3[0] = 0
+        if math.fabs(lat_vect_3[1]) < 1e-8:
+            lat_vect_3[1] = 0
+        if math.fabs(lat_vect_3[2]) < 1e-8:
+            lat_vect_3[2] = 0
+        return lat_vect_1, lat_vect_2, lat_vect_3
 
     @staticmethod
     def lattice_vectors(filename):
@@ -2608,7 +2772,7 @@ class TFDFFile:
     def get_all_data(self, _structure, coordType, lattType):
         structure = deepcopy(_structure)
 
-        st = structure.toSIESTAfdfdata(coordType,lattType)
+        st = structure.toSIESTAfdfdata(coordType, lattType)
 
         for prop in self.properties:
             f = True
@@ -2626,7 +2790,6 @@ class TFDFFile:
             if ((block.name).lower().find("latticeparameters") >=0): f = False
             if ((block.name).lower().find("latticevectors") >=0): f = False
             if ((block.name).lower().find("atomiccoordinatesandatomicspecies") >= 0): f = False
-
 
             if f:
                 st +="%block "+block.name+"\n"
@@ -3318,6 +3481,3 @@ class TVASP:
         if os.path.exists(filename):
             energy, spinDown, spinUp = Helpers.dos_from_file(filename, 3, nlines)
             return np.array(spinUp), np.array(spinDown), np.array(energy)
-
-
-

@@ -68,7 +68,7 @@ class Importer(object):
         return "unknown"
 
     @staticmethod
-    def Import(filename, fl='all', prop=False):
+    def Import(filename, fl='all', prop=False, xyzcritic2=False):
         """import file"""
         models = []
         fdf = TFDFFile()
@@ -124,7 +124,7 @@ class Importer(object):
                 models = TGaussianCube.get_atoms(filename)
 
             if fileFormat == "SiestaXYZ":
-                models = TAtomicModel.atoms_from_xyz(filename)
+                models = TAtomicModel.atoms_from_xyz(filename, xyzcritic2)
 
             if fileFormat == "XMolXYZ":
                 models = TAtomicModel.atoms_from_XMOLxyz(filename)
@@ -148,6 +148,43 @@ class Importer(object):
             return file, eFermy
         else:
             return False, 0
+
+    @staticmethod
+    def check_cro_file(filename):
+        if os.path.exists(filename) and filename.endswith("cro"):
+            box_bohr = Helpers.fromFileProperty(filename, "Lattice parameters (bohr):", 1, 'string').split()
+            box_bohr = np.array(Helpers.list_str_to_float(box_bohr))
+            box_ang = Helpers.fromFileProperty(filename, "Lattice parameters (ang):", 1, 'string').split()
+            box_ang = np.array(Helpers.list_str_to_float(box_ang))
+            box_deg = Helpers.fromFileProperty(filename, "Lattice angles (degrees):", 1, 'string').split()
+            box_deg = np.array(Helpers.list_str_to_float(box_deg))
+
+            MyFile = open(filename)
+            str1 = MyFile.readline()
+            while str1.find("Critical point list, final report (non-equivalent cps") < 0:
+                str1 = MyFile.readline()
+            str1 = MyFile.readline()
+            str1 = MyFile.readline()
+            str1 = MyFile.readline()
+
+            cps = []
+            str1 = MyFile.readline()
+
+            while len(str1) > 3:
+                str1 = str1.split(')')[1].split()
+                x = float(str1[1]) * box_ang[0]
+                y = float(str1[2]) * box_ang[1]
+                z = float(str1[3]) * box_ang[2]
+
+                line = [str1[0], x, y, z, str1[6], str1[7], str1[8]]
+                cps.append(line)
+                #print(line)
+                str1 = MyFile.readline()
+
+            MyFile.close()
+            return box_bohr, box_ang, box_deg, cps
+        else:
+            return "", "", "", []
 
     @staticmethod
     def check_pdos_file(filename):

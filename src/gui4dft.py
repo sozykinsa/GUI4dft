@@ -29,6 +29,7 @@ from PyQt5.QtGui import QKeySequence
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtGui import QStandardItem
 from PyQt5.QtGui import QStandardItemModel
+from PyQt5.QtWidgets import QListWidgetItem
 from PyQt5.QtWidgets import QAction
 from PyQt5.QtWidgets import QApplication
 from PyQt5.QtWidgets import QDialog, QFileDialog, QMessageBox, QColorDialog
@@ -105,6 +106,8 @@ class mainWindow(QMainWindow):
         self.ui.actionHideBox.triggered.connect(self.menu_hide_box)
         self.ui.actionAbout.triggered.connect(self.menu_about)
 
+        self.ui.AtomPropertiesText.textChanged.connect(self.critical_point_prop_to_form)
+
         self.ui.FormModelComboModels.currentIndexChanged.connect(self.model_to_screen)
         self.ui.FormActionsPostTreeSurface.itemSelectionChanged.connect(self.type_of_surface)
         self.ui.PropertyForColorOfAtoms.currentIndexChanged.connect(self.color_atoms_with_property)
@@ -151,6 +154,7 @@ class mainWindow(QMainWindow):
         self.ui.FormModifyCellButton.clicked.connect(self.edit_cell)
         self.ui.FormActionsPostButGetBonds.clicked.connect(self.get_bonds)
         self.ui.PropertyAtomAtomDistanceGet.clicked.connect(self.get_bond)
+        self.ui.FormCPaddToList.clicked.connect(self.add_cp_to_list)
 
         self.ui.changeFragment1StatusByX.clicked.connect(self.change_fragment1_status_by_x)
         self.ui.changeFragment1StatusByY.clicked.connect(self.change_fragment1_status_by_y)
@@ -169,6 +173,9 @@ class mainWindow(QMainWindow):
         self.ui.FormActionsButtonAddDOSFile.clicked.connect(self.add_dos_file)
         self.ui.FormActionsButtonPlotDOS.clicked.connect(self.plot_dos)
         self.ui.FormActionsButtonClearDOS.clicked.connect(self.clear_dos)
+
+        self.ui.FormButtonAddCroData.clicked.connect(self.add_critic2_cro_file)
+        self.ui.FormCreateCriFile.clicked.connect(self.create_cri_file)
 
         self.ui.FormActionsPostButPlusCellParam.clicked.connect(self.add_cell_param)
         self.ui.FormActionsPostButAddRowCellParam.clicked.connect(self.add_cell_param_row)
@@ -452,6 +459,40 @@ class mainWindow(QMainWindow):
             msg.setText("Unknown error")
             msg.setInformativeText('An unknown error has occurred. Try again.')
             msg.setWindowTitle("Unknown error")
+            msg.exec_()
+
+    def add_critic2_cro_file(self):
+        try:
+            fname = QFileDialog.getOpenFileName(self, 'Open file', self.WorkDir)[0]
+            self.WorkDir = os.path.dirname(fname)
+
+            box_bohr, box_ang, box_deg, cps = Importer.check_cro_file(fname)
+            al = math.radians(box_deg[0])
+            be = math.radians(box_deg[1])
+            ga = math.radians(box_deg[2])
+            lat_vect_1, lat_vect_2, lat_vect_3 = TSIESTA.lat_vectors_from_params(box_ang[0], box_ang[1], box_ang[2], al, be, ga)
+
+            model = self.models[-1]
+            model.set_lat_vectors(lat_vect_1, lat_vect_2, lat_vect_3)
+
+            k = 0
+            for cp in model.bcp:
+                for cp1 in cps:
+                    d1 = (cp.x - cp1[1]) ** 2
+                    d2 = (cp.y - cp1[2]) ** 2
+                    d3 = (cp.z - cp1[3]) ** 2
+                    if math.sqrt(d1 + d2 + d3) < 1e-5:
+                        cp.setProperty("field", cp1[4])
+                        cp.setProperty("grad", cp1[5])
+                        cp.setProperty("lap", cp1[6])
+                        k += 1
+            self.plot_last_model()
+        except Exception as e:
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Critical)
+            msg.setText(str(e))
+            #msg.setInformativeText('An unknown error has occurred. Try again.')
+            msg.setWindowTitle(str(e))
             msg.exec_()
 
     def add_dos_file(self):
@@ -1047,8 +1088,17 @@ class mainWindow(QMainWindow):
         self.ui.FormSettingsViewCheckShowAxes.clicked.connect(self.save_state_view_show_axes)
         state_FormSettingsViewCheckAtomSelection = settings.value(SETTINGS_FormSettingsViewCheckAtomSelection, False,
                                                                   type=bool)
-        self.ui.FormSettingsViewCheckAtomSelection.setChecked(state_FormSettingsViewCheckAtomSelection)
+        if state_FormSettingsViewCheckAtomSelection:
+            self.ui.FormSettingsViewCheckAtomSelection.setChecked(True)
+        else:
+            self.ui.FormSettingsViewCheckModelMove.setChecked(True)
         self.ui.FormSettingsViewCheckAtomSelection.clicked.connect(self.save_state_view_atom_selection)
+        self.ui.FormSettingsViewCheckModelMove.clicked.connect(self.save_state_view_atom_selection)
+
+        state_FormSettingsViewCheckXYZasCritic2 = settings.value(SETTINGS_FormSettingsViewCheckXYZasCritic2, False,
+                                                                  type=bool)
+        self.ui.FormSettingsViewCheckXYZasCritic2.setChecked(state_FormSettingsViewCheckXYZasCritic2)
+        self.ui.FormSettingsViewCheckXYZasCritic2.clicked.connect(self.save_state_xyz_as_critic2)
 
         state_FormSettingsViewCheckShowAtoms = settings.value(SETTINGS_FormSettingsViewCheckShowAtoms, True, type=bool)
         self.ui.FormSettingsViewCheckShowAtoms.setChecked(state_FormSettingsViewCheckShowAtoms)
@@ -1186,10 +1236,11 @@ class mainWindow(QMainWindow):
 
     def get_atomic_model_and_fdf(self, fname):
         parse_properies = self.ui.FormSettingsParseAtomicProperties.isChecked()
+        xyzcritic2 = self.ui.FormSettingsViewCheckXYZasCritic2.isChecked()
         if self.ui.FormSettingsOpeningCheckOnlyOptimal.isChecked():
-            self.models, self.FDFData = Importer.Import(fname, 'opt', parse_properies)
+            self.models, self.FDFData = Importer.Import(fname, 'opt', parse_properies, xyzcritic2)
         else:
-            self.models, self.FDFData = Importer.Import(fname, 'all', parse_properies)
+            self.models, self.FDFData = Importer.Import(fname, 'all', parse_properies, xyzcritic2)
 
     def plot_last_model(self):
         if len(self.models) > 0:
@@ -1222,6 +1273,18 @@ class mainWindow(QMainWindow):
         about_win.ui.setupUi(about_win)
         about_win.setFixedSize(QSize(550, 250))
         about_win.show()
+
+    def critical_point_prop_to_form(self):
+        text = self.ui.AtomPropertiesText.toPlainText().split("Selected critical point:")
+        if len(text) > 1:
+            text = text[1].split()[0]
+            self.ui.FormSelectedCP.setText(text)
+            f = self.models[-1].bcp[int(text)].getProperty("field")
+            self.ui.FormSelectedCP_f.setText(f)
+            g = self.models[-1].bcp[int(text)].getProperty("grad")
+            self.ui.FormSelectedCP_g.setText(g)
+            l = self.models[-1].bcp[int(text)].getProperty("lap")
+            self.ui.FormSelectedCP_lap.setText(l)
 
     def model_to_screen(self, value):
         self.ui.Form3Dand2DTabs.setCurrentIndex(0)
@@ -2013,6 +2076,9 @@ class mainWindow(QMainWindow):
         self.save_property(SETTINGS_FormSettingsViewCheckAtomSelection,
                            self.ui.FormSettingsViewCheckAtomSelection.isChecked())
 
+    def save_state_xyz_as_critic2(self):
+        self.save_property(SETTINGS_FormSettingsViewCheckXYZasCritic2, self.ui.FormSettingsViewCheckXYZasCritic2.isChecked())
+
     def save_state_view_show_atoms(self):
         self.save_property(SETTINGS_FormSettingsViewCheckShowAtoms, self.ui.FormSettingsViewCheckShowAtoms.isChecked())
         self.MainForm.set_atoms_visible(self.ui.FormSettingsViewCheckShowAtoms.isChecked())
@@ -2248,6 +2314,59 @@ class mainWindow(QMainWindow):
         boxcolor = self.change_color(self.ui.ColorBox, SETTINGS_Color_Of_Box)
         self.MainForm.set_color_of_box(boxcolor)
 
+    def add_cp_to_list(self):
+        newCP = self.ui.FormSelectedCP.text()
+        if newCP == "...":
+            return
+
+        fl = True
+
+        for i in range(0, self.ui.FormCPlist.count()):
+            if self.ui.FormCPlist.item(i).text() == newCP:
+                fl = False
+        if fl:
+            QListWidgetItem(newCP, self.ui.FormCPlist)
+
+    def create_cri_file(self):
+        name = QFileDialog.getSaveFileName(self, 'Save File', self.WorkDir)
+        fname = name[0]
+        if len(fname) > 0:
+            f = open(fname, 'w')
+            text = ""
+
+            SysCoord = np.array([self.models[-1].LatVect1, self.models[-1].LatVect2, self.models[-1].LatVect3])
+            obr = np.linalg.inv(SysCoord).transpose()
+
+            for i in range(0, self.ui.FormCPlist.count()):
+                ind = int(self.ui.FormCPlist.item(i).text())
+                cp = self.models[-1].bcp[ind]
+
+                bond1 = cp.getProperty("bond1")
+                bond2 = cp.getProperty("bond2")
+
+                text += "Bond Critical Point: " + str(ind) + "  :  "
+                ind1, ind2 = self.models[-1].atoms_of_bond_path(ind)
+                text += self.models[-1].atoms[ind1].let + str(ind1) + "-" + self.models[-1].atoms[ind2].let + str(ind2) + "\n"
+
+                for i in range(0, len(bond1)):
+                    Coord = np.array(
+                        [bond1[len(bond1) - i - 1].x, bond1[len(bond1) - i - 1].y, bond1[len(bond1) - i - 1].z])
+                    res = obr.dot(Coord)
+                    x = res[0]
+                    y = res[1]
+                    z = res[2]
+                    text += str(x) + " " + str(y) + " " + str(z) + "\n"
+                for i in range(0, len(bond2)):
+                    Coord = np.array([bond2[i].x, bond2[i].y, bond2[i].z])
+                    res = obr.dot(Coord)
+                    x = res[0]
+                    y = res[1]
+                    z = res[2]
+                    text += str(x) + " " + str(y) + " " + str(z) + "\n"
+
+            print(text, file=f)
+            f.close()
+
     def select_voronoi_color(self):
         voronoicolor = self.change_color(self.ui.ColorVoronoi, SETTINGS_Color_Of_Voronoi)
         self.MainForm.set_color_of_voronoi(voronoicolor)
@@ -2438,6 +2557,7 @@ SETTINGS_FormSettingsColorsScaleType = 'colors/ColorsScaleType'
 SETTINGS_FormSettingsOpeningCheckOnlyOptimal = 'open/CheckOnlyOptimal'
 SETTINGS_FormSettingsParseAtomicProperties = 'open/ParseAtomicProperties'
 SETTINGS_FormSettingsViewCheckAtomSelection = 'view/CheckAtomSelection'
+SETTINGS_FormSettingsViewCheckXYZasCritic2 = 'mode/XYZasCritic2'
 SETTINGS_FormSettingsViewCheckShowAtoms = 'view/CheckShowAtoms'
 SETTINGS_FormSettingsViewCheckShowBox = 'view/CheckShowBox'
 SETTINGS_FormSettingsViewCheckShowAxes = 'view/CheckShowAxes'
