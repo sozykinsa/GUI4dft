@@ -2348,21 +2348,26 @@ class mainWindow(QMainWindow):
                 ind1, ind2 = self.models[-1].atoms_of_bond_path(ind)
                 text += self.models[-1].atoms[ind1].let + str(ind1) + "-" + self.models[-1].atoms[ind2].let + str(ind2) + "\n"
 
+                path_low = []
                 for i in range(0, len(bond1)):
                     Coord = np.array(
                         [bond1[len(bond1) - i - 1].x, bond1[len(bond1) - i - 1].y, bond1[len(bond1) - i - 1].z])
                     res = obr.dot(Coord)
-                    x = res[0]
-                    y = res[1]
-                    z = res[2]
-                    text += str(x) + " " + str(y) + " " + str(z) + "\n"
-                for i in range(0, len(bond2)):
+                    path_low.append(np.array([float(res[0]), float(res[1]), float(res[2])]))
+
+                for i in range(1, len(bond2)):
                     Coord = np.array([bond2[i].x, bond2[i].y, bond2[i].z])
                     res = obr.dot(Coord)
-                    x = res[0]
-                    y = res[1]
-                    z = res[2]
-                    text += str(x) + " " + str(y) + " " + str(z) + "\n"
+                    path_low.append(np.array([float(res[0]), float(res[1]), float(res[2])]))
+
+                path_fine = [path_low[0]]
+                for i in range(1, len(path_low)):
+                    dv = (path_low[i] - path_low[i-1]) / 10
+                    for j in range(0, 10):
+                        path_fine.append(path_fine[-1] + dv)
+
+                for i in range(0, len(path_fine)):
+                    text += str(path_fine[i][0]) + " " + str(path_fine[i][1]) + " " + str(path_fine[i][2]) + "\n"
 
             print(text, file=f)
             f.close()
