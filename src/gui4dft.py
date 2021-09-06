@@ -415,13 +415,8 @@ class mainWindow(QMainWindow):
             fname = QFileDialog.getOpenFileName(self, 'Open file', self.WorkDir)[0]
             if Importer.check_format(fname) == "SIESTAout":
                 self.fill_cell_info(fname)
-        except Exception:
-            msg = QMessageBox()
-            msg.setIcon(QMessageBox.Critical)
-            msg.setText("Unknown error")
-            msg.setInformativeText('An unknown error has occurred. Try again.')
-            msg.setWindowTitle("Unknown error")
-            msg.exec_()
+        except Exception as e:
+            self.show_error(e)
 
     def add_cell_param_row(self):
         i = self.ui.FormActionsPostTableCellParam.rowCount() + 1
@@ -453,13 +448,8 @@ class mainWindow(QMainWindow):
                             c = row[4]
                         self.fill_cell_info_row(Energy, Volume, a, b, c)
                 f.close()
-        except Exception:
-            msg = QMessageBox()
-            msg.setIcon(QMessageBox.Critical)
-            msg.setText("Unknown error")
-            msg.setInformativeText('An unknown error has occurred. Try again.')
-            msg.setWindowTitle("Unknown error")
-            msg.exec_()
+        except Exception as e:
+            self.show_error(e)
 
     def add_critic2_cro_file(self):
         try:
@@ -488,25 +478,23 @@ class mainWindow(QMainWindow):
                         k += 1
             self.plot_last_model()
         except Exception as e:
-            msg = QMessageBox()
-            msg.setIcon(QMessageBox.Critical)
-            msg.setText(str(e))
-            #msg.setInformativeText('An unknown error has occurred. Try again.')
-            msg.setWindowTitle(str(e))
-            msg.exec_()
+            self.show_error(e)
+
+    def show_error(self, e):
+        msg = QMessageBox()
+        msg.setIcon(QMessageBox.Critical)
+        msg.setText("Error")
+        msg.setInformativeText(str(e))
+        msg.setWindowTitle("Error")
+        msg.exec_()
 
     def add_dos_file(self):
         try:
             fname = QFileDialog.getOpenFileName(self, 'Open file', self.WorkDir)[0]
             self.WorkDir = os.path.dirname(fname)
             self.check_dos(fname)
-        except Exception:
-            msg = QMessageBox()
-            msg.setIcon(QMessageBox.Critical)
-            msg.setText("Unknown error")
-            msg.setInformativeText('An unknown error has occurred. Try again.')
-            msg.setWindowTitle("Unknown error")
-            msg.exec_()
+        except Exception as e:
+            self.show_error(e)
 
     def add_isosurface_color_to_table(self):
         cmap = plt.get_cmap(self.ui.FormSettingsColorsScale.currentText())
@@ -746,13 +734,8 @@ class mainWindow(QMainWindow):
             self.plot_model(-1)
             self.MainForm.add_atoms()
             self.fill_gui("SWNT-model")
-        except Exception:
-            msg = QMessageBox()
-            msg.setIcon(QMessageBox.Critical)
-            msg.setText("Unknown error")
-            msg.setInformativeText('An error occurred while trying to create the model. Check the correctness of the input files.')
-            msg.setWindowTitle("Unknown error")
-            msg.exec_()
+        except Exception as e:
+            self.show_error(e)
 
     def colors_of_atoms(self):
         atomscolor = [QTableWidgetItem(self.ui.ColorsOfAtomsTable.item(1, 0)).background().color().getRgbF()]
@@ -798,25 +781,15 @@ class mainWindow(QMainWindow):
         try:
             fname = QFileDialog.getSaveFileName(self, 'Save File', self.WorkDir, "XSF files (*.XSF)")[0]
             self.export_volumeric_data_to_file(fname)
-        except Exception:
-            msg = QMessageBox()
-            msg.setIcon(QMessageBox.Critical)
-            msg.setText("Unknown error")
-            msg.setInformativeText('An unknown error has occurred. Try again.')
-            msg.setWindowTitle("Unknown error")
-            msg.exec_()
+        except Exception as e:
+            self.show_error(e)
 
     def export_volumeric_data_to_cube(self):
         try:
             fname = QFileDialog.getSaveFileName(self, 'Save File', self.WorkDir, "cube files (*.cube)")[0]
             self.export_volumeric_data_to_file(fname)
-        except Exception:
-            msg = QMessageBox()
-            msg.setIcon(QMessageBox.Critical)
-            msg.setText("Unknown error")
-            msg.setInformativeText('An unknown error has occurred. Try again.')
-            msg.setWindowTitle("Unknown error")
-            msg.exec_()
+        except Exception as e:
+            self.show_error(e)
 
     def export_volumeric_data_to_file(self, fname):
         self.MainForm.volumeric_data_to_file(fname, self.VolumericData)
@@ -1095,6 +1068,16 @@ class mainWindow(QMainWindow):
         self.ui.FormSettingsViewCheckAtomSelection.clicked.connect(self.save_state_view_atom_selection)
         self.ui.FormSettingsViewCheckModelMove.clicked.connect(self.save_state_view_atom_selection)
 
+        state_FormSettingsViewRadioColorBondsManual = settings.value(SETTINGS_FormSettingsViewRadioColorBondsManual, False,
+                                                                  type=bool)
+        if state_FormSettingsViewRadioColorBondsManual:
+            self.ui.FormSettingsViewRadioColorBondsManual.setChecked(True)
+        else:
+            self.ui.FormSettingsViewRadioColorBondsByAtoms.setChecked(True)
+        self.ui.FormSettingsViewRadioColorBondsManual.clicked.connect(self.save_state_view_bond_color)
+        self.ui.FormSettingsViewRadioColorBondsByAtoms.clicked.connect(self.save_state_view_bond_color)
+
+
         state_FormSettingsViewCheckXYZasCritic2 = settings.value(SETTINGS_FormSettingsViewCheckXYZasCritic2, False,
                                                                   type=bool)
         self.ui.FormSettingsViewCheckXYZasCritic2.setChecked(state_FormSettingsViewCheckXYZasCritic2)
@@ -1189,13 +1172,8 @@ class mainWindow(QMainWindow):
                 self.MainForm.atomic_structure_to_file(fname)
                 self.WorkDir = os.path.dirname(fname)
                 self.save_active_folder()
-            except Exception:
-                msg = QMessageBox()
-                msg.setIcon(QMessageBox.Critical)
-                msg.setText("Unknown error")
-                msg.setInformativeText('An unknown error has occurred. Try again.')
-                msg.setWindowTitle("Unknown error")
-                msg.exec_()
+            except Exception as e:
+                self.show_error(e)
 
     def menu_open(self):
         if len(self.models) > 0:
@@ -1366,13 +1344,14 @@ class mainWindow(QMainWindow):
         view_bonds = self.ui.FormSettingsViewCheckShowBonds.isChecked()
         bond_width = 0.005 * self.ui.FormSettingsViewSpinBondWidth.value()
         bondscolor = self.get_color_from_setting(self.state_Color_Of_Bonds)
+        color_of_bonds_by_atoms = self.ui.FormSettingsViewRadioColorBondsManual.isChecked()
         axescolor = self.get_color_from_setting(self.state_Color_Of_Axes)
         view_axes = self.ui.FormSettingsViewCheckShowAxes.isChecked()
         boxcolor = self.get_color_from_setting(self.state_Color_Of_Box)
         atomscolor = self.colors_of_atoms()
         contour_width = (self.ui.FormSettingsViewSpinContourWidth.value()) / 1000.0
         self.MainForm.set_atomic_structure(self.models[value], atomscolor, view_atoms, view_box, boxcolor, view_bonds,
-                                           bondscolor, bond_width, view_axes, axescolor, contour_width)
+                                           bondscolor, bond_width, color_of_bonds_by_atoms, view_axes, axescolor, contour_width)
         self.prepare_form_actions_combo_pdos_species()
         self.prepare_form_actions_combo_pdos_indexes()
 
@@ -1992,13 +1971,8 @@ class mainWindow(QMainWindow):
                             s += str(number) + " "
                         file.write(s + "\n")
                 file.close()
-        except Exception:
-            msg = QMessageBox()
-            msg.setIcon(QMessageBox.Critical)
-            msg.setText("Unknown error")
-            msg.setInformativeText('An unknown error has occurred. Try again.')
-            msg.setWindowTitle("Unknown error")
-            msg.exec_()
+        except Exception as e:
+            self.show_error(e)
 
     def save_image_to_file(self):
         if len(self.models) == 0:
@@ -2017,20 +1991,16 @@ class mainWindow(QMainWindow):
             if not fname.endswith(ext):
                 fname += "." + ext
 
-            new_window = Image3Dexporter(5 * self.ui.openGLWidget.width(), 5 * self.ui.openGLWidget.height(), 5)
-            new_window.MainForm.copy_state(self.MainForm)
+            if fname:
+                new_window = Image3Dexporter(5 * self.ui.openGLWidget.width(), 5 * self.ui.openGLWidget.height(), 5)
+                new_window.MainForm.copy_state(self.MainForm)
 
-            new_window.MainForm.image3D_to_file(fname)
-            new_window.destroy()
-            self.WorkDir = os.path.dirname(fname)
-            self.save_active_folder()
-        except Exception:
-            msg = QMessageBox()
-            msg.setIcon(QMessageBox.Critical)
-            msg.setText("Unknown error")
-            msg.setInformativeText('An unknown error has occurred. Try again.')
-            msg.setWindowTitle("Unknown error")
-            msg.exec_()
+                new_window.MainForm.image3D_to_file(fname)
+                new_window.destroy()
+                self.WorkDir = os.path.dirname(fname)
+                self.save_active_folder()
+        except Exception as e:
+            self.show_error(e)
 
     def rotate_model_xp(self):
         self.MainForm.rotX += self.rotation_step
@@ -2075,6 +2045,12 @@ class mainWindow(QMainWindow):
     def save_state_view_atom_selection(self):
         self.save_property(SETTINGS_FormSettingsViewCheckAtomSelection,
                            self.ui.FormSettingsViewCheckAtomSelection.isChecked())
+
+    def save_state_view_bond_color(self):
+        self.save_property(SETTINGS_FormSettingsViewRadioColorBondsManual,
+                           self.ui.FormSettingsViewRadioColorBondsManual.isChecked())
+        if self.MainForm:
+            self.MainForm.set_bond_color(self.ui.FormSettingsViewRadioColorBondsManual.isChecked())
 
     def save_state_xyz_as_critic2(self):
         self.save_property(SETTINGS_FormSettingsViewCheckXYZasCritic2, self.ui.FormSettingsViewCheckXYZasCritic2.isChecked())
@@ -2169,13 +2145,8 @@ class mainWindow(QMainWindow):
                 if len(name) > 0:
                     with open(name, 'w') as f:
                         f.write(text)
-        except Exception:
-            msg = QMessageBox()
-            msg.setIcon(QMessageBox.Critical)
-            msg.setText("Unknown error")
-            msg.setInformativeText('An unknown error has occurred. Try again.')
-            msg.setWindowTitle("Unknown error")
-            msg.exec_()
+        except Exception as e:
+            self.show_error(e)
 
     def fill_space(self):
         if len(self.models) == 0:
@@ -2196,13 +2167,8 @@ class mainWindow(QMainWindow):
             if self.ui.FormActionsPreSaveToFileFillSpace.isChecked():
                 filename = QFileDialog.getSaveFileName(self, 'Save File')[0]
                 filename = filename.split(".fdf")[0]
-        except Exception:
-            msg = QMessageBox()
-            msg.setIcon(QMessageBox.Critical)
-            msg.setText("Unknown error")
-            msg.setInformativeText('An unknown error has occurred. Try again.')
-            msg.setWindowTitle("Unknown error")
-            msg.exec_()
+        except Exception as e:
+            self.show_error(e)
 
         myiter = 0
         for model in models:
@@ -2256,13 +2222,8 @@ class mainWindow(QMainWindow):
                 self.ui.ExportTheVolumericDataXSF.setEnabled(False)
                 self.ui.ExportTheVolumericDataCube.setEnabled(False)
                 self.ui.VolumrricDataGrid2.setTitle("Grid")
-        except Exception:
-            msg = QMessageBox()
-            msg.setIcon(QMessageBox.Critical)
-            msg.setText("Unknown error")
-            msg.setInformativeText('An unknown error has occurred. Try again.')
-            msg.setWindowTitle("Unknown error")
-            msg.exec_()
+        except Exception as e:
+            self.show_error(e)
 
     def set_xsf_z_position(self):
         value = int(self.ui.FormActionsPostSliderContourXY.value())
@@ -2562,6 +2523,7 @@ SETTINGS_FormSettingsColorsScaleType = 'colors/ColorsScaleType'
 SETTINGS_FormSettingsOpeningCheckOnlyOptimal = 'open/CheckOnlyOptimal'
 SETTINGS_FormSettingsParseAtomicProperties = 'open/ParseAtomicProperties'
 SETTINGS_FormSettingsViewCheckAtomSelection = 'view/CheckAtomSelection'
+SETTINGS_FormSettingsViewRadioColorBondsManual = 'view/BondsColorType'
 SETTINGS_FormSettingsViewCheckXYZasCritic2 = 'mode/XYZasCritic2'
 SETTINGS_FormSettingsViewCheckShowAtoms = 'view/CheckShowAtoms'
 SETTINGS_FormSettingsViewCheckShowBox = 'view/CheckShowBox'

@@ -43,57 +43,101 @@ class mouse_events_filter(QObject):
 
 
 class GuiOpenGL(object):
-    def __init__(self, widget, CheckAtomSelection, selected_atom_info = [], quality = 1):
+    def __init__(self, widget, CheckAtomSelection, selected_atom_info=[], quality=1):
         self.openGLWidget = widget
         self.MainModel = TAtomicModel()
-        self.ViewOrtho = True
-        self.ViewAtoms = True
-        self.ViewBox = False
-        self.ViewBonds = True
-        self.ViewSurface = False
-        self.ViewContour = False
-        self.ViewContourFill = False
-        self.ViewVoronoi = False
-        self.ViewBCP = False
-        self.ViewBondpath = False
-        self.active = False
-        self.QuadObjS = []
-        self.object = None
-        self.NLists = 8
-        self.Scale = 1
-        self.xsOld = 0
-        self.ysOld = 0
-        self.xScene = 0
-        self.yScene = 0
-        self.x = 0
-        self.y = 0
-        self.z = -20
-        self.rotX = 0
-        self.rotY = 0
-        self.rotZ = 0
-        self.CanSearch = False
-        self.selected_atom = -1
-        self.selected_cp = -1
-        self.history_of_atom_selection = []
         self.CheckAtomSelection = CheckAtomSelection
-        self.openGLWidget.initializeGL()
-        self.openGLWidget.paintGL = self.paintGL
-        self.openGLWidget.initializeGL = self.initializeGL
-        self.openGLWidget.setMouseTracking(True)
-        self.filter = mouse_events_filter(self)
-        self.openGLWidget.installEventFilter(self.filter)
-        self.quality = quality
-        self.prop = "charge"
-        self.SelectedFragmentMode = False
-        self.SelectedFragmentAtomsListView = None
-        self.SelectedFragmentAtomsTransp = 1.0
-
         if len(selected_atom_info) == 5:
             self.selected_atom_type = selected_atom_info[0]
             self.selected_atom_X = selected_atom_info[1]
             self.selected_atom_Y = selected_atom_info[2]
             self.selected_atom_Z = selected_atom_info[3]
             self.selected_atom_properties = selected_atom_info[4]
+        self.quality = quality
+
+        self.QuadObjS = []
+        self.object = None
+        self.NLists = 10
+        self.history_of_atom_selection = []
+        self.CanSearch = False
+        self.xsOld = 0
+        self.ysOld = 0
+
+        self.init_params()
+
+        self.openGLWidget.initializeGL()
+        self.openGLWidget.paintGL = self.paintGL
+        self.openGLWidget.initializeGL = self.initializeGL
+        self.openGLWidget.setMouseTracking(True)
+        self.filter = mouse_events_filter(self)
+        self.openGLWidget.installEventFilter(self.filter)
+
+    def init_params(self, TheObject=None):
+        if TheObject==None:
+            self.ViewOrtho = True
+            self.ViewAtoms = True
+            self.ViewBox = False
+            self.ViewBonds = True
+            self.ViewSurface = False
+            self.ViewContour = False
+            self.ViewContourFill = False
+            self.ViewVoronoi = False
+            self.ViewBCP = False
+            self.ViewBondpath = False
+            self.active = False
+            self.Scale = 1
+            self.bondWidth = 20
+            self.xScene = 0
+            self.yScene = 0
+            self.x = 0
+            self.y = 0
+            self.z = -20
+            self.rotX = 0
+            self.rotY = 0
+            self.rotZ = 0
+            self.selected_atom = -1
+            self.selected_cp = -1
+            self.prop = "charge"
+            self.SelectedFragmentMode = False
+            self.SelectedFragmentAtomsListView = None
+            self.SelectedFragmentAtomsTransp = 1.0
+            self.color_of_bonds = [0, 0, 0]
+        else:
+            self.ViewOrtho = TheObject.ViewOrtho
+            self.ViewAtoms = TheObject.ViewAtoms
+            self.ViewBox = TheObject.ViewBox
+            self.ViewBonds = TheObject.ViewBonds
+            self.ViewSurface = TheObject.ViewSurface
+            self.ViewContour = TheObject.ViewContour
+            self.ViewContourFill = TheObject.ViewContourFill
+            self.ViewVoronoi = TheObject.ViewVoronoi
+            self.ViewBCP = TheObject.ViewBCP
+            self.ViewBondpath = TheObject.ViewBondpath
+            self.active = TheObject.active
+            self.Scale = TheObject.Scale
+            self.bondWidth = TheObject.bondWidth
+            self.xsOld = TheObject.xsOld
+            self.ysOld = TheObject.ysOld
+            self.xScene = TheObject.xScene
+            self.yScene = TheObject.yScene
+            self.x = TheObject.x
+            self.y = TheObject.y
+            self.z = TheObject.z
+            self.rotX = TheObject.rotX
+            self.rotY = TheObject.rotY
+            self.rotZ = TheObject.rotZ
+            self.selected_atom =TheObject.selected_atom
+            self.selected_cp = TheObject.selected_cp
+            self.prop = TheObject.prop
+            self.SelectedFragmentMode = TheObject.SelectedFragmentMode
+            self.SelectedFragmentAtomsListView = TheObject.SelectedFragmentAtomsListView
+            self.SelectedFragmentAtomsTransp = TheObject.SelectedFragmentAtomsTransp
+            self.MainModel = TheObject.MainModel
+            self.color_of_atoms = TheObject.color_of_atoms
+            self.color_of_bonds = TheObject.color_of_bonds
+            self.color_of_bonds_by_atoms = TheObject.color_of_bonds_by_atoms
+            self.color_of_box = TheObject.color_of_box
+            self.ViewAxes = TheObject.ViewAxes
 
     def update(self):
         self.openGLWidget.update()
@@ -254,32 +298,7 @@ class GuiOpenGL(object):
         return self.selected_atom >= 0
 
     def copy_state(self, GUI):
-        self.rotX = GUI.rotX
-        self.rotY = GUI.rotY
-        self.rotZ = GUI.rotZ
-        self.ViewOrtho = GUI.ViewOrtho
-        self.ViewAtoms = GUI.ViewAtoms
-        self.ViewBox = GUI.ViewBox
-        self.ViewBonds = GUI.ViewBonds
-        self.bondWidth = GUI.bondWidth
-        self.ViewAxes = GUI.ViewAxes
-        self.ViewSurface = GUI.ViewSurface
-        self.ViewContour = GUI.ViewContour
-        self.ViewVoronoi = GUI.ViewVoronoi
-        self.ViewContourFill = GUI.ViewContourFill
-        self.x = GUI.x
-        self.y = GUI.y
-        self.z = GUI.z
-        self.Scale = GUI.Scale
-        self.selected_atom = GUI.selected_atom
-        self.MainModel = GUI.MainModel
-        self.color_of_atoms = GUI.color_of_atoms
-        self.SelectedFragmentMode = GUI.SelectedFragmentMode
-        self.SelectedFragmentAtomsTransp = GUI.SelectedFragmentAtomsTransp
-        self.color_of_bonds = GUI.color_of_bonds
-        self.color_of_box = GUI.color_of_box
-        self.contour_width = GUI.contour_width
-        self.prop = GUI.prop
+        self.init_params(GUI)
         self.add_atoms()
         self.add_bonds()
         self.add_box()
@@ -298,7 +317,7 @@ class GuiOpenGL(object):
         radius = min(width, height)*float(self.Scale)
         return (2.*x-width)/radius, -(2.*y-height)/radius
 
-    def set_atomic_structure(self, structure, atomscolors, ViewAtoms, ViewBox, boxcolor, ViewBonds, bondscolor, bondWidth, ViewAxes, axescolor, contour_width):
+    def set_atomic_structure(self, structure, atomscolors, ViewAtoms, ViewBox, boxcolor, ViewBonds, bondscolor, bondWidth, Bonds_by_atoms, ViewAxes, axescolor, contour_width):
         self.clean()
         self.prop = "charge"
         self.MainModel = deepcopy(structure)
@@ -310,6 +329,7 @@ class GuiOpenGL(object):
         self.ViewBox = ViewBox
         self.ViewAtoms = ViewAtoms
         self.ViewBonds = ViewBonds
+        self.color_of_bonds_by_atoms = Bonds_by_atoms
         self.bondWidth = bondWidth
         self.ViewAxes = ViewAxes
         self.color_of_axes = axescolor
@@ -432,6 +452,11 @@ class GuiOpenGL(object):
         self.add_bonds()
         self.openGLWidget.update()
 
+    def set_bond_color(self, type):
+        self.color_of_bonds_by_atoms = type
+        self.add_bonds()
+        self.openGLWidget.update()
+
     def set_contour_width(self, width):
         self.contour_width = width
         self.openGLWidget.update()
@@ -449,17 +474,17 @@ class GuiOpenGL(object):
         self.openGLWidget.update()
 
     def set_axes_visible(self, state):
-        self.ViewAxes= state
+        self.ViewAxes = state
         self.openGLWidget.update()
     
     def scale(self, wheel):
-        if self.active == True:
+        if self.active:
             self.Scale += 0.05*(wheel/120)
             self.openGLWidget.update()
             return True
     
     def rotat(self, x, y, width, height):
-        if self.active == True:
+        if self.active:
             xs, ys = self.screen2space(x, y, width, height)
             self.rotY += 10*(xs-self.xsOld)
             self.rotX -= 10*(ys-self.ysOld)
@@ -541,7 +566,7 @@ class GuiOpenGL(object):
         if type == 'conus':
             Radius2 = 0
         Rel = [Atom2Pos[0]-Atom1Pos[0], Atom2Pos[1]-Atom1Pos[1], Atom2Pos[2]-Atom1Pos[2]]
-        BindingLen = math.sqrt(math.pow(Rel[0],2) + math.pow(Rel[1],2) + math.pow(Rel[2],2)) # высота цилиндра
+        BindingLen = math.sqrt(math.pow(Rel[0], 2) + math.pow(Rel[1], 2) + math.pow(Rel[2], 2)) # высота цилиндра
         if (BindingLen != 0):
             Fall = 180.0/math.pi*math.acos(Rel[2] / BindingLen)
             Yaw = 180.0/math.pi*math.atan2(Rel[1], Rel[0])
@@ -603,7 +628,7 @@ class GuiOpenGL(object):
                 mean_val += val
             mean_val /= self.MainModel.nAtoms()
 
-        for at in self.MainModel.atoms:            
+        for at in self.MainModel.atoms:
             gl.glPushMatrix()
             gl.glTranslatef(at.x, at.y, at.z)
             self.QuadObjS.append(glu.gluNewQuadric())
@@ -641,11 +666,22 @@ class GuiOpenGL(object):
             y2 = self.MainModel.atoms[bond[1]].y
             z2 = self.MainModel.atoms[bond[1]].z
 
-            if self.SelectedFragmentMode and (self.MainModel.atoms[bond[0]].fragment1 or self.MainModel.atoms[bond[1]].fragment1):
-                gl.glColor4f(self.color_of_bonds[0], self.color_of_bonds[1], self.color_of_bonds[2], self.SelectedFragmentAtomsTransp)
+            if not self.color_of_bonds_by_atoms:
+                x3 = (self.MainModel.atoms[bond[1]].x + self.MainModel.atoms[bond[0]].x) / 2
+                y3 = (self.MainModel.atoms[bond[1]].y + self.MainModel.atoms[bond[0]].y) / 2
+                z3 = (self.MainModel.atoms[bond[1]].z + self.MainModel.atoms[bond[0]].z) / 2
+                coords = []
+                coords.append([[x1, y1, z1], [x3, y3, z3], self.color_of_atoms[self.MainModel.atoms[bond[0]].charge]])
+                coords.append([[x3, y3, z3], [x2, y2, z2], self.color_of_atoms[self.MainModel.atoms[bond[1]].charge]])
             else:
-                gl.glColor3f(self.color_of_bonds[0], self.color_of_bonds[1], self.color_of_bonds[2])
-            self.add_bond([x1, y1, z1], [x2, y2, z2], self.bondWidth)
+                coords = [[[x1, y1, z1], [x2, y2, z2], self.color_of_bonds]]
+
+            for coord in coords:
+                if self.SelectedFragmentMode and (self.MainModel.atoms[bond[0]].fragment1 or self.MainModel.atoms[bond[1]].fragment1):
+                    gl.glColor4f(coord[2][0], coord[2][1], coord[2][2], self.SelectedFragmentAtomsTransp)
+                else:
+                    gl.glColor3f(coord[2][0], coord[2][1], coord[2][2])
+                self.add_bond(coord[0], coord[1], self.bondWidth)
         gl.glEndList()
 
     def add_box(self):
