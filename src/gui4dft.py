@@ -1077,7 +1077,6 @@ class mainWindow(QMainWindow):
         self.ui.FormSettingsViewRadioColorBondsManual.clicked.connect(self.save_state_view_bond_color)
         self.ui.FormSettingsViewRadioColorBondsByAtoms.clicked.connect(self.save_state_view_bond_color)
 
-
         state_FormSettingsViewCheckXYZasCritic2 = settings.value(SETTINGS_FormSettingsViewCheckXYZasCritic2, False,
                                                                   type=bool)
         self.ui.FormSettingsViewCheckXYZasCritic2.setChecked(state_FormSettingsViewCheckXYZasCritic2)
@@ -1167,8 +1166,10 @@ class mainWindow(QMainWindow):
     def menu_export(self):
         if self.MainForm.MainModel.nAtoms() > 0:
             try:
-                fname = QFileDialog.getSaveFileName(self, 'Save File', self.WorkDir,
-                                                "All files (*);;FDF files (*.fdf);;XYZ files (*.xyz)")[0]
+                long_name = QFileDialog.getSaveFileName(self, 'Save File', self.WorkDir,
+                    "FDF files (*.fdf);;XYZ files (*.xyz);;FireFly input files (*.inp);;VASP POSCAR file (POSCAR)")
+                fname = long_name[0]
+                print(long_name)
                 self.MainForm.atomic_structure_to_file(fname)
                 self.WorkDir = os.path.dirname(fname)
                 self.save_active_folder()

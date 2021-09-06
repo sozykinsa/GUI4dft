@@ -190,34 +190,51 @@ class Helpers:
         return ans
 
     @staticmethod
-    def fromFileProperty(filename,prop,count = 1, type = 'int'):
+    def fromFileProperty(filename, prop, count=1, type='int'):
         """ Возвращает  значение параметра property из файла filename. Зрачене может быть целым или дробным числом с фиксированной точкой. Если в файле необходимый параметр встречается несколько раз, необходимо задать параметр count, который показывает какое по счету найденное значение должна вернуть функция. Параметр type указывает тип возвращаемого значения (int, float или string)  """
-        property = None
         k = 1
+        is_found, k, property = Helpers.property_from_sub_file(filename, k, prop, count, type)
+        if is_found:
+            return property
+        else:
+            return None
+
+    @staticmethod
+    def property_from_sub_file(filename, k, prop, count, typen):
+        property = None
+        is_found = False
         if os.path.exists(filename):
             MyFile = open(filename)
-            str1 = MyFile.readline()            
-            while str1!='':            
-                if (str1 != '') and (str1.find(prop)>=0):
-                    str1 = str1.replace(prop,' ')
-                    if type == "unformatted":
-                        return str1
-                    if (type == 'string'):
+            str1 = MyFile.readline()
+            while str1 != '':
+                if (str1 != '') and (str1.find("%include") >= 0):
+                    new_f = str1.split()[1]
+                    file = os.path.dirname(filename) + "/" + new_f
+                    is_found, k, property = Helpers.property_from_sub_file(file, k, prop, count, typen)
+                if (str1 != '') and (str1.find(prop) >= 0):
+                    str1 = str1.replace(prop, ' ')
+                    if typen == "unformatted":
+                        property = str1
+                    if typen == 'string':
                         property = Helpers.spacedel(str1)
                     else:
                         prop1 = re.findall(r"[0-9,\.,-]+", str1)[0]
-                        if (type == 'int'):
+                        if typen == 'int':
                             property = int(prop1)
-                        if (type == 'float'):
+                        if typen == 'float':
                             property = float(prop1)
-                        
-                    if (k == count):
-                        return property
-                    k+=1
-                
+
+                    if k == count:
+                        is_found = True
+
+                    k += 1
+                if is_found:
+                    MyFile.close()
+                    return is_found, k-1, property
+
                 str1 = MyFile.readline()
             MyFile.close()
-        return property
+        return is_found, k, property
 
     @staticmethod
     def RoundToPlane(atom, R):

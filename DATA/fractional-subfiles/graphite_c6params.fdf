@@ -1,0 +1,14 @@
+NumberOfAtoms        4
+
+%block PS.lmax
+    C 2
+%endblock PS.lmax
+
+MM.Cutoff 20.0 Ang
+%block MM.Potentials
+ 1  1 C6 15.19 1.56
+%endblock MM.Potentials
+
+kgrid_cutoff 4.0 Ang
+
+ElectronicTemperature 0 K
