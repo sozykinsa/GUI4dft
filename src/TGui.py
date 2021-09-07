@@ -896,15 +896,8 @@ class GuiOpenGL(object):
 
     def paintGL(self):
         QOpenGLWidget.makeCurrent(self.openGLWidget)
-        ambient = [1.0, 1.0, 1.0, 0.04]
-        lightpos = [1.0, 10.0, 100.0]
-        gl.glLightModelfv(gl.GL_LIGHT_MODEL_AMBIENT, ambient) # Определяем текущую модель освещения
-        gl.glEnable (gl.GL_LIGHTING)
-        gl.glEnable (gl.GL_LIGHT0)
-        gl.glEnable (gl.GL_DEPTH_TEST)
-        gl.glEnable (gl.GL_COLOR_MATERIAL)
-        gl.glLightfv(gl.GL_LIGHT0, gl.GL_POSITION, lightpos)     # Определяем положение источника света
         try:
+            self.light_prepare()
             self.prepere_scene()
             if self.active:
                     self.prepare_orientation()
@@ -944,6 +937,39 @@ class GuiOpenGL(object):
         except Exception as exc:
             print(exc)
             pass
+
+    def light_prepare(self):
+        ambient = [0.2*self.Scale, 0.2*self.Scale, 0.2*self.Scale, 1]
+        gl.glLightModelfv(gl.GL_LIGHT_MODEL_AMBIENT, ambient)  # Определяем текущую модель освещения
+        gl.glEnable(gl.GL_LIGHTING)
+        gl.glEnable(gl.GL_LIGHT0)
+        gl.glEnable(gl.GL_DEPTH_TEST)
+        gl.glEnable(gl.GL_COLOR_MATERIAL)
+
+        lightpos = [1.0, 10.0, 100.0]
+
+        alpha = - self.rotX * math.pi / 180
+        # ox
+        xnn = float(lightpos[1]) * math.cos(alpha) - float(lightpos[2]) * math.sin(alpha)
+        ynn = float(lightpos[1]) * math.sin(alpha) + float(lightpos[2]) * math.cos(alpha)
+        lightpos[1] = xnn
+        lightpos[2] = ynn
+
+        alpha = - self.rotY * math.pi / 180
+        # oy
+        xnn = float(lightpos[0]) * math.cos(alpha) + float(lightpos[2]) * math.sin(alpha)
+        ynn = -float(lightpos[0]) * math.sin(alpha) + float(lightpos[2]) * math.cos(alpha)
+        lightpos[0] = xnn
+        lightpos[2] = ynn
+
+        alpha = - self.rotZ * math.pi / 180
+        # oz
+        xnn = float(lightpos[0]) * math.cos(alpha) - float(lightpos[1]) * math.sin(alpha)
+        ynn = float(lightpos[0]) * math.sin(alpha) + float(lightpos[1]) * math.cos(alpha)
+        lightpos[0] = xnn
+        lightpos[1] = ynn
+
+        gl.glLightfv(gl.GL_LIGHT0, gl.GL_POSITION, lightpos)  # Определяем положение источника света
 
     def prepare_orientation(self):
         gl.glTranslated(self.x, self.y, self.z)

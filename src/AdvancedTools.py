@@ -203,6 +203,7 @@ class Helpers:
     def property_from_sub_file(filename, k, prop, count, typen):
         property = None
         is_found = False
+        k = 1
         if os.path.exists(filename):
             MyFile = open(filename)
             str1 = MyFile.readline()
