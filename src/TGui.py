@@ -73,7 +73,7 @@ class GuiOpenGL(object):
         self.openGLWidget.installEventFilter(self.filter)
 
     def init_params(self, TheObject=None):
-        if TheObject==None:
+        if TheObject == None:
             self.ViewOrtho = True
             self.ViewAtoms = True
             self.ViewBox = False
@@ -126,7 +126,7 @@ class GuiOpenGL(object):
             self.rotX = TheObject.rotX
             self.rotY = TheObject.rotY
             self.rotZ = TheObject.rotZ
-            self.selected_atom =TheObject.selected_atom
+            self.selected_atom = TheObject.selected_atom
             self.selected_cp = TheObject.selected_cp
             self.prop = TheObject.prop
             self.SelectedFragmentMode = TheObject.SelectedFragmentMode
@@ -356,7 +356,6 @@ class GuiOpenGL(object):
         return newModel
 
     def image3D_to_file(self, fname):
-        #self.openGLWidget.grab().save(fname)
         self.openGLWidget.grabFramebuffer().save(fname)
 
     def atomic_structure_to_file(self, fname):
@@ -948,26 +947,28 @@ class GuiOpenGL(object):
 
         lightpos = [1.0, 10.0, 100.0]
 
-        alpha = - self.rotX * math.pi / 180
-        # ox
-        xnn = float(lightpos[1]) * math.cos(alpha) - float(lightpos[2]) * math.sin(alpha)
-        ynn = float(lightpos[1]) * math.sin(alpha) + float(lightpos[2]) * math.cos(alpha)
-        lightpos[1] = xnn
-        lightpos[2] = ynn
+        if self.quality == 1:
 
-        alpha = - self.rotY * math.pi / 180
-        # oy
-        xnn = float(lightpos[0]) * math.cos(alpha) + float(lightpos[2]) * math.sin(alpha)
-        ynn = -float(lightpos[0]) * math.sin(alpha) + float(lightpos[2]) * math.cos(alpha)
-        lightpos[0] = xnn
-        lightpos[2] = ynn
+            alpha = - self.rotX * math.pi / 180
+            # ox
+            xnn = float(lightpos[1]) * math.cos(alpha) - float(lightpos[2]) * math.sin(alpha)
+            ynn = float(lightpos[1]) * math.sin(alpha) + float(lightpos[2]) * math.cos(alpha)
+            lightpos[1] = xnn
+            lightpos[2] = ynn
 
-        alpha = - self.rotZ * math.pi / 180
-        # oz
-        xnn = float(lightpos[0]) * math.cos(alpha) - float(lightpos[1]) * math.sin(alpha)
-        ynn = float(lightpos[0]) * math.sin(alpha) + float(lightpos[1]) * math.cos(alpha)
-        lightpos[0] = xnn
-        lightpos[1] = ynn
+            alpha = - self.rotY * math.pi / 180
+            # oy
+            xnn = float(lightpos[0]) * math.cos(alpha) + float(lightpos[2]) * math.sin(alpha)
+            ynn = -float(lightpos[0]) * math.sin(alpha) + float(lightpos[2]) * math.cos(alpha)
+            lightpos[0] = xnn
+            lightpos[2] = ynn
+
+            alpha = - self.rotZ * math.pi / 180
+            # oz
+            xnn = float(lightpos[0]) * math.cos(alpha) - float(lightpos[1]) * math.sin(alpha)
+            ynn = float(lightpos[0]) * math.sin(alpha) + float(lightpos[1]) * math.cos(alpha)
+            lightpos[0] = xnn
+            lightpos[1] = ynn
 
         gl.glLightfv(gl.GL_LIGHT0, gl.GL_POSITION, lightpos)  # Определяем положение источника света
 
