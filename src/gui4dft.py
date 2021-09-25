@@ -1169,7 +1169,6 @@ class mainWindow(QMainWindow):
                 long_name = QFileDialog.getSaveFileName(self, 'Save File', self.WorkDir,
                     "FDF files (*.fdf);;XYZ files (*.xyz);;FireFly input files (*.inp);;VASP POSCAR file (POSCAR)")
                 fname = long_name[0]
-                print(long_name)
                 self.MainForm.atomic_structure_to_file(fname)
                 self.WorkDir = os.path.dirname(fname)
                 self.save_active_folder()
@@ -2141,8 +2140,8 @@ class mainWindow(QMainWindow):
     def fdf_data_from_form_to_file(self):
         try:
             text = self.ui.FormActionsPreTextFDF.toPlainText()
-            if len(text)>0:
-                name = QFileDialog.getSaveFileName(self, 'Save File')[0]
+            if len(text) > 0:
+                name = QFileDialog.getSaveFileName(self, 'Save File', self.WorkDir, "FDF files (*.fdf)")[0]
                 if len(name) > 0:
                     with open(name, 'w') as f:
                         f.write(text)
