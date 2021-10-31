@@ -11,6 +11,7 @@ from AdvancedTools import Helpers
 from AdvancedTools import TAtomicModel
 from AdvancedTools import TCalculators as Calculator
 from AdvancedTools import TCapedSWNT
+from AdvancedTools import TBiNT
 from AdvancedTools import TFDFFile
 from AdvancedTools import TGraphene
 from AdvancedTools import TPeriodTable
@@ -88,6 +89,7 @@ class mainWindow(QMainWindow):
 
         self.shortcut = QShortcut(QKeySequence("Ctrl+D"), self)
         self.shortcut.activated.connect(self.atom_delete)
+        self.active_model = -1
 
     def start_program(self):
         if self.action_on_start == 'Open':
@@ -129,6 +131,7 @@ class mainWindow(QMainWindow):
         self.ui.FormActionsPreButFDFToFile.clicked.connect(self.fdf_data_from_form_to_file)
         self.ui.FormActionsPreButFillSpace.clicked.connect(self.fill_space)
         self.ui.FormActionsPreButSWNTGenerate.clicked.connect(self.create_swnt)
+        self.ui.FormActionsPreButBiElementGenerate.clicked.connect(self.create_bi_el_nt)
         self.ui.FormActionsPreButGrapheneGenerate.clicked.connect(self.create_graphene)
         self.ui.FormActionsPostButSurface.clicked.connect(self.plot_surface)
         self.ui.FormActionsPostButSurfaceParse.clicked.connect(self.parse_volumeric_data)
@@ -155,6 +158,7 @@ class mainWindow(QMainWindow):
         self.ui.FormActionsPostButGetBonds.clicked.connect(self.get_bonds)
         self.ui.PropertyAtomAtomDistanceGet.clicked.connect(self.get_bond)
         self.ui.FormCPaddToList.clicked.connect(self.add_cp_to_list)
+        self.ui.FormIEd12Generate.clicked.connect(self.d12_to_file)
 
         self.ui.changeFragment1StatusByX.clicked.connect(self.change_fragment1_status_by_x)
         self.ui.changeFragment1StatusByY.clicked.connect(self.change_fragment1_status_by_y)
@@ -289,6 +293,12 @@ class mainWindow(QMainWindow):
         color_type_scale.appendRow(QStandardItem("Log"))
         self.ui.FormSettingsColorsScaleType.setModel(color_type_scale)
         self.ui.FormSettingsColorsScaleType.setCurrentText(self.color_type_scale)
+
+        bi_element_type_tube = QStandardItemModel()
+        bi_element_type_tube.appendRow(QStandardItem("BN"))
+        bi_element_type_tube.appendRow(QStandardItem("BC"))
+        self.ui.FormNanotypeTypeSelector.setModel(bi_element_type_tube)
+        self.ui.FormNanotypeTypeSelector.setCurrentIndex(0)
 
         self.ui.FormActionsPostTableCellParam.setColumnCount(5)
         self.ui.FormActionsPostTableCellParam.setHorizontalHeaderLabels(["volume", "Energy", "a", "b", "c"])
@@ -1187,13 +1197,8 @@ class mainWindow(QMainWindow):
             self.WorkDir = os.path.dirname(fname)
             try:
                 self.get_atomic_model_and_fdf(fname)
-            except Exception:
-                msg = QMessageBox()
-                msg.setIcon(QMessageBox.Critical)
-                msg.setText("File format error")
-                msg.setInformativeText('The format of this file is not supported')
-                msg.setWindowTitle("File format error")
-                msg.exec_()
+            except Exception as e:
+                self.show_error(e)
 
             problem_atoms = []
             for structure in self.models:
@@ -1210,7 +1215,10 @@ class mainWindow(QMainWindow):
                 for structure in self.models:
                     structure.ModifyAtomsTypes(ansv)
 
-            self.plot_last_model()
+            try:
+                self.plot_last_model()
+            except Exception as e:
+                self.show_error(e)
 
     def get_atomic_model_and_fdf(self, fname):
         parse_properies = self.ui.FormSettingsParseAtomicProperties.isChecked()
@@ -1338,6 +1346,7 @@ class mainWindow(QMainWindow):
         self.model_to_screen(-1)
 
     def plot_model(self, value):
+        self.active_model = value
         self.ui.Form3Dand2DTabs.setCurrentIndex(0)
         view_atoms = self.ui.FormSettingsViewCheckShowAtoms.isChecked()
         view_box = self.ui.FormSettingsViewCheckShowBox.isChecked()
@@ -1350,7 +1359,7 @@ class mainWindow(QMainWindow):
         boxcolor = self.get_color_from_setting(self.state_Color_Of_Box)
         atomscolor = self.colors_of_atoms()
         contour_width = (self.ui.FormSettingsViewSpinContourWidth.value()) / 1000.0
-        self.MainForm.set_atomic_structure(self.models[value], atomscolor, view_atoms, view_box, boxcolor, view_bonds,
+        self.MainForm.set_atomic_structure(self.models[self.active_model], atomscolor, view_atoms, view_box, boxcolor, view_bonds,
                                            bondscolor, bond_width, color_of_bonds_by_atoms, view_axes, axescolor, contour_width)
         self.prepare_form_actions_combo_pdos_species()
         self.prepare_form_actions_combo_pdos_indexes()
@@ -2148,6 +2157,34 @@ class mainWindow(QMainWindow):
         except Exception as e:
             self.show_error(e)
 
+    def d12_to_file(self):
+        if len(self.models) == 0:
+            return
+        try:
+            text = "crystal\n"
+            if self.ui.crystal_d12_1d.isChecked():
+                text += "POLYMER\n"
+                model1 = deepcopy(self.models[self.active_model])
+                model2 = deepcopy(self.models[self.active_model])
+                model2.convert_from_cart_to_direct()
+                nat = model1.nAtoms()
+                text += "1\n"
+                text += str(model1.get_LatVect3_norm()) + "\n"
+                text += str(nat) + "\n"
+                for i in range(0, nat):
+                    ch = model1.atoms[i].charge
+                    x = str(model2.atoms[i].z)
+                    y = str(model1.atoms[i].x)
+                    z = str(model1.atoms[i].y)
+                    text += "2" + str(ch) + "   " + x + "   " + y + "   " + z + "\n"
+            if len(text) > 0:
+                name = QFileDialog.getSaveFileName(self, 'Save File', self.WorkDir, "Crystal d12 (*.d12)")[0]
+                if len(name) > 0:
+                    with open(name, 'w') as f:
+                        f.write(text)
+        except Exception as e:
+            self.show_error(e)
+
     def fill_space(self):
         if len(self.models) == 0:
             return
@@ -2322,9 +2359,10 @@ class mainWindow(QMainWindow):
                     path_low.append(np.array([float(res[0]), float(res[1]), float(res[2])]))
 
                 path_fine = [path_low[0]]
+                extra_points = self.ui.FormExtraPoints.value() + 1
                 for i in range(1, len(path_low)):
-                    dv = (path_low[i] - path_low[i-1]) / 10
-                    for j in range(0, 10):
+                    dv = (path_low[i] - path_low[i-1]) / extra_points
+                    for j in range(0, extra_points):
                         path_fine.append(path_fine[-1] + dv)
 
                 for i in range(0, len(path_fine)):
@@ -2398,6 +2436,26 @@ class mainWindow(QMainWindow):
         self.plot_model(-1)
         self.MainForm.add_atoms()
         self.fill_gui("SWNT-model")
+
+    def create_swgnt(self):
+        """  to do """
+
+    def create_bi_el_nt(self):
+        """ to do """
+        n = self.ui.FormBiElementN.value()
+        if self.ui.FormBiElementRadioArm.isChecked():
+            m = n
+        else:
+            m = 0
+        leng = self.ui.FormBiElementLen.value()
+        t = self.ui.FormNanotypeTypeSelector.currentText()
+
+        model = TBiNT(n, m, leng, t)
+
+        self.models.append(model)
+        self.plot_model(-1)
+        self.MainForm.add_atoms()
+        self.fill_gui("Bi element NT-model")
 
     def swnt_type1_selected(self):
         self.ui.FormActionsPreLineSWNTn.setEnabled(True)

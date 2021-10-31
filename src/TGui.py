@@ -428,6 +428,7 @@ class GuiOpenGL(object):
     def set_color_of_atoms(self, colors):
         self.color_of_atoms = colors
         self.add_atoms()
+        self.add_bonds()
 
     def set_color_of_bonds(self, color):
         self.color_of_bonds = color

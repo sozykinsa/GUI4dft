@@ -559,11 +559,11 @@ class TAtomicModel(object):
         if os.path.exists(filename):
             ani_file = open(filename)
             NumberOfAtoms = int(ani_file.readline())
-            while NumberOfAtoms>0:
-                newModel = TSIESTA.atoms_from_xyz_structure(NumberOfAtoms, ani_file, periodTable)
+            while NumberOfAtoms > 0:
+                newModel = TAtomicModel.atoms_from_xyz_structure(NumberOfAtoms, ani_file, periodTable)
                 molecules.append(newModel)
                 st = ani_file.readline()
-                if st!='':
+                if st != '':
                     NumberOfAtoms = int(st)
                 else:
                     NumberOfAtoms = 0
@@ -593,7 +593,7 @@ class TAtomicModel(object):
             lat = TSIESTA.lattice_constant(filename)
         units = Helpers.fromFileProperty(filename, 'ZM.UnitsLength', 1, 'string')
         lat_vect_1, lat_vect_2, lat_vect_3 = TSIESTA.lattice_vectors(filename)
-        if lat_vect_1[0] == False:
+        if not lat_vect_1[0]:
             lat_vect_1, lat_vect_2, lat_vect_3 = TSIESTA.lattice_parameters_abc_angles(filename)
         chem_spec_info = {}
         ChemicalSpeciesLabel = TSIESTA.get_block_from_siesta_fdf(filename, "ChemicalSpeciesLabel")
@@ -806,7 +806,7 @@ class TAtomicModel(object):
         if os.path.exists(filename):
             struct_file = open(filename)
             str1 = struct_file.readline()
-            while str1.find("---")>=0:
+            while str1.find("---") >= 0:
                 newStr = TAtomicModel()
                 LatConst = float(struct_file.readline())
                 lat1 = Helpers.spacedel(struct_file.readline()).split()
@@ -845,7 +845,7 @@ class TAtomicModel(object):
         AtomicCoordinatesFormat, NumberOfAtoms, chem_spec_info, lat, lat_vect_1, lat_vect_2, lat_vect_3, units = TAtomicModel.atoms_from_fdf_prepare(
             filename)
 
-        lines  = TFDFFile.fdf_data_dump(filename)
+        lines = TFDFFile.fdf_data_dump(filename)
 
         AllAtoms = TAtomicModel.atoms_from_fdf_text(AtomicCoordinatesFormat, NumberOfAtoms, chem_spec_info, lat,
                                                     lat_vect_1, lat_vect_2, lat_vect_3, lines, units)
@@ -1049,12 +1049,12 @@ class TAtomicModel(object):
         if os.path.exists(filename):
             f = open(filename)
             NumberOfAtoms = int(math.fabs(int(f.readline())))
-            newModel = TAtomicModel.atoms_from_xyz_structure(NumberOfAtoms, f, periodTable, [1,2,3,4])
+            newModel = TAtomicModel.atoms_from_xyz_structure(NumberOfAtoms, f, periodTable, [1, 2, 3, 4])
             molecules.append(newModel)
         return molecules
 
     @staticmethod
-    def atoms_from_xyz_structure(NumberOfAtoms, ani_file, periodTable, indexes=[0,1,2,3]):
+    def atoms_from_xyz_structure(NumberOfAtoms, ani_file, periodTable, indexes=[0, 1, 2, 3]):
         if indexes[0] == 0:
             str1 = Helpers.spacedel(ani_file.readline())
         atoms = []
@@ -1159,8 +1159,6 @@ class TAtomicModel(object):
                     cp.setProperty("bond1", deepcopy(points))
                 else:
                     cp.setProperty("bond2", deepcopy(points))
-        #newPoints = deepcopy(points)
-        #self.bondpath.append(newPoints)
 
     def atoms_of_bond_path(self, ind):
         atoms = self.atoms
@@ -1951,12 +1949,12 @@ class TAtomicModel(object):
 
 class TGraphene(TAtomicModel):
     """The TGraphene class provides """
-    def __init__(self, n = 0, m = 0, leng = 0):
+    def __init__(self, n=0, m=0, leng=0):
         TAtomicModel.__init__(self)
         self.maxMol = 200000
         self.a = 1.43
 
-        if (n==0) and (m==0):
+        if (n == 0) and (m == 0):
             return
 
         np1, pi, px, py, leng = self.graphene_positions(n, m, leng)
@@ -2031,7 +2029,73 @@ class TGraphene(TAtomicModel):
         return np1, pi, px, py, vlen
 
 
-  
+##################################################################
+########################### TSWNT ################################
+##################################################################
+
+class TBiNT(TAtomicModel):
+
+    def __init__(self, n, m, leng=1, tubetype="BN"):
+
+        TAtomicModel.__init__(self)
+        a = 1
+
+        if tubetype == "BN":
+            a = 1.434
+            atom1 = ["B", 5]
+            atom2 = ["N", 7]
+
+        if tubetype == "BC":
+            a = 1.4
+            atom1 = ["B", 5]
+            atom2 = ["C", 6]
+
+        z = 0
+
+        df = 180 / n
+        dfi = 0
+        row = 0
+
+        if (n > 0) and (m == 0):
+            rad = math.sqrt(3) / (2 * math.pi) * a * n
+
+            while z <= leng:
+                if (row % 2) == 0:
+                    dfi += df
+                if row % 2:
+                    let = atom1[0]
+                    charge = atom1[1]
+                else:
+                    let = atom2[0]
+                    charge = atom2[1]
+
+                for i in range(0, n):
+                    x = rad * math.cos(math.radians(i * 360 / n + dfi))
+                    y = rad * math.sin(math.radians(i * 360 / n + dfi))
+                    self.add_atom(TAtom([x, y, z, let, charge]))
+
+                row += 1
+                if row % 2:
+                    z += a
+                else:
+                    z += a / 2
+
+        if (n == m) and (n > 0):
+            rad = 3 * n * a / (2 * math.pi)
+            while z <= leng:
+
+                dfi += df
+                for i in range(0, n):
+                    x = rad * math.cos(math.radians(i * 360 / n + dfi))
+                    y = rad * math.sin(math.radians(i * 360 / n + dfi))
+                    self.add_atom(TAtom([x, y, z, atom1[0], atom1[1]]))
+
+                    x = rad * math.cos(math.radians(i * 360 / n + 120 / n + dfi))
+                    y = rad * math.sin(math.radians(i * 360 / n + 120 / n + dfi))
+                    self.add_atom(TAtom([x, y, z, atom2[0], atom2[1]]))
+                row += 1
+                z += math.sqrt(3) / 2 * a
+
 ##################################################################
 ########################### TSWNT ################################
 ##################################################################    
@@ -2348,6 +2412,7 @@ class TSIESTA:
             except Exception:
                 MdSiestaFile = open(filename)
                 str1 = MdSiestaFile.readline()
+                energy_string = "0 0 0 0 0 0 0"
                 while str1 != '':
                     if str1 != '' and (str1.find(
                             "siesta: iscf   Eharris(eV)      E_KS(eV)   FreeEng(eV)   dDmax  Ef(eV)") >= 0) or (
@@ -2359,10 +2424,11 @@ class TSIESTA:
                                 str1.find('scf:') >= 0) or (str1.find('spin moment:') >= 0):
                             str1 = Helpers.spacedel(str1)
                             if (str1.find('siesta') >= 0) or (str1.find('scf:') >= 0):
-                                energy = float(str1.split(' ')[6])
+                                energy_string = str1
                             str1 = MdSiestaFile.readline()
                     str1 = MdSiestaFile.readline()
                 MdSiestaFile.close()
+                energy = float(energy_string.split(' ')[6])
             return energy
         else:
             return None
