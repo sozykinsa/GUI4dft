@@ -1724,10 +1724,20 @@ class TAtomicModel(object):
             if elements[i] > 0:
                 types.append([i, elements[i]])
         return types
+
+    def formula(self):
+        mendeley = TPeriodTable()
+        text = ""
+        charges = self.typesOfAtoms()
+        for charge in charges:
+            ind = self.indexes_of_atoms_with_charge(charge[0])
+            let = mendeley.get_let(self.atoms[ind[0]].charge)
+            text += let + str(len(ind))
+        return text
     
     def toSIESTAfdf(self, filename):
         """ созадет входной файл для пакета SIESTA """
-        f = open(filename,'w')
+        f = open(filename, 'w')
         text = self.toSIESTAfdfdata("Fractional", "LatticeVectors")
         print(text, file=f)
         f.close()
@@ -2799,7 +2809,7 @@ class TFDFFile:
         self.properties = []
         self.blocks = []
 
-    def add_block(self,block):
+    def add_block(self, block):
         self.blocks.append(block)
 
     def add_property(self, row):
@@ -2811,16 +2821,16 @@ class TFDFFile:
             if not data[i].lstrip().startswith('#'):
                 if data[i].find("%block") >= 0:
                     newBlock = Block(data[i].split()[1])
-                    i+=1
+                    i += 1
                     while data[i].find("%endblock") == -1:
                         newBlock.add_row(data[i])
-                        i+=1
+                        i += 1
                     self.add_block(newBlock)
-                    i+=1
+                    i += 1
                 else:
-                    if data[i]!="" and data[i]!="\n":
+                    if data[i] != "" and data[i] != "\n":
                         self.add_property(data[i])
-                    i+=1
+                    i += 1
             else:
                 i += 1
 
@@ -2853,6 +2863,21 @@ class TFDFFile:
         MyFile.close()
         return fdf
 
+    def get_property(self, prop):
+        val = ""
+        prop = prop.lower()
+        for pr in self.properties:
+            pos = pr.lower().find(prop)
+            if pos >= 0:
+                val = ""
+                for i in range(pos + len(prop), len(pr)):
+                    val += pr[i]
+                val = val.replace('=', ' ')
+                val = val.strip()
+                return val
+        print("property '" + prop + "' not found\n")
+        return val
+
     def get_all_data(self, _structure, coordType, lattType):
         structure = deepcopy(_structure)
 
@@ -2860,26 +2885,26 @@ class TFDFFile:
 
         for prop in self.properties:
             f = True
-            if (prop.lower().find("numberofatoms")>=0): f = False
-            if (prop.lower().find("numberofspecies")>=0): f = False
-            if (prop.lower().find("atomiccoordinatesformat")>=0): f = False
-            if (prop.lower().find("latticeconstant") >= 0): f = False
+            if prop.lower().find("numberofatoms") >= 0: f = False
+            if prop.lower().find("numberofspecies") >= 0: f = False
+            if prop.lower().find("atomiccoordinatesformat") >= 0: f = False
+            if prop.lower().find("latticeconstant") >= 0: f = False
             if f:
                 st += prop
 
         for block in self.blocks:
             f = True
-            if ((block.name).lower().find("zmatrix")>=0): f = False
-            if ((block.name).lower().find("chemicalspecieslabel")>=0): f = False
-            if ((block.name).lower().find("latticeparameters") >=0): f = False
-            if ((block.name).lower().find("latticevectors") >=0): f = False
-            if ((block.name).lower().find("atomiccoordinatesandatomicspecies") >= 0): f = False
+            if (block.name).lower().find("zmatrix") >= 0: f = False
+            if (block.name).lower().find("chemicalspecieslabel") >= 0: f = False
+            if (block.name).lower().find("latticeparameters") >=0: f = False
+            if (block.name).lower().find("latticevectors") >=0: f = False
+            if (block.name).lower().find("atomiccoordinatesandatomicspecies") >= 0: f = False
 
             if f:
-                st +="%block "+block.name+"\n"
+                st += "%block "+block.name+"\n"
                 for row in block.value:
                     st += row
-                st +="%endblock "+block.name+"\n"
+                st += "%endblock "+block.name+"\n"
         return st
 
     @staticmethod
@@ -2889,16 +2914,14 @@ class TFDFFile:
         lines = []
         f = open(filename)
         lines = f.readlines()
-
         i = 0
-
         newlines = []
 
         while i < len(lines):
-            if (lines[i].find("%block Zmatrix") >= 0):
+            if lines[i].find("%block Zmatrix") >= 0:
                 newlines.append(lines[i])
                 i += 1
-                if (lines[i].find("cartesian") >= 0):
+                if lines[i].find("cartesian") >= 0:
                     newlines.append(lines[i])
                     i += 1
                     for j in range(0, NumberOfAtoms):
@@ -2952,7 +2975,7 @@ class TFDFFile:
                     flag = 1
                     f.write(str(newvalue) + "\n")
                 else:
-                    if (flag == 0):
+                    if flag == 0:
                         f.write(lines[j])
         f.close()
 

@@ -1,6 +1,11 @@
 # -*- coding: utf-8 -*-
-import math
 import os
+try:
+    if os.environ["XDG_SESSION_TYPE"] == "wayland":
+        os.environ["QT_QPA_PLATFORM"] = "wayland"
+except Exception as e:
+    """  """
+import math
 import sys
 import xml.etree.ElementTree as ET
 from copy import deepcopy
@@ -159,6 +164,7 @@ class mainWindow(QMainWindow):
         self.ui.PropertyAtomAtomDistanceGet.clicked.connect(self.get_bond)
         self.ui.FormCPaddToList.clicked.connect(self.add_cp_to_list)
         self.ui.FormIEd12Generate.clicked.connect(self.d12_to_file)
+        self.ui.FormASERamanAndIRscriptCreate.clicked.connect(self.ase_raman_and_ir_script_create)
 
         self.ui.changeFragment1StatusByX.clicked.connect(self.change_fragment1_status_by_x)
         self.ui.changeFragment1StatusByY.clicked.connect(self.change_fragment1_status_by_y)
@@ -2151,6 +2157,112 @@ class mainWindow(QMainWindow):
             text = self.ui.FormActionsPreTextFDF.toPlainText()
             if len(text) > 0:
                 name = QFileDialog.getSaveFileName(self, 'Save File', self.WorkDir, "FDF files (*.fdf)")[0]
+                if len(name) > 0:
+                    with open(name, 'w') as f:
+                        f.write(text)
+        except Exception as e:
+            self.show_error(e)
+
+    def ase_raman_and_ir_script_create(self):
+        if len(self.models) == 0:
+            return
+
+        try:
+            text = "import numpy as np\n"
+            text += "from ase import Atoms\n"
+            text += "from ase.calculators.siesta import Siesta\n"
+            text += "from ase.calculators.siesta.siesta_lrtddft import RamanCalculatorInterface\n"
+            text += "from ase.vibrations.raman import StaticRamanCalculator\n"
+            text += "from ase.vibrations.placzek import PlaczekStatic\n"
+            text += "from ase.units import Ry, eV, Ha\n"
+
+            model2 = deepcopy(self.models[self.active_model])
+            nat = model2.nAtoms()
+
+            formula = model2.formula()
+
+            text += "model = Atoms('" + formula +"', positions=["
+            for i in range(0, nat):
+                x = str(model2.atoms[i].x)
+                y = str(model2.atoms[i].y)
+                z = str(model2.atoms[i].z)
+                text += "(" + x + ",   " + y + ",   " + z + "),\n"
+            text += "], cell=["
+            text += str(model2.get_LatVect1_norm()) + ", "
+            text += str(model2.get_LatVect2_norm()) + ", "
+            text += str(model2.get_LatVect3_norm()) + "])\n"
+
+            text += "model.center(about=(0., 0., 0.))\n"
+
+            text += "# set-up the Siesta parameters\n"
+            text += "model.calc = Siesta(\n"
+            mesh = self.FDFData.get_property("MeshCutoff")
+            if len(mesh) == 0:
+                mesh = "200 Ry"
+            mesh = mesh.split()
+            text += "mesh_cutoff=" + str(mesh[0]) + " * " + str(mesh[1]) + ",\n"
+            basis = self.FDFData.get_property("PAO.BasisSize")
+            if len(basis) == 0:
+                basis = "DZP"
+            text += "basis_set='" + basis + "',\n"
+            func = self.FDFData.get_property("XC.functional")
+            if len(func) == 0:
+                func = "DZP"
+            text += "pseudo_qualifier='" + func + "',\n"
+
+            aut = self.FDFData.get_property("XC.authors")
+            if len(aut) == 0:
+                aut = "PZ"
+            text += "xc='" + aut + "',\n"
+            shift = self.FDFData.get_property("PAO.EnergyShift")
+            if len(shift) == 0:
+                shift = "0.03374 Ry"
+            shift = shift.split()
+            text += "energy_shift=" + str(shift[0]) + " * " + str(shift[1]) + ",\n"
+            spin = self.FDFData.get_property("spin")
+            if (len(spin) == 0) or (len(spin.split()) > 1):
+                spin = "non-polarized"
+            text += "spin='" + spin + "',\n"
+            text += "fdf_arguments={\n"
+            text += "'SCFMustConverge': False,\n"
+            text += "'COOP.Write': True,\n"
+            text += "'WriteDenchar': True,\n"
+            text += "'PAO.BasisType': 'split',\n"
+            text += "'DM.Tolerance': 1e-4,\n"
+            text += "'MD.NumCGsteps': 0,\n"
+            text += "'MD.MaxForceTol': (0.02, 'eV/Ang'),\n"
+            text += "'MaxSCFIterations': 10000,\n"
+            Pulay = self.FDFData.get_property("DM.NumberPulay")
+            if len(Pulay) == 0:
+                Pulay = "4"
+            text += "'DM.NumberPulay': " + str(Pulay) +",\n"
+            Mixing = self.FDFData.get_property("DM.MixingWeight")
+            if len(Mixing) == 0:
+                Mixing = "0.01"
+            text += "'DM.MixingWeight': " + str(Mixing) + ",\n"
+            text += "'XML.Write': True,\n"
+            text += "'WriteCoorXmol': True,\n"
+            text += "'DM.UseSaveDM': True,})\n"
+
+            text += "name = '" + formula + "'\n"
+            text += "pynao_args = dict(label='siesta', jcutoff=7, iter_broadening=0.15, xc_code='LDA,PZ', tol_loc=1e-6, tol_biloc=1e-7)\n"
+            text += "rm = StaticRamanCalculator(model, RamanCalculatorInterface, name=name, delta=0.011, exkwargs=pynao_args)\n"
+            text += "# save dipole moments from DFT calculation in order to get\n"
+            text += "# infrared intensities as well\n"
+            text += "rm.ir = True\n"
+            text += "rm.run()\n"
+            text += "pz = PlaczekStatic(model, name=name)\n"
+            text += "e_vib = pz.get_energies()\n"
+            text += "pz.summary()\n"
+
+            text += "from ase.vibrations.infrared import Infrared\n"
+            text += "# finite displacement for vibrations\n"
+            text += "ir = Infrared(model, name=name)\n"
+            text += "ir.run()\n"
+            text += "ir.summary()\n"
+
+            if len(text) > 0:
+                name = QFileDialog.getSaveFileName(self, 'Save File', self.WorkDir, "Python file (*.py)")[0]
                 if len(name) > 0:
                     with open(name, 'w') as f:
                         f.write(text)
