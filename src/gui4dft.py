@@ -74,7 +74,7 @@ class mainWindow(QMainWindow):
         self.ui = Ui_form()
         self.ui.setupUi(self)
 
-        self.ui.sisl_area.setEnabled(is_sisl_enable)
+        #self.ui.sisl_area.setEnabled(is_sisl_enable)
 
         self.models = []
         selected_atom_info = [self.ui.FormActionsPreComboAtomsList, self.ui.FormActionsPreSpinAtomsCoordX,
@@ -170,6 +170,8 @@ class mainWindow(QMainWindow):
         self.ui.changeFragment1StatusByY.clicked.connect(self.change_fragment1_status_by_y)
         self.ui.changeFragment1StatusByZ.clicked.connect(self.change_fragment1_status_by_z)
         self.ui.fragment1Clear.clicked.connect(self.fragment1_clear)
+        self.ui.FormCreateCriXYZFile.clicked.connect(self.create_critic2_xyz_file)
+        self.ui.FormCPdeleteFromList.clicked.connect(self.delete_cp_from_list)
 
         self.ui.FormActionsPreButDeleteAtom.clicked.connect(self.atom_delete)
         self.ui.FormActionsPreButModifyAtom.clicked.connect(self.atom_modify)
@@ -338,8 +340,6 @@ class mainWindow(QMainWindow):
         self.ui.FormActionsPosTableBonds.horizontalHeader().setStyleSheet(self.table_header_stylesheet)
         self.ui.FormActionsPosTableBonds.verticalHeader().setStyleSheet(self.table_header_stylesheet)
 
-        #self.ui.toolBar.setIconSize(QSize(500, 500))
-
         if is_with_figure and os.path.exists('./images/Open.png'):
             openAction = QAction(QIcon('./images/Open.png'), 'Open', self)
         else:
@@ -411,7 +411,7 @@ class mainWindow(QMainWindow):
         self.ui.toolBar.addSeparator()
 
     def activate_fragment_selection_mode(self):
-        if self.ui.ActivateFragmentSelectionModeCheckBox.isChecked() == True:
+        if self.ui.ActivateFragmentSelectionModeCheckBox.isChecked():
             self.MainForm.setSelectedFragmentMode(self.ui.AtomsInSelectedFragment,
                                                   self.ui.ActivateFragmentSelectionTransp.value())
             self.ui.changeFragment1StatusByX.setEnabled(True)
@@ -2437,12 +2437,56 @@ class mainWindow(QMainWindow):
         if fl:
             QListWidgetItem(newCP, self.ui.FormCPlist)
 
+    def delete_cp_from_list(self):
+        itemrow = self.ui.FormCPlist.currentRow()
+        self.ui.FormCPlist.takeItem(itemrow)
+
+    def create_critic2_xyz_file(self):
+        """ add code here"""
+        name = QFileDialog.getSaveFileName(self, 'Save File', self.WorkDir)
+        fname = name[0]
+        if len(fname) > 0:
+            f = open(fname, 'w')
+
+            bcp = deepcopy(self.models[self.active_model].bcp)
+
+            bcp_seleted = []
+            for i in range(0, self.ui.FormCPlist.count()):
+                ind = int(self.ui.FormCPlist.item(i).text())
+                bcp_seleted.append(self.models[self.active_model].bcp[ind])
+
+            if self.ui.radio_with_cp.isChecked():
+                text = self.models[self.active_model].toCriticXYZfile(bcp_seleted)
+            else:
+                for b in bcp_seleted:
+                    bcp.remove(b)
+                text = self.models[self.active_model].toCriticXYZfile(bcp)
+
+            print(text, file=f)
+            f.close()
+
     def create_cri_file(self):
         name = QFileDialog.getSaveFileName(self, 'Save File', self.WorkDir)
         fname = name[0]
         if len(fname) > 0:
             f = open(fname, 'w')
+
+            textl = "crystal model.BADER.cube\n"
+            textl += "WRITE model.xyz\n"
+            textl += "load model.BADER.cube\n"
+            textl += "load model.VT.DN.cube\n"
+            textl += "load model.VT.UP.cube\n"
+            textl += 'LOAD AS "-$2-$3"\n'
+            textl += 'LOAD AS LAP 1\n'
+            textl += "REFERENCE 1\n"
+            textl += "# bond path information\n"
+            textl += 'POINTPROP elpot "$4"\n'
+            textl += 'POINTPROP lapl "$5"\n'
+            textl += "POINT ./POINTS.txt\n"
+
             text = ""
+            te = ""
+            lines = ""
 
             SysCoord = np.array([self.models[-1].LatVect1, self.models[-1].LatVect2, self.models[-1].LatVect3])
             obr = np.linalg.inv(SysCoord).transpose()
@@ -2456,7 +2500,10 @@ class mainWindow(QMainWindow):
 
                 text += "Bond Critical Point: " + str(ind) + "  :  "
                 ind1, ind2 = self.models[-1].atoms_of_bond_path(ind)
-                text += self.models[-1].atoms[ind1].let + str(ind1) + "-" + self.models[-1].atoms[ind2].let + str(ind2) + "\n"
+                atom1 = self.models[-1].atoms[ind1].let + str(ind1)
+                atom2 = self.models[-1].atoms[ind2].let + str(ind2)
+                title = atom1 + "-" + atom2
+                text += title + "\n"
 
                 path_low = []
                 for i in range(0, len(bond1)):
@@ -2465,10 +2512,36 @@ class mainWindow(QMainWindow):
                     res = obr.dot(Coord)
                     path_low.append(np.array([float(res[0]), float(res[1]), float(res[2])]))
 
+                """"   """
+                from_to = "{0:14.10} {1:14.10} {2:14.10} {3:14.10} {4:14.10} {5:14.10} ".format(path_low[0][0],
+                                                                                                path_low[0][1],
+                                                                                                path_low[0][2],
+                                                                                                path_low[-1][0],
+                                                                                                path_low[-1][1],
+                                                                                                path_low[-1][2])
+
+                lines += "# " + title + "\n"
+                lines += "REFERENCE 1\n"
+                lines += "LINE " + from_to + " 100 FILE ./lines/lines-" + title + "-00-charge.txt\n"
+                lines += "REFERENCE 4\n"
+                lines += "LINE " + from_to + " 100 FILE ./lines/lines-" + title + "-00-elpot.txt\n"
+                lines += "REFERENCE 5\n"
+                lines += "LINE " + from_to + " 100 FILE ./lines/lines-" + title + "-00-lapl.txt\n"
+
+                first = "{0:14.10} {1:14.10} {2:14.10} ".format(path_low[-1][0], path_low[-1][1], path_low[-1][2])
+
                 for i in range(1, len(bond2)):
                     Coord = np.array([bond2[i].x, bond2[i].y, bond2[i].z])
                     res = obr.dot(Coord)
                     path_low.append(np.array([float(res[0]), float(res[1]), float(res[2])]))
+
+                last = "{0:14.10} {1:14.10} {2:14.10} ".format(path_low[-1][0], path_low[-1][1], path_low[-1][2])
+                lines += "REFERENCE 1\n"
+                lines += "LINE " + first + last + " 100 FILE ./lines/lines-" + title + "-01-charge.txt\n"
+                lines += "REFERENCE 4\n"
+                lines += "LINE " + first + last + " 100 FILE ./lines/lines-" + title + "-01-elpot.txt\n"
+                lines += "REFERENCE 5\n"
+                lines += "LINE " + first + last + " 100 FILE ./lines/lines-" + title + "-01-lapl.txt\n"
 
                 path_fine = [path_low[0]]
                 extra_points = self.ui.FormExtraPoints.value() + 1
@@ -2478,8 +2551,20 @@ class mainWindow(QMainWindow):
                         path_fine.append(path_fine[-1] + dv)
 
                 for i in range(0, len(path_fine)):
-                    text += str(path_fine[i][0]) + " " + str(path_fine[i][1]) + " " + str(path_fine[i][2]) + "\n"
+                    text += "{0:20.16f} {1:20.16f} {2:20.16f}\n".format(path_fine[i][0], path_fine[i][1], path_fine[i][2])
+                    te += "{0:20.16f} {1:20.16f} {2:20.16f}\n".format(path_fine[i][0], path_fine[i][1], path_fine[i][2])
 
+            lines += "UNLOAD ALL\nEND"
+            print(textl + lines, file=f)
+            f.close()
+
+            fname_dir = os.path.dirname(fname)
+
+            f = open(fname_dir + "/POINTS.txt", 'w')
+            print(te, file=f)
+            f.close()
+
+            f = open(fname_dir + "/POINTSatoms.txt", 'w')
             print(text, file=f)
             f.close()
 
@@ -2607,7 +2692,6 @@ class mainWindow(QMainWindow):
                 self.get_atomic_model_and_fdf(self.VolumericData.filename)
                 self.VolumericData.load_data(getChildNode)
 
-                #self.clear_form_isosurface_isosurface()
                 self.plot_last_model()
 
                 self.volumeric_data_max_min_to_form()

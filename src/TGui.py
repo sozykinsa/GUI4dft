@@ -6,6 +6,7 @@ from PyQt5.QtWidgets import QOpenGLWidget
 from PyQt5.QtCore import QEvent
 from PyQt5.QtCore import QObject
 from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QColor, QPainter, QFont
 from copy import deepcopy
 from AdvancedTools import TAtom
 from AdvancedTools import TAtomicModel
@@ -32,7 +33,8 @@ class mouse_events_filter(QObject):
                 if self.window.isAtomSelected():
                     self.window.move_atom(event.x(), event.y(), self.window.openGLWidget.width(), self.window.openGLWidget.height())
                 else:
-                    self.window.move(event.x(), event.y(), self.window.openGLWidget.width(), self.window.openGLWidget.height())
+                    if not self.window.CheckAtomSelection.isChecked():
+                        self.window.move(event.x(), event.y(), self.window.openGLWidget.width(), self.window.openGLWidget.height())
                 self.window.setXY(event.x(), event.y(), self.window.openGLWidget.width(), self.window.openGLWidget.height())
 
         elif event.type() == QEvent.MouseButtonPress:
@@ -62,6 +64,10 @@ class GuiOpenGL(object):
         self.CanSearch = False
         self.xsOld = 0
         self.ysOld = 0
+
+        self.x0 = 0
+        self.y0 = 0
+        self.z0 = 0
 
         self.init_params()
 
@@ -934,44 +940,101 @@ class GuiOpenGL(object):
                     if self.ViewBondpath:
                         gl.glCallList(self.object + 9)  # Bondpath
 
+                    #self.renderText(900, 500, "GUI4dft");
+
         except Exception as exc:
             print(exc)
             pass
 
+    def renderText(self, x, y, str_text, font=QFont()):
+        # Identify x and y locations to render text within widget
+        height = self.openGLWidget.height()
+        point = self.get_point_in_3D(x, y)
+        textPosX, textPosY, textPosZ = point[0], point[1], point[2]
+        textPosY = height - textPosY # y is inverted
+
+        fontColor = QColor.fromRgbF(0.0, 0.0, 0.0, 1)
+
+        # Render text
+        painter = QPainter(self.openGLWidget)
+        painter.setPen(fontColor)
+        painter.setFont(font)
+        painter.drawText(textPosX, textPosY, str_text)
+        painter.end()
+
+
+
     def light_prepare(self):
-        ambient = [0.2*self.Scale, 0.2*self.Scale, 0.2*self.Scale, 1]
-        gl.glLightModelfv(gl.GL_LIGHT_MODEL_AMBIENT, ambient)  # Определяем текущую модель освещения
-        gl.glEnable(gl.GL_LIGHTING)
-        gl.glEnable(gl.GL_LIGHT0)
-        gl.glEnable(gl.GL_DEPTH_TEST)
-        gl.glEnable(gl.GL_COLOR_MATERIAL)
+        # очищаем буфер кадра и глубины
+        gl.glClear(gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT)
 
-        lightpos = [1.0, 10.0, 100.0]
+        # свойства материала
+        material_diffuse = [1.0, 1.0, 1.0, 1.0]
+        gl.glMaterialfv(gl.GL_FRONT_AND_BACK, gl.GL_DIFFUSE, material_diffuse)
 
-        if self.quality == 1:
+        light_sample = 0
 
-            alpha = - self.rotX * math.pi / 180
-            # ox
-            xnn = float(lightpos[1]) * math.cos(alpha) - float(lightpos[2]) * math.sin(alpha)
-            ynn = float(lightpos[1]) * math.sin(alpha) + float(lightpos[2]) * math.cos(alpha)
-            lightpos[1] = xnn
-            lightpos[2] = ynn
+        # установка источников света
+        if light_sample == 1:
+            """ направленный источник света """
+            light0_diffuse = [0.4, 0.7, 0.2]
+            light0_direction = [0.0, 0.0, 1.0, 0.0]
 
-            alpha = - self.rotY * math.pi / 180
-            # oy
-            xnn = float(lightpos[0]) * math.cos(alpha) + float(lightpos[2]) * math.sin(alpha)
-            ynn = -float(lightpos[0]) * math.sin(alpha) + float(lightpos[2]) * math.cos(alpha)
-            lightpos[0] = xnn
-            lightpos[2] = ynn
+            gl.glEnable(gl.GL_LIGHT0)
+            gl.glLightfv(gl.GL_LIGHT0, gl.GL_DIFFUSE, light0_diffuse)
+            gl.glLightfv(gl.GL_LIGHT0, gl.GL_POSITION, light0_direction)
 
-            alpha = - self.rotZ * math.pi / 180
-            # oz
-            xnn = float(lightpos[0]) * math.cos(alpha) - float(lightpos[1]) * math.sin(alpha)
-            ynn = float(lightpos[0]) * math.sin(alpha) + float(lightpos[1]) * math.cos(alpha)
-            lightpos[0] = xnn
-            lightpos[1] = ynn
+        #  --------------------------------------
+        if light_sample == 2:
+            """ точечный источник света убывание интенсивности с расстоянием отключено (по умолчанию) """
+            light1_diffuse = [0.4, 0.7, 0.2]
+            light1_position = [0.0, 0.0, 1.0, 1.0]
 
-        gl.glLightfv(gl.GL_LIGHT0, gl.GL_POSITION, lightpos)  # Определяем положение источника света
+            gl.glEnable(gl.GL_LIGHT1)
+            gl.glLightfv(gl.GL_LIGHT1, gl.GL_DIFFUSE, light1_diffuse)
+            gl.glLightfv(gl.GL_LIGHT1, gl.GL_POSITION, light1_position)
+
+        if light_sample == 0:
+            ambient = [0.5, 0.5, 0.5, 1]
+            #ambient = [0.2 * self.Scale, 0.2 * self.Scale, 0.2 * self.Scale, 1]
+            gl.glLightModelfv(gl.GL_LIGHT_MODEL_AMBIENT, ambient)  # Определяем текущую модель освещения
+            gl.glLightModelf(gl.GL_LIGHT_MODEL_TWO_SIDE, gl.GL_TRUE) # двухсторонний расчет освещения
+            gl.glEnable(gl.GL_LIGHTING)
+            gl.glEnable(gl.GL_LIGHT0)
+            gl.glEnable(gl.GL_DEPTH_TEST)
+            gl.glEnable(gl.GL_COLOR_MATERIAL)
+
+            lightpos = [5.0, 5.0, 100.0]
+
+            if self.quality == 1:
+                lightpos = self.lightpos_rotate(lightpos)
+
+            gl.glLightfv(gl.GL_LIGHT0, gl.GL_POSITION, lightpos)  # Определяем положение источника света
+
+    def lightpos_rotate(self, lightpos):
+        # self.x0, self.y0, self.z0
+        lightpos = [lightpos[0] - self.x0, lightpos[1] - self.y0, lightpos[2] - self.z0]
+
+        alpha = - self.rotX * math.pi / 180
+        # ox
+        xnn = float(lightpos[1]) * math.cos(alpha) - float(lightpos[2]) * math.sin(alpha)
+        ynn = float(lightpos[1]) * math.sin(alpha) + float(lightpos[2]) * math.cos(alpha)
+        lightpos[1] = xnn
+        lightpos[2] = ynn
+        alpha = - self.rotY * math.pi / 180
+        # oy
+        xnn = float(lightpos[0]) * math.cos(alpha) + float(lightpos[2]) * math.sin(alpha)
+        ynn = -float(lightpos[0]) * math.sin(alpha) + float(lightpos[2]) * math.cos(alpha)
+        lightpos[0] = xnn
+        lightpos[2] = ynn
+        alpha = - self.rotZ * math.pi / 180
+        # oz
+        xnn = float(lightpos[0]) * math.cos(alpha) - float(lightpos[1]) * math.sin(alpha)
+        ynn = float(lightpos[0]) * math.sin(alpha) + float(lightpos[1]) * math.cos(alpha)
+        lightpos[0] = xnn
+        lightpos[1] = ynn
+
+        return [lightpos[0] + self.x0, lightpos[1] + self.y0, lightpos[2] + self.z0]
 
     def prepare_orientation(self):
         gl.glTranslated(self.x, self.y, self.z)

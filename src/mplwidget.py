@@ -19,4 +19,3 @@ class MplWidget(QWidget):
     def addToolBar(self, tb, action):
         tb.addAction(action)
         self.layout().setMenuBar(tb)
-

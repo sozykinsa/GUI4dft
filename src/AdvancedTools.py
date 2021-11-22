@@ -523,6 +523,13 @@ class TAtom(object):
 
     def getProperty(self, prop):
         return self.properties.get(prop)
+
+    def to_string(self):
+        let = self.let
+        sx = Helpers.float_to_string(self.x)
+        sy = Helpers.float_to_string(self.y)
+        sz = Helpers.float_to_string(self.z)
+        return let + '  ' + sx + '  ' + sy + '  ' + sz
         
 ##################################################################
 ################### The AtomicModel class ########################
@@ -537,7 +544,7 @@ class TAtomicModel(object):
         self.bcp = []
         self.rcp = []
         self.ccp = []
-        self.bondpath = []
+        #self.bondpath = []
 
         self.name = ""
         self.LatVect1 = np.array([100, 0, 0])
@@ -992,13 +999,13 @@ class TAtomicModel(object):
             newModel = TAtomicModel.atoms_from_xyz_structure(NumberOfAtoms, f, periodTable)
             if xyzcritic2:
                 fl = False
+                critic_data = {"xn", "xr", "xb", "xc", "xz"}
                 for atom in newModel.atoms:
-                    if (atom.let.lower() == "xn") or (atom.let.lower() == "xr") or (atom.let.lower() == "xb") or (atom.let.lower() == "xc") or (atom.let.lower() == "xz"):
+                    if atom.let.lower() in critic_data:
                         fl = True
 
                 if fl:
                     newModel2 = TAtomicModel()
-                    critic_data = {"xn", "xr", "xb", "xc", "xz"}
                     xz_points = []
 
                     for atom in newModel.atoms:
@@ -1154,7 +1161,11 @@ class TAtomicModel(object):
 
     def add_bond_path_point(self, points):
         for cp in self.bcp:
-            if (cp.x == points[0].x) and (cp.y == points[0].y) and (cp.z == points[0].z):
+            dx = math.pow(cp.x - points[0].x, 2)
+            dy = math.pow(cp.y - points[0].y, 2)
+            dz = math.pow(cp.z - points[0].z, 2)
+            d = math.sqrt(dx+dy+dz)
+            if d < 1e-4:
                 if cp.getProperty("bond1") == None:
                     cp.setProperty("bond1", deepcopy(points))
                 else:
@@ -1210,19 +1221,20 @@ class TAtomicModel(object):
         while i < len(self.bcp):
             bond1 = self.bcp[i].getProperty("bond1")
             bond2 = self.bcp[i].getProperty("bond2")
+            """
             if (bond1 == None) or (bond2 == None):
                 self.bcp.pop(i)
                 i -= 1
             else:
-                if ((bond1[-1].x == bond2[-1].x) and (bond1[-1].y == bond2[-1].y) and (bond1[-1].z == bond2[-1].z)):
+                if (bond1[-1].x == bond2[-1].x) and (bond1[-1].y == bond2[-1].y) and (bond1[-1].z == bond2[-1].z):
                     self.bcp.pop(i)
                     i -= 1
+            """
             i += 1
 
         for cp in self.bcp:
             self.critical_path_simplifier("bond1", cp)
             self.critical_path_simplifier("bond2", cp)
-
 
     def critical_path_simplifier(self, b, cp):
         bond = deepcopy(cp.getProperty(b))
@@ -1256,10 +1268,8 @@ class TAtomicModel(object):
     def AddBond(self, bond):
         self.bonds.append(bond)
 
-
     def nBonds(self):
         return len(self.bonds)
-
 
     def __getitem__(self, i):
         return self.atoms[i]
@@ -1402,7 +1412,7 @@ class TAtomicModel(object):
         """ минимальная координата по оси X """
         minx = self.atoms[0].x
         for atom in self.atoms:
-            if (float(atom.x) < float(minx)):
+            if float(atom.x) < float(minx):
                 minx = atom.x
         return float(minx)
 
@@ -1515,18 +1525,18 @@ class TAtomicModel(object):
             at.y = pos[1]
             at.z = pos[2]
 
-    def Neighbors(self,atom,col,charge):
+    def Neighbors(self, atom, col, charge):
         """ Look for col neighbors of atom "atom" with a charge "charge" """
         neighbor = []
         for at in range(0, len(self.atoms)):
-            if ((at != atom) and (int(self.atoms[at].charge) == int(charge))):
+            if (at != atom) and (int(self.atoms[at].charge) == int(charge)):
                 r = self.atom_atom_distance(atom, at)
                 neighbor.append([at,r])
         fl = 1
-        while (fl == 1):
+        while fl == 1:
             fl = 0
             for i in range(len(neighbor)-1,0,-1):
-                if (neighbor[i-1][1]>neighbor[i][1]):
+                if neighbor[i-1][1]>neighbor[i][1]:
                     at = copy.deepcopy(neighbor[i])
                     neighbor[i] = copy.deepcopy(neighbor[i-1])
                     neighbor[i-1] = copy.deepcopy(at)
@@ -1594,7 +1604,6 @@ class TAtomicModel(object):
                 DeltaMolecula1 = r1
         return DeltaMolecula1
 
-
     def GoToPositiveCoordinates(self):
         xm = self.minX()
         ym = self.minY()
@@ -1609,7 +1618,6 @@ class TAtomicModel(object):
             self.atoms[i].z -= zm
             self.atoms[i].z = self.minus0(self.atoms[i].z)
             #self.atoms[i].z += 0.1
-
 
     def minus0(self, fl):
         res = fl
@@ -1628,20 +1636,17 @@ class TAtomicModel(object):
     def grow(self):
         """ модель транслируется в трех измерениях и становится в 27 раз больше """
         newAtList = deepcopy(self.atoms)
-        for i in [-1,0,1]:
-            for j in [-1,0,1]:
-                for k in [-1,0,1]:
-                    if abs(i)+abs(j)+abs(k)!=0:
+        for i in [-1, 0, 1]:
+            for j in [-1, 0, 1]:
+                for k in [-1, 0, 1]:
+                    if abs(i)+abs(j)+abs(k) != 0:
                         vect = i * self.LatVect1 + j * self.LatVect2 + k * self.LatVect3
                         copyOfModel = TAtomicModel(self.atoms)
                         copyOfModel.move(vect[0], vect[1], vect[2])
                         for atom in copyOfModel.atoms:
                             newAtList.append(atom)
         newModel = TAtomicModel(newAtList)
-        v1 = 3 * self.LatVect1
-        v2 = 3 * self.LatVect2
-        v3 = 3 * self.LatVect3
-        newModel.set_lat_vectors(v1,v2,v3)
+        newModel.set_lat_vectors(3 * self.LatVect1, 3 * self.LatVect2, 3 * self.LatVect3)
         return newModel
 
     def growX(self):
@@ -1653,10 +1658,7 @@ class TAtomicModel(object):
         for atom in copyOfModel.atoms:
             newAtList.append(atom)
         newModel = TAtomicModel(newAtList)
-        v1 = 2 * self.LatVect1
-        v2 = self.LatVect2
-        v3 = self.LatVect3
-        newModel.set_lat_vectors(v1,v2,v3)
+        newModel.set_lat_vectors(2 * self.LatVect1, self.LatVect2, self.LatVect3)
         return newModel
 
     def growY(self):
@@ -1668,10 +1670,7 @@ class TAtomicModel(object):
         for atom in copyOfModel.atoms:
             newAtList.append(atom)
         newModel = TAtomicModel(newAtList)
-        v1 = self.LatVect1
-        v2 = 3 * self.LatVect2
-        v3 = self.LatVect3
-        newModel.set_lat_vectors(v1,v2,v3)
+        newModel.set_lat_vectors(self.LatVect1, 2 * self.LatVect2, self.LatVect3)
         return newModel
 
     def growZ(self):
@@ -1683,10 +1682,7 @@ class TAtomicModel(object):
         for atom in copyOfModel.atoms:
             newAtList.append(atom)
         newModel = TAtomicModel(newAtList)
-        v1 = self.LatVect1
-        v2 = self.LatVect2
-        v3 = 3 * self.LatVect3
-        newModel.set_lat_vectors(v1,v2,v3)
+        newModel.set_lat_vectors(self.LatVect1, self.LatVect2, 2 * self.LatVect3)
         return newModel
         
     def move(self, Lx, Ly, Lz):
@@ -1793,7 +1789,6 @@ class TAtomicModel(object):
             data += '%endblock AtomicCoordinatesAndAtomicSpecies\n'
         return data
 
-
     def toCUBEfile(self, fname, volumeric_data):
         f = open(fname+".cube", 'w')
         text = "DATA.cube\n"
@@ -1815,12 +1810,12 @@ class TAtomicModel(object):
 
         orderData = 'C'
 
-        N = int(volumeric_data.Nx) * int(volumeric_data.Ny) * int(volumeric_data.Nz)
+        n = int(volumeric_data.Nx) * int(volumeric_data.Ny) * int(volumeric_data.Nz)
 
-        data3D = np.reshape(volumeric_data.data3D, int(N), orderData)
+        data3D = np.reshape(volumeric_data.data3D, int(n), orderData)
 
-        for i in range(0, N):
-            text += str(data3D[i]) +"   "
+        for i in range(0, n):
+            text += str(data3D[i]) + "   "
 
         print(text, file=f)
         f.close()
@@ -1843,12 +1838,12 @@ class TAtomicModel(object):
 
         orderData = 'F'
 
-        N = int(volumeric_data.Nx) * int(volumeric_data.Ny) * int(volumeric_data.Nz)
+        n = int(volumeric_data.Nx) * int(volumeric_data.Ny) * int(volumeric_data.Nz)
 
-        data3D = np.reshape(volumeric_data.data3D, int(N), orderData)
+        data3D = np.reshape(volumeric_data.data3D, int(n), orderData)
 
-        for i in range(0, N):
-            text += str(data3D[i]) +"   "
+        for i in range(0, n):
+            text += str(data3D[i]) + "   "
 
         text += "\n"
 
@@ -1887,7 +1882,7 @@ class TAtomicModel(object):
                 str1 = ' ' + str(self.atoms[i].let) + '   ' + str(self.atoms[i].charge) + '.0  '
                 str2 = '    ' + self.xyz_string(i)
                 data += str1+str2+"\n"
-            data+= ' $END'
+            data += ' $END'
         return data
 
     def xyz_string(self, i):
@@ -1897,13 +1892,41 @@ class TAtomicModel(object):
         str2 = '  ' + sx + '  ' + sy + '  ' + sz
         return str2
 
+    def toCriticXYZfile(self, cps):
+        """ returns data for *.xyz file with CP and BCP """
+        text = ""
+
+        n_atoms = self.nAtoms()
+        for i in range(0, n_atoms):
+            text += self.atoms[i].to_string() + "\n"
+
+        n_cp = len(cps)
+        for cp in cps:
+            text += cp.to_string() + "\n"
+
+        n_bcp = 0
+        for cp in cps:
+            bond1 = cp.getProperty("bond1")
+            bond2 = cp.getProperty("bond2")
+
+            for i in range(0, len(bond1)):
+                n_bcp += 1
+                text += bond1[i].to_string() + "\n"
+
+            for i in range(0, len(bond2)):
+                n_bcp += 1
+                text += bond2[i].to_string() + "\n"
+
+        header = "   " + str(n_atoms + n_cp + n_bcp) + "\n\n"
+        return header + text
+
     def toSIESTAxyzdata(self):
-        """ возвращает данные для xyz файла """
+        """ returns data for *.xyz file """
         data = "  "
         nAtoms = self.nAtoms()
-        data+= str(nAtoms) + "\n"
+        data += str(nAtoms) + "\n"
         for i in range(0, nAtoms):
-            data+= "\n"+self.atoms[i].let + '       '+ str(round(self.atoms[i].x, 7)) + '     ' + str(round(self.atoms[i].y, 7)) + '      ' + str(round(self.atoms[i].z, 7))
+            data += "\n" + self.atoms[i].let + '       ' + self.xyz_string(i)
         return data
 
     def toFireflyINP(self, filename):
@@ -2048,7 +2071,9 @@ class TBiNT(TAtomicModel):
     def __init__(self, n, m, leng=1, tubetype="BN"):
 
         TAtomicModel.__init__(self)
-        a = 1
+        a = 1.43
+        atom1 = ["C", 6]
+        atom2 = ["C", 6]
 
         if tubetype == "BN":
             a = 1.434
@@ -2551,7 +2576,7 @@ class TSIESTA:
         return ListOfVal
 
     @staticmethod
-    def Replaceatominsiestafdf(filename,atom,string):
+    def Replaceatominsiestafdf(filename, atom, string):
         """ not documented """
         NumberOfAtoms = Helpers.fromFileProperty(filename, 'number_of_atoms')
         NumberOfSpecies = Helpers.fromFileProperty(filename, 'number_of_species')
@@ -2563,15 +2588,15 @@ class TSIESTA:
         newlines = []
         
         while i < len(lines):    
-            if (lines[i].find("%block ChemicalSpeciesLabel") >= 0):
+            if lines[i].find("%block ChemicalSpeciesLabel") >= 0:
                 for j in range(0,NumberOfSpecies):
                     newlines.append(lines[i])
                     i += 1
     
-            if (lines[i].find("%block Zmatrix") >= 0):
+            if lines[i].find("%block Zmatrix") >= 0:
                 newlines.append(lines[i])
                 i += 1
-                if (lines[i].find("cartesian") >= 0):
+                if lines[i].find("cartesian") >= 0:
                     for j in range(0, NumberOfAtoms):
                         if (j == atom):
                             newlines.append(string+'\n')
@@ -2581,7 +2606,6 @@ class TSIESTA:
             newlines.append(lines[i])
             i += 1
         return newlines
-            
 
     @staticmethod
     def get_block_from_siesta_fdf(filename, blockname):
@@ -2609,7 +2633,7 @@ class TSIESTA:
             return "sp"
         """ MD or CG? """
         res = Helpers.fromFileProperty(filename, 'MD.TypeOfRun', 1, 'string')
-        if res == None:
+        if res is None:
             res = Helpers.fromFileProperty(filename, "Begin CG opt. move =", 1, 'string')
             if res == "0":
                 return "cg"
@@ -2666,7 +2690,6 @@ class TCalculators:
                 if len(Models) == 0:
                     Models.append(Molecula)
         return Models
-
 
     @staticmethod
     def fParabola(x, b0, b1, b2):
@@ -2775,7 +2798,7 @@ class TCalculators:
 
         point_ridges = []
         for ridge in vor.ridge_vertices:
-            if (len(list(set(ridge) - set(regions[0]))) == 0) and (len(ridge)>0):
+            if (len(list(set(ridge) - set(regions[0]))) == 0) and (len(ridge) > 0):
                 point_ridges.append(ridge)
 
         ListOfPoligons = []
@@ -2796,6 +2819,7 @@ class TCalculators:
 ########################## TFDFfile ##############################
 ##################################################################
 
+
 class Block:
     def __init__(self, st):
         self.name = st
@@ -2803,6 +2827,7 @@ class Block:
 
     def add_row(self, row):
         self.value.append(row)
+
 
 class TFDFFile:
     def __init__(self):
@@ -2911,7 +2936,6 @@ class TFDFFile:
     def updateAtominSIESTAfdf(filename, model):
         """ заменяет атомы во входном файле SIESTA """
         NumberOfAtoms = Helpers.fromFileProperty(filename, 'NumberOfAtoms')
-        lines = []
         f = open(filename)
         lines = f.readlines()
         i = 0
@@ -2942,7 +2966,6 @@ class TFDFFile:
     @staticmethod
     def updatePropertyInSIESTAfdf(filename, property, newvalue, units):
         """ изменяет один из параметров во входном файле """
-        lines = []
         f = open(filename)
         lines = f.readlines()
         f.close()
@@ -2950,7 +2973,7 @@ class TFDFFile:
         f = open(filename, 'w')
         for j in range(0, len(lines)):
             field = lines[j]
-            if (lines[j].find(property) >= 0):
+            if lines[j].find(property) >= 0:
                 field = property + "  " + str(newvalue) + "  " + str(units) + "\n"
             f.write(field)
         f.close()
@@ -2958,7 +2981,6 @@ class TFDFFile:
     @staticmethod
     def updateBlockinSIESTAfdf(filename, blockname, newvalue):
         """ изменяет один из блоков во входном файле """
-        lines = []
         f = open(filename)
         lines = f.readlines()
         f.close()
@@ -2982,7 +3004,6 @@ class TFDFFile:
 ##################################################################
 ######################## TCap for SWNT ###########################
 ##################################################################
-
 
 class TCapedSWNT(TAtomicModel):
     def __init__(self, n, m, leng, ncell, type, dist1, angle1, dist2, angle2):
