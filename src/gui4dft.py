@@ -162,9 +162,12 @@ class mainWindow(QMainWindow):
         self.ui.FormModifyCellButton.clicked.connect(self.edit_cell)
         self.ui.FormActionsPostButGetBonds.clicked.connect(self.get_bonds)
         self.ui.PropertyAtomAtomDistanceGet.clicked.connect(self.get_bond)
-        self.ui.FormCPaddToList.clicked.connect(self.add_cp_to_list)
+
         self.ui.FormIEd12Generate.clicked.connect(self.d12_to_file)
+
         self.ui.FormASERamanAndIRscriptCreate.clicked.connect(self.ase_raman_and_ir_script_create)
+        self.ui.FormASERamanAndIRscriptParse.clicked.connect(self.ase_raman_and_ir_parse)
+        self.ui.FormASERamanAndIRscriptPlot.clicked.connect(self.ase_raman_and_ir_plot)
 
         self.ui.changeFragment1StatusByX.clicked.connect(self.change_fragment1_status_by_x)
         self.ui.changeFragment1StatusByY.clicked.connect(self.change_fragment1_status_by_y)
@@ -172,6 +175,7 @@ class mainWindow(QMainWindow):
         self.ui.fragment1Clear.clicked.connect(self.fragment1_clear)
         self.ui.FormCreateCriXYZFile.clicked.connect(self.create_critic2_xyz_file)
         self.ui.FormCPdeleteFromList.clicked.connect(self.delete_cp_from_list)
+        self.ui.FormCPaddToList.clicked.connect(self.add_cp_to_list)
 
         self.ui.FormActionsPreButDeleteAtom.clicked.connect(self.atom_delete)
         self.ui.FormActionsPreButModifyAtom.clicked.connect(self.atom_modify)
@@ -1102,6 +1106,10 @@ class mainWindow(QMainWindow):
         self.ui.FormSettingsViewCheckShowAtoms.setChecked(state_FormSettingsViewCheckShowAtoms)
         self.ui.FormSettingsViewCheckShowAtoms.clicked.connect(self.save_state_view_show_atoms)
 
+        state_FormSettingsViewCheckShowAtomNumber = settings.value(SETTINGS_FormSettingsViewCheckShowAtomNumber, True, type=bool)
+        self.ui.FormSettingsViewCheckShowAtomNumber.setChecked(state_FormSettingsViewCheckShowAtomNumber)
+        self.ui.FormSettingsViewCheckShowAtomNumber.clicked.connect(self.save_state_view_show_atom_number)
+
         state_FormSettingsViewCheckShowBox = settings.value(SETTINGS_FormSettingsViewCheckShowBox, False, type=bool)
         self.ui.FormSettingsViewCheckShowBox.setChecked(state_FormSettingsViewCheckShowBox)
         self.ui.FormSettingsViewCheckShowBox.clicked.connect(self.save_state_view_show_box)
@@ -1355,6 +1363,7 @@ class mainWindow(QMainWindow):
         self.active_model = value
         self.ui.Form3Dand2DTabs.setCurrentIndex(0)
         view_atoms = self.ui.FormSettingsViewCheckShowAtoms.isChecked()
+        view_atom_numbers = self.ui.FormSettingsViewCheckShowAtomNumber.isChecked()
         view_box = self.ui.FormSettingsViewCheckShowBox.isChecked()
         view_bonds = self.ui.FormSettingsViewCheckShowBonds.isChecked()
         bond_width = 0.005 * self.ui.FormSettingsViewSpinBondWidth.value()
@@ -1365,7 +1374,7 @@ class mainWindow(QMainWindow):
         boxcolor = self.get_color_from_setting(self.state_Color_Of_Box)
         atomscolor = self.colors_of_atoms()
         contour_width = (self.ui.FormSettingsViewSpinContourWidth.value()) / 1000.0
-        self.MainForm.set_atomic_structure(self.models[self.active_model], atomscolor, view_atoms, view_box, boxcolor, view_bonds,
+        self.MainForm.set_atomic_structure(self.models[self.active_model], atomscolor, view_atoms, view_atom_numbers, view_box, boxcolor, view_bonds,
                                            bondscolor, bond_width, color_of_bonds_by_atoms, view_axes, axescolor, contour_width)
         self.prepare_form_actions_combo_pdos_species()
         self.prepare_form_actions_combo_pdos_indexes()
@@ -2074,6 +2083,10 @@ class mainWindow(QMainWindow):
         self.save_property(SETTINGS_FormSettingsViewCheckShowAtoms, self.ui.FormSettingsViewCheckShowAtoms.isChecked())
         self.MainForm.set_atoms_visible(self.ui.FormSettingsViewCheckShowAtoms.isChecked())
 
+    def save_state_view_show_atom_number(self):
+        self.save_property(SETTINGS_FormSettingsViewCheckShowAtomNumber, self.ui.FormSettingsViewCheckShowAtomNumber.isChecked())
+        self.MainForm.set_atoms_numbred(self.ui.FormSettingsViewCheckShowAtomNumber.isChecked())
+
     def save_state_action_on_start(self):
         self.save_property(SETTINGS_FormSettingsActionOnStart, self.action_on_start)
 
@@ -2268,6 +2281,113 @@ class mainWindow(QMainWindow):
                         f.write(text)
         except Exception as e:
             self.show_error(e)
+
+    def ase_raman_and_ir_parse(self):
+        try:
+            fname = QFileDialog.getOpenFileName(self, 'Open file', self.WorkDir)[0]
+            if os.path.exists(fname):
+                self.filename = fname
+                self.WorkDir = os.path.dirname(fname)
+                f = open(fname)
+                rows = f.readlines()
+
+                is_raman = False
+                is_ir = False
+
+                raman_en_ev = []
+                raman_en_cm = []
+                raman_inten = []
+
+                ir_en_ev = []
+                ir_en_cm = []
+                ir_inten = []
+
+                i = 0
+
+                while i < len(rows):
+                    if rows[i].find("meV     cm^-1      [10A^4/amu]") >= 0:
+                        is_raman = True
+                        i += 2
+
+                    if rows[i].find(")^2 amu^-1") >= 0:
+                        is_ir = True
+                        i += 2
+
+                    if rows[i].find("---------------------") >= 0:
+                        is_raman = False
+                        is_ir = False
+                        i += 1
+
+                    if len(rows[i].split()) == 4:
+                        row = rows[i].split()
+                        if (row[0]).isdigit() and Helpers.is_number(row[1]):
+                            if (float(row[1]) > 0) and (float(row[3]) > 0):
+                                if is_raman:
+                                    raman_en_ev.append(float(row[1]))
+                                    raman_en_cm.append(float(row[2]))
+                                    raman_inten.append(float(row[3]))
+
+                                if is_ir:
+                                    ir_en_ev.append(float(row[1]))
+                                    ir_en_cm.append(float(row[2]))
+                                    ir_inten.append(float(row[3]))
+                    i += 1
+            raman_text = "meV cm^-1 Intensity [10A^4/amu]\n"
+            for i in range(0, len(raman_inten)):
+                raman_text += "{0:10.1f} {1:10.1f} {2:10.2f}\n".format(raman_en_ev[i], raman_en_cm[i], raman_inten[i])
+            self.ui.FormRamanSpectraText.setPlainText(raman_text)
+
+            ir_text = "meV cm^-1 Intensity [(D/A)^2 amu^-1]\n"
+            for i in range(0, len(ir_inten)):
+                ir_text += "{0:10.1f} {1:10.1f} {2:10.4f}\n".format(ir_en_ev[i], ir_en_cm[i], ir_inten[i])
+            self.ui.FormIrSpectraText.setPlainText(ir_text)
+
+        except Exception as e:
+            self.show_error(e)
+
+    def ase_raman_and_ir_plot(self):
+        if self.ui.form_raman_radio.isChecked():
+            data = self.ui.FormRamanSpectraText.toPlainText()
+            y_text = "Raman"
+        else:
+            data = self.ui.FormIrSpectraText.toPlainText()
+            y_text = "IR"
+
+        col = 1
+        x_text = "cm^-1"
+        if self.ui.form_spectra_mev_radio.isChecked():
+            col = 0
+            x_text = "meV"
+
+        x = []
+        y = []
+
+        rows = data.split("\n")
+        for i in range(1, len(rows)):
+            row = rows[i].split()
+            if len(row) > 2:
+                x.append(float(row[col]))
+                y.append(float(row[2]))
+
+        x_max = max(x)
+        n = 1000
+        x_fig = np.linspace(0, x_max, n)
+        y_fig = np.zeros(n)
+
+        sigma = self.ui.formGaussWidth.value()
+
+        for i in range(0, len(x)):
+            for j in range(0, n):
+                y_fig[j] += y[i] * math.exp(-math.pow(x[i] - x_fig[j], 2) / ( 2 * sigma) )
+
+        self.ui.MplWidget.canvas.axes.clear()
+        self.ui.Form3Dand2DTabs.setCurrentIndex(1)
+        self.ui.MplWidget.canvas.axes.plot(x_fig, y_fig)
+
+        self.ui.MplWidget.canvas.axes.set_xlabel(x_text)
+        self.ui.MplWidget.canvas.axes.set_ylabel(y_text)
+
+        self.ui.MplWidget.canvas.draw()
 
     def d12_to_file(self):
         if len(self.models) == 0:
@@ -2479,10 +2599,6 @@ class mainWindow(QMainWindow):
             textl += 'LOAD AS "-$2-$3"\n'
             textl += 'LOAD AS LAP 1\n'
             textl += "REFERENCE 1\n"
-            textl += "# bond path information\n"
-            textl += 'POINTPROP elpot "$4"\n'
-            textl += 'POINTPROP lapl "$5"\n'
-            textl += "POINT ./POINTS.txt\n"
 
             text = ""
             te = ""
@@ -2491,13 +2607,16 @@ class mainWindow(QMainWindow):
             SysCoord = np.array([self.models[-1].LatVect1, self.models[-1].LatVect2, self.models[-1].LatVect3])
             obr = np.linalg.inv(SysCoord).transpose()
 
-            for i in range(0, self.ui.FormCPlist.count()):
-                ind = int(self.ui.FormCPlist.item(i).text())
-                cp = self.models[-1].bcp[ind]
+            cp_list = []
+            if self.ui.form_critic_all_cp.isChecked():
+                cp_list = self.models[self.active_model].bcp
+            else:
+                for i in range(0, self.ui.FormCPlist.count()):
+                    ind = int(self.ui.FormCPlist.item(i).text())
+                    cp_list.append(self.models[self.active_model].bcp[ind])
 
-                bond1 = cp.getProperty("bond1")
-                bond2 = cp.getProperty("bond2")
-
+            for ind in range(0, len(cp_list)):
+                cp = cp_list[ind]
                 text += "Bond Critical Point: " + str(ind) + "  :  "
                 ind1, ind2 = self.models[-1].atoms_of_bond_path(ind)
                 atom1 = self.models[-1].atoms[ind1].let + str(ind1)
@@ -2505,54 +2624,79 @@ class mainWindow(QMainWindow):
                 title = atom1 + "-" + atom2
                 text += title + "\n"
 
-                path_low = []
-                for i in range(0, len(bond1)):
-                    Coord = np.array(
-                        [bond1[len(bond1) - i - 1].x, bond1[len(bond1) - i - 1].y, bond1[len(bond1) - i - 1].z])
-                    res = obr.dot(Coord)
-                    path_low.append(np.array([float(res[0]), float(res[1]), float(res[2])]))
+                if self.ui.formCriticBPradio.isChecked():
+                    """ bond path """
+                    bond1 = cp.getProperty("bond1")
+                    bond2 = cp.getProperty("bond2")
 
-                """"   """
-                from_to = "{0:14.10} {1:14.10} {2:14.10} {3:14.10} {4:14.10} {5:14.10} ".format(path_low[0][0],
+                    path_low = []
+                    for i in range(0, len(bond1)):
+                        Coord = np.array(
+                            [bond1[len(bond1) - i - 1].x, bond1[len(bond1) - i - 1].y, bond1[len(bond1) - i - 1].z])
+                        res = obr.dot(Coord)
+                        path_low.append(np.array([float(res[0]), float(res[1]), float(res[2])]))
+
+                    from_to = "{0:14.10} {1:14.10} {2:14.10} {3:14.10} {4:14.10} {5:14.10} ".format(path_low[0][0],
                                                                                                 path_low[0][1],
                                                                                                 path_low[0][2],
                                                                                                 path_low[-1][0],
                                                                                                 path_low[-1][1],
                                                                                                 path_low[-1][2])
 
-                lines += "# " + title + "\n"
-                lines += "REFERENCE 1\n"
-                lines += "LINE " + from_to + " 100 FILE ./lines/lines-" + title + "-00-charge.txt\n"
-                lines += "REFERENCE 4\n"
-                lines += "LINE " + from_to + " 100 FILE ./lines/lines-" + title + "-00-elpot.txt\n"
-                lines += "REFERENCE 5\n"
-                lines += "LINE " + from_to + " 100 FILE ./lines/lines-" + title + "-00-lapl.txt\n"
+                    lines += "# " + title + "\n"
+                    lines += "REFERENCE 1\n"
+                    lines += "LINE " + from_to + " 100 FILE ./lines/lines-" + title + "-00-charge.txt\n"
+                    lines += "REFERENCE 4\n"
+                    lines += "LINE " + from_to + " 100 FILE ./lines/lines-" + title + "-00-elpot.txt\n"
+                    lines += "REFERENCE 5\n"
+                    lines += "LINE " + from_to + " 100 FILE ./lines/lines-" + title + "-00-lapl.txt\n"
 
-                first = "{0:14.10} {1:14.10} {2:14.10} ".format(path_low[-1][0], path_low[-1][1], path_low[-1][2])
+                    first = "{0:14.10} {1:14.10} {2:14.10} ".format(path_low[-1][0], path_low[-1][1], path_low[-1][2])
 
-                for i in range(1, len(bond2)):
-                    Coord = np.array([bond2[i].x, bond2[i].y, bond2[i].z])
+                    for i in range(1, len(bond2)):
+                        Coord = np.array([bond2[i].x, bond2[i].y, bond2[i].z])
+                        res = obr.dot(Coord)
+                        path_low.append(np.array([float(res[0]), float(res[1]), float(res[2])]))
+
+                    last = "{0:14.10} {1:14.10} {2:14.10} ".format(path_low[-1][0], path_low[-1][1], path_low[-1][2])
+                    lines += "REFERENCE 1\n"
+                    lines += "LINE " + first + last + " 100 FILE ./lines/lines-" + title + "-01-charge.txt\n"
+                    lines += "REFERENCE 4\n"
+                    lines += "LINE " + first + last + " 100 FILE ./lines/lines-" + title + "-01-elpot.txt\n"
+                    lines += "REFERENCE 5\n"
+                    lines += "LINE " + first + last + " 100 FILE ./lines/lines-" + title + "-01-lapl.txt\n"
+
+                    path_fine = [path_low[0]]
+                    extra_points = self.ui.FormExtraPoints.value() + 1
+                    for i in range(1, len(path_low)):
+                        dv = (path_low[i] - path_low[i-1]) / extra_points
+                        for j in range(0, extra_points):
+                            path_fine.append(path_fine[-1] + dv)
+
+                    for i in range(0, len(path_fine)):
+                        text += "{0:20.16f} {1:20.16f} {2:20.16f}\n".format(path_fine[i][0], path_fine[i][1], path_fine[i][2])
+                        te += "{0:20.16f} {1:20.16f} {2:20.16f}\n".format(path_fine[i][0], path_fine[i][1], path_fine[i][2])
+                else:
+                    """ critical points only """
+                    Coord = np.array([cp.x, cp.y, cp.z])
                     res = obr.dot(Coord)
-                    path_low.append(np.array([float(res[0]), float(res[1]), float(res[2])]))
+                    text += "{0:20.16f} {1:20.16f} {2:20.16f}\n".format(float(res[0]), float(res[1]), float(res[2]))
+                    te += "{0:20.16f} {1:20.16f} {2:20.16f}\n".format(float(res[0]), float(res[1]), float(res[2]))
 
-                last = "{0:14.10} {1:14.10} {2:14.10} ".format(path_low[-1][0], path_low[-1][1], path_low[-1][2])
-                lines += "REFERENCE 1\n"
-                lines += "LINE " + first + last + " 100 FILE ./lines/lines-" + title + "-01-charge.txt\n"
-                lines += "REFERENCE 4\n"
-                lines += "LINE " + first + last + " 100 FILE ./lines/lines-" + title + "-01-elpot.txt\n"
-                lines += "REFERENCE 5\n"
-                lines += "LINE " + first + last + " 100 FILE ./lines/lines-" + title + "-01-lapl.txt\n"
+            textl += "# bond path information\n"
+            if self.ui.form_critic_prop_gtf.isChecked(): textl += 'POINTPROP GTF\n'
+            if self.ui.form_critic_prop_vtf.isChecked(): textl += 'POINTPROP VTF\n'
+            if self.ui.form_critic_prop_htf.isChecked(): textl += 'POINTPROP HTF\n'
+            if self.ui.form_critic_prop_gtf_kir.isChecked(): textl += 'POINTPROP GTF_KIR\n'
+            if self.ui.form_critic_prop_vtf_kir.isChecked(): textl += 'POINTPROP VTF_KIR\n'
+            if self.ui.form_critic_prop_htf_kir.isChecked(): textl += 'POINTPROP HTF_KIR\n'
+            if self.ui.form_critic_prop_lag.isChecked(): textl += 'POINTPROP LAG\n'
+            if self.ui.form_critic_prop_lol_kir.isChecked(): textl += 'POINTPROP LOL_KIR\n'
+            if self.ui.form_critic_prop_rdg.isChecked(): textl += 'POINTPROP RDG\n'
 
-                path_fine = [path_low[0]]
-                extra_points = self.ui.FormExtraPoints.value() + 1
-                for i in range(1, len(path_low)):
-                    dv = (path_low[i] - path_low[i-1]) / extra_points
-                    for j in range(0, extra_points):
-                        path_fine.append(path_fine[-1] + dv)
-
-                for i in range(0, len(path_fine)):
-                    text += "{0:20.16f} {1:20.16f} {2:20.16f}\n".format(path_fine[i][0], path_fine[i][1], path_fine[i][2])
-                    te += "{0:20.16f} {1:20.16f} {2:20.16f}\n".format(path_fine[i][0], path_fine[i][1], path_fine[i][2])
+            textl += 'POINTPROP elpot "$4"\n'
+            textl += 'POINTPROP lapl "$5"\n'
+            textl += "POINT ./POINTS.txt\n"
 
             lines += "UNLOAD ALL\nEND"
             print(textl + lines, file=f)
@@ -2780,6 +2924,7 @@ SETTINGS_FormSettingsViewCheckAtomSelection = 'view/CheckAtomSelection'
 SETTINGS_FormSettingsViewRadioColorBondsManual = 'view/BondsColorType'
 SETTINGS_FormSettingsViewCheckXYZasCritic2 = 'mode/XYZasCritic2'
 SETTINGS_FormSettingsViewCheckShowAtoms = 'view/CheckShowAtoms'
+SETTINGS_FormSettingsViewCheckShowAtomNumber = 'view/CheckShowAtomNumber'
 SETTINGS_FormSettingsViewCheckShowBox = 'view/CheckShowBox'
 SETTINGS_FormSettingsViewCheckShowAxes = 'view/CheckShowAxes'
 SETTINGS_FormSettingsViewCheckShowBonds = 'view/CheckShowBonds'

@@ -15,6 +15,7 @@ from AdvancedTools import TPeriodTable
 import math
 import numpy as np
 
+
 class mouse_events_filter(QObject):
     def __init__(self, wind):
         super(mouse_events_filter, self).__init__()
@@ -91,6 +92,7 @@ class GuiOpenGL(object):
             self.ViewBCP = False
             self.ViewBondpath = False
             self.active = False
+            self.ViewAtomNumbers = False
             self.Scale = 1
             self.bondWidth = 20
             self.xScene = 0
@@ -111,6 +113,7 @@ class GuiOpenGL(object):
         else:
             self.ViewOrtho = TheObject.ViewOrtho
             self.ViewAtoms = TheObject.ViewAtoms
+            self.ViewAtomNumbers = TheObject.ViewAtomNumbers
             self.ViewBox = TheObject.ViewBox
             self.ViewBonds = TheObject.ViewBonds
             self.ViewSurface = TheObject.ViewSurface
@@ -307,6 +310,8 @@ class GuiOpenGL(object):
         self.init_params(GUI)
         self.add_atoms()
         self.add_bonds()
+        self.add_bcp()
+        self.add_bondpath()
         self.add_box()
         if self.ViewVoronoi:
             self.color_of_voronoi = GUI.color_of_voronoi
@@ -323,7 +328,7 @@ class GuiOpenGL(object):
         radius = min(width, height)*float(self.Scale)
         return (2.*x-width)/radius, -(2.*y-height)/radius
 
-    def set_atomic_structure(self, structure, atomscolors, ViewAtoms, ViewBox, boxcolor, ViewBonds, bondscolor, bondWidth, Bonds_by_atoms, ViewAxes, axescolor, contour_width):
+    def set_atomic_structure(self, structure, atomscolors, ViewAtoms, ViewAtomNumbers, ViewBox, boxcolor, ViewBonds, bondscolor, bondWidth, Bonds_by_atoms, ViewAxes, axescolor, contour_width):
         self.clean()
         self.prop = "charge"
         self.MainModel = deepcopy(structure)
@@ -334,6 +339,7 @@ class GuiOpenGL(object):
         self.MainModel.move(self.x0, self.y0, self.z0)
         self.ViewBox = ViewBox
         self.ViewAtoms = ViewAtoms
+        self.ViewAtomNumbers = ViewAtomNumbers
         self.ViewBonds = ViewBonds
         self.color_of_bonds_by_atoms = Bonds_by_atoms
         self.bondWidth = bondWidth
@@ -469,6 +475,10 @@ class GuiOpenGL(object):
 
     def set_atoms_visible(self, state):
         self.ViewAtoms= state
+        self.openGLWidget.update()
+
+    def set_atoms_numbred(self, state):
+        self.ViewAtomNumbers = state
         self.openGLWidget.update()
 
     def set_box_visible(self, state):
@@ -940,17 +950,25 @@ class GuiOpenGL(object):
                     if self.ViewBondpath:
                         gl.glCallList(self.object + 9)  # Bondpath
 
-                    #self.renderText(900, 500, "GUI4dft");
+                    if self.ViewAtomNumbers:
+                        for i in range(0, len(self.MainModel.atoms)):
+                            at = self.MainModel.atoms[i]
+                            self.renderText(at.x, at.y, at.z, at.let+str(i))
+
+                        for i in range(0, len(self.MainModel.bcp)):
+                            at = self.MainModel.bcp[i]
+                            self.renderText(at.x, at.y, at.z, at.let+str(i))
 
         except Exception as exc:
             print(exc)
             pass
 
-    def renderText(self, x, y, str_text, font=QFont()):
+    def renderText(self, x,y,z, st, font=QFont()):
         # Identify x and y locations to render text within widget
         height = self.openGLWidget.height()
-        point = self.get_point_in_3D(x, y)
-        textPosX, textPosY, textPosZ = point[0], point[1], point[2]
+        textPosX, textPosY, textPosZ = self.getScreenCoords(x ,y, z)
+        #point = self.get_point_in_3D(at.x, at.y)
+        #textPosX, textPosY, textPosZ = point[0], point[1], point[2]
         textPosY = height - textPosY # y is inverted
 
         fontColor = QColor.fromRgbF(0.0, 0.0, 0.0, 1)
@@ -959,10 +977,8 @@ class GuiOpenGL(object):
         painter = QPainter(self.openGLWidget)
         painter.setPen(fontColor)
         painter.setFont(font)
-        painter.drawText(textPosX, textPosY, str_text)
+        painter.drawText(textPosX, textPosY, st)
         painter.end()
-
-
 
     def light_prepare(self):
         # очищаем буфер кадра и глубины
@@ -1141,6 +1157,15 @@ class GuiOpenGL(object):
         point = self.rotate_un_vector(np.array(point), al, bet, gam)
         point = self.rotate_vector(np.array(point), al, bet, gam)
         return point
+
+    def getScreenCoords(self, x, y, z):
+        model = gl.glGetDoublev(gl.GL_MODELVIEW_MATRIX)
+        proj = gl.glGetDoublev(gl.GL_PROJECTION_MATRIX)
+        view = gl.glGetIntegerv(gl.GL_VIEWPORT)
+        #winY = int(float(view[3]) - float(y))
+
+        winx, winy, winz = glu.gluProject(x, y, z, model, proj, view)
+        return winx, winy, winz
 
     def initializeGL(self):
         QOpenGLWidget.makeCurrent(self.openGLWidget)

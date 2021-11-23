@@ -34,13 +34,18 @@ class Helpers:
 
     @staticmethod
     def float_to_string(fl):
-        res = ""
         res = '{0:12.8f}'.format(fl)
         if res == "-0.00000000":
             res = " 0.00000000"
-
         return res
 
+    @staticmethod
+    def is_number(str):
+        try:
+            float(str)
+            return True
+        except ValueError:
+            return False
 
     @staticmethod
     def is_integer(n):
@@ -1221,7 +1226,6 @@ class TAtomicModel(object):
         while i < len(self.bcp):
             bond1 = self.bcp[i].getProperty("bond1")
             bond2 = self.bcp[i].getProperty("bond2")
-            """
             if (bond1 == None) or (bond2 == None):
                 self.bcp.pop(i)
                 i -= 1
@@ -1229,7 +1233,6 @@ class TAtomicModel(object):
                 if (bond1[-1].x == bond2[-1].x) and (bond1[-1].y == bond2[-1].y) and (bond1[-1].z == bond2[-1].z):
                     self.bcp.pop(i)
                     i -= 1
-            """
             i += 1
 
         for cp in self.bcp:
@@ -2303,7 +2306,7 @@ class TSIESTA:
                 MdSiestaFile = open(filename)
                 str1 = MdSiestaFile.readline()
 
-                if (is_spin_polarized == 2):
+                if is_spin_polarized == 2:
                     number_of_species *= 2
                     number_of_atoms *= 2
 
