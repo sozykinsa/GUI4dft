@@ -2305,7 +2305,7 @@ class mainWindow(QMainWindow):
                 i = 0
 
                 while i < len(rows):
-                    if rows[i].find("meV     cm^-1      [10A^4/amu]") >= 0:
+                    if rows[i].find("A^4/amu") >= 0:
                         is_raman = True
                         i += 2
 
@@ -2367,7 +2367,7 @@ class mainWindow(QMainWindow):
             row = rows[i].split()
             if len(row) > 2:
                 x.append(float(row[col]))
-                y.append(float(row[2]))
+                y.append(math.log(float(row[2])))
 
         x_max = max(x)
         n = 1000

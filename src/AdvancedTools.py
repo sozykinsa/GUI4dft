@@ -601,9 +601,15 @@ class TAtomicModel(object):
         NumberOfAtoms = TSIESTA.number_of_atoms(filename)
         AtomicCoordinatesFormat = TSIESTA.atomic_coordinates_format(filename)
         lat = ""
+        units = Helpers.fromFileProperty(filename, 'ZM.UnitsLength', 1, 'string')
         if AtomicCoordinatesFormat == "ScaledCartesian":
             lat = TSIESTA.lattice_constant(filename)
-        units = Helpers.fromFileProperty(filename, 'ZM.UnitsLength', 1, 'string')
+            units = "ang"
+        if not units:
+            if AtomicCoordinatesFormat.lower().find("bohr") >= 0:
+                units = "bohr"
+            else:
+                units = "ang"
         lat_vect_1, lat_vect_2, lat_vect_3 = TSIESTA.lattice_vectors(filename)
         if not lat_vect_1[0]:
             lat_vect_1, lat_vect_2, lat_vect_3 = TSIESTA.lattice_parameters_abc_angles(filename)
@@ -623,17 +629,17 @@ class TAtomicModel(object):
         isBlockAtomicCoordinates = False
         isBlockZMatrix = False
         while i < len(lines):
-            if (lines[i].find("%block Zmatrix") >= 0):
+            if lines[i].find("%block Zmatrix") >= 0:
                 isBlockZMatrix = True
                 i += 1
                 AtList = []
-                if (lines[i].find("cartesian") >= 0):
+                if lines[i].find("cartesian") >= 0:
                     for j in range(0, NumberOfAtoms):
                         i += 1
                         Atom_full = lines[i].split()
                         AtList.append([float(Atom_full[1]), float(Atom_full[2]), float(Atom_full[3]),
                                        (chem_spec_info[str(Atom_full[0])])[1], (chem_spec_info[str(Atom_full[0])])[0]])
-            if (lines[i].find("%block AtomicCoordinatesAndAtomicSpecies") >= 0):
+            if lines[i].find("%block AtomicCoordinatesAndAtomicSpecies") >= 0:
                 isBlockAtomicCoordinates = True
                 mult = 1
                 if AtomicCoordinatesFormat == "NotScaledCartesianBohr":
@@ -643,23 +649,21 @@ class TAtomicModel(object):
                     Atom_full = lines[i].split()
                     AtList1.append([mult * float(Atom_full[0]), mult * float(Atom_full[1]), mult * float(Atom_full[2]),
                                     (chem_spec_info[str(Atom_full[3])])[1], (chem_spec_info[str(Atom_full[3])])[0]])
-
             i += 1
-        if isBlockZMatrix == True:
+        if isBlockZMatrix:
             AllAtoms = TAtomicModel(AtList)
         else:
-            if isBlockAtomicCoordinates == True:
+            if isBlockAtomicCoordinates:
                 AllAtoms = TAtomicModel(AtList1)
         if lat_vect_1[0] == False:
             AllAtoms.set_lat_vectors_default()
-
         else:
             AllAtoms.set_lat_vectors(lat_vect_1, lat_vect_2, lat_vect_3)
-        if isBlockZMatrix == True:
+        if isBlockZMatrix:
             if units.lower() == "bohr":
                 AllAtoms.convert_from_scaled_to_cart(0.52917720859)
         else:
-            if isBlockAtomicCoordinates == True:
+            if isBlockAtomicCoordinates:
                 if AtomicCoordinatesFormat == "ScaledByLatticeVectors":
                     AllAtoms.convert_from_direct_to_cart()
                 if AtomicCoordinatesFormat == "ScaledCartesian":
@@ -1763,12 +1767,12 @@ class TAtomicModel(object):
         # LatticeConstant
         data +='LatticeConstant       1.0 Ang\n'
 
-        if latt_style=='LatticeParameters':
+        if latt_style == 'LatticeParameters':
             data += '%block LatticeParameters\n'
             data += '  '+str(self.get_LatVect1_norm())+'  '+str(self.get_LatVect2_norm())+'  '+str(self.get_LatVect3_norm()) + '  '+str(self.get_angle_alpha())+'  '+ str(self.get_angle_beta()) +'  '+  str(self.get_angle_gamma()) +   '\n'
             data += '%endblock LatticeParameters\n'
         #or
-        if latt_style=='LatticeVectors':
+        if latt_style == 'LatticeVectors':
             data += '%block LatticeVectors\n'
             data += '  ' + str(self.LatVect1[0]) + '  ' + str(self.LatVect1[1]) + '  ' + str(self.LatVect1[2]) + '\n'
             data += '  ' + str(self.LatVect2[0]) + '  ' + str(self.LatVect2[1]) + '  ' + str(self.LatVect2[2]) + '\n'
@@ -1777,10 +1781,10 @@ class TAtomicModel(object):
 
         if coord_style == "Zmatrix Cartesian":
             data += 'AtomicCoordinatesFormat NotScaledCartesianAng\n'
-            data+='%block Zmatrix\n'
-            data+='cartesian\n'
+            data += '%block Zmatrix\n'
+            data += 'cartesian\n'
             data += self.coords_for_export(coord_style)
-            data+='%endblock Zmatrix\n'
+            data += '%endblock Zmatrix\n'
 
         if coord_style == "Fractional":
             self.sort_atoms_by_type()
@@ -2197,7 +2201,7 @@ class TSIESTA:
     def lattice_constant(filename):
         """ Returns the LatticeConstant from SIESTA output file """
         mult = 1
-        latc = Helpers.fromFileProperty(filename,'LatticeConstant',1,'unformatted')
+        latc = Helpers.fromFileProperty(filename,'LatticeConstant', 1, 'unformatted')
         if latc == None:
             return 1
         property = (latc).split()
@@ -2862,7 +2866,7 @@ class TFDFFile:
             else:
                 i += 1
 
-    def from_fdf_file(self,filename):
+    def from_fdf_file(self, filename):
         if os.path.exists(filename):
             f = open(filename)
             lines = f.readlines()
