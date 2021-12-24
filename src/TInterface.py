@@ -74,7 +74,7 @@ class Importer(object):
         fdf = TFDFFile()
         if os.path.exists(filename):
             fileFormat = Importer.check_format(filename)
-            print("File " + str(filename) + " : " +str(fileFormat) )
+            print("File " + str(filename) + " : " + str(fileFormat))
 
             if fileFormat == "SIESTAfdf":
                 models = TAtomicModel.atoms_from_fdf(filename)
@@ -131,7 +131,6 @@ class Importer(object):
 
             if fileFormat == "VASPposcar":
                 models = TAtomicModel.atoms_from_POSCAR(filename)
-
         return models, fdf
 
     @staticmethod

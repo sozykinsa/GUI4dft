@@ -586,15 +586,12 @@ class TAtomicModel(object):
         """Return a AtList from fdf file"""
         AtomicCoordinatesFormat, NumberOfAtoms, chem_spec_info, lat, lat_vect_1, lat_vect_2, lat_vect_3, units = TAtomicModel.atoms_from_fdf_prepare(
             filename)
-
         f = open(filename)
         lines = f.readlines()
         f.close()
         AllAtoms = TAtomicModel.atoms_from_fdf_text(AtomicCoordinatesFormat, NumberOfAtoms, chem_spec_info, lat,
                                                     lat_vect_1, lat_vect_2, lat_vect_3, lines, units)
-
-        Molecules = [AllAtoms]
-        return Molecules
+        return [AllAtoms]
 
     @staticmethod
     def atoms_from_fdf_prepare(filename):

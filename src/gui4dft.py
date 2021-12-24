@@ -2179,7 +2179,6 @@ class mainWindow(QMainWindow):
     def ase_raman_and_ir_script_create(self):
         if len(self.models) == 0:
             return
-
         try:
             text = "import numpy as np\n"
             text += "from ase import Atoms\n"
@@ -2304,13 +2303,17 @@ class mainWindow(QMainWindow):
 
                 i = 0
 
+                units_r = ""
+                units_i = ""
                 while i < len(rows):
                     if rows[i].find("A^4/amu") >= 0:
                         is_raman = True
+                        units_r = rows[i].split("cm^-1")[1]
                         i += 2
 
                     if rows[i].find(")^2 amu^-1") >= 0:
                         is_ir = True
+                        units_i = rows[i].split("cm^-1")[1]
                         i += 2
 
                     if rows[i].find("---------------------") >= 0:
@@ -2332,12 +2335,12 @@ class mainWindow(QMainWindow):
                                     ir_en_cm.append(float(row[2]))
                                     ir_inten.append(float(row[3]))
                     i += 1
-            raman_text = "meV cm^-1 Intensity [10A^4/amu]\n"
+            raman_text = "meV cm^-1 Intensity " + units_r + "\n"
             for i in range(0, len(raman_inten)):
                 raman_text += "{0:10.1f} {1:10.1f} {2:10.2f}\n".format(raman_en_ev[i], raman_en_cm[i], raman_inten[i])
             self.ui.FormRamanSpectraText.setPlainText(raman_text)
 
-            ir_text = "meV cm^-1 Intensity [(D/A)^2 amu^-1]\n"
+            ir_text = "meV cm^-1 Intensity " + units_i + "\n"
             for i in range(0, len(ir_inten)):
                 ir_text += "{0:10.1f} {1:10.1f} {2:10.4f}\n".format(ir_en_ev[i], ir_en_cm[i], ir_inten[i])
             self.ui.FormIrSpectraText.setPlainText(ir_text)

@@ -14,6 +14,7 @@ from AdvancedTools import TCalculators
 from AdvancedTools import TPeriodTable
 import math
 import numpy as np
+import time
 
 
 class mouse_events_filter(QObject):
@@ -600,7 +601,7 @@ class GuiOpenGL(object):
             gl.glPopMatrix()
 
     def clean(self):
-        if self.active == True:
+        if self.active:
             gl.glDeleteLists(self.object, self.NLists)
         self.object = gl.glGenLists(self.NLists)
 
@@ -913,52 +914,60 @@ class GuiOpenGL(object):
     def paintGL(self):
         QOpenGLWidget.makeCurrent(self.openGLWidget)
         try:
+            start_time = time.time()
             self.light_prepare()
             self.prepere_scene()
             if self.active:
-                    self.prepare_orientation()
-                    if self.ViewAtoms:
-                        gl.glCallList(self.object)  # atoms
+                #print("1-- %s seconds ---" % (time.time() - start_time))
+                self.prepare_orientation()
+                #print("2-- %s seconds ---" % (time.time() - start_time))
+                if self.ViewAtoms:
+                    gl.glCallList(self.object)  # atoms
 
-                    if self.ViewBCP:
-                        gl.glCallList(self.object + 8)  # BCP
+                #print("3-- %s seconds ---" % (time.time() - start_time))
+                if self.ViewBCP:
+                    gl.glCallList(self.object + 8)  # BCP
 
-                    if self.CanSearch:
-                        self.get_atom_on_screen()
+                #print("4-- %s seconds ---" % (time.time() - start_time))
+                if self.CanSearch:
+                    self.get_atom_on_screen()
 
-                    if self.ViewBonds and (len(self.MainModel.bonds) > 0):
-                        gl.glCallList(self.object + 2)  # find_bonds_exact
+                #print("5-- %s seconds ---" % (time.time() - start_time))
+                if self.ViewBonds and (len(self.MainModel.bonds) > 0):
+                    gl.glCallList(self.object + 2)  # find_bonds_exact
 
-                    if self.ViewVoronoi:
-                        gl.glCallList(self.object + 1)  # Voronoi
+                #print("6-- %s seconds ---" % (time.time() - start_time))
+                if self.ViewVoronoi:
+                    gl.glCallList(self.object + 1)  # Voronoi
 
-                    if self.ViewBox:
-                        gl.glCallList(self.object + 3)  # lattice_parameters_abc_angles
+                if self.ViewBox:
+                    gl.glCallList(self.object + 3)  # lattice_parameters_abc_angles
 
-                    if self.ViewSurface:
-                        gl.glCallList(self.object + 4)  # Surface
+                if self.ViewSurface:
+                    gl.glCallList(self.object + 4)  # Surface
 
-                    if self.ViewContour:
-                        gl.glCallList(self.object + 5)  # Contour
+                if self.ViewContour:
+                    gl.glCallList(self.object + 5)  # Contour
 
-                    if self.ViewContourFill:
-                        gl.glCallList(self.object + 6)  # ContourFill
+                if self.ViewContourFill:
+                    gl.glCallList(self.object + 6)  # ContourFill
 
-                    if self.ViewAxes:
-                        gl.glCallList(self.object + 7)  # Axes
+                if self.ViewAxes:
+                    gl.glCallList(self.object + 7)  # Axes
 
-                    if self.ViewBondpath:
-                        gl.glCallList(self.object + 9)  # Bondpath
+                if self.ViewBondpath:
+                    gl.glCallList(self.object + 9)  # Bondpath
 
-                    if self.ViewAtomNumbers:
-                        for i in range(0, len(self.MainModel.atoms)):
-                            at = self.MainModel.atoms[i]
-                            self.renderText(at.x, at.y, at.z, at.let+str(i))
+                #print("7-- %s seconds ---" % (time.time() - start_time))
+                if self.ViewAtomNumbers:
+                    for i in range(0, len(self.MainModel.atoms)):
+                       at = self.MainModel.atoms[i]
+                       self.renderText(at.x, at.y, at.z, at.let+str(i))
 
-                        for i in range(0, len(self.MainModel.bcp)):
-                            at = self.MainModel.bcp[i]
-                            self.renderText(at.x, at.y, at.z, at.let+str(i))
-
+                    for i in range(0, len(self.MainModel.bcp)):
+                       at = self.MainModel.bcp[i]
+                       self.renderText(at.x, at.y, at.z, at.let+str(i))
+                #print("8-- %s seconds ---" % (time.time() - start_time))
         except Exception as exc:
             print(exc)
             pass
@@ -987,45 +996,72 @@ class GuiOpenGL(object):
         # свойства материала
         material_diffuse = [1.0, 1.0, 1.0, 1.0]
         gl.glMaterialfv(gl.GL_FRONT_AND_BACK, gl.GL_DIFFUSE, material_diffuse)
+        gl.glEnable(gl.GL_LIGHTING)
+        ambient = [0.5, 0.5, 0.5, 1]
+        light_diffuse = [0.4, 0.7, 0.2]
 
         light_sample = 0
 
         # установка источников света
         if light_sample == 1:
-            """ направленный источник света """
-            light0_diffuse = [0.4, 0.7, 0.2]
-            light0_direction = [0.0, 0.0, 1.0, 0.0]
-
-            gl.glEnable(gl.GL_LIGHT0)
-            gl.glLightfv(gl.GL_LIGHT0, gl.GL_DIFFUSE, light0_diffuse)
-            gl.glLightfv(gl.GL_LIGHT0, gl.GL_POSITION, light0_direction)
-
-        #  --------------------------------------
-        if light_sample == 2:
             """ точечный источник света убывание интенсивности с расстоянием отключено (по умолчанию) """
-            light1_diffuse = [0.4, 0.7, 0.2]
-            light1_position = [0.0, 0.0, 1.0, 1.0]
+            light0_position = [self.x0, self.y0, 40.0, 1]
+            light1_position = [0.0, 0.0, 40.0, 1.0]
+
+            if self.quality == 1:
+                light0_position = self.lightpos_rotate(light0_position)
+                light1_position = self.lightpos_rotate(light1_position)
+
+            gl.glLightModelfv(gl.GL_LIGHT_MODEL_AMBIENT, ambient)  # Определяем текущую модель освещения
+            gl.glLightModelf(gl.GL_LIGHT_MODEL_TWO_SIDE, gl.GL_TRUE)  # двухсторонний расчет освещения
 
             gl.glEnable(gl.GL_LIGHT1)
-            gl.glLightfv(gl.GL_LIGHT1, gl.GL_DIFFUSE, light1_diffuse)
+            gl.glEnable(gl.GL_DEPTH_TEST)
+            gl.glEnable(gl.GL_COLOR_MATERIAL)
+            gl.glLightfv(gl.GL_LIGHT0, gl.GL_DIFFUSE, light_diffuse)
+            gl.glLightfv(gl.GL_LIGHT0, gl.GL_POSITION, light0_position)  # Определяем положение источника света
+            gl.glLightfv(gl.GL_LIGHT1, gl.GL_DIFFUSE, light_diffuse)
+            gl.glLightfv(gl.GL_LIGHT1, gl.GL_POSITION, light1_position)
+
+        if light_sample == 2:
+            """ точечный источник света убывание интенсивности с расстоянием отключено (по умолчанию) """
+
+            light1_position = [0.0, 0.0, 40.0, 1.0]
+
+            if self.quality == 1:
+                light1_position = self.lightpos_rotate(light1_position)
+
+            gl.glLightModelfv(gl.GL_LIGHT_MODEL_AMBIENT, ambient)  # Определяем текущую модель освещения
+            gl.glLightModelf(gl.GL_LIGHT_MODEL_TWO_SIDE, gl.GL_TRUE)  # двухсторонний расчет освещения
+
+            gl.glEnable(gl.GL_LIGHT1)
+            gl.glEnable(gl.GL_DEPTH_TEST)
+            gl.glEnable(gl.GL_COLOR_MATERIAL)
+            gl.glLightfv(gl.GL_LIGHT1, gl.GL_DIFFUSE, light_diffuse)
             gl.glLightfv(gl.GL_LIGHT1, gl.GL_POSITION, light1_position)
 
         if light_sample == 0:
-            ambient = [0.5, 0.5, 0.5, 1]
-            #ambient = [0.2 * self.Scale, 0.2 * self.Scale, 0.2 * self.Scale, 1]
             gl.glLightModelfv(gl.GL_LIGHT_MODEL_AMBIENT, ambient)  # Определяем текущую модель освещения
             gl.glLightModelf(gl.GL_LIGHT_MODEL_TWO_SIDE, gl.GL_TRUE) # двухсторонний расчет освещения
-            gl.glEnable(gl.GL_LIGHTING)
+
             gl.glEnable(gl.GL_LIGHT0)
             gl.glEnable(gl.GL_DEPTH_TEST)
             gl.glEnable(gl.GL_COLOR_MATERIAL)
 
-            lightpos = [5.0, 5.0, 100.0]
+            #lightpos = [5.0, 5.0, 100.0 * self.Scale, 1]
+            #light0_position = [self.x0, self.y0, 100.0, 1]
+            light0_position = [0.0, 0.0, 100.0, 1]
+            #print(str(self.x0)+":"+str(self.y0)+":"+str(self.z0))
+            dir = [self.x0, self.y0, self.z0]
 
             if self.quality == 1:
-                lightpos = self.lightpos_rotate(lightpos)
+                light0_position = self.lightpos_rotate(light0_position)
 
-            gl.glLightfv(gl.GL_LIGHT0, gl.GL_POSITION, lightpos)  # Определяем положение источника света
+            #print(light0_position)
+
+            #gl.glLightfv(gl.GL_LIGHT0, gl.GL_SPOT_DIRECTION, dir)
+            #gl.glLightfv(gl.GL_LIGHT0, gl.GL_DIFFUSE, light_diffuse)
+            gl.glLightfv(gl.GL_LIGHT0, gl.GL_POSITION, light0_position)  # Определяем положение источника света
 
     def lightpos_rotate(self, lightpos):
         # self.x0, self.y0, self.z0
@@ -1065,7 +1101,7 @@ class GuiOpenGL(object):
         gl.glMatrixMode(gl.GL_PROJECTION)
         gl.glLoadIdentity()
         x, y, width, height = gl.glGetDoublev(gl.GL_VIEWPORT)
-        if self.ViewOrtho == False:
+        if not self.ViewOrtho:
             glu.gluPerspective(
                 45,  # field of view in degrees
                 width / float(height or 1),  # aspect ratio
