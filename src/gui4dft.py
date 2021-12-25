@@ -74,7 +74,7 @@ class mainWindow(QMainWindow):
         self.ui = Ui_form()
         self.ui.setupUi(self)
 
-        #self.ui.sisl_area.setEnabled(is_sisl_enable)
+        self.ui.sisl_area.setEnabled(is_sisl_enable)
 
         self.models = []
         selected_atom_info = [self.ui.FormActionsPreComboAtomsList, self.ui.FormActionsPreSpinAtomsCoordX,
@@ -176,6 +176,10 @@ class mainWindow(QMainWindow):
         self.ui.FormCreateCriXYZFile.clicked.connect(self.create_critic2_xyz_file)
         self.ui.FormCPdeleteFromList.clicked.connect(self.delete_cp_from_list)
         self.ui.FormCPaddToList.clicked.connect(self.add_cp_to_list)
+
+        #RUN section
+        self.ui.FormLocateFDFButt.clicked.connect(self.run_locate_fdf)
+        self.ui.FormRunSiestaButt.clicked.connect(self.run_siesta)
 
         self.ui.FormActionsPreButDeleteAtom.clicked.connect(self.atom_delete)
         self.ui.FormActionsPreButModifyAtom.clicked.connect(self.atom_modify)
@@ -2235,11 +2239,15 @@ class mainWindow(QMainWindow):
             if (len(spin) == 0) or (len(spin.split()) > 1):
                 spin = "non-polarized"
             text += "spin='" + spin + "',\n"
+            kpts = self.FDFData.get_block("kgrid_Monkhorst_Pack")
+            kpts = kpts[0].split()[0] + ", " + kpts[1].split()[1] + ", " + kpts[2].split()[2]
+            text += "kpts=[" + kpts + "],\n"
             text += "fdf_arguments={\n"
             text += "'SCFMustConverge': False,\n"
             text += "'COOP.Write': True,\n"
             text += "'WriteDenchar': True,\n"
             text += "'PAO.BasisType': 'split',\n"
+            text += "'PAO.SplitNorm': 0.25,\n"
             text += "'DM.Tolerance': 1e-4,\n"
             text += "'MD.NumCGsteps': 0,\n"
             text += "'MD.MaxForceTol': (0.02, 'eV/Ang'),\n"
@@ -2546,6 +2554,14 @@ class mainWindow(QMainWindow):
     def select_box_color(self):
         boxcolor = self.change_color(self.ui.ColorBox, SETTINGS_Color_Of_Box)
         self.MainForm.set_color_of_box(boxcolor)
+
+    def run_locate_fdf(self):
+        df = 3
+        # QTextEdit  FormRunFDFViewer
+
+    def run_siesta(self):
+        ds = 3
+        # QTextEdit  FormRunOutViewer
 
     def add_cp_to_list(self):
         newCP = self.ui.FormSelectedCP.text()

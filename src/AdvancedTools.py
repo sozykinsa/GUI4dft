@@ -2907,6 +2907,17 @@ class TFDFFile:
         print("property '" + prop + "' not found\n")
         return val
 
+    def get_block(self, prop):
+        val = ""
+        prop = prop.lower()
+        for pr in self.blocks:
+            pos = pr.name.lower().find(prop)
+            if pos >= 0:
+                val = pr.value
+                return val
+        print("block '" + prop + "' not found\n")
+        return val
+
     def get_all_data(self, _structure, coordType, lattType):
         structure = deepcopy(_structure)
 
