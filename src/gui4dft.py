@@ -56,14 +56,6 @@ from about import Ui_DialogAbout as Ui_about
 from form import Ui_MainWindow as Ui_form
 from matplotlib.backends.backend_qt5agg import (NavigationToolbar2QT as NavigationToolbar)
 
-is_sisl_enable = False
-try:
-    import sisl
-    is_sisl_enable = True
-    print("module 'sisl' is installed")
-except ModuleNotFoundError:
-    print("module 'sisl' is not installed")
-
 sys.path.append('.')
 
 is_with_figure = True
@@ -73,8 +65,6 @@ class mainWindow(QMainWindow):
         super(mainWindow, self).__init__(*args)
         self.ui = Ui_form()
         self.ui.setupUi(self)
-
-        self.ui.sisl_area.setEnabled(is_sisl_enable)
 
         self.models = []
         selected_atom_info = [self.ui.FormActionsPreComboAtomsList, self.ui.FormActionsPreSpinAtomsCoordX,
@@ -176,10 +166,6 @@ class mainWindow(QMainWindow):
         self.ui.FormCreateCriXYZFile.clicked.connect(self.create_critic2_xyz_file)
         self.ui.FormCPdeleteFromList.clicked.connect(self.delete_cp_from_list)
         self.ui.FormCPaddToList.clicked.connect(self.add_cp_to_list)
-
-        #RUN section
-        self.ui.FormLocateFDFButt.clicked.connect(self.run_locate_fdf)
-        self.ui.FormRunSiestaButt.clicked.connect(self.run_siesta)
 
         self.ui.FormActionsPreButDeleteAtom.clicked.connect(self.atom_delete)
         self.ui.FormActionsPreButModifyAtom.clicked.connect(self.atom_modify)
@@ -2554,14 +2540,6 @@ class mainWindow(QMainWindow):
     def select_box_color(self):
         boxcolor = self.change_color(self.ui.ColorBox, SETTINGS_Color_Of_Box)
         self.MainForm.set_color_of_box(boxcolor)
-
-    def run_locate_fdf(self):
-        df = 3
-        # QTextEdit  FormRunFDFViewer
-
-    def run_siesta(self):
-        ds = 3
-        # QTextEdit  FormRunOutViewer
 
     def add_cp_to_list(self):
         newCP = self.ui.FormSelectedCP.text()
