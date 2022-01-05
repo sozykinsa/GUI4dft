@@ -736,14 +736,13 @@ class GuiOpenGL(object):
 
     def add_axes(self):
         gl.glNewList(self.object + 7, gl.GL_COMPILE)
-        gl.glColor3f(self.color_of_axes[0], self.color_of_axes[1], self.color_of_axes[2])
+        gl.glColor3f(*self.color_of_axes)
         size = 2
         sizeCone = 0.2
         letter_height = sizeCone
         letter_width = 0.6*sizeCone
         width = 0.06
-        self.QuadObjS.append(glu.gluNewQuadric())
-        glu.gluSphere(self.QuadObjS[-1], 2*width, 70, 70)
+        glu.gluSphere(glu.gluNewQuadric(), 2*width, 70, 70)
         p0 = np.array([0, 0, 0])
         p1 = np.array([size, 0, 0])
         p1cone = np.array([size+sizeCone, 0, 0])
@@ -918,25 +917,19 @@ class GuiOpenGL(object):
             self.light_prepare()
             self.prepere_scene()
             if self.active:
-                #print("1-- %s seconds ---" % (time.time() - start_time))
                 self.prepare_orientation()
-                #print("2-- %s seconds ---" % (time.time() - start_time))
                 if self.ViewAtoms:
                     gl.glCallList(self.object)  # atoms
 
-                #print("3-- %s seconds ---" % (time.time() - start_time))
                 if self.ViewBCP:
                     gl.glCallList(self.object + 8)  # BCP
 
-                #print("4-- %s seconds ---" % (time.time() - start_time))
                 if self.CanSearch:
                     self.get_atom_on_screen()
 
-                #print("5-- %s seconds ---" % (time.time() - start_time))
                 if self.ViewBonds and (len(self.MainModel.bonds) > 0):
                     gl.glCallList(self.object + 2)  # find_bonds_exact
 
-                #print("6-- %s seconds ---" % (time.time() - start_time))
                 if self.ViewVoronoi:
                     gl.glCallList(self.object + 1)  # Voronoi
 
@@ -958,7 +951,6 @@ class GuiOpenGL(object):
                 if self.ViewBondpath:
                     gl.glCallList(self.object + 9)  # Bondpath
 
-                #print("7-- %s seconds ---" % (time.time() - start_time))
                 if self.ViewAtomNumbers:
                     for i in range(0, len(self.MainModel.atoms)):
                        at = self.MainModel.atoms[i]
@@ -967,7 +959,6 @@ class GuiOpenGL(object):
                     for i in range(0, len(self.MainModel.bcp)):
                        at = self.MainModel.bcp[i]
                        self.renderText(at.x, at.y, at.z, at.let+str(i))
-                #print("8-- %s seconds ---" % (time.time() - start_time))
         except Exception as exc:
             print(exc)
             pass

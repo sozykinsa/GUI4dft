@@ -7,6 +7,7 @@ except Exception as e:
     """  """
 import math
 import sys
+from pathlib import Path
 import xml.etree.ElementTree as ET
 from copy import deepcopy
 from operator import itemgetter
@@ -196,8 +197,8 @@ class mainWindow(QMainWindow):
         self.ui.FormActionsPostButVoronoi.clicked.connect(self.plot_voronoi)
         self.ui.FormActionsPostButOptimizeCellParam.clicked.connect(self.plot_volume_param_energy)
 
-        if is_with_figure and os.path.exists('./images/Save2D.png'):
-            action = QAction(QIcon('./images/Save2D.png'), 'SaveDataFromFigure', self)
+        if is_with_figure and os.path.exists(Path(__file__).parent / "images" / 'Save2D.png'):
+            action = QAction(QIcon(str(Path(__file__).parent / "images" / 'Save2D.png')), 'SaveDataFromFigure', self)
         else:
             action = QAction('SaveDataFromFigure', self)
         action.triggered.connect(self.save_data_from_figure2d)
@@ -334,16 +335,16 @@ class mainWindow(QMainWindow):
         self.ui.FormActionsPosTableBonds.horizontalHeader().setStyleSheet(self.table_header_stylesheet)
         self.ui.FormActionsPosTableBonds.verticalHeader().setStyleSheet(self.table_header_stylesheet)
 
-        if is_with_figure and os.path.exists('./images/Open.png'):
-            openAction = QAction(QIcon('./images/Open.png'), 'Open', self)
+        if is_with_figure and os.path.exists(Path(__file__).parent / "images" /'Open.png'):
+            openAction = QAction(QIcon(str(Path(__file__).parent / "images" / 'Open.png')), 'Open', self)
         else:
             openAction = QAction('Open', self)
         openAction.setShortcut('Ctrl+O')
         openAction.triggered.connect(self.menu_open)
         self.ui.toolBar.addAction(openAction)
 
-        if is_with_figure and os.path.exists('./images/Close.png'):
-            openAction = QAction(QIcon('./images/Close.png'), 'Export', self)
+        if is_with_figure and os.path.exists(Path(__file__).parent / "images" / 'Close.png'):
+            openAction = QAction(QIcon(str(Path(__file__).parent / "images" / 'Close.png')), 'Export', self)
         else:
             openAction = QAction('Export', self)
         openAction.setShortcut('Ctrl+E')
@@ -351,53 +352,53 @@ class mainWindow(QMainWindow):
         self.ui.toolBar.addAction(openAction)
         self.ui.toolBar.addSeparator()
 
-        if is_with_figure and os.path.exists('./images/Save3D.png'):
-            save_image_to_file_action = QAction(QIcon('./images/Save3D.png'), 'SaveFigure3D', self)
+        if is_with_figure and os.path.exists(Path(__file__).parent / "images" / 'Save3D.png'):
+            save_image_to_file_action = QAction(QIcon(str(Path(__file__).parent / "images" / 'Save3D.png')), 'SaveFigure3D', self)
         else:
             save_image_to_file_action = QAction('SaveFigure3D', self)
         save_image_to_file_action.triggered.connect(self.save_image_to_file)
         self.ui.toolBar.addAction(save_image_to_file_action)
         self.ui.toolBar.addSeparator()
 
-        if is_with_figure and os.path.exists('./images/UndoX.png'):
-            openAction = QAction(QIcon('./images/UndoX.png'), 'RotateX-', self)
+        if is_with_figure and os.path.exists(Path(__file__).parent / "images" / 'UndoX.png'):
+            openAction = QAction(QIcon(str(Path(__file__).parent / "images" / 'UndoX.png')), 'RotateX-', self)
         else:
             openAction = QAction('RotateX-', self)
         openAction.triggered.connect(self.rotate_model_xm)
         self.ui.toolBar.addAction(openAction)
 
-        if is_with_figure and os.path.exists('./images/RedoX.png'):
-            openAction = QAction(QIcon('./images/RedoX.png'), 'RotateX+', self)
+        if is_with_figure and os.path.exists(Path(__file__).parent / "images" / 'RedoX.png'):
+            openAction = QAction(QIcon(str(Path(__file__).parent / "images" / 'RedoX.png')), 'RotateX+', self)
         else:
             openAction = QAction('RotateX+', self)
         openAction.triggered.connect(self.rotate_model_xp)
         self.ui.toolBar.addAction(openAction)
         self.ui.toolBar.addSeparator()
 
-        if is_with_figure and os.path.exists('./images/UndoY.png'):
-            openAction = QAction(QIcon('./images/UndoY.png'), 'RotateY-', self)
+        if is_with_figure and os.path.exists(Path(__file__).parent / "images" / 'UndoY.png'):
+            openAction = QAction(QIcon(str(Path(__file__).parent / "images" / 'UndoY.png')), 'RotateY-', self)
         else:
             openAction = QAction('RotateY-', self)
         openAction.triggered.connect(self.rotate_model_ym)
         self.ui.toolBar.addAction(openAction)
 
-        if is_with_figure and os.path.exists('./images/RedoY.png'):
-            openAction = QAction(QIcon('./images/RedoY.png'), 'RotateY+', self)
+        if is_with_figure and os.path.exists(Path(__file__).parent / "images" / 'RedoY.png'):
+            openAction = QAction(QIcon(str(Path(__file__).parent / "images" / 'RedoY.png')), 'RotateY+', self)
         else:
             openAction = QAction('RotateY+', self)
         openAction.triggered.connect(self.rotate_model_yp)
         self.ui.toolBar.addAction(openAction)
         self.ui.toolBar.addSeparator()
 
-        if is_with_figure and os.path.exists('./images/UndoZ.png'):
-            openAction = QAction(QIcon('./images/UndoZ.png'), 'RotateZ-', self)
+        if is_with_figure and os.path.exists(Path(__file__).parent / "images" /'UndoZ.png'):
+            openAction = QAction(QIcon(str(Path(__file__).parent / "images" / 'UndoZ.png')), 'RotateZ-', self)
         else:
             openAction = QAction('RotateZ-', self)
         openAction.triggered.connect(self.rotate_model_zm)
         self.ui.toolBar.addAction(openAction)
 
-        if is_with_figure and os.path.exists('./images/RedoZ.png'):
-            openAction = QAction(QIcon('./images/RedoZ.png'), 'RotateZ+', self)
+        if is_with_figure and os.path.exists(Path(__file__).parent / "images" / 'RedoZ.png'):
+            openAction = QAction(QIcon(str(Path(__file__).parent / "images" / 'RedoZ.png')), 'RotateZ+', self)
         else:
             openAction = QAction('RotateZ+', self)
         openAction.triggered.connect(self.rotate_model_zp)
