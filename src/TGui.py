@@ -913,9 +913,8 @@ class GuiOpenGL(object):
     def paintGL(self):
         QOpenGLWidget.makeCurrent(self.openGLWidget)
         try:
-            start_time = time.time()
-            self.light_prepare()
             self.prepere_scene()
+            self.light_prepare()
             if self.active:
                 self.prepare_orientation()
                 if self.ViewAtoms:
@@ -963,13 +962,11 @@ class GuiOpenGL(object):
             print(exc)
             pass
 
-    def renderText(self, x,y,z, st, font=QFont()):
+    def renderText(self, x, y, z, st, font=QFont()):
         # Identify x and y locations to render text within widget
         height = self.openGLWidget.height()
-        textPosX, textPosY, textPosZ = self.getScreenCoords(x ,y, z)
-        #point = self.get_point_in_3D(at.x, at.y)
-        #textPosX, textPosY, textPosZ = point[0], point[1], point[2]
-        textPosY = height - textPosY # y is inverted
+        textPosX, textPosY, textPosZ = self.getScreenCoords(x, y, z)
+        textPosY = height - textPosY  # y is inverted
 
         fontColor = QColor.fromRgbF(0.0, 0.0, 0.0, 1)
 
@@ -989,95 +986,16 @@ class GuiOpenGL(object):
         gl.glMaterialfv(gl.GL_FRONT_AND_BACK, gl.GL_DIFFUSE, material_diffuse)
         gl.glEnable(gl.GL_LIGHTING)
         ambient = [0.5, 0.5, 0.5, 1]
-        light_diffuse = [0.4, 0.7, 0.2]
 
-        light_sample = 0
+        gl.glLightModelfv(gl.GL_LIGHT_MODEL_AMBIENT, ambient)  # Определяем текущую модель освещения
+        gl.glLightModelf(gl.GL_LIGHT_MODEL_TWO_SIDE, gl.GL_TRUE) # двухсторонний расчет освещения
 
-        # установка источников света
-        if light_sample == 1:
-            """ точечный источник света убывание интенсивности с расстоянием отключено (по умолчанию) """
-            light0_position = [self.x0, self.y0, 40.0, 1]
-            light1_position = [0.0, 0.0, 40.0, 1.0]
+        gl.glEnable(gl.GL_LIGHT0)
+        gl.glEnable(gl.GL_DEPTH_TEST)
+        gl.glEnable(gl.GL_COLOR_MATERIAL)
 
-            if self.quality == 1:
-                light0_position = self.lightpos_rotate(light0_position)
-                light1_position = self.lightpos_rotate(light1_position)
-
-            gl.glLightModelfv(gl.GL_LIGHT_MODEL_AMBIENT, ambient)  # Определяем текущую модель освещения
-            gl.glLightModelf(gl.GL_LIGHT_MODEL_TWO_SIDE, gl.GL_TRUE)  # двухсторонний расчет освещения
-
-            gl.glEnable(gl.GL_LIGHT1)
-            gl.glEnable(gl.GL_DEPTH_TEST)
-            gl.glEnable(gl.GL_COLOR_MATERIAL)
-            gl.glLightfv(gl.GL_LIGHT0, gl.GL_DIFFUSE, light_diffuse)
-            gl.glLightfv(gl.GL_LIGHT0, gl.GL_POSITION, light0_position)  # Определяем положение источника света
-            gl.glLightfv(gl.GL_LIGHT1, gl.GL_DIFFUSE, light_diffuse)
-            gl.glLightfv(gl.GL_LIGHT1, gl.GL_POSITION, light1_position)
-
-        if light_sample == 2:
-            """ точечный источник света убывание интенсивности с расстоянием отключено (по умолчанию) """
-
-            light1_position = [0.0, 0.0, 40.0, 1.0]
-
-            if self.quality == 1:
-                light1_position = self.lightpos_rotate(light1_position)
-
-            gl.glLightModelfv(gl.GL_LIGHT_MODEL_AMBIENT, ambient)  # Определяем текущую модель освещения
-            gl.glLightModelf(gl.GL_LIGHT_MODEL_TWO_SIDE, gl.GL_TRUE)  # двухсторонний расчет освещения
-
-            gl.glEnable(gl.GL_LIGHT1)
-            gl.glEnable(gl.GL_DEPTH_TEST)
-            gl.glEnable(gl.GL_COLOR_MATERIAL)
-            gl.glLightfv(gl.GL_LIGHT1, gl.GL_DIFFUSE, light_diffuse)
-            gl.glLightfv(gl.GL_LIGHT1, gl.GL_POSITION, light1_position)
-
-        if light_sample == 0:
-            gl.glLightModelfv(gl.GL_LIGHT_MODEL_AMBIENT, ambient)  # Определяем текущую модель освещения
-            gl.glLightModelf(gl.GL_LIGHT_MODEL_TWO_SIDE, gl.GL_TRUE) # двухсторонний расчет освещения
-
-            gl.glEnable(gl.GL_LIGHT0)
-            gl.glEnable(gl.GL_DEPTH_TEST)
-            gl.glEnable(gl.GL_COLOR_MATERIAL)
-
-            #lightpos = [5.0, 5.0, 100.0 * self.Scale, 1]
-            #light0_position = [self.x0, self.y0, 100.0, 1]
-            light0_position = [0.0, 0.0, 100.0, 1]
-            #print(str(self.x0)+":"+str(self.y0)+":"+str(self.z0))
-            dir = [self.x0, self.y0, self.z0]
-
-            if self.quality == 1:
-                light0_position = self.lightpos_rotate(light0_position)
-
-            #print(light0_position)
-
-            #gl.glLightfv(gl.GL_LIGHT0, gl.GL_SPOT_DIRECTION, dir)
-            #gl.glLightfv(gl.GL_LIGHT0, gl.GL_DIFFUSE, light_diffuse)
-            gl.glLightfv(gl.GL_LIGHT0, gl.GL_POSITION, light0_position)  # Определяем положение источника света
-
-    def lightpos_rotate(self, lightpos):
-        # self.x0, self.y0, self.z0
-        lightpos = [lightpos[0] - self.x0, lightpos[1] - self.y0, lightpos[2] - self.z0]
-
-        alpha = - self.rotX * math.pi / 180
-        # ox
-        xnn = float(lightpos[1]) * math.cos(alpha) - float(lightpos[2]) * math.sin(alpha)
-        ynn = float(lightpos[1]) * math.sin(alpha) + float(lightpos[2]) * math.cos(alpha)
-        lightpos[1] = xnn
-        lightpos[2] = ynn
-        alpha = - self.rotY * math.pi / 180
-        # oy
-        xnn = float(lightpos[0]) * math.cos(alpha) + float(lightpos[2]) * math.sin(alpha)
-        ynn = -float(lightpos[0]) * math.sin(alpha) + float(lightpos[2]) * math.cos(alpha)
-        lightpos[0] = xnn
-        lightpos[2] = ynn
-        alpha = - self.rotZ * math.pi / 180
-        # oz
-        xnn = float(lightpos[0]) * math.cos(alpha) - float(lightpos[1]) * math.sin(alpha)
-        ynn = float(lightpos[0]) * math.sin(alpha) + float(lightpos[1]) * math.cos(alpha)
-        lightpos[0] = xnn
-        lightpos[1] = ynn
-
-        return [lightpos[0] + self.x0, lightpos[1] + self.y0, lightpos[2] + self.z0]
+        light0_position = [0.0, 0.0, 100.0, 1]
+        gl.glLightfv(gl.GL_LIGHT0, gl.GL_POSITION, light0_position)  # Определяем положение источника света
 
     def prepare_orientation(self):
         gl.glTranslated(self.x, self.y, self.z)
