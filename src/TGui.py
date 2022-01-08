@@ -2,11 +2,11 @@
 
 import OpenGL.GL as gl
 import OpenGL.GLU as glu
-from PyQt5.QtWidgets import QOpenGLWidget
-from PyQt5.QtCore import QEvent
-from PyQt5.QtCore import QObject
-from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QColor, QPainter, QFont
+from PySide2.QtWidgets import QOpenGLWidget
+from PySide2.QtCore import QEvent
+from PySide2.QtCore import QObject
+from PySide2.QtCore import Qt
+from PySide2.QtGui import QColor, QPainter, QFont
 from copy import deepcopy
 from AdvancedTools import TAtom
 from AdvancedTools import TAtomicModel
@@ -14,7 +14,6 @@ from AdvancedTools import TCalculators
 from AdvancedTools import TPeriodTable
 import math
 import numpy as np
-import time
 
 
 class mouse_events_filter(QObject):

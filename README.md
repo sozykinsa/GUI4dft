@@ -1,6 +1,6 @@
 GUI4dft (Graphical User Interface for support of Density Functional Theory calculations) - first free SIESTA oriented GUI. It is a cross-platform program. 
 
-GUI4DFT program is written in Python 3. It has some dependences. To install the necessary modules, run in the terminal (command line):
+GUI4DFT program is written in Python 3 (version >= 3.4). It has some dependences. To install the necessary modules, run in the terminal (command line):
 
 pip3 install pyqt5 numpy scipy pyopengl matplotlib scikit-image 
 

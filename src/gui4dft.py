@@ -12,6 +12,7 @@ import xml.etree.ElementTree as ET
 from copy import deepcopy
 from operator import itemgetter
 import matplotlib.pyplot as plt
+from pyqt_graph_widget.pygrwidget import PyqtGraphWidget
 import numpy as np
 from AdvancedTools import Helpers
 from AdvancedTools import TAtomicModel
@@ -24,28 +25,13 @@ from AdvancedTools import TPeriodTable
 from AdvancedTools import TSIESTA
 from AdvancedTools import TSWNT
 from AdvancedTools import TVASP
-from PyQt5.QtCore import QCoreApplication
-from PyQt5.QtCore import QLocale
-from PyQt5.QtCore import QSettings
-from PyQt5.QtCore import QVariant
-from PyQt5.QtCore import Qt, QSize
-from PyQt5.QtGui import QColor
-from PyQt5.QtGui import QIcon
-from PyQt5.QtGui import QImage
-from PyQt5.QtGui import QKeySequence
-from PyQt5.QtGui import QPixmap
-from PyQt5.QtGui import QStandardItem
-from PyQt5.QtGui import QStandardItemModel
-from PyQt5.QtWidgets import QListWidgetItem
-from PyQt5.QtWidgets import QAction
-from PyQt5.QtWidgets import QApplication
-from PyQt5.QtWidgets import QDialog, QFileDialog, QMessageBox, QColorDialog
-from PyQt5.QtWidgets import QDoubleSpinBox
-from PyQt5.QtWidgets import QMainWindow
-from PyQt5.QtWidgets import QShortcut
-from PyQt5.QtWidgets import QTableWidgetItem
-from PyQt5.QtWidgets import QTreeWidgetItem
-from PyQt5.QtWidgets import QTreeWidgetItemIterator
+from PySide2.QtCore import QCoreApplication, QLocale, QSettings, Qt, QSize
+import PySide2.QtCore as QtCore
+QtCore.QVariant = "QVariant"
+from PySide2.QtGui import QColor, QIcon, QImage, QKeySequence, QPixmap, QStandardItem, QStandardItemModel
+from PySide2.QtWidgets import QListWidgetItem, QAction, QApplication, QDialog, QFileDialog, QMessageBox, QColorDialog
+from PySide2.QtWidgets import QDoubleSpinBox, QMainWindow, QShortcut, QTableWidgetItem, QTreeWidgetItem
+from PySide2.QtWidgets import QTreeWidgetItemIterator
 from TGui import GuiOpenGL
 from TInterface import AtomsIdentifier
 from TInterface import Image3Dexporter
@@ -60,6 +46,7 @@ from matplotlib.backends.backend_qt5agg import (NavigationToolbar2QT as Navigati
 sys.path.append('.')
 
 is_with_figure = True
+
 
 class mainWindow(QMainWindow):
     def __init__(self, *args):
@@ -202,7 +189,7 @@ class mainWindow(QMainWindow):
         else:
             action = QAction('SaveDataFromFigure', self)
         action.triggered.connect(self.save_data_from_figure2d)
-        self.ui.MplWidget.addToolBar(NavigationToolbar(self.ui.MplWidget.canvas, self), action)
+        #self.ui.MplWidget.addToolBar(NavigationToolbar(self.ui.MplWidget.canvas, self), action)
 
         model = QStandardItemModel()
         model.appendRow(QStandardItem("select"))
@@ -1755,21 +1742,17 @@ class mainWindow(QMainWindow):
             if self.ui.FormActionsCheckBANDSfermyShift.isChecked():
                 shift = eF
             f.readline()
-            kmin = self.ui.FormActionsSpinBANDSxmin.value()
-            kmax = self.ui.FormActionsSpinBANDSxmax.value()
+            kmin, kmax = self.ui.FormActionsSpinBANDSxmin.value(), self.ui.FormActionsSpinBANDSxmax.value()
             str1 = f.readline().split()
             str1 = Helpers.list_str_to_float(str1)
-            eminf = float(str1[0])
-            emaxf = float(str1[1])
-            emin = self.ui.FormActionsSpinBANDSemin.value()
-            emax = self.ui.FormActionsSpinBANDSemax.value()
+            eminf, emaxf = float(str1[0]), float(str1[1])
+            emin, emax = self.ui.FormActionsSpinBANDSemin.value(), self.ui.FormActionsSpinBANDSemax.value()
             str1 = f.readline().split()
             str1 = Helpers.list_str_to_int(str1)
-            nbands = int(str1[0])
-            nspins = int(str1[1])
+            nbands, nspins = int(str1[0]), int(str1[1])
             kmesh = np.zeros((str1[2]))
-            HOMO = eminf * np.ones((str1[2]))
-            LUMO = emaxf * np.ones((str1[2]))
+            homo = eminf * np.ones((str1[2]))
+            lumo = emaxf * np.ones((str1[2]))
             bands = np.zeros((nbands * nspins, str1[2]))
             for i in range(0, str1[2]):
                 str2 = f.readline().split()
@@ -1793,10 +1776,10 @@ class mainWindow(QMainWindow):
             for i in range(0, nbands):
                 for j in range(0, len(bands[0])):
                     tm = float(bands[i][j]) - eF + shift
-                    if (tm > HOMO[j]) and (tm <= 0):
-                        HOMO[j] = tm
-                    if (tm < LUMO[j]) and (tm > 0):
-                        LUMO[j] = tm
+                    if (tm > homo[j]) and (tm <= 0):
+                        homo[j] = tm
+                    if (tm < lumo[j]) and (tm > 0):
+                        lumo[j] = tm
 
             nsticks = int(f.readline())
             xticks = []
@@ -1809,9 +1792,9 @@ class mainWindow(QMainWindow):
                     letter = self.utf8_letter(str3[1][1:-1])
                     xticklabels.append(letter)
             f.close()
-            self.ui.MplWidget.canvas.axes.clear()
+            self.ui.PyqtGraphWidget.clear()
             gap = emaxf - eminf
-            # print(gap)
+            #self.ui.PyqtGraphWidget.plot(x, y, labels, title, x_title, y_title)
             for band in bands:
                 self.ui.MplWidget.canvas.axes.plot(kmesh, band, linestyle="-", color="black")
                 for i in range(0, len(band) - 1):
@@ -1820,20 +1803,20 @@ class mainWindow(QMainWindow):
 
             if gap > 0:
                 for i in range(0, len(bands[0])):
-                    if LUMO[i] - HOMO[i] < gap:
-                        gap = LUMO[i] - HOMO[i]
+                    if lumo[i] - homo[i] < gap:
+                        gap = lumo[i] - homo[i]
 
-            HOMOmax = HOMO[0]
-            LUMOmin = LUMO[0]
+            homo_max = homo[0]
+            lumo_min = lumo[0]
             for i in range(0, len(bands[0])):
-                if HOMO[i] > HOMOmax:
-                    HOMOmax = HOMO[i]
-                if LUMO[i] < LUMOmin:
-                    LUMOmin = LUMO[i]
-            gapIND = LUMOmin - HOMOmax
+                if homo[i] > homo_max:
+                    homo_max = homo[i]
+                if lumo[i] < lumo_min:
+                    lumo_min = lumo[i]
+            gap_ind = lumo_min - homo_max
 
             self.ui.FormActionsLabelBANDSgap.setText(
-                "Band gap = " + str(round(gap, 3)) + "  " + "Indirect gap = " + str(round(gapIND, 3)))
+                "Band gap = " + str(round(gap, 3)) + "  " + "Indirect gap = " + str(round(gap_ind, 3)))
             self.ui.MplWidget.canvas.axes.set_xlim(kmin, kmax)
             self.ui.MplWidget.canvas.axes.set_ylim(emin, emax)
             self.ui.MplWidget.canvas.axes.set_xticks(xticks)
@@ -1844,12 +1827,57 @@ class mainWindow(QMainWindow):
             self.ui.MplWidget.canvas.axes.set_xticklabels(xticklabels)
             self.ui.MplWidget.canvas.axes.set_xlabel("k")
             self.ui.MplWidget.canvas.axes.set_ylabel("Energy, eV")
-
-            #plt.rcParams.update({'font.size': 44})
             self.ui.MplWidget.canvas.axes.labelsize = 10
-
             self.ui.MplWidget.canvas.draw()
 
+    def plot_dos(self):
+        self.ui.Form3Dand2DTabs.setCurrentIndex(1)
+
+        is_fermi_level_show = self.ui.FormActionsCheckBANDSfermyShow_3.isChecked()
+        is_invert_spin_down = self.ui.FormActionsCheckDOS_2.isChecked()
+        is_spin_down_needed = self.ui.FormActionsCheckDOS.isChecked()
+
+        path_efermy_list = []
+        for index in range(self.ui.FormActionsTabeDOSProperty.rowCount()):
+            path_efermy_list.append([self.ui.FormActionsTabeDOSProperty.item(index, 0).toolTip(),
+                                    float(self.ui.FormActionsTabeDOSProperty.item(index, 1).text())])
+
+        self.ui.PyqtGraphWidget.clear()
+
+        x = []
+        y = []
+        labels = []
+
+        for index in range(len(path_efermy_list)):
+            path = path_efermy_list[index][0]
+
+            if os.path.exists(path):
+                if path.endswith("DOSCAR"):
+                    spin_up, spin_down, energy = TVASP.DOS(path)
+                else:
+                    spin_up, spin_down, energy = TSIESTA.DOS(path)
+
+                energy -= path_efermy_list[index][1]
+                if is_invert_spin_down:
+                    spin_down *= -1
+                x.append(energy)
+                y.append(spin_up)
+                labels.append("spin_up")
+                if is_spin_down_needed:
+                    x.append(energy)
+                    y.append(spin_down)
+                    labels.append("spin_down")
+
+        x_title = "Energy, eV"
+        y_title = "DOS, states/eV"
+        title = "DOS"
+
+        self.ui.PyqtGraphWidget.add_legend()
+        self.ui.PyqtGraphWidget.plot(x, y, labels, title, x_title, y_title)
+
+        if is_fermi_level_show:
+            self.ui.PyqtGraphWidget.add_line(0, 90, 2, Qt.DashLine)
+        self.ui.PyqtGraphWidget.add_line(0, 0, 2, Qt.SolidLine)
 
     def plot_voronoi(self):
         self.ui.Form3Dand2DTabs.setCurrentIndex(0)
@@ -1866,38 +1894,6 @@ class mainWindow(QMainWindow):
             else:
                 self.ui.FormActionsPostLabelVoronoiAtom.setText("Atom: ")
                 self.ui.FormActionsPostLabelVoronoiVolume.setText("volume: ")
-
-    def plot_dos(self):
-        self.ui.MplWidget.canvas.axes.clear()
-        self.ui.Form3Dand2DTabs.setCurrentIndex(1)
-        eF = 0
-        shift = 0
-        for index in range(self.ui.FormActionsTabeDOSProperty.rowCount()):
-            path = self.ui.FormActionsTabeDOSProperty.item(index, 0).toolTip()
-            eF = float(self.ui.FormActionsTabeDOSProperty.item(index, 1).text())
-
-            if os.path.exists(path):
-                if path.endswith("DOSCAR"):
-                    spinUp, spinDown, energy = TVASP.DOS(path)
-                else:
-                    spinUp, spinDown, energy = TSIESTA.DOS(path)
-                shift = 0
-                if self.ui.FormActionsCheckBANDSfermyShift_3.isChecked():
-                    shift = eF
-                    energy -= shift
-                if self.ui.FormActionsCheckDOS_2.isChecked():
-                    spinDown *= -1
-                self.ui.MplWidget.canvas.axes.plot(energy, spinUp)
-                if self.ui.FormActionsCheckDOS.isChecked():
-                    self.ui.MplWidget.canvas.axes.plot(energy, spinDown)
-
-        self.ui.MplWidget.canvas.axes.set_xlabel("Energy, eV")
-        self.ui.MplWidget.canvas.axes.set_ylabel("DOS, states/eV")
-        if self.ui.FormActionsCheckBANDSfermyShow_3.isChecked():
-            self.ui.MplWidget.canvas.axes.axvline(x=eF - shift, linestyle="--")
-        self.ui.MplWidget.canvas.axes.axhline(y=0, linestyle="-.")
-
-        self.ui.MplWidget.canvas.draw()
 
     def clear_dos(self):
         self.ui.FormActionsTabeDOSProperty.setRowCount(0)

@@ -1,0 +1,9 @@
+pyopengl
+pyqt5
+numpy
+scipy
+matplotlib
+pyqtgraph
+scikit-image
+pyside2
+pytest
