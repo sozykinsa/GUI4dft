@@ -1794,9 +1794,26 @@ class mainWindow(QMainWindow):
             f.close()
             self.ui.PyqtGraphWidget.clear()
             gap = emaxf - eminf
-            #self.ui.PyqtGraphWidget.plot(x, y, labels, title, x_title, y_title)
+            self.ui.PyqtGraphWidget.set_limits(kmin, kmax, emin, emax)
+            # self.ui.MplWidget.canvas.axes.set_xlim(kmin, kmax)
+            # self.ui.MplWidget.canvas.axes.set_ylim(emin, emax)
+            title = "Bands"
+            x_title = "k"
+            y_title = "Energy, eV"
+            self.ui.PyqtGraphWidget.plot([kmesh], bands, [None], title, x_title, y_title, False)
+
+            #self.ui.MplWidget.canvas.axes.set_xticks(xticks)
+            #for tick in xticks:
+            #    self.ui.MplWidget.canvas.axes.axvline(x=tick, linestyle="--")
+            #if self.ui.FormActionsCheckBANDSfermyShow.isChecked():
+            #    self.ui.MplWidget.canvas.axes.axhline(y=eF - shift, linestyle="-.")
+            #self.ui.MplWidget.canvas.axes.set_xticklabels(xticklabels)
+            #self.ui.MplWidget.canvas.axes.set_xlabel("k")
+            #self.ui.MplWidget.canvas.axes.set_ylabel("Energy, eV")
+            #self.ui.MplWidget.canvas.axes.labelsize = 10
+            #self.ui.MplWidget.canvas.draw()
             for band in bands:
-                self.ui.MplWidget.canvas.axes.plot(kmesh, band, linestyle="-", color="black")
+                #self.ui.MplWidget.canvas.axes.plot(kmesh, band, linestyle="-", color="black")
                 for i in range(0, len(band) - 1):
                     if (band[i] - eF + shift) * (band[i + 1] - eF + shift) <= 0:
                         gap = 0
@@ -1817,18 +1834,6 @@ class mainWindow(QMainWindow):
 
             self.ui.FormActionsLabelBANDSgap.setText(
                 "Band gap = " + str(round(gap, 3)) + "  " + "Indirect gap = " + str(round(gap_ind, 3)))
-            self.ui.MplWidget.canvas.axes.set_xlim(kmin, kmax)
-            self.ui.MplWidget.canvas.axes.set_ylim(emin, emax)
-            self.ui.MplWidget.canvas.axes.set_xticks(xticks)
-            for tick in xticks:
-                self.ui.MplWidget.canvas.axes.axvline(x=tick, linestyle="--")
-            if self.ui.FormActionsCheckBANDSfermyShow.isChecked():
-                self.ui.MplWidget.canvas.axes.axhline(y=eF - shift, linestyle="-.")
-            self.ui.MplWidget.canvas.axes.set_xticklabels(xticklabels)
-            self.ui.MplWidget.canvas.axes.set_xlabel("k")
-            self.ui.MplWidget.canvas.axes.set_ylabel("Energy, eV")
-            self.ui.MplWidget.canvas.axes.labelsize = 10
-            self.ui.MplWidget.canvas.draw()
 
     def plot_dos(self):
         self.ui.Form3Dand2DTabs.setCurrentIndex(1)
