@@ -1737,10 +1737,7 @@ class mainWindow(QMainWindow):
         self.ui.Form3Dand2DTabs.setCurrentIndex(1)
         if os.path.exists(file):
             f = open(file)
-            eF = float(f.readline())
-            shift = 0
-            if self.ui.FormActionsCheckBANDSfermyShift.isChecked():
-                shift = eF
+            e_fermi = float(f.readline())
             f.readline()
             kmin, kmax = self.ui.FormActionsSpinBANDSxmin.value(), self.ui.FormActionsSpinBANDSxmax.value()
             str1 = f.readline().split()
@@ -1759,13 +1756,13 @@ class mainWindow(QMainWindow):
                 str2 = Helpers.list_str_to_float(str2)
                 kmesh[i] = str2[0]
                 for j in range(1, len(str2)):
-                    bands[j - 1][i] = float(str2[j]) - shift
+                    bands[j - 1][i] = float(str2[j]) - e_fermi
                 kol = len(str2) - 1
                 while kol < nbands * nspins:
                     str2 = f.readline().split()
                     str2 = Helpers.list_str_to_float(str2)
                     for j in range(0, len(str2)):
-                        bands[kol + j][i] = float(str2[j]) - shift
+                        bands[kol + j][i] = float(str2[j]) - e_fermi
                     kol += len(str2)
 
             if self.ui.FormActionsCheckBANDSspinUp.isChecked():
@@ -1775,7 +1772,7 @@ class mainWindow(QMainWindow):
 
             for i in range(0, nbands):
                 for j in range(0, len(bands[0])):
-                    tm = float(bands[i][j]) - eF + shift
+                    tm = float(bands[i][j])
                     if (tm > homo[j]) and (tm <= 0):
                         homo[j] = tm
                     if (tm < lumo[j]) and (tm > 0):
@@ -1794,28 +1791,24 @@ class mainWindow(QMainWindow):
             f.close()
             self.ui.PyqtGraphWidget.clear()
             gap = emaxf - eminf
-            self.ui.PyqtGraphWidget.set_limits(kmin, kmax, emin, emax)
-            # self.ui.MplWidget.canvas.axes.set_xlim(kmin, kmax)
-            # self.ui.MplWidget.canvas.axes.set_ylim(emin, emax)
+            self.ui.PyqtGraphWidget.set_limits(0.95 * kmin, 1.05 * kmax, emin, emax)
             title = "Bands"
             x_title = "k"
             y_title = "Energy, eV"
             self.ui.PyqtGraphWidget.plot([kmesh], bands, [None], title, x_title, y_title, False)
+            major_tick = []
+            for index in range(len(xticks)):
+                self.ui.PyqtGraphWidget.add_line(xticks[index], 90, 2, Qt.DashLine)
+                major_tick.append((round(xticks[index], 3), xticklabels[index]))
 
-            #self.ui.MplWidget.canvas.axes.set_xticks(xticks)
-            #for tick in xticks:
-            #    self.ui.MplWidget.canvas.axes.axvline(x=tick, linestyle="--")
-            #if self.ui.FormActionsCheckBANDSfermyShow.isChecked():
-            #    self.ui.MplWidget.canvas.axes.axhline(y=eF - shift, linestyle="-.")
-            #self.ui.MplWidget.canvas.axes.set_xticklabels(xticklabels)
-            #self.ui.MplWidget.canvas.axes.set_xlabel("k")
-            #self.ui.MplWidget.canvas.axes.set_ylabel("Energy, eV")
-            #self.ui.MplWidget.canvas.axes.labelsize = 10
-            #self.ui.MplWidget.canvas.draw()
+            self.ui.PyqtGraphWidget.set_xticks([major_tick])
+            if self.ui.FormActionsCheckBANDSfermyShow.isChecked():
+                self.ui.PyqtGraphWidget.add_line(0, 0, 2, Qt.SolidLine)
+
+            # Gap
             for band in bands:
-                #self.ui.MplWidget.canvas.axes.plot(kmesh, band, linestyle="-", color="black")
                 for i in range(0, len(band) - 1):
-                    if (band[i] - eF + shift) * (band[i + 1] - eF + shift) <= 0:
+                    if band[i] * band[i + 1] <= 0:
                         gap = 0
 
             if gap > 0:
@@ -1878,6 +1871,7 @@ class mainWindow(QMainWindow):
         title = "DOS"
 
         self.ui.PyqtGraphWidget.add_legend()
+        self.ui.PyqtGraphWidget.enableAutoRange()
         self.ui.PyqtGraphWidget.plot(x, y, labels, title, x_title, y_title)
 
         if is_fermi_level_show:

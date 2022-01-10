@@ -7,7 +7,6 @@
 from PySide2.QtWidgets import QWidget, QVBoxLayout
 from PySide2.QtGui import QFont
 import pyqtgraph as pg  # pip install pyqtgraph
-import sys
 
 
 class PyqtGraphWidget(QWidget):
@@ -22,6 +21,7 @@ class PyqtGraphWidget(QWidget):
         self.setLayout(vertical_layout)
         self.graphWidget.setBackground((255, 255, 255))
         self.styles = {"color": "#000", "font-size": "20px"}
+        self.legend_item = None
 
     def clear(self):
         self.graphWidget.clear()
@@ -45,10 +45,14 @@ class PyqtGraphWidget(QWidget):
 
     def plot(self, x: list[list[float]], y: list[list[float]], labels: list[str],
              title: str, x_title: str, y_title: str, is_colored=True):
+        # Axis
         font = QFont()
         font.setPixelSize(20)
         self.graphWidget.getAxis("bottom").setStyle(tickFont=font)
         self.graphWidget.getAxis("left").setStyle(tickFont=font)
+        pen = pg.mkPen(color=self.COLORS[0])
+        self.graphWidget.getAxis("bottom").setTextPen(pen)
+        self.graphWidget.getAxis("left").setTextPen(pen)
         # Add Title
         self.graphWidget.setTitle(title, color=self.COLORS[0], size="20pt")
         # Add Axis Labels
@@ -67,8 +71,16 @@ class PyqtGraphWidget(QWidget):
         self.graphWidget.addItem(line)
 
     def add_legend(self):
-        self.graphWidget.addLegend(labelTextSize='15pt')
+        self.legend_item = self.graphWidget.addLegend()
+        self.legend_item.setLabelTextSize('15pt')
+        self.legend_item.setLabelTextColor(pg.mkColor(0, 0, 0))
 
     def set_limits(self, x_min, x_max, y_min, y_max):
         self.graphWidget.setXRange(x_min, x_max, padding=0)
         self.graphWidget.setYRange(y_min, y_max, padding=0)
+
+    def enableAutoRange(self):
+        self.graphWidget.enableAutoRange()
+
+    def set_xticks(self, ticks):
+        self.graphWidget.getAxis("bottom").setTicks(ticks)
