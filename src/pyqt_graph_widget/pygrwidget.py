@@ -79,7 +79,7 @@ class PyqtGraphWidget(QWidget):
         self.graphWidget.setXRange(x_min, x_max, padding=0)
         self.graphWidget.setYRange(y_min, y_max, padding=0)
 
-    def enableAutoRange(self):
+    def enable_auto_range(self):
         self.graphWidget.enableAutoRange()
 
     def set_xticks(self, ticks):

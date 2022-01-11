@@ -41,7 +41,7 @@ from TInterface import TVolumericData
 from TInterface import TXSF
 from about import Ui_DialogAbout as Ui_about
 from form import Ui_MainWindow as Ui_form
-from matplotlib.backends.backend_qt5agg import (NavigationToolbar2QT as NavigationToolbar)
+#from matplotlib.backends.backend_qt5agg import (NavigationToolbar2QT as NavigationToolbar)
 
 sys.path.append('.')
 
@@ -590,7 +590,6 @@ class mainWindow(QMainWindow):
     def check_dos(self, fname):
         DOSfile, eFermy = Importer.check_dos_file(fname)
         if DOSfile:
-            self.ui.FormActionsEditPDOSefermi.setText(str(eFermy))
             i = self.ui.FormActionsTabeDOSProperty.rowCount() + 1
             self.ui.FormActionsTabeDOSProperty.setRowCount(i)
             line = "..." + str(DOSfile)[-15:]
@@ -1484,6 +1483,102 @@ class mainWindow(QMainWindow):
         model.appendRow(QStandardItem("Selected in list below"))
         self.ui.FormActionsComboPDOSspecies.setModel(model)
 
+    def pdos_filter(self):
+        atom_index = []
+        if self.ui.FormActionsComboPDOSIndexes.currentText() == 'All':
+            atom_index = range(1, self.MainForm.MainModel.nAtoms() + 1)
+        if self.ui.FormActionsComboPDOSIndexes.currentText() == 'Selected atom (3D View)':
+            atom_index = [self.MainForm.MainModel.selected_atom + 1]
+        if self.ui.FormActionsComboPDOSIndexes.currentText() == 'Selected in list below':
+            atom_index = (self.ui.FormActionsPDOSIndexes.toPlainText()).split()
+            atom_index = Helpers.list_str_to_int(atom_index)
+        species = []
+        if self.ui.FormActionsComboPDOSspecies.currentText() == 'All':
+            mendeley = TPeriodTable()
+            atoms_list = mendeley.get_all_letters()
+            types_of_atoms = self.MainForm.MainModel.typesOfAtoms()
+            for i in range(0, len(types_of_atoms)):
+                species.append(str(atoms_list[types_of_atoms[i][0]]))
+        if self.ui.FormActionsComboPDOSspecies.currentText() == 'Selected in list below':
+            species = (self.ui.FormActionsPDOSSpecieces.text()).split()
+        number_n = []
+        if self.ui.FormActionsComboPDOSn1.isChecked():
+            number_n.append(1)
+        if self.ui.FormActionsComboPDOSn2.isChecked():
+            number_n.append(2)
+        if self.ui.FormActionsComboPDOSn3.isChecked():
+            number_n.append(3)
+        if self.ui.FormActionsComboPDOSn4.isChecked():
+            number_n.append(4)
+        if self.ui.FormActionsComboPDOSn5.isChecked():
+            number_n.append(5)
+        if self.ui.FormActionsComboPDOSn6.isChecked():
+            number_n.append(6)
+        if self.ui.FormActionsComboPDOSn7.isChecked():
+            number_n.append(7)
+        if self.ui.FormActionsComboPDOSn8.isChecked():
+            number_n.append(8)
+        number_l = []
+        if self.ui.FormActionsComboPDOSL0.isChecked():
+            number_l.append(0)
+        if self.ui.FormActionsComboPDOSL1.isChecked():
+            number_l.append(1)
+        if self.ui.FormActionsComboPDOSL2.isChecked():
+            number_l.append(2)
+        if self.ui.FormActionsComboPDOSL3.isChecked():
+            number_l.append(3)
+        if self.ui.FormActionsComboPDOSL4.isChecked():
+            number_l.append(4)
+        if self.ui.FormActionsComboPDOSL5.isChecked():
+            number_l.append(5)
+        if self.ui.FormActionsComboPDOSL6.isChecked():
+            number_l.append(6)
+        if self.ui.FormActionsComboPDOSL7.isChecked():
+            number_l.append(7)
+        number_m = []
+        if self.ui.FormActionsComboPDOSMm7.isChecked():
+            number_m.append(-7)
+        if self.ui.FormActionsComboPDOSMm6.isChecked():
+            number_m.append(-6)
+        if self.ui.FormActionsComboPDOSMm5.isChecked():
+            number_m.append(-5)
+        if self.ui.FormActionsComboPDOSMm4.isChecked():
+            number_m.append(-4)
+        if self.ui.FormActionsComboPDOSMm3.isChecked():
+            number_m.append(-3)
+        if self.ui.FormActionsComboPDOSMm2.isChecked():
+            number_m.append(-2)
+        if self.ui.FormActionsComboPDOSMm1.isChecked():
+            number_m.append(-1)
+        if self.ui.FormActionsComboPDOSMp0.isChecked():
+            number_m.append(0)
+        if self.ui.FormActionsComboPDOSMp1.isChecked():
+            number_m.append(1)
+        if self.ui.FormActionsComboPDOSMp2.isChecked():
+            number_m.append(2)
+        if self.ui.FormActionsComboPDOSMp3.isChecked():
+            number_m.append(3)
+        if self.ui.FormActionsComboPDOSMp4.isChecked():
+            number_m.append(4)
+        if self.ui.FormActionsComboPDOSMp5.isChecked():
+            number_m.append(5)
+        if self.ui.FormActionsComboPDOSMp6.isChecked():
+            number_m.append(6)
+        if self.ui.FormActionsComboPDOSMp7.isChecked():
+            number_m.append(7)
+        number_z = []
+        if self.ui.FormActionsComboPDOSz1.isChecked():
+            number_z.append(1)
+        if self.ui.FormActionsComboPDOSz2.isChecked():
+            number_z.append(2)
+        if self.ui.FormActionsComboPDOSz3.isChecked():
+            number_z.append(3)
+        if self.ui.FormActionsComboPDOSz4.isChecked():
+            number_z.append(4)
+        if self.ui.FormActionsComboPDOSz5.isChecked():
+            number_z.append(5)
+        return atom_index, number_l, number_m, number_n, number_z, species
+
     def plot_bonds_histogram(self):
         self.ui.Form3Dand2DTabs.setCurrentIndex(1)
         c1, c2 = self.fill_bonds_charges()
@@ -1508,134 +1603,32 @@ class mainWindow(QMainWindow):
             tree = ET.parse(file)
             root = tree.getroot()
 
-            atom_index = []
-            if self.ui.FormActionsComboPDOSIndexes.currentText() == 'All':
-                atom_index = range(1, self.MainForm.MainModel.nAtoms() + 1)
-            if self.ui.FormActionsComboPDOSIndexes.currentText() == 'Selected atom (3D View)':
-                atom_index = [self.MainForm.MainModel.selected_atom + 1]
-            if self.ui.FormActionsComboPDOSIndexes.currentText() == 'Selected in list below':
-                atom_index = (self.ui.FormActionsPDOSIndexes.toPlainText()).split()
-                atom_index = Helpers.list_str_to_int(atom_index)
-
-            species = []
-            if self.ui.FormActionsComboPDOSspecies.currentText() == 'All':
-                mendeley = TPeriodTable()
-                atoms_list = mendeley.get_all_letters()
-                typesOfAtoms = self.MainForm.MainModel.typesOfAtoms()
-                for i in range(0, len(typesOfAtoms)):
-                    species.append(str(atoms_list[typesOfAtoms[i][0]]))
-            if self.ui.FormActionsComboPDOSspecies.currentText() == 'Selected in list below':
-                species = (self.ui.FormActionsPDOSSpecieces.text()).split()
-
-            number_n = []
-            if self.ui.FormActionsComboPDOSn1.isChecked():
-                number_n.append(1)
-            if self.ui.FormActionsComboPDOSn2.isChecked():
-                number_n.append(2)
-            if self.ui.FormActionsComboPDOSn3.isChecked():
-                number_n.append(3)
-            if self.ui.FormActionsComboPDOSn4.isChecked():
-                number_n.append(4)
-            if self.ui.FormActionsComboPDOSn5.isChecked():
-                number_n.append(5)
-            if self.ui.FormActionsComboPDOSn6.isChecked():
-                number_n.append(6)
-            if self.ui.FormActionsComboPDOSn7.isChecked():
-                number_n.append(7)
-            if self.ui.FormActionsComboPDOSn8.isChecked():
-                number_n.append(8)
-
-            number_l = []
-            if self.ui.FormActionsComboPDOSL0.isChecked():
-                number_l.append(0)
-            if self.ui.FormActionsComboPDOSL1.isChecked():
-                number_l.append(1)
-            if self.ui.FormActionsComboPDOSL2.isChecked():
-                number_l.append(2)
-            if self.ui.FormActionsComboPDOSL3.isChecked():
-                number_l.append(3)
-            if self.ui.FormActionsComboPDOSL4.isChecked():
-                number_l.append(4)
-            if self.ui.FormActionsComboPDOSL5.isChecked():
-                number_l.append(5)
-            if self.ui.FormActionsComboPDOSL6.isChecked():
-                number_l.append(6)
-            if self.ui.FormActionsComboPDOSL7.isChecked():
-                number_l.append(7)
-
-            number_m = []
-            if self.ui.FormActionsComboPDOSMm7.isChecked():
-                number_m.append(-7)
-            if self.ui.FormActionsComboPDOSMm6.isChecked():
-                number_m.append(-6)
-            if self.ui.FormActionsComboPDOSMm5.isChecked():
-                number_m.append(-5)
-            if self.ui.FormActionsComboPDOSMm4.isChecked():
-                number_m.append(-4)
-            if self.ui.FormActionsComboPDOSMm3.isChecked():
-                number_m.append(-3)
-            if self.ui.FormActionsComboPDOSMm2.isChecked():
-                number_m.append(-2)
-            if self.ui.FormActionsComboPDOSMm1.isChecked():
-                number_m.append(-1)
-            if self.ui.FormActionsComboPDOSMp0.isChecked():
-                number_m.append(0)
-            if self.ui.FormActionsComboPDOSMp1.isChecked():
-                number_m.append(1)
-            if self.ui.FormActionsComboPDOSMp2.isChecked():
-                number_m.append(2)
-            if self.ui.FormActionsComboPDOSMp3.isChecked():
-                number_m.append(3)
-            if self.ui.FormActionsComboPDOSMp4.isChecked():
-                number_m.append(4)
-            if self.ui.FormActionsComboPDOSMp5.isChecked():
-                number_m.append(5)
-            if self.ui.FormActionsComboPDOSMp6.isChecked():
-                number_m.append(6)
-            if self.ui.FormActionsComboPDOSMp7.isChecked():
-                number_m.append(7)
-
-            number_z = []
-            if self.ui.FormActionsComboPDOSz1.isChecked():
-                number_z.append(1)
-            if self.ui.FormActionsComboPDOSz2.isChecked():
-                number_z.append(2)
-            if self.ui.FormActionsComboPDOSz3.isChecked():
-                number_z.append(3)
-            if self.ui.FormActionsComboPDOSz4.isChecked():
-                number_z.append(4)
-            if self.ui.FormActionsComboPDOSz5.isChecked():
-                number_z.append(5)
+            atom_index, number_l, number_m, number_n, number_z, species = self.pdos_filter()
 
             pdos, energy = TSIESTA.calc_pdos(root, atom_index, species, number_l, number_m, number_n, number_z)
-            EF = TSIESTA.FermiEnergy(self.filename)
-            shift = 0
-            if self.ui.FormActionsCheckBANDSfermyShift_2.isChecked():
-                shift = EF
-                energy -= EF
+            e_fermi = TSIESTA.FermiEnergy(self.filename)
+            energy -= e_fermi
+            labels = [None]
 
-            self.ui.MplWidget.canvas.axes.clear()
-
-            ys = pdos[0]
+            ys = [pdos[0]]
             sign = 1
             if self.ui.FormActionsCheckPDOS_2.isChecked():
                 sign = -1
-            if len(pdos) > 1:
-                ys2 = sign * pdos[1]
-            else:
-                ys2 = np.zeros((len(pdos[0])))
+            if (len(pdos) > 1) and self.ui.FormActionsCheckPDOS.isChecked():
+                ys.append(sign * pdos[1])
+                labels = ["spin_up", "spin_down"]
 
-            self.ui.MplWidget.canvas.axes.plot(energy, ys)
-            if self.ui.FormActionsCheckPDOS.isChecked():
-                self.ui.MplWidget.canvas.axes.plot(energy, ys2)
+            self.ui.PyqtGraphWidget.clear()
 
-            self.ui.MplWidget.canvas.axes.set_xlabel("Energy, eV")
-            self.ui.MplWidget.canvas.axes.set_ylabel("PDOS, states/eV")
+            title = "PDOS"
+            x_title = "Energy, eV"
+            y_title = "PDOS, states/eV"
+            self.ui.PyqtGraphWidget.plot([energy], ys, labels, title, x_title, y_title, True)
+
             if self.ui.FormActionsCheckBANDSfermyShow_2.isChecked():
-                self.ui.MplWidget.canvas.axes.axvline(x=EF - shift, linestyle="--")
-            self.ui.MplWidget.canvas.axes.axhline(y=0, linestyle="-.")
+                self.ui.PyqtGraphWidget.add_line(0, 90, 2, Qt.DashLine)
+            self.ui.PyqtGraphWidget.add_line(0, 0, 2, Qt.SolidLine)
 
-            self.ui.MplWidget.canvas.draw()
             if len(pdos) > 1:
                 self.PDOSdata.append([energy, pdos[0], pdos[1]])
             else:
@@ -1651,45 +1644,37 @@ class mainWindow(QMainWindow):
 
     def plot_selected_pdos(self):
         self.ui.Form3Dand2DTabs.setCurrentIndex(1)
-        EF = TSIESTA.FermiEnergy(self.filename)
-        shift = 0
-        # labels = []
-        plots = []
-        if self.ui.FormActionsCheckBANDSfermyShift_2.isChecked():
-            shift = EF
 
         selected = self.ui.FormActionsListPDOS.selectedItems()
-        self.ui.MplWidget.canvas.axes.clear()
+        self.ui.PyqtGraphWidget.clear()
+        x = []
+        y = []
+        labels = []
         for item in selected:
             ind = int(item.text().split(':')[0]) - 1
-            # labels.append(item.text())
 
-            energy = self.PDOSdata[ind][0]
-            spinUp = self.PDOSdata[ind][1]
-            spinDown = self.PDOSdata[ind][2]
+            energy, spin_up, spin_down = self.PDOSdata[ind][0], self.PDOSdata[ind][1], self.PDOSdata[ind][2]
 
             if self.ui.FormActionsCheckPDOS_2.isChecked():
-                spinDown *= -1
+                spin_down *= -1
 
-            add_srt = ""
+            x.append(energy)
+            y.append(spin_up)
+            labels.append(item.text() + "_up")
 
             if self.ui.FormActionsCheckPDOS.isChecked():
-                add_srt = ' up'
+                x.append(energy)
+                y.append(spin_down)
+                labels.append(item.text() + "_down")
 
-            pl1, = self.ui.MplWidget.canvas.axes.plot(energy, spinUp, label=item.text() + add_srt)
-            plots += [pl1]
-            if self.ui.FormActionsCheckPDOS.isChecked():
-                pl2, = self.ui.MplWidget.canvas.axes.plot(energy, spinDown, label=item.text() + ' down')
-                plots += [pl2]
+        title = "PDOS"
+        x_title = "Energy, eV"
+        y_title = "PDOS, states/eV"
+        self.ui.PyqtGraphWidget.plot(x, y, labels, title, x_title, y_title, True)
 
-        self.ui.MplWidget.canvas.axes.set_xlabel("Energy, eV")
-        self.ui.MplWidget.canvas.axes.set_ylabel("PDOS, states/eV")
         if self.ui.FormActionsCheckBANDSfermyShow_2.isChecked():
-            self.ui.MplWidget.canvas.axes.axvline(x=EF - shift, linestyle="--")
-        self.ui.MplWidget.canvas.axes.axhline(y=0, linestyle="-.")
-
-        self.ui.MplWidget.canvas.axes.legend(handles=plots)
-        self.ui.MplWidget.canvas.draw()
+            self.ui.PyqtGraphWidget.add_line(0, 90, 2, Qt.DashLine)
+        self.ui.PyqtGraphWidget.add_line(0, 0, 2, Qt.SolidLine)
 
     @staticmethod
     def list_of_selected_items_in_combo(atom_index, combo):
@@ -1703,12 +1688,10 @@ class mainWindow(QMainWindow):
         file = self.ui.FormActionsLineBANDSfile.text()
         if os.path.exists(file):
             f = open(file)
-            eF = float(f.readline())
-            self.ui.FormActionsEditBANDSefermi.setText(str(eF))
+            e_fermi = float(f.readline())
             str1 = f.readline().split()
             str1 = Helpers.list_str_to_float(str1)
-            kmin = float(str1[0])
-            kmax = float(str1[1])
+            kmin, kmax = float(str1[0]), float(str1[1])
             self.ui.FormActionsSpinBANDSxmin.setRange(kmin, kmax)
             self.ui.FormActionsSpinBANDSxmin.setValue(kmin)
             self.ui.FormActionsSpinBANDSxmax.setRange(kmin, kmax)
@@ -1725,11 +1708,12 @@ class mainWindow(QMainWindow):
                 self.ui.FormActionsGrBoxBANDSspin.setEnabled(True)
             else:
                 self.ui.FormActionsGrBoxBANDSspin.setEnabled(False)
+            f.close()
+
             self.ui.FormActionsSpinBANDSemin.setRange(emin, emax)
             self.ui.FormActionsSpinBANDSemin.setValue(emin)
             self.ui.FormActionsSpinBANDSemax.setRange(emin, emax)
             self.ui.FormActionsSpinBANDSemax.setValue(emax)
-            f.close()
             self.ui.FormActionsButtonPlotBANDS.setEnabled(True)
 
     def plot_bands(self):
@@ -1790,8 +1774,8 @@ class mainWindow(QMainWindow):
                     xticklabels.append(letter)
             f.close()
             self.ui.PyqtGraphWidget.clear()
-            gap = emaxf - eminf
-            self.ui.PyqtGraphWidget.set_limits(0.95 * kmin, 1.05 * kmax, emin, emax)
+            delta = 0.05 * (kmax - kmin)
+            self.ui.PyqtGraphWidget.set_limits(kmin - delta, kmax + delta, emin, emax)
             title = "Bands"
             x_title = "k"
             y_title = "Energy, eV"
@@ -1799,34 +1783,37 @@ class mainWindow(QMainWindow):
             major_tick = []
             for index in range(len(xticks)):
                 self.ui.PyqtGraphWidget.add_line(xticks[index], 90, 2, Qt.DashLine)
-                major_tick.append((round(xticks[index], 3), xticklabels[index]))
+                major_tick.append((xticks[index], xticklabels[index]))
 
             self.ui.PyqtGraphWidget.set_xticks([major_tick])
             if self.ui.FormActionsCheckBANDSfermyShow.isChecked():
                 self.ui.PyqtGraphWidget.add_line(0, 0, 2, Qt.SolidLine)
 
-            # Gap
-            for band in bands:
-                for i in range(0, len(band) - 1):
-                    if band[i] * band[i + 1] <= 0:
-                        gap = 0
-
-            if gap > 0:
-                for i in range(0, len(bands[0])):
-                    if lumo[i] - homo[i] < gap:
-                        gap = lumo[i] - homo[i]
-
-            homo_max = homo[0]
-            lumo_min = lumo[0]
-            for i in range(0, len(bands[0])):
-                if homo[i] > homo_max:
-                    homo_max = homo[i]
-                if lumo[i] < lumo_min:
-                    lumo_min = lumo[i]
-            gap_ind = lumo_min - homo_max
+            gap, gap_ind = self.gaps(bands, emaxf, eminf, homo, lumo)
 
             self.ui.FormActionsLabelBANDSgap.setText(
                 "Band gap = " + str(round(gap, 3)) + "  " + "Indirect gap = " + str(round(gap_ind, 3)))
+
+    def gaps(self, bands, emaxf, eminf, homo, lumo):
+        # Gap
+        gap = emaxf - eminf
+        for band in bands:
+            for i in range(0, len(band) - 1):
+                if band[i] * band[i + 1] <= 0:
+                    gap = 0
+        if gap > 0:
+            for i in range(0, len(bands[0])):
+                if lumo[i] - homo[i] < gap:
+                    gap = lumo[i] - homo[i]
+        homo_max = homo[0]
+        lumo_min = lumo[0]
+        for i in range(0, len(bands[0])):
+            if homo[i] > homo_max:
+                homo_max = homo[i]
+            if lumo[i] < lumo_min:
+                lumo_min = lumo[i]
+        gap_ind = lumo_min - homo_max
+        return gap, gap_ind
 
     def plot_dos(self):
         self.ui.Form3Dand2DTabs.setCurrentIndex(1)
@@ -1871,7 +1858,7 @@ class mainWindow(QMainWindow):
         title = "DOS"
 
         self.ui.PyqtGraphWidget.add_legend()
-        self.ui.PyqtGraphWidget.enableAutoRange()
+        self.ui.PyqtGraphWidget.enable_auto_range()
         self.ui.PyqtGraphWidget.plot(x, y, labels, title, x_title, y_title)
 
         if is_fermi_level_show:
