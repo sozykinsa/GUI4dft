@@ -12,7 +12,8 @@ import xml.etree.ElementTree as ET
 from copy import deepcopy
 from operator import itemgetter
 import matplotlib.pyplot as plt
-from pyqt_graph_widget.pygrwidget import PyqtGraphWidget
+#from pyqt_graph_widget.pygrwidget import PyqtGraphWidget
+import pyqtgraph as pg  # pip install pyqtgraph
 import numpy as np
 from AdvancedTools import Helpers
 from AdvancedTools import TAtomicModel
@@ -870,12 +871,6 @@ class mainWindow(QMainWindow):
         self.ui.FormModifyCellEditC1.setValue(model.LatVect3[0])
         self.ui.FormModifyCellEditC2.setValue(model.LatVect3[1])
         self.ui.FormModifyCellEditC3.setValue(model.LatVect3[2])
-
-    #def file_brouser_selection(self, selected, deselected):
-    #    self.IndexOfFileToOpen = selected.indexes()[0]
-    #    text = str(self.ui.FileBrouserTree.model().filePath(self.IndexOfFileToOpen))
-    #    self.ui.FileBrouserOpenLine.setText(text)
-    #    self.ui.FileBrouserOpenLine.update()
 
     def fill_volumeric_data(self, data, tree=" "):
         if tree == " ":
@@ -1827,8 +1822,6 @@ class mainWindow(QMainWindow):
             path_efermy_list.append([self.ui.FormActionsTabeDOSProperty.item(index, 0).toolTip(),
                                     float(self.ui.FormActionsTabeDOSProperty.item(index, 1).text())])
 
-        self.ui.PyqtGraphWidget.clear()
-
         x = []
         y = []
         labels = []
@@ -1857,6 +1850,7 @@ class mainWindow(QMainWindow):
         y_title = "DOS, states/eV"
         title = "DOS"
 
+        self.ui.PyqtGraphWidget.clear()
         self.ui.PyqtGraphWidget.add_legend()
         self.ui.PyqtGraphWidget.enable_auto_range()
         self.ui.PyqtGraphWidget.plot(x, y, labels, title, x_title, y_title)
@@ -1912,7 +1906,7 @@ class mainWindow(QMainWindow):
 
             if (method == "Murnaghan") and (len(items) > 4):
                 aprox, xs2, ys2 = Calculator.ApproxMurnaghan(items)
-                image_path = '.\images\murnaghan.png'  # path to your image file
+                image_path = str(Path(__file__).parent / 'images' / 'murnaghan.png')  # path to your image file
                 self.ui.FormActionsPostLabelCellParamOptimExpr.setText("E(V0)=" + str(round(float(aprox[0]), 2)))
                 self.ui.FormActionsPostLabelCellParamOptimExpr2.setText("B0=" + str(round(float(aprox[1]), 2)))
                 self.ui.FormActionsPostLabelCellParamOptimExpr3.setText("B0'=" + str(round(float(aprox[2]), 2)))
@@ -1921,7 +1915,7 @@ class mainWindow(QMainWindow):
 
             if (method == "BirchMurnaghan") and (len(items) > 4):
                 aprox, xs2, ys2 = Calculator.ApproxBirchMurnaghan(items)
-                image_path = '.\images\murnaghanbirch.png'  # path to your image file
+                image_path = str(Path(__file__).parent / 'images' / 'murnaghanbirch.png')  # path to your image file
                 self.ui.FormActionsPostLabelCellParamOptimExpr.setText("E(V0)=" + str(round(float(aprox[0]), 2)))
                 self.ui.FormActionsPostLabelCellParamOptimExpr2.setText("B0=" + str(round(float(aprox[1]), 2)))
                 self.ui.FormActionsPostLabelCellParamOptimExpr3.setText("B0'=" + str(round(float(aprox[2]), 2)))
@@ -1930,7 +1924,7 @@ class mainWindow(QMainWindow):
 
             if (method == "Parabola") and (len(items) > 2):
                 aprox, xs2, ys2 = Calculator.ApproxParabola(items)
-                image_path = '.\images\parabola.png'  # path to your image file
+                image_path = str(Path(__file__).parent / 'images' / 'parabola.png')  # path to your image file
                 self.ui.FormActionsPostLabelCellParamOptimExpr.setText("a=" + str(round(float(aprox[2]), 2)))
                 self.ui.FormActionsPostLabelCellParamOptimExpr2.setText("b=" + str(round(float(aprox[1]), 2)))
                 self.ui.FormActionsPostLabelCellParamOptimExpr3.setText(
@@ -2114,14 +2108,9 @@ class mainWindow(QMainWindow):
 
     def state_changed_form_settings_colors_scale(self):
         if self.ui.FormSettingsColorsScale.currentText() == "":
-            self.ui.ColorRow.canvas.axes.clear()
+            self.ui.ColorRow.clear()
         else:
-            gradient = np.linspace(0, 1, 256)
-            gradient = np.vstack((gradient, gradient))
-            self.ui.ColorRow.canvas.axes.imshow(gradient, aspect='auto',
-                                                cmap=plt.get_cmap(self.ui.FormSettingsColorsScale.currentText()))
-            self.ui.ColorRow.canvas.axes.set_axis_off()
-            self.ui.ColorRow.canvas.draw()
+            self.ui.ColorRow.plot_mpl_colormap(self.ui.FormSettingsColorsScale.currentText())
 
     def type_of_surface(self):
         self.ui.FormActionsPostLabelSurfaceMin.setText("")
@@ -2931,7 +2920,7 @@ app = QApplication(sys.argv)
 window = mainWindow()
 window.setup_ui()
 if is_with_figure:
-    window.setWindowIcon(QIcon('./images/ico.png'))
+    window.setWindowIcon(QIcon(str(Path(__file__).parent / 'images' / 'ico.png')))
 window.show()
 window.start_program()
 

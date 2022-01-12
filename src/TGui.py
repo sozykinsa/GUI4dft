@@ -789,11 +789,11 @@ class GuiOpenGL(object):
             verts = surf[0]
             faces = surf[1]
             color = surf[2]
-            gl.glColor4f(color[0], color[1], color[2], color[3])
+            gl.glColor4f(*color)
             for face in faces:
                 gl.glBegin(gl.GL_TRIANGLES)
                 for point in face:
-                    gl.glVertex3f(verts[point][0], verts[point][1], verts[point][2])
+                    gl.glVertex3f(*verts[point])
                 gl.glEnd()
         gl.glEndList()
         self.ViewSurface = True
