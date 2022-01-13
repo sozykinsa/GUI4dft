@@ -22,7 +22,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QStandardItemModel
 from PyQt5.QtGui import QStandardItem
 from image3D import Ui_MainWindow as Ui_image3D
-from atomsidentify import Ui_Dialog as Ui_Dialog_Atoms
+from gui.atomsidentify import Ui_Dialog as Ui_Dialog_Atoms
 from TGui import GuiOpenGL
 
 

@@ -30,43 +30,32 @@ class PyqtGraphWidget(QWidget):
     def clear(self):
         self.graphWidget.clear()
 
-    def plot_dos(self, x: list[list[float]], y: list[list[float]], labels: list[str],
-             title: str, x_title: str, y_title: str):
-        font = QFont()
-        font.setPixelSize(20)
-        self.graphWidget.getAxis("bottom").setStyle(tickFont=font)
-        self.graphWidget.getAxis("left").setStyle(tickFont=font)
-        # Add Title
-        self.graphWidget.setTitle(title, color=self.COLORS[0], size="20pt")
-        # Add Axis Labels
-        self.graphWidget.setLabel("left", y_title, **self.styles)
-        self.graphWidget.setLabel("bottom", x_title, **self.styles)
-
-        n_plots = len(y)
-        for index in range(n_plots):
-            pen = pg.mkPen(color=self.COLORS[index], width=4)
-            self.graphWidget.plot(x[index], y[index], name=labels[index],  pen=pen, font=font)
-
     def plot(self, x: list[list[float]], y: list[list[float]], labels: list[str],
              title: str, x_title: str, y_title: str, is_colored=True):
-        # Axis
         font = QFont()
         font.setPixelSize(20)
-        self.graphWidget.getAxis("bottom").setStyle(tickFont=font)
-        self.graphWidget.getAxis("left").setStyle(tickFont=font)
-        pen = pg.mkPen(color=self.COLORS[0])
-        self.graphWidget.getAxis("bottom").setTextPen(pen)
-        self.graphWidget.getAxis("left").setTextPen(pen)
+        self.set_styles(font)
         # Add Title
         self.graphWidget.setTitle(title, color=self.COLORS[0], size="20pt")
-        # Add Axis Labels
-        self.graphWidget.setLabel("left", y_title, **self.styles)
-        self.graphWidget.setLabel("bottom", x_title, **self.styles)
+        self.add_axes_titles(x_title, y_title)
 
         n_plots = len(y)
         for index in range(n_plots):
             pen = pg.mkPen(color=self.COLORS[index % len(self.COLORS) if is_colored else 0], width=4)
             self.graphWidget.plot(x[index % len(x)], y[index], name=labels[index % len(labels)],  pen=pen, font=font)
+
+    def set_styles(self, font):
+        # Axis
+        self.graphWidget.getAxis("bottom").setStyle(tickFont=font)
+        self.graphWidget.getAxis("left").setStyle(tickFont=font)
+        pen = pg.mkPen(color=self.COLORS[0])
+        self.graphWidget.getAxis("bottom").setTextPen(pen)
+        self.graphWidget.getAxis("left").setTextPen(pen)
+
+    def add_axes_titles(self, x_title, y_title):
+        # Add Axis Labels
+        self.graphWidget.setLabel("left", y_title, **self.styles)
+        self.graphWidget.setLabel("bottom", x_title, **self.styles)
 
     def add_line(self, _pos, _angle, _width, _style):
         # _style: Qt.SolidLine, Qt.DashLine, Qt.DotLine, Qt.DashDotLine, Qt.DashDotDotLine
@@ -88,6 +77,17 @@ class PyqtGraphWidget(QWidget):
 
     def set_xticks(self, ticks):
         self.graphWidget.getAxis("bottom").setTicks(ticks)
+
+    def add_histogram(self, vals, num_bins, facecolor, x_title, y_title):
+        font = QFont()
+        font.setPixelSize(20)
+        self.set_styles(font)
+        ## compute standard histogram
+        y, x = np.histogram(vals, bins=num_bins)
+        ## We are required to use stepMode=True so that PlotCurveItem will interpret this data correctly.
+        curve = pg.PlotCurveItem(x, y, stepMode=True, fillLevel=0, brush=facecolor)
+        self.graphWidget.addItem(curve)
+        self.add_axes_titles(x_title, y_title)
 
 
 class PyqtGraphWidgetImage(QWidget):

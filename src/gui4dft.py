@@ -40,9 +40,8 @@ from TInterface import Importer
 from TInterface import TGaussianCube
 from TInterface import TVolumericData
 from TInterface import TXSF
-from about import Ui_DialogAbout as Ui_about
-from form import Ui_MainWindow as Ui_form
-#from matplotlib.backends.backend_qt5agg import (NavigationToolbar2QT as NavigationToolbar)
+from gui.about import Ui_DialogAbout as Ui_about
+from gui.form import Ui_MainWindow as Ui_form
 
 sys.path.append('.')
 
@@ -1578,7 +1577,8 @@ class mainWindow(QMainWindow):
         self.ui.Form3Dand2DTabs.setCurrentIndex(1)
         c1, c2 = self.fill_bonds_charges()
         bonds = self.MainForm.MainModel.find_bonds_exact()
-        self.ui.MplWidget.canvas.axes.clear()
+
+        self.ui.PyqtGraphWidget.clear()
         b = []
         for bond in bonds:
             if ((c1 == 0) or (c2 == 0)) or ((c1 == bond[0]) and (c2 == bond[1])) or (
@@ -1586,10 +1586,9 @@ class mainWindow(QMainWindow):
                 b.append(bond[2])
 
         num_bins = self.ui.FormActionsPostPlotBondsHistogramN.value()
-        self.ui.MplWidget.canvas.axes.hist(b, num_bins, facecolor='blue', alpha=0.5)
-        self.ui.MplWidget.canvas.axes.set_xlabel("Bond lenght")
-        self.ui.MplWidget.canvas.axes.set_ylabel("Number of bonds")
-        self.ui.MplWidget.canvas.draw()
+        x_label = "Bond lenght"
+        y_label = "Number of bonds"
+        self.ui.PyqtGraphWidget.add_histogram(b, num_bins, (0, 0, 255, 90), x_label, y_label)
 
     def plot_pdos(self):
         file = self.ui.FormActionsLinePDOSfile.text()
