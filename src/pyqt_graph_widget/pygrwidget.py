@@ -7,9 +7,6 @@
 from PySide2.QtWidgets import QWidget, QVBoxLayout
 from PySide2.QtGui import QFont
 import pyqtgraph as pg  # pip install pyqtgraph
-from pyqtgraph.Qt import QtCore, QtGui
-#import pyqtgraph as pg
-from pathlib import Path
 import numpy as np
 
 
@@ -43,6 +40,12 @@ class PyqtGraphWidget(QWidget):
         for index in range(n_plots):
             pen = pg.mkPen(color=self.COLORS[index % len(self.COLORS) if is_colored else 0], width=4)
             self.graphWidget.plot(x[index % len(x)], y[index], name=labels[index % len(labels)],  pen=pen, font=font)
+
+    def add_scatter(self, xs, ys):
+        scatter = pg.ScatterPlotItem(size=15, brush=pg.mkBrush(255, 255, 0, 190))
+        spots = [{'pos': [xs[i], ys[i]], 'data': 1} for i in range(len(xs))]
+        scatter.addPoints(spots)
+        self.graphWidget.addItem(scatter)
 
     def set_styles(self, font):
         # Axis

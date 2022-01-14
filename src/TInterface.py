@@ -2,12 +2,12 @@
 
 from copy import deepcopy
 import os
-from AdvancedTools import TAtomicModel
-from AdvancedTools import TVASP
-from AdvancedTools import TFDFFile
-from AdvancedTools import TSIESTA
-from AdvancedTools import TPeriodTable
-from AdvancedTools import Helpers
+from utils.AdvancedTools import TAtomicModel
+from utils.AdvancedTools import TVASP
+from utils.AdvancedTools import TFDFFile
+from utils.AdvancedTools import TSIESTA
+from utils.AdvancedTools import TPeriodTable
+from utils.AdvancedTools import Helpers
 import numpy as np
 import math
 import skimage

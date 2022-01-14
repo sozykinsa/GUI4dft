@@ -15,17 +15,17 @@ import matplotlib.pyplot as plt
 #from pyqt_graph_widget.pygrwidget import PyqtGraphWidget
 import pyqtgraph as pg  # pip install pyqtgraph
 import numpy as np
-from AdvancedTools import Helpers
-from AdvancedTools import TAtomicModel
-from AdvancedTools import TCalculators as Calculator
-from AdvancedTools import TCapedSWNT
-from AdvancedTools import TBiNT
-from AdvancedTools import TFDFFile
-from AdvancedTools import TGraphene
-from AdvancedTools import TPeriodTable
-from AdvancedTools import TSIESTA
-from AdvancedTools import TSWNT
-from AdvancedTools import TVASP
+from utils.AdvancedTools import Helpers
+from utils.AdvancedTools import TAtomicModel
+from utils.AdvancedTools import TCalculators as Calculator
+from utils.AdvancedTools import TCapedSWNT
+from utils.AdvancedTools import TBiNT
+from utils.AdvancedTools import TFDFFile
+from utils.AdvancedTools import TGraphene
+from utils.AdvancedTools import TPeriodTable
+from utils.AdvancedTools import TSIESTA
+from utils.AdvancedTools import TSWNT
+from utils.AdvancedTools import TVASP
 from PySide2.QtCore import QCoreApplication, QLocale, QSettings, Qt, QSize
 import PySide2.QtCore as QtCore
 QtCore.QVariant = "QVariant"
@@ -183,13 +183,6 @@ class mainWindow(QMainWindow):
 
         self.ui.FormActionsPostButVoronoi.clicked.connect(self.plot_voronoi)
         self.ui.FormActionsPostButOptimizeCellParam.clicked.connect(self.plot_volume_param_energy)
-
-        if is_with_figure and os.path.exists(Path(__file__).parent / "images" / 'Save2D.png'):
-            action = QAction(QIcon(str(Path(__file__).parent / "images" / 'Save2D.png')), 'SaveDataFromFigure', self)
-        else:
-            action = QAction('SaveDataFromFigure', self)
-        action.triggered.connect(self.save_data_from_figure2d)
-        #self.ui.MplWidget.addToolBar(NavigationToolbar(self.ui.MplWidget.canvas, self), action)
 
         model = QStandardItemModel()
         model.appendRow(QStandardItem("select"))
@@ -1640,7 +1633,6 @@ class mainWindow(QMainWindow):
         self.ui.Form3Dand2DTabs.setCurrentIndex(1)
 
         selected = self.ui.FormActionsListPDOS.selectedItems()
-        self.ui.PyqtGraphWidget.clear()
         x = []
         y = []
         labels = []
@@ -1664,6 +1656,7 @@ class mainWindow(QMainWindow):
         title = "PDOS"
         x_title = "Energy, eV"
         y_title = "PDOS, states/eV"
+        self.ui.PyqtGraphWidget.clear()
         self.ui.PyqtGraphWidget.plot(x, y, labels, title, x_title, y_title, True)
 
         if self.ui.FormActionsCheckBANDSfermyShow_2.isChecked():
@@ -1893,7 +1886,6 @@ class mainWindow(QMainWindow):
 
         if len(items):
             items = sorted(items, key=itemgetter(0))
-            self.ui.MplWidget.canvas.axes.clear()
 
             xs = []
             ys = []
@@ -1901,7 +1893,6 @@ class mainWindow(QMainWindow):
             for i in range(0, len(items)):
                 xs.append(items[i][0])
                 ys.append(items[i][1])
-            self.ui.MplWidget.canvas.axes.scatter(xs, ys, color='orange', s=40, marker='o')
 
             if (method == "Murnaghan") and (len(items) > 4):
                 aprox, xs2, ys2 = Calculator.ApproxMurnaghan(items)
@@ -1910,7 +1901,8 @@ class mainWindow(QMainWindow):
                 self.ui.FormActionsPostLabelCellParamOptimExpr2.setText("B0=" + str(round(float(aprox[1]), 2)))
                 self.ui.FormActionsPostLabelCellParamOptimExpr3.setText("B0'=" + str(round(float(aprox[2]), 2)))
                 self.ui.FormActionsPostLabelCellParamOptimExpr4.setText("V0=" + str(round(float(aprox[3]), 2)))
-                self.plot_cell_approx(LabelX, image_path, xs2, ys2)
+                self.plot_cell_approx(image_path)
+                self.plot_curv_and_points(LabelX, xs, ys, xs2, ys2)
 
             if (method == "BirchMurnaghan") and (len(items) > 4):
                 aprox, xs2, ys2 = Calculator.ApproxBirchMurnaghan(items)
@@ -1919,7 +1911,8 @@ class mainWindow(QMainWindow):
                 self.ui.FormActionsPostLabelCellParamOptimExpr2.setText("B0=" + str(round(float(aprox[1]), 2)))
                 self.ui.FormActionsPostLabelCellParamOptimExpr3.setText("B0'=" + str(round(float(aprox[2]), 2)))
                 self.ui.FormActionsPostLabelCellParamOptimExpr4.setText("V0=" + str(round(float(aprox[3]), 2)))
-                self.plot_cell_approx(LabelX, image_path, xs2, ys2)
+                self.plot_cell_approx(image_path)
+                self.plot_curv_and_points(LabelX, xs, ys, xs2, ys2)
 
             if (method == "Parabola") and (len(items) > 2):
                 aprox, xs2, ys2 = Calculator.ApproxParabola(items)
@@ -1929,40 +1922,23 @@ class mainWindow(QMainWindow):
                 self.ui.FormActionsPostLabelCellParamOptimExpr3.setText(
                     "x0=" + str(round(-float(aprox[1]) / float(2 * aprox[2]), 2)))
                 self.ui.FormActionsPostLabelCellParamOptimExpr4.setText("c=" + str(round(float(aprox[0]), 2)))
-                self.plot_cell_approx(LabelX, image_path, xs2, ys2)
+                self.plot_cell_approx(image_path)
+                self.plot_curv_and_points(LabelX, xs, ys, xs2, ys2)
 
-            self.ui.MplWidget.canvas.draw()
+    def plot_curv_and_points(self, x_title, xs, ys, xs2, ys2):
+        self.ui.PyqtGraphWidget.clear()
+        self.ui.PyqtGraphWidget.add_legend()
+        self.ui.PyqtGraphWidget.enable_auto_range()
+        title = "Cell param"
+        y_title = "Energy"
+        self.ui.PyqtGraphWidget.plot([xs2], [ys2], [None], title, x_title, y_title)
+        self.ui.PyqtGraphWidget.add_scatter(xs, ys)
 
-    def plot_cell_approx(self, label_x, image_path, xs2, ys2):
-        self.ui.MplWidget.canvas.axes.plot(xs2, ys2)
-        self.ui.MplWidget.canvas.axes.set_ylabel("Energy")
-        self.ui.MplWidget.canvas.axes.set_xlabel(label_x)
+    def plot_cell_approx(self, image_path):
         image_profile = QImage(image_path)
-        image_profile = image_profile.scaled(320, 320, aspectRatioMode=Qt.KeepAspectRatio,
+        image_profile = image_profile.scaled(320, 54, aspectRatioMode=Qt.KeepAspectRatio,
                                              transformMode=Qt.SmoothTransformation)
         self.ui.FormActionsPostLabelCellParamFig.setPixmap(QPixmap.fromImage(image_profile))
-
-    def save_data_from_figure2d(self):
-        try:
-            data = []
-            lines = self.ui.MplWidget.canvas.axes.lines
-
-            for line in lines:
-                data.append(line.get_xydata())
-
-            if len(data) > 0:
-                name = QFileDialog.getSaveFileName(self, 'Save File')[0]
-                file = open(name, 'w')
-                for line in data:
-                    file.write("Data: \n")
-                    for row in line:
-                        s = ""
-                        for number in row:
-                            s += str(number) + " "
-                        file.write(s + "\n")
-                file.close()
-        except Exception as e:
-            self.show_error(e)
 
     def save_image_to_file(self):
         if len(self.models) == 0:
@@ -2316,16 +2292,16 @@ class mainWindow(QMainWindow):
     def ase_raman_and_ir_plot(self):
         if self.ui.form_raman_radio.isChecked():
             data = self.ui.FormRamanSpectraText.toPlainText()
-            y_text = "Raman"
+            y_title = "Raman"
         else:
             data = self.ui.FormIrSpectraText.toPlainText()
-            y_text = "IR"
+            y_title = "IR"
 
         col = 1
-        x_text = "cm^-1"
+        x_title = "cm^-1"
         if self.ui.form_spectra_mev_radio.isChecked():
             col = 0
-            x_text = "meV"
+            x_title = "meV"
 
         x = []
         y = []
@@ -2348,14 +2324,10 @@ class mainWindow(QMainWindow):
             for j in range(0, n):
                 y_fig[j] += y[i] * math.exp(-math.pow(x[i] - x_fig[j], 2) / ( 2 * sigma) )
 
-        self.ui.MplWidget.canvas.axes.clear()
+        title = "Spectrum"
+        self.ui.PyqtGraphWidget.clear()
         self.ui.Form3Dand2DTabs.setCurrentIndex(1)
-        self.ui.MplWidget.canvas.axes.plot(x_fig, y_fig)
-
-        self.ui.MplWidget.canvas.axes.set_xlabel(x_text)
-        self.ui.MplWidget.canvas.axes.set_ylabel(y_text)
-
-        self.ui.MplWidget.canvas.draw()
+        self.ui.PyqtGraphWidget.plot([x_fig], [y_fig], [None], title, x_title, y_title, True)
 
     def d12_to_file(self):
         if len(self.models) == 0:
