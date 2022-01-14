@@ -12,8 +12,7 @@ from PySide2.QtCore import *
 from PySide2.QtGui import *
 from PySide2.QtWidgets import *
 
-from pyqt_graph_widget.pygrwidget import PyqtGraphWidget
-from pyqt_graph_widget.pygrwidget import PyqtGraphWidgetImage
+from pyqt_graph_widget.pygrwidget import PyqtGraphWidget, PyqtGraphWidgetImage
 
 
 class Ui_MainWindow(object):
@@ -4437,33 +4436,141 @@ class Ui_MainWindow(object):
         self.verticalLayout_58.setObjectName(u"verticalLayout_58")
         self.groupBox_9 = QGroupBox(self.tab_33)
         self.groupBox_9.setObjectName(u"groupBox_9")
-        self.groupBox_9.setEnabled(False)
-        self.groupBox_9.setMinimumSize(QSize(0, 100))
+        self.groupBox_9.setEnabled(True)
+        self.groupBox_9.setMinimumSize(QSize(0, 0))
+        self.horizontalLayout_125 = QHBoxLayout(self.groupBox_9)
+        self.horizontalLayout_125.setObjectName(u"horizontalLayout_125")
         self.label_32 = QLabel(self.groupBox_9)
         self.label_32.setObjectName(u"label_32")
-        self.label_32.setGeometry(QRect(10, 30, 55, 16))
-        self.xfontsize = QSpinBox(self.groupBox_9)
-        self.xfontsize.setObjectName(u"xfontsize")
-        self.xfontsize.setGeometry(QRect(90, 30, 42, 22))
-        self.xfontsize.setMinimum(1)
-        self.xfontsize.setValue(10)
+
+        self.horizontalLayout_125.addWidget(self.label_32)
+
+        self.Form2DFontColorR = QSpinBox(self.groupBox_9)
+        self.Form2DFontColorR.setObjectName(u"Form2DFontColorR")
+        self.Form2DFontColorR.setMaximum(255)
+
+        self.horizontalLayout_125.addWidget(self.Form2DFontColorR)
+
+        self.Form2DFontColorG = QSpinBox(self.groupBox_9)
+        self.Form2DFontColorG.setObjectName(u"Form2DFontColorG")
+        self.Form2DFontColorG.setMaximum(255)
+
+        self.horizontalLayout_125.addWidget(self.Form2DFontColorG)
+
+        self.Form2DFontColorB = QSpinBox(self.groupBox_9)
+        self.Form2DFontColorB.setObjectName(u"Form2DFontColorB")
+        self.Form2DFontColorB.setMaximum(255)
+
+        self.horizontalLayout_125.addWidget(self.Form2DFontColorB)
+
 
         self.verticalLayout_58.addWidget(self.groupBox_9)
 
         self.groupBox_10 = QGroupBox(self.tab_33)
         self.groupBox_10.setObjectName(u"groupBox_10")
-        self.groupBox_10.setEnabled(False)
-        self.groupBox_10.setMinimumSize(QSize(0, 100))
-        self.label_34 = QLabel(self.groupBox_10)
+        self.groupBox_10.setEnabled(True)
+        self.groupBox_10.setMinimumSize(QSize(0, 0))
+        self.verticalLayout_45 = QVBoxLayout(self.groupBox_10)
+        self.verticalLayout_45.setObjectName(u"verticalLayout_45")
+        self.frame_38 = QFrame(self.groupBox_10)
+        self.frame_38.setObjectName(u"frame_38")
+        self.frame_38.setFrameShape(QFrame.StyledPanel)
+        self.frame_38.setFrameShadow(QFrame.Raised)
+        self.horizontalLayout_20 = QHBoxLayout(self.frame_38)
+        self.horizontalLayout_20.setObjectName(u"horizontalLayout_20")
+        self.label_91 = QLabel(self.frame_38)
+        self.label_91.setObjectName(u"label_91")
+
+        self.horizontalLayout_20.addWidget(self.label_91)
+
+        self.FormTitleFontSize = QSpinBox(self.frame_38)
+        self.FormTitleFontSize.setObjectName(u"FormTitleFontSize")
+        self.FormTitleFontSize.setMinimum(1)
+        self.FormTitleFontSize.setValue(10)
+
+        self.horizontalLayout_20.addWidget(self.FormTitleFontSize)
+
+        self.horizontalSpacer_73 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_20.addItem(self.horizontalSpacer_73)
+
+
+        self.verticalLayout_45.addWidget(self.frame_38)
+
+        self.frame_32 = QFrame(self.groupBox_10)
+        self.frame_32.setObjectName(u"frame_32")
+        self.frame_32.setFrameShape(QFrame.StyledPanel)
+        self.frame_32.setFrameShadow(QFrame.Raised)
+        self.horizontalLayout_21 = QHBoxLayout(self.frame_32)
+        self.horizontalLayout_21.setObjectName(u"horizontalLayout_21")
+        self.label_34 = QLabel(self.frame_32)
         self.label_34.setObjectName(u"label_34")
-        self.label_34.setGeometry(QRect(10, 30, 55, 16))
-        self.yfontsize = QSpinBox(self.groupBox_10)
-        self.yfontsize.setObjectName(u"yfontsize")
-        self.yfontsize.setGeometry(QRect(100, 30, 42, 22))
-        self.yfontsize.setMinimum(1)
-        self.yfontsize.setValue(10)
+
+        self.horizontalLayout_21.addWidget(self.label_34)
+
+        self.FormAxesFontSize = QSpinBox(self.frame_32)
+        self.FormAxesFontSize.setObjectName(u"FormAxesFontSize")
+        self.FormAxesFontSize.setMinimum(1)
+        self.FormAxesFontSize.setValue(10)
+
+        self.horizontalLayout_21.addWidget(self.FormAxesFontSize)
+
+        self.horizontalSpacer_18 = QSpacerItem(187, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_21.addItem(self.horizontalSpacer_18)
+
+
+        self.verticalLayout_45.addWidget(self.frame_32)
+
+        self.frame_33 = QFrame(self.groupBox_10)
+        self.frame_33.setObjectName(u"frame_33")
+        self.frame_33.setFrameShape(QFrame.StyledPanel)
+        self.frame_33.setFrameShadow(QFrame.Raised)
+        self.horizontalLayout_25 = QHBoxLayout(self.frame_33)
+        self.horizontalLayout_25.setObjectName(u"horizontalLayout_25")
+        self.label_40 = QLabel(self.frame_33)
+        self.label_40.setObjectName(u"label_40")
+
+        self.horizontalLayout_25.addWidget(self.label_40)
+
+        self.FormLabelFontSize = QSpinBox(self.frame_33)
+        self.FormLabelFontSize.setObjectName(u"FormLabelFontSize")
+        self.FormLabelFontSize.setMinimum(1)
+        self.FormLabelFontSize.setValue(10)
+
+        self.horizontalLayout_25.addWidget(self.FormLabelFontSize)
+
+        self.horizontalSpacer_67 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_25.addItem(self.horizontalSpacer_67)
+
+
+        self.verticalLayout_45.addWidget(self.frame_33)
+
 
         self.verticalLayout_58.addWidget(self.groupBox_10)
+
+        self.frame_120 = QFrame(self.tab_33)
+        self.frame_120.setObjectName(u"frame_120")
+        self.frame_120.setFrameShape(QFrame.StyledPanel)
+        self.frame_120.setFrameShadow(QFrame.Raised)
+        self.horizontalLayout_34 = QHBoxLayout(self.frame_120)
+        self.horizontalLayout_34.setObjectName(u"horizontalLayout_34")
+        self.horizontalSpacer_86 = QSpacerItem(117, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_34.addItem(self.horizontalSpacer_86)
+
+        self.FormStylesFor2DGraph = QPushButton(self.frame_120)
+        self.FormStylesFor2DGraph.setObjectName(u"FormStylesFor2DGraph")
+
+        self.horizontalLayout_34.addWidget(self.FormStylesFor2DGraph)
+
+        self.horizontalSpacer_87 = QSpacerItem(117, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_34.addItem(self.horizontalSpacer_87)
+
+
+        self.verticalLayout_58.addWidget(self.frame_120)
 
         self.verticalSpacer_27 = QSpacerItem(20, 531, QSizePolicy.Minimum, QSizePolicy.Expanding)
 
@@ -4996,7 +5103,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.tabWidget.setCurrentIndex(5)
+        self.tabWidget.setCurrentIndex(0)
         self.tabWidget_3.setCurrentIndex(0)
         self.toolBox.setCurrentIndex(0)
         self.toolBox_6.setCurrentIndex(0)
@@ -5009,7 +5116,7 @@ class Ui_MainWindow(object):
         self.tabWidget_7.setCurrentIndex(2)
         self.tabWidget_8.setCurrentIndex(0)
         self.tabWidget_9.setCurrentIndex(0)
-        self.toolBox_3.setCurrentIndex(2)
+        self.toolBox_3.setCurrentIndex(0)
         self.Form3Dand2DTabs.setCurrentIndex(0)
 
 
@@ -5374,10 +5481,13 @@ class Ui_MainWindow(object):
         self.label_31.setText(QCoreApplication.translate("MainWindow", u"-", None))
         self.label_30.setText(QCoreApplication.translate("MainWindow", u"A", None))
         self.tabWidget_9.setTabText(self.tabWidget_9.indexOf(self.tab_32), QCoreApplication.translate("MainWindow", u"View 3D", None))
-        self.groupBox_9.setTitle(QCoreApplication.translate("MainWindow", u"X-axes", None))
-        self.label_32.setText(QCoreApplication.translate("MainWindow", u"Font size", None))
-        self.groupBox_10.setTitle(QCoreApplication.translate("MainWindow", u"Y-axes", None))
-        self.label_34.setText(QCoreApplication.translate("MainWindow", u"Font size", None))
+        self.groupBox_9.setTitle(QCoreApplication.translate("MainWindow", u"Colors", None))
+        self.label_32.setText(QCoreApplication.translate("MainWindow", u"Font color", None))
+        self.groupBox_10.setTitle(QCoreApplication.translate("MainWindow", u"Font size", None))
+        self.label_91.setText(QCoreApplication.translate("MainWindow", u"Title font size", None))
+        self.label_34.setText(QCoreApplication.translate("MainWindow", u"Axes font size", None))
+        self.label_40.setText(QCoreApplication.translate("MainWindow", u"Label font size", None))
+        self.FormStylesFor2DGraph.setText(QCoreApplication.translate("MainWindow", u"Apply style", None))
         self.tabWidget_9.setTabText(self.tabWidget_9.indexOf(self.tab_33), QCoreApplication.translate("MainWindow", u"View 2D", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_29), QCoreApplication.translate("MainWindow", u"View", None))
         self.FormSettingsOpeningCheckOnlyOptimal.setText(QCoreApplication.translate("MainWindow", u"Get only optimal structures", None))

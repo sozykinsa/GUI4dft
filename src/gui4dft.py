@@ -140,6 +140,7 @@ class mainWindow(QMainWindow):
         self.ui.FormModifyCellButton.clicked.connect(self.edit_cell)
         self.ui.FormActionsPostButGetBonds.clicked.connect(self.get_bonds)
         self.ui.PropertyAtomAtomDistanceGet.clicked.connect(self.get_bond)
+        self.ui.FormStylesFor2DGraph.clicked.connect(self.set_2d_graph_styles)
 
         self.ui.FormIEd12Generate.clicked.connect(self.d12_to_file)
 
@@ -978,6 +979,16 @@ class mainWindow(QMainWindow):
             value = values[i]
             colors.append(self.get_color(cmap, minv, maxv, value, color_scale))
         return colors
+
+    def set_2d_graph_styles(self):
+        color_r = self.ui.Form2DFontColorR.value()
+        color_g = self.ui.Form2DFontColorG.value()
+        color_b = self.ui.Form2DFontColorB.value()
+        color = [color_r, color_g, color_b]
+        title_font_size = self.ui.FormTitleFontSize.text()
+        label_font_size = self.ui.FormLabelFontSize.text()
+        axes_font_size = self.ui.FormAxesFontSize.text()
+        self.ui.PyqtGraphWidget.set_styles(title_font_size, axes_font_size, label_font_size, color)
 
     def get_color_of_plane(self, minv, maxv, points, cmap, color_scale):
         Nx = len(points)
