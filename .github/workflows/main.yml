@@ -29,5 +29,4 @@ jobs:
     - name: set pythonpath
       run: |
        echo "PYTHONPATH=./src" >> $GITHUB_ENV
-    - run: pip install pytest-cov
-    - run: pytest --cov=src
+    - run: python -m pytest --color=yes --cov=src --cov-report=html --cov-report=term-missing

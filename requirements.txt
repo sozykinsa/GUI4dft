@@ -6,3 +6,4 @@ pyqtgraph
 scikit-image
 pyside2
 pytest
+pytest-cov
