@@ -7,6 +7,7 @@ from utils.AdvancedTools import TFDFFile
 from utils.siesta import TSIESTA
 from utils.helpers import Helpers
 import numpy as np
+from TInterface import TXSF, TGaussianCube
 
 
 class Importer(object):

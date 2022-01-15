@@ -125,7 +125,9 @@ class PyqtGraphWidget(QWidget):
         y, x = np.histogram(vals, bins=num_bins)
         curve = pg.PlotCurveItem(x, y, stepMode=True, fillLevel=0, brush=facecolor)
         self.graphWidget.addItem(curve)
-        self.add_axes_titles(x_title, y_title)
+        self.x_title = x_title
+        self.y_title = y_title
+        self.add_axes_titles()
 
     def set_limits(self, x_min, x_max, y_min, y_max):
         self.graphWidget.setXRange(x_min, x_max, padding=0)
