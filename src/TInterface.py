@@ -3,9 +3,6 @@
 from copy import deepcopy
 import os
 from utils.atomic_model import TAtomicModel
-from utils.vasp import TVASP
-from utils.AdvancedTools import TFDFFile
-from utils.siesta import TSIESTA
 from utils.periodic_table import TPeriodTable
 from utils.helpers import Helpers
 import numpy as np

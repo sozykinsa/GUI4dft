@@ -7,3 +7,4 @@ scikit-image
 pyside2
 pytest
 pytest-cov
+pytest-qt
