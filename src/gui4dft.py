@@ -15,17 +15,17 @@ import matplotlib.pyplot as plt
 #from pyqt_graph_widget.pygrwidget import PyqtGraphWidget
 import pyqtgraph as pg  # pip install pyqtgraph
 import numpy as np
-from utils.AdvancedTools import Helpers
-from utils.AdvancedTools import TAtomicModel
+from utils.helpers import Helpers
+from utils.atomic_model import TAtomicModel
 from utils.AdvancedTools import TCalculators as Calculator
 from utils.AdvancedTools import TCapedSWNT
 from utils.AdvancedTools import TBiNT
 from utils.AdvancedTools import TFDFFile
 from utils.AdvancedTools import TGraphene
 from utils.AdvancedTools import TPeriodTable
-from utils.AdvancedTools import TSIESTA
+from utils.siesta import TSIESTA
 from utils.AdvancedTools import TSWNT
-from utils.AdvancedTools import TVASP
+from utils.vasp import TVASP
 from PySide2.QtCore import QCoreApplication, QLocale, QSettings, Qt, QSize
 import PySide2.QtCore as QtCore
 QtCore.QVariant = "QVariant"
