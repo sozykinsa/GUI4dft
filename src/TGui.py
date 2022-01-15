@@ -2,19 +2,18 @@
 
 import OpenGL.GL as gl
 import OpenGL.GLU as glu
-from PyQt5.QtWidgets import QOpenGLWidget
-from PyQt5.QtCore import QEvent
-from PyQt5.QtCore import QObject
-from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QColor, QPainter, QFont
+from PySide2.QtWidgets import QOpenGLWidget
+from PySide2.QtCore import QEvent
+from PySide2.QtCore import QObject
+from PySide2.QtCore import Qt
+from PySide2.QtGui import QColor, QPainter, QFont
 from copy import deepcopy
-from AdvancedTools import TAtom
-from AdvancedTools import TAtomicModel
-from AdvancedTools import TCalculators
-from AdvancedTools import TPeriodTable
+from utils.AdvancedTools import TAtom
+from utils.AdvancedTools import TAtomicModel
+from utils.AdvancedTools import TCalculators
+from utils.AdvancedTools import TPeriodTable
 import math
 import numpy as np
-import time
 
 
 class mouse_events_filter(QObject):
@@ -790,11 +789,11 @@ class GuiOpenGL(object):
             verts = surf[0]
             faces = surf[1]
             color = surf[2]
-            gl.glColor4f(color[0], color[1], color[2], color[3])
+            gl.glColor4f(*color)
             for face in faces:
                 gl.glBegin(gl.GL_TRIANGLES)
                 for point in face:
-                    gl.glVertex3f(verts[point][0], verts[point][1], verts[point][2])
+                    gl.glVertex3f(*verts[point])
                 gl.glEnd()
         gl.glEndList()
         self.ViewSurface = True

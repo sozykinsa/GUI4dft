@@ -2,12 +2,12 @@
 
 from copy import deepcopy
 import os
-from AdvancedTools import TAtomicModel
-from AdvancedTools import TVASP
-from AdvancedTools import TFDFFile
-from AdvancedTools import TSIESTA
-from AdvancedTools import TPeriodTable
-from AdvancedTools import Helpers
+from utils.AdvancedTools import TAtomicModel
+from utils.AdvancedTools import TVASP
+from utils.AdvancedTools import TFDFFile
+from utils.AdvancedTools import TSIESTA
+from utils.AdvancedTools import TPeriodTable
+from utils.AdvancedTools import Helpers
 import numpy as np
 import math
 import skimage
@@ -22,7 +22,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QStandardItemModel
 from PyQt5.QtGui import QStandardItem
 from image3D import Ui_MainWindow as Ui_image3D
-from atomsidentify import Ui_Dialog as Ui_Dialog_Atoms
+from gui.atomsidentify import Ui_Dialog as Ui_Dialog_Atoms
 from TGui import GuiOpenGL
 
 
