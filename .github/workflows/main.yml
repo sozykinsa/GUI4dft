@@ -29,5 +29,6 @@ jobs:
     - name: set pythonpath
       run: |
        echo "PYTHONPATH=./src" >> $GITHUB_ENV
-       pytest
+    - run: pip install coverage
+    - run: coverage run -m pytest
    
