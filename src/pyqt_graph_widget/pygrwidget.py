@@ -8,6 +8,7 @@ from PySide2.QtWidgets import QWidget, QVBoxLayout
 from PySide2.QtGui import QFont
 import pyqtgraph as pg  # pip install pyqtgraph
 import numpy as np
+from typing import List
 
 
 class PyqtGraphWidget(QWidget):
@@ -76,7 +77,7 @@ class PyqtGraphWidget(QWidget):
     def clear(self):
         self.graphWidget.clear()
 
-    def plot(self, x: list[list[float]], y: list[list[float]], labels: list[str],
+    def plot(self, x: List[List[float]], y: List[List[float]], labels: List[str],
              title: str, x_title: str, y_title: str, is_colored=True):
         self.title = title
         self.x_title = x_title

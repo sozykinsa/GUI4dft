@@ -7,6 +7,10 @@ pip3 install pyside2 numpy scipy pyopengl pyqtgraph matplotlib scikit-image
 
 These commands are suitable for Windows 10, Ubuntu 20, Mas OS Majave. For other distributions and operating systems, the command and set of required packages may differ.
 
+You have to set the variable QT_API:
+
+export QT_API=pyside2 (in linux, or https://www.architectryan.com/2018/08/31/how-to-change-environment-variables-on-windows-10/ in Windows)
+
 To run the program, type
 
 python3 gui4dft.py
