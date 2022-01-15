@@ -985,10 +985,11 @@ class mainWindow(QMainWindow):
         color_g = self.ui.Form2DFontColorG.value()
         color_b = self.ui.Form2DFontColorB.value()
         color = [color_r, color_g, color_b]
-        title_font_size = self.ui.FormTitleFontSize.text()
-        label_font_size = self.ui.FormLabelFontSize.text()
-        axes_font_size = self.ui.FormAxesFontSize.text()
-        self.ui.PyqtGraphWidget.set_styles(title_font_size, axes_font_size, label_font_size, color)
+        title_font_size = self.ui.FormTitleFontSize.value()
+        label_font_size = self.ui.FormLabelFontSize.value()
+        axes_font_size = self.ui.FormAxesFontSize.value()
+        line_width = self.ui.Form2DLineWidth.value()
+        self.ui.PyqtGraphWidget.set_styles(title_font_size, axes_font_size, label_font_size, line_width, color)
 
     def get_color_of_plane(self, minv, maxv, points, cmap, color_scale):
         Nx = len(points)

@@ -21,6 +21,8 @@ class PyqtGraphWidget(QWidget):
         vertical_layout.addWidget(self.graphWidget)
         self.setLayout(vertical_layout)
 
+        self.line_width = 2
+
         self.font_size_title = 20
         self.font_size_axes = 20
         self.font_size_legend = 20
@@ -29,45 +31,68 @@ class PyqtGraphWidget(QWidget):
         self.font_pen = pg.mkPen(color=self.font_color)
 
         self.graphWidget.setBackground((255, 255, 255))
-        self.styles = {"color": "#000", "font-size": "20px"}
         self.legend_item = None
 
-        self.main_font = QFont()
-        self.main_font.setPixelSize(20)
+        self.styles = {"color": "#000", "font-size": str(self.font_size_axes) + "px"}
+
+        self.title_font = QFont()
+        self.legend_font = QFont()
+        self.axes_font = QFont()
+
+        self.title = ""
+        self.x_title = ""
+        self.y_title = ""
 
         self.apply_styles()
 
-    def set_styles(self, font_size_t, font_size_a, font_size_l, font_color):
+    def set_styles(self, font_size_t, font_size_a, font_size_l, line_width, font_color):
         self.font_size_title = font_size_t
         self.font_size_axes = font_size_a
         self.font_size_legend = font_size_l
-
+        self.line_width = line_width
         self.font_color = font_color
         self.apply_styles()
 
     def apply_styles(self):
         self.font_pen = pg.mkPen(color=self.font_color)
 
-        self.graphWidget.getAxis("bottom").setStyle(tickFont=self.main_font)
-        self.graphWidget.getAxis("left").setStyle(tickFont=self.main_font)
+        self.title_font.setPixelSize(self.font_size_title)
+        self.legend_font.setPixelSize(self.font_size_legend)
+        self.axes_font.setPixelSize(self.font_size_axes)
+
+        self.graphWidget.getAxis("bottom").setStyle(tickFont=self.axes_font)
+        self.graphWidget.getAxis("left").setStyle(tickFont=self.axes_font)
         self.graphWidget.getAxis("bottom").setTextPen(self.font_pen)
         self.graphWidget.getAxis("left").setTextPen(self.font_pen)
+
+        self.styles = {"color": "#000", "font-size": str(self.font_size_axes) + "px"}
+
+        self.add_title()
+        self.add_axes_titles()
+
+        if self.legend_item:
+            self.legend_item.setLabelTextSize(str(self.font_size_legend) + 'pt')
 
     def clear(self):
         self.graphWidget.clear()
 
     def plot(self, x: list[list[float]], y: list[list[float]], labels: list[str],
              title: str, x_title: str, y_title: str, is_colored=True):
+        self.title = title
+        self.x_title = x_title
+        self.y_title = y_title
         self.apply_styles()
-        # Add Title
-        self.graphWidget.setTitle(title, color=self.font_color, size=str(self.font_size_title)+"pt")
-        self.add_axes_titles(x_title, y_title)
+        self.add_title()
+        self.add_axes_titles()
 
         n_plots = len(y)
         for index in range(n_plots):
-            pen = pg.mkPen(color=self.COLORS[index % len(self.COLORS) if is_colored else 0], width=4)
+            pen = pg.mkPen(color=self.COLORS[index % len(self.COLORS) if is_colored else 0], width=self.line_width)
             self.graphWidget.plot(x[index % len(x)], y[index], name=labels[index % len(labels)],
-                                  pen=pen, font=self.main_font)
+                                  pen=pen, font=self.legend_font)
+
+    def add_title(self):
+        self.graphWidget.setTitle(self.title, color=self.font_color, size=str(self.font_size_title) + "pt")
 
     def add_scatter(self, xs, ys):
         scatter = pg.ScatterPlotItem(size=15, brush=pg.mkBrush(255, 255, 0, 190))
@@ -75,10 +100,10 @@ class PyqtGraphWidget(QWidget):
         scatter.addPoints(spots)
         self.graphWidget.addItem(scatter)
 
-    def add_axes_titles(self, x_title, y_title):
+    def add_axes_titles(self):
         # Add Axis Labels
-        self.graphWidget.setLabel("left", y_title, **self.styles)
-        self.graphWidget.setLabel("bottom", x_title, **self.styles)
+        self.graphWidget.setLabel("left", self.y_title, **self.styles)
+        self.graphWidget.setLabel("bottom", self.x_title, **self.styles)
 
     def add_line(self, _pos, _angle, _width, _style):
         # _style: Qt.SolidLine, Qt.DashLine, Qt.DotLine, Qt.DashDotLine, Qt.DashDotDotLine
@@ -88,7 +113,7 @@ class PyqtGraphWidget(QWidget):
 
     def add_legend(self):
         self.legend_item = self.graphWidget.addLegend()
-        self.legend_item.setLabelTextSize('15pt')
+        self.legend_item.setLabelTextSize(str(self.font_size_legend) + 'pt')
         self.legend_item.setLabelTextColor(pg.mkColor(0, 0, 0))
 
     def set_xticks(self, ticks):

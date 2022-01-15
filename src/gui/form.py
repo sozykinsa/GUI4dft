@@ -4486,7 +4486,7 @@ class Ui_MainWindow(object):
         self.FormTitleFontSize = QSpinBox(self.frame_38)
         self.FormTitleFontSize.setObjectName(u"FormTitleFontSize")
         self.FormTitleFontSize.setMinimum(1)
-        self.FormTitleFontSize.setValue(10)
+        self.FormTitleFontSize.setValue(20)
 
         self.horizontalLayout_20.addWidget(self.FormTitleFontSize)
 
@@ -4511,7 +4511,7 @@ class Ui_MainWindow(object):
         self.FormAxesFontSize = QSpinBox(self.frame_32)
         self.FormAxesFontSize.setObjectName(u"FormAxesFontSize")
         self.FormAxesFontSize.setMinimum(1)
-        self.FormAxesFontSize.setValue(10)
+        self.FormAxesFontSize.setValue(20)
 
         self.horizontalLayout_21.addWidget(self.FormAxesFontSize)
 
@@ -4536,7 +4536,7 @@ class Ui_MainWindow(object):
         self.FormLabelFontSize = QSpinBox(self.frame_33)
         self.FormLabelFontSize.setObjectName(u"FormLabelFontSize")
         self.FormLabelFontSize.setMinimum(1)
-        self.FormLabelFontSize.setValue(10)
+        self.FormLabelFontSize.setValue(20)
 
         self.horizontalLayout_25.addWidget(self.FormLabelFontSize)
 
@@ -4549,6 +4549,38 @@ class Ui_MainWindow(object):
 
 
         self.verticalLayout_58.addWidget(self.groupBox_10)
+
+        self.groupBox_17 = QGroupBox(self.tab_33)
+        self.groupBox_17.setObjectName(u"groupBox_17")
+        self.groupBox_17.setMinimumSize(QSize(0, 0))
+        self.verticalLayout_76 = QVBoxLayout(self.groupBox_17)
+        self.verticalLayout_76.setObjectName(u"verticalLayout_76")
+        self.frame_121 = QFrame(self.groupBox_17)
+        self.frame_121.setObjectName(u"frame_121")
+        self.frame_121.setFrameShape(QFrame.StyledPanel)
+        self.frame_121.setFrameShadow(QFrame.Raised)
+        self.horizontalLayout_126 = QHBoxLayout(self.frame_121)
+        self.horizontalLayout_126.setObjectName(u"horizontalLayout_126")
+        self.label_28 = QLabel(self.frame_121)
+        self.label_28.setObjectName(u"label_28")
+
+        self.horizontalLayout_126.addWidget(self.label_28)
+
+        self.Form2DLineWidth = QSpinBox(self.frame_121)
+        self.Form2DLineWidth.setObjectName(u"Form2DLineWidth")
+        self.Form2DLineWidth.setMinimum(2)
+
+        self.horizontalLayout_126.addWidget(self.Form2DLineWidth)
+
+        self.horizontalSpacer_88 = QSpacerItem(208, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_126.addItem(self.horizontalSpacer_88)
+
+
+        self.verticalLayout_76.addWidget(self.frame_121)
+
+
+        self.verticalLayout_58.addWidget(self.groupBox_17)
 
         self.frame_120 = QFrame(self.tab_33)
         self.frame_120.setObjectName(u"frame_120")
@@ -4855,7 +4887,7 @@ class Ui_MainWindow(object):
         self.toolBox_3.addItem(self.page_20, u"Colors of model")
         self.page_18 = QWidget()
         self.page_18.setObjectName(u"page_18")
-        self.page_18.setGeometry(QRect(0, 0, 399, 706))
+        self.page_18.setGeometry(QRect(0, 0, 379, 324))
         self.verticalLayout_21 = QVBoxLayout(self.page_18)
         self.verticalLayout_21.setObjectName(u"verticalLayout_21")
         self.frame_76 = QFrame(self.page_18)
@@ -5487,6 +5519,8 @@ class Ui_MainWindow(object):
         self.label_91.setText(QCoreApplication.translate("MainWindow", u"Title font size", None))
         self.label_34.setText(QCoreApplication.translate("MainWindow", u"Axes font size", None))
         self.label_40.setText(QCoreApplication.translate("MainWindow", u"Label font size", None))
+        self.groupBox_17.setTitle(QCoreApplication.translate("MainWindow", u"Line width", None))
+        self.label_28.setText(QCoreApplication.translate("MainWindow", u"Line width", None))
         self.FormStylesFor2DGraph.setText(QCoreApplication.translate("MainWindow", u"Apply style", None))
         self.tabWidget_9.setTabText(self.tabWidget_9.indexOf(self.tab_33), QCoreApplication.translate("MainWindow", u"View 2D", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_29), QCoreApplication.translate("MainWindow", u"View", None))
