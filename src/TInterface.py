@@ -16,11 +16,11 @@ if skimage.__version__ >= '0.17.2':
 else:
     from skimage.measure import marching_cubes_lewiner
 from skimage.measure import find_contours
-from PyQt5.QtWidgets import QDialog, QTableWidgetItem, QComboBox, QMainWindow
-from PyQt5.QtCore import QSize
-from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QStandardItemModel
-from PyQt5.QtGui import QStandardItem
+from PySide2.QtWidgets import QDialog, QTableWidgetItem, QComboBox, QMainWindow
+from PySide2.QtCore import QSize
+from PySide2.QtCore import Qt
+from PySide2.QtGui import QStandardItemModel
+from PySide2.QtGui import QStandardItem
 from image3D import Ui_MainWindow as Ui_image3D
 from gui.atomsidentify import Ui_Dialog as Ui_Dialog_Atoms
 from TGui import GuiOpenGL
