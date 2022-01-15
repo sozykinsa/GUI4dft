@@ -9,7 +9,7 @@ def tests_path() -> Path:
     return Path(__file__).parent
 
 
-@pytest.fixture
-def graph_widget(qapp):
-    widget = PyqtGraphWidget()
-    return widget
+#@pytest.fixture
+#def graph_widget(qapp):
+#    widget = PyqtGraphWidget()
+#    return widget
