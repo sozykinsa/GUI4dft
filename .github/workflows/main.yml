@@ -29,6 +29,5 @@ jobs:
     - name: set pythonpath
       run: |
        echo "PYTHONPATH=./src" >> $GITHUB_ENV
-       pip install coverage
        pytest
    
