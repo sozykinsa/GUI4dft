@@ -17,7 +17,7 @@ jobs:
         pip install pyside2 pytest coverage pytest-qt
     - name: set pythonpath
       run: |
-        echo "PYTHONPATH=/home/runner/work/GUI4dft/GUI4dft/src" >> $GITHUB_ENV
+        echo "PYTHONPATH=/home/runner/work/GUI4dft/GUI4dft/src:/home/runner/work/GUI4dft/GUI4dft/src/pyqt_graph_widget" >> $GITHUB_ENV
     - name: Test
       env:
         QT_DEBUG_PLUGINS: 1
