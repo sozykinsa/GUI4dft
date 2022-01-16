@@ -66,17 +66,17 @@ class TFDFFile:
 
     @staticmethod
     def fdf_data_dump(filename):
-        MyFile = open(filename)
-        str1 = MyFile.readline()
+        file_name = open(filename)
+        str1 = file_name.readline()
         while str1.find("Dump of input data file") == -1:
-            str1 = MyFile.readline()
-        str1 = MyFile.readline()
+            str1 = file_name.readline()
+        str1 = file_name.readline()
         fdf = []
         while str1.find("End of input data file") == -1:
             if str1 != "":
                 fdf.append(str1)
-            str1 = MyFile.readline()
-        MyFile.close()
+            str1 = file_name.readline()
+        file_name.close()
         return fdf
 
     def get_property(self, prop):
@@ -105,10 +105,10 @@ class TFDFFile:
         print("block '" + prop + "' not found\n")
         return val
 
-    def get_all_data(self, _structure, coordType, lattType):
+    def get_all_data(self, _structure, coord_type, latt_type):
         structure = deepcopy(_structure)
 
-        st = structure.toSIESTAfdfdata(coordType, lattType)
+        st = structure.toSIESTAfdfdata(coord_type, latt_type)
 
         for prop in self.properties:
             f = True
@@ -121,11 +121,11 @@ class TFDFFile:
 
         for block in self.blocks:
             f = True
-            if (block.name).lower().find("zmatrix") >= 0: f = False
-            if (block.name).lower().find("chemicalspecieslabel") >= 0: f = False
-            if (block.name).lower().find("latticeparameters") >=0: f = False
-            if (block.name).lower().find("latticevectors") >=0: f = False
-            if (block.name).lower().find("atomiccoordinatesandatomicspecies") >= 0: f = False
+            if block.name.lower().find("zmatrix") >= 0: f = False
+            if block.name.lower().find("chemicalspecieslabel") >= 0: f = False
+            if block.name.lower().find("latticeparameters") >=0: f = False
+            if block.name.lower().find("latticevectors") >=0: f = False
+            if block.name.lower().find("atomiccoordinatesandatomicspecies") >= 0: f = False
 
             if f:
                 st += "%block "+block.name+"\n"

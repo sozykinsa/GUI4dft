@@ -789,10 +789,12 @@ class GuiOpenGL(object):
             verts = surf[0]
             faces = surf[1]
             color = surf[2]
+            normals = surf[3]
             gl.glColor4f(*color)
             for face in faces:
                 gl.glBegin(gl.GL_TRIANGLES)
                 for point in face:
+                    gl.glNormal3f(*(-normals[point]))
                     gl.glVertex3f(*verts[point])
                 gl.glEnd()
         gl.glEndList()
@@ -870,23 +872,25 @@ class GuiOpenGL(object):
         for plane in data:
             points = plane[0]
             colors = plane[1]
+            normal = plane[2]
             Nx = len(points)
             Ny = len(points[0])
+            gl.glNormal3f(*normal)
             gl.glBegin(gl.GL_TRIANGLES)
             for i in range(0, Nx-1):
                 for j in range(0, Ny-1):
-                    gl.glColor3f(colors[i][j][0], colors[i][j][1], colors[i][j][2])
-                    gl.glVertex3f(points[i][j][0], points[i][j][1], points[i][j][2])
-                    gl.glColor3f(colors[i+1][j][0], colors[i+1][j][1], colors[i+1][j][2])
-                    gl.glVertex3f(points[i+1][j][0], points[i+1][j][1], points[i+1][j][2])
-                    gl.glColor3f(colors[i][j+1][0], colors[i][j+1][1], colors[i][j+1][2])
-                    gl.glVertex3f(points[i][j+1][0], points[i][j+1][1], points[i][j+1][2])
-                    gl.glColor3f(colors[i][j+1][0], colors[i][j+1][1], colors[i][j+1][2])
-                    gl.glVertex3f(points[i][j+1][0], points[i][j+1][1], points[i][j+1][2])
-                    gl.glColor3f(colors[i + 1][j][0], colors[i + 1][j][1], colors[i + 1][j][2])
-                    gl.glVertex3f(points[i + 1][j][0], points[i + 1][j][1], points[i + 1][j][2])
-                    gl.glColor3f(colors[i + 1][j+1][0], colors[i + 1][j+1][1], colors[i + 1][j+1][2])
-                    gl.glVertex3f(points[i + 1][j+1][0], points[i + 1][j+1][1], points[i + 1][j+1][2])
+                    gl.glColor3f(*colors[i][j])
+                    gl.glVertex3f(*points[i][j][0:3])
+                    gl.glColor3f(*colors[i+1][j])
+                    gl.glVertex3f(*points[i+1][j][0:3])
+                    gl.glColor3f(*colors[i][j+1])
+                    gl.glVertex3f(*points[i][j+1][0:3])
+                    gl.glColor3f(*colors[i][j+1])
+                    gl.glVertex3f(*points[i][j+1][0:3])
+                    gl.glColor3f(*colors[i + 1][j])
+                    gl.glVertex3f(*points[i + 1][j][0:3])
+                    gl.glColor3f(*colors[i + 1][j+1])
+                    gl.glVertex3f(*points[i + 1][j+1][0:3])
             gl.glEnd()
         gl.glEndList()
         self.ViewContourFill = True

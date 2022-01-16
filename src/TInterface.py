@@ -81,7 +81,7 @@ class TVolumericData:
 
         for i in range(0, len(verts)):
             verts[i] += self.origin
-        return verts, faces
+        return verts, faces, normals
 
     def contours(self, values, type_of_plane="xy", _slice=5):
         conts = []

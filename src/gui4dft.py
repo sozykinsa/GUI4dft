@@ -13,7 +13,7 @@ from copy import deepcopy
 from operator import itemgetter
 import matplotlib.pyplot as plt
 #from pyqt_graph_widget.pygrwidget import PyqtGraphWidget
-import pyqtgraph as pg  # pip install pyqtgraph
+#import pyqtgraph as pg  # pip install pyqtgraph
 import numpy as np
 from utils.helpers import Helpers
 from utils.atomic_model import TAtomicModel
@@ -605,11 +605,7 @@ class mainWindow(QMainWindow):
             dir = os.path.dirname(fname)
             dirs, content = Helpers.getsubs(dir)
             for posFile in content:
-                print(posFile)
-                file_candidat = Path(posFile).name  #   posFile.split("\\")
-                #if len(file_candidat) > 1:
-                #file_candidat = file_candidat[1]
-                print(file_candidat, file_candidat.endswith(".cube"), file_candidat.startswith(label))
+                file_candidat = Path(posFile).name
                 if file_candidat.startswith(label) and file_candidat.endswith(".cube"):
                     files.append(dir + "/" + file_candidat)
 
@@ -1372,7 +1368,7 @@ class mainWindow(QMainWindow):
             data = []
             for i in range(0, self.ui.IsosurfaceColorsTable.rowCount()):
                 value = float(self.ui.IsosurfaceColorsTable.item(i, 0).text())
-                verts, faces = self.VolumericData.isosurface(value)
+                verts, faces, normals = self.VolumericData.isosurface(value)
                 transp = float(self.ui.IsosurfaceColorsTable.cellWidget(i, 1).text())
                 if self.is_scaled_colors_for_surface:
                     color = self.get_color(cmap, minv, maxv, value, color_scale)
@@ -1380,7 +1376,7 @@ class mainWindow(QMainWindow):
                     if __name__ == '__main__':
                         color = self.ui.IsosurfaceColorsTable.item(i, 0).background().color().getRgbF()
                 color = (color[0], color[1], color[2], transp)
-                data.append([verts, faces, color])
+                data.append([verts, faces, color, normals])
             self.MainForm.add_surface(data)
         else:
             self.MainForm.update()
@@ -1462,7 +1458,12 @@ class mainWindow(QMainWindow):
             if self.ui.FormActionsPostRadioColorPlane.isChecked() or self.ui.FormActionsPostRadioColorPlaneContours.isChecked():
                 points = self.VolumericData.plane(plane, myslice)
                 colors = self.get_color_of_plane(minv, maxv, points, cmap, color_scale)
-                params_colored_plane.append([points, colors])
+                normal = [0, 0, 1]
+                if plane == "xz":
+                    normal = [0, -1, 0]
+                if plane == "yz":
+                    normal = [1, 0, 0]
+                params_colored_plane.append([points, colors, normal])
 
         if self.ui.FormActionsPostRadioContour.isChecked() or self.ui.FormActionsPostRadioColorPlaneContours.isChecked():
             self.MainForm.add_contour(params)
