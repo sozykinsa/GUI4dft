@@ -15,9 +15,6 @@ jobs:
         sudo apt install -y xvfb x11-utils libxkbcommon-x11-0
         python -m pip install --upgrade pip
         pip install pyside2 pytest coverage pytest-qt
-    - name: set pythonpath
-      run: |
-        echo "PYTHONPATH=/home/runner/work/GUI4dft/GUI4dft/src:/home/runner/work/GUI4dft/GUI4dft/src/pyqt_graph_widget" >> $GITHUB_ENV
     - name: Test
       env:
         QT_DEBUG_PLUGINS: 1
@@ -25,7 +22,7 @@ jobs:
         ulimit -c unlimited
         echo $PYTHONPATH
         echo $PATH
-        sudo catchsegv xvfb-run --auto-servernum `which coverage` run -m pytest
+        sudo catchsegv xvfb-run --auto-servernum /home/runner/work/GUI4dft/GUI4dft/src run -m pytest
     - name: chmod
       if: always()
       run: |
