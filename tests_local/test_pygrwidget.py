@@ -2,9 +2,8 @@ import pytest
 from pyqt_graph_widget.pygrwidget import PyqtGraphWidget
 
 
-def test_hello(qtbot):
-    widget = PyqtGraphWidget()
-    qtbot.addWidget(widget)
+def test_hello(graph_widget):
+    widget = graph_widget
     assert widget.font_color == (0, 0, 0)
     assert widget.font_size_title == 20
 
