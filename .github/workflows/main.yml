@@ -30,4 +30,4 @@ jobs:
     - name: set pythonpath
       run: |
        echo "PYTHONPATH=./src" >> $GITHUB_ENV
-    - run: python -m pytest --color=yes --cov=src --cov-report=html --cov-report=term-missing
+    - run: python -m pytest tests --color=yes --cov=src --cov-report=html --cov-report=term-missing
