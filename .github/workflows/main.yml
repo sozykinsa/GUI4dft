@@ -31,4 +31,4 @@ jobs:
     - name: set pythonpath
       run: |
        echo "PYTHONPATH=./src" >> $GITHUB_ENV
-    - run: sudo catchsegv xvfb-run --auto-servernum `which coverage` run -m pytest   #python -m pytest --color=yes --cov=src --cov-report=html --cov-report=term-missing
+    - run: pytest   #python -m pytest --color=yes --cov=src --cov-report=html --cov-report=term-missing
