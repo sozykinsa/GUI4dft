@@ -10,6 +10,16 @@ def tests_path() -> Path:
 
 
 @pytest.fixture
-def graph_widget(qapp):
-    widget = PyqtGraphWidget()
-    return widget
+def get_graph_widget(qapp):
+
+    def factory_function():
+        widget = PyqtGraphWidget()
+        widget.show()
+        return widget
+
+    return factory_function
+
+
+@pytest.fixture
+def graph_widget(get_graph_widget):
+    return get_graph_widget()
