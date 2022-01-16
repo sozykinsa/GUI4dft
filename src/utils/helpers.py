@@ -284,3 +284,19 @@ class Helpers:
             spinDown.append(0)
         strDOS = DOSFile.readline()
         return strDOS
+
+    @staticmethod
+    def utf8_letter(let):
+        if let == '\Gamma':
+            return '\u0393'
+        if let == '\Delta':
+            return '\u0394'
+        if let == '\Lambda':
+            return '\u039B'
+        if let == '\Pi':
+            return '\u03A0'
+        if let == '\Sigma':
+            return '\u03A3'
+        if let == '\Omega':
+            return '\u03A9'
+        return let

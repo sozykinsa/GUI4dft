@@ -1773,7 +1773,7 @@ class mainWindow(QMainWindow):
                 value = float(str3[0])
                 if (round(value, 2) >= kmin) and (round(value, 2) <= kmax):
                     xticks.append(value)
-                    letter = self.utf8_letter(str3[1][1:-1])
+                    letter = Helpers.utf8_letter(str3[1][1:-1])
                     xticklabels.append(letter)
             f.close()
             self.ui.PyqtGraphWidget.clear()
@@ -2846,22 +2846,6 @@ class mainWindow(QMainWindow):
         self.ui.FormActionsPostLabelSurfaceValue.setRange(minv, maxv)
         self.ui.FormActionsPostLabelSurfaceValue.setValue(round(0.5 * (maxv + minv), 5))
         # self.ui.CalculateTheVolumericDataDifference.setEnabled(True)
-
-    @staticmethod
-    def utf8_letter(let):
-        if let == '\Gamma':
-            return '\u0393'
-        if let == '\Delta':
-            return '\u0394'
-        if let == '\Lambda':
-            return '\u039B'
-        if let == '\Pi':
-            return '\u03A0'
-        if let == '\Sigma':
-            return '\u03A3'
-        if let == '\Omega':
-            return '\u03A9'
-        return let
 
 
 ORGANIZATION_NAME = 'SUSU'
