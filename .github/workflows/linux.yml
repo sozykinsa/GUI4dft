@@ -15,6 +15,9 @@ jobs:
         sudo apt install -y xvfb x11-utils libxkbcommon-x11-0
         python -m pip install --upgrade pip
         pip install pyside2 pytest coverage pytest-qt
+    - name: set pythonpath
+      run: |
+        echo "PYTHONPATH=./src" >> $GITHUB_ENV
     - name: Test
       env:
         QT_DEBUG_PLUGINS: 1
