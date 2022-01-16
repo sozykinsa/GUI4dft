@@ -1,0 +1,35 @@
+name: linux
+on: [push]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Set up Python 3.8
+      uses: actions/setup-python@v1
+      with:
+        python-version: 3.8
+    - name: Install dependencies
+      run: |
+        sudo apt install -y xvfb x11-utils libxkbcommon-x11-0
+        python -m pip install --upgrade pip
+        pip install pyside2 pytest coverage pytest-qt
+    - name: Test
+      env:
+        QT_DEBUG_PLUGINS: 1
+      run: |
+        ulimit -c unlimited
+        sudo catchsegv xvfb-run --auto-servernum `which coverage` run -m pytest
+    - name: chmod
+      if: always()
+      run: |
+        if [[ -d "$DIRECTORY" ]]; then
+          sudo chmod -R +rwx /var/crash
+        fi
+    - name: Upload artifacts
+      if: always()
+      uses: actions/upload-artifact@master
+      with:
+        name: crashes
+        path: /var/crash
