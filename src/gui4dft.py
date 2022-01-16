@@ -17,10 +17,10 @@ import pyqtgraph as pg  # pip install pyqtgraph
 import numpy as np
 from utils.helpers import Helpers
 from utils.atomic_model import TAtomicModel
-from utils.AdvancedTools import TCalculators as Calculator
+from utils.calculators import TCalculators as Calculator
 from utils.models import TCapedSWNT
 from utils.models import TBiNT
-from utils.AdvancedTools import TFDFFile
+from utils.fdfdata import TFDFFile
 from utils.models import TGraphene
 from utils.periodic_table import TPeriodTable
 from utils.siesta import TSIESTA
@@ -605,11 +605,13 @@ class mainWindow(QMainWindow):
             dir = os.path.dirname(fname)
             dirs, content = Helpers.getsubs(dir)
             for posFile in content:
-                F = posFile.split("\\")
-                if len(F) > 1:
-                    F = F[1]
-                    if F.startswith(label) and F.endswith(".cube"):
-                        files.append(dir + "/" + F)
+                print(posFile)
+                file_candidat = Path(posFile).name  #   posFile.split("\\")
+                #if len(file_candidat) > 1:
+                #file_candidat = file_candidat[1]
+                print(file_candidat, file_candidat.endswith(".cube"), file_candidat.startswith(label))
+                if file_candidat.startswith(label) and file_candidat.endswith(".cube"):
+                    files.append(dir + "/" + file_candidat)
 
             files.append(dir + "/" + label + ".XSF")
         self.ui.FormActionsPostList3DData.clear()
@@ -788,7 +790,6 @@ class mainWindow(QMainWindow):
         self.save_active_folder()
 
     def fill_gui(self, title=""):
-        #self.clear_form()
         fname = self.filename
         if title == "":
             self.fill_file_name(fname)
@@ -879,7 +880,7 @@ class mainWindow(QMainWindow):
                 parent.setText(0, "{}".format(text) + "3D")
                 for da in dat:
                     child = QTreeWidgetItem(parent)
-                    child.setText(0, "{}".format(text + ':' + (da.title).split(':')[1]))
+                    child.setText(0, "{}".format(text + ':' + da.title.split(':')[1]))
 
         if type == "TGaussianCube":
             for dat in data:
@@ -1698,21 +1699,23 @@ class mainWindow(QMainWindow):
 
             str1 = f.readline().split()
             str1 = Helpers.list_str_to_float(str1)
-            emin = float(str1[0])
-            emax = float(str1[1])
+            emin = float(str1[0]) - e_fermi
+            emax = float(str1[1]) - e_fermi
             str1 = f.readline().split()
+            f.close()
             str1 = Helpers.list_str_to_int(str1)
             nspins = float(str1[1])
             if nspins == 2:
                 self.ui.FormActionsGrBoxBANDSspin.setEnabled(True)
             else:
                 self.ui.FormActionsGrBoxBANDSspin.setEnabled(False)
-            f.close()
 
+            e_min_form = -2 if emin < -2 else emin
+            e_max_form = 2 if emax > 2 else emax
             self.ui.FormActionsSpinBANDSemin.setRange(emin, emax)
-            self.ui.FormActionsSpinBANDSemin.setValue(emin)
+            self.ui.FormActionsSpinBANDSemin.setValue(e_min_form)
             self.ui.FormActionsSpinBANDSemax.setRange(emin, emax)
-            self.ui.FormActionsSpinBANDSemax.setValue(emax)
+            self.ui.FormActionsSpinBANDSemax.setValue(e_max_form)
             self.ui.FormActionsButtonPlotBANDS.setEnabled(True)
 
     def plot_bands(self):

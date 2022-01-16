@@ -9,6 +9,3 @@ qtpy
 pytest
 pytest-cov
 pytest-qt
-pytest-mock
-pytest-xvfb
-pytest-xdist

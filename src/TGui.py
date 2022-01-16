@@ -10,7 +10,7 @@ from PySide2.QtGui import QColor, QPainter, QFont
 from copy import deepcopy
 from utils.atomic_model import TAtom
 from utils.atomic_model import TAtomicModel
-from utils.AdvancedTools import TCalculators
+from utils.calculators import TCalculators
 from utils.periodic_table import TPeriodTable
 import math
 import numpy as np
