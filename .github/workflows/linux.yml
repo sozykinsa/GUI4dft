@@ -17,7 +17,7 @@ jobs:
         pip install pyside2 pytest coverage pytest-qt
     - name: set pythonpath
       run: |
-        echo "PYTHONPATH=./src" >> $GITHUB_ENV
+        echo "PYTHONPATH=./src:../src" >> $GITHUB_ENV
     - name: Test
       env:
         QT_DEBUG_PLUGINS: 1
