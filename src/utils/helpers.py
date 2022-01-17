@@ -287,16 +287,16 @@ class Helpers:
 
     @staticmethod
     def utf8_letter(let):
-        if let == '\Gamma':
+        if let == r'\Gamma':
             return '\u0393'
-        if let == '\Delta':
+        if let == r'\Delta':
             return '\u0394'
-        if let == '\Lambda':
+        if let == r'\Lambda':
             return '\u039B'
-        if let == '\Pi':
+        if let == r'\Pi':
             return '\u03A0'
-        if let == '\Sigma':
+        if let == r'\Sigma':
             return '\u03A3'
-        if let == '\Omega':
+        if let == r'\Omega':
             return '\u03A9'
         return let

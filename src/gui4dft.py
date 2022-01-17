@@ -2196,7 +2196,10 @@ class mainWindow(QMainWindow):
             text += "'COOP.Write': True,\n"
             text += "'WriteDenchar': True,\n"
             text += "'PAO.BasisType': 'split',\n"
-            text += "'PAO.SplitNorm': 0.25,\n"
+            split_norm = self.FDFData.get_property("PAO.SplitNorm")
+            if (len(split_norm) == 0) or (len(split_norm.split()) > 1):
+                split_norm = "0.15"
+            text += "'PAO.SplitNorm': " + str(split_norm) + ",\n"
             text += "'DM.Tolerance': 1e-4,\n"
             text += "'MD.NumCGsteps': 0,\n"
             text += "'MD.MaxForceTol': (0.02, 'eV/Ang'),\n"
