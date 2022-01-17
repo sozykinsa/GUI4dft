@@ -3,4 +3,5 @@
 src/__pycache__/
 dist/
 build/
+tests/.coverage
 p4dft.spec

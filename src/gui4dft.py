@@ -13,19 +13,20 @@ from copy import deepcopy
 from operator import itemgetter
 import matplotlib.pyplot as plt
 #from pyqt_graph_widget.pygrwidget import PyqtGraphWidget
-import pyqtgraph as pg  # pip install pyqtgraph
+#import pyqtgraph as pg  # pip install pyqtgraph
 import numpy as np
-from utils.AdvancedTools import Helpers
-from utils.AdvancedTools import TAtomicModel
-from utils.AdvancedTools import TCalculators as Calculator
-from utils.AdvancedTools import TCapedSWNT
-from utils.AdvancedTools import TBiNT
-from utils.AdvancedTools import TFDFFile
-from utils.AdvancedTools import TGraphene
-from utils.AdvancedTools import TPeriodTable
-from utils.AdvancedTools import TSIESTA
-from utils.AdvancedTools import TSWNT
-from utils.AdvancedTools import TVASP
+from utils.helpers import Helpers
+from utils.atomic_model import TAtomicModel
+from utils.calculators import TCalculators as Calculator
+from utils.models import TCapedSWNT
+from utils.models import TBiNT
+from utils.fdfdata import TFDFFile
+from utils.models import TGraphene
+from utils.periodic_table import TPeriodTable
+from utils.siesta import TSIESTA
+from utils.models import TSWNT
+from utils.vasp import TVASP
+from utils.importer import Importer
 from PySide2.QtCore import QCoreApplication, QLocale, QSettings, Qt, QSize
 import PySide2.QtCore as QtCore
 QtCore.QVariant = "QVariant"
@@ -36,7 +37,6 @@ from PySide2.QtWidgets import QTreeWidgetItemIterator
 from TGui import GuiOpenGL
 from TInterface import AtomsIdentifier
 from TInterface import Image3Dexporter
-from TInterface import Importer
 from TInterface import TGaussianCube
 from TInterface import TVolumericData
 from TInterface import TXSF
@@ -605,11 +605,9 @@ class mainWindow(QMainWindow):
             dir = os.path.dirname(fname)
             dirs, content = Helpers.getsubs(dir)
             for posFile in content:
-                F = posFile.split("\\")
-                if len(F) > 1:
-                    F = F[1]
-                    if F.startswith(label) and F.endswith(".cube"):
-                        files.append(dir + "/" + F)
+                file_candidat = Path(posFile).name
+                if file_candidat.startswith(label) and file_candidat.endswith(".cube"):
+                    files.append(dir + "/" + file_candidat)
 
             files.append(dir + "/" + label + ".XSF")
         self.ui.FormActionsPostList3DData.clear()
@@ -788,7 +786,6 @@ class mainWindow(QMainWindow):
         self.save_active_folder()
 
     def fill_gui(self, title=""):
-        #self.clear_form()
         fname = self.filename
         if title == "":
             self.fill_file_name(fname)
@@ -879,7 +876,7 @@ class mainWindow(QMainWindow):
                 parent.setText(0, "{}".format(text) + "3D")
                 for da in dat:
                     child = QTreeWidgetItem(parent)
-                    child.setText(0, "{}".format(text + ':' + (da.title).split(':')[1]))
+                    child.setText(0, "{}".format(text + ':' + da.title.split(':')[1]))
 
         if type == "TGaussianCube":
             for dat in data:
@@ -1371,7 +1368,7 @@ class mainWindow(QMainWindow):
             data = []
             for i in range(0, self.ui.IsosurfaceColorsTable.rowCount()):
                 value = float(self.ui.IsosurfaceColorsTable.item(i, 0).text())
-                verts, faces = self.VolumericData.isosurface(value)
+                verts, faces, normals = self.VolumericData.isosurface(value)
                 transp = float(self.ui.IsosurfaceColorsTable.cellWidget(i, 1).text())
                 if self.is_scaled_colors_for_surface:
                     color = self.get_color(cmap, minv, maxv, value, color_scale)
@@ -1379,7 +1376,7 @@ class mainWindow(QMainWindow):
                     if __name__ == '__main__':
                         color = self.ui.IsosurfaceColorsTable.item(i, 0).background().color().getRgbF()
                 color = (color[0], color[1], color[2], transp)
-                data.append([verts, faces, color])
+                data.append([verts, faces, color, normals])
             self.MainForm.add_surface(data)
         else:
             self.MainForm.update()
@@ -1461,7 +1458,12 @@ class mainWindow(QMainWindow):
             if self.ui.FormActionsPostRadioColorPlane.isChecked() or self.ui.FormActionsPostRadioColorPlaneContours.isChecked():
                 points = self.VolumericData.plane(plane, myslice)
                 colors = self.get_color_of_plane(minv, maxv, points, cmap, color_scale)
-                params_colored_plane.append([points, colors])
+                normal = [0, 0, 1]
+                if plane == "xz":
+                    normal = [0, -1, 0]
+                if plane == "yz":
+                    normal = [1, 0, 0]
+                params_colored_plane.append([points, colors, normal])
 
         if self.ui.FormActionsPostRadioContour.isChecked() or self.ui.FormActionsPostRadioColorPlaneContours.isChecked():
             self.MainForm.add_contour(params)
@@ -1698,21 +1700,23 @@ class mainWindow(QMainWindow):
 
             str1 = f.readline().split()
             str1 = Helpers.list_str_to_float(str1)
-            emin = float(str1[0])
-            emax = float(str1[1])
+            emin = float(str1[0]) - e_fermi
+            emax = float(str1[1]) - e_fermi
             str1 = f.readline().split()
+            f.close()
             str1 = Helpers.list_str_to_int(str1)
             nspins = float(str1[1])
             if nspins == 2:
                 self.ui.FormActionsGrBoxBANDSspin.setEnabled(True)
             else:
                 self.ui.FormActionsGrBoxBANDSspin.setEnabled(False)
-            f.close()
 
+            e_min_form = -2 if emin < -2 else emin
+            e_max_form = 2 if emax > 2 else emax
             self.ui.FormActionsSpinBANDSemin.setRange(emin, emax)
-            self.ui.FormActionsSpinBANDSemin.setValue(emin)
+            self.ui.FormActionsSpinBANDSemin.setValue(e_min_form)
             self.ui.FormActionsSpinBANDSemax.setRange(emin, emax)
-            self.ui.FormActionsSpinBANDSemax.setValue(emax)
+            self.ui.FormActionsSpinBANDSemax.setValue(e_max_form)
             self.ui.FormActionsButtonPlotBANDS.setEnabled(True)
 
     def plot_bands(self):
@@ -1769,7 +1773,7 @@ class mainWindow(QMainWindow):
                 value = float(str3[0])
                 if (round(value, 2) >= kmin) and (round(value, 2) <= kmax):
                     xticks.append(value)
-                    letter = self.utf8_letter(str3[1][1:-1])
+                    letter = Helpers.utf8_letter(str3[1][1:-1])
                     xticklabels.append(letter)
             f.close()
             self.ui.PyqtGraphWidget.clear()
@@ -2192,7 +2196,10 @@ class mainWindow(QMainWindow):
             text += "'COOP.Write': True,\n"
             text += "'WriteDenchar': True,\n"
             text += "'PAO.BasisType': 'split',\n"
-            text += "'PAO.SplitNorm': 0.25,\n"
+            split_norm = self.FDFData.get_property("PAO.SplitNorm")
+            if (len(split_norm) == 0) or (len(split_norm.split()) > 1):
+                split_norm = "0.15"
+            text += "'PAO.SplitNorm': " + str(split_norm) + ",\n"
             text += "'DM.Tolerance': 1e-4,\n"
             text += "'MD.NumCGsteps': 0,\n"
             text += "'MD.MaxForceTol': (0.02, 'eV/Ang'),\n"
@@ -2842,22 +2849,6 @@ class mainWindow(QMainWindow):
         self.ui.FormActionsPostLabelSurfaceValue.setRange(minv, maxv)
         self.ui.FormActionsPostLabelSurfaceValue.setValue(round(0.5 * (maxv + minv), 5))
         # self.ui.CalculateTheVolumericDataDifference.setEnabled(True)
-
-    @staticmethod
-    def utf8_letter(let):
-        if let == '\Gamma':
-            return '\u0393'
-        if let == '\Delta':
-            return '\u0394'
-        if let == '\Lambda':
-            return '\u039B'
-        if let == '\Pi':
-            return '\u03A0'
-        if let == '\Sigma':
-            return '\u03A3'
-        if let == '\Omega':
-            return '\u03A9'
-        return let
 
 
 ORGANIZATION_NAME = 'SUSU'

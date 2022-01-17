@@ -5,4 +5,7 @@ matplotlib
 pyqtgraph
 scikit-image
 pyside2
+qtpy
 pytest
+pytest-cov
+pytest-qt
