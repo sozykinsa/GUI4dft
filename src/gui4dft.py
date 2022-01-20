@@ -233,8 +233,9 @@ class mainWindow(QMainWindow):
         self.ui.FormActionsPostComboCellParam.setModel(cell_prediction_type)
 
         form_settings_preferred_coordinates_type = QStandardItemModel()
-        form_settings_preferred_coordinates_type.appendRow(QStandardItem("Zmatrix Cartesian"))
+        form_settings_preferred_coordinates_type.appendRow(QStandardItem("Cartesian"))
         form_settings_preferred_coordinates_type.appendRow(QStandardItem("Fractional"))
+        form_settings_preferred_coordinates_type.appendRow(QStandardItem("Zmatrix Cartesian"))
         self.ui.FormSettingsPreferredCoordinates.setModel(form_settings_preferred_coordinates_type)
         self.ui.FormSettingsPreferredCoordinates.setCurrentText(self.CoordType)
         self.ui.FormSettingsPreferredCoordinates.currentIndexChanged.connect(
@@ -1154,7 +1155,7 @@ class mainWindow(QMainWindow):
         self.state_Color_Of_Contour = str(settings.value(SETTINGS_Color_Of_Contour, '0 255 0'))
         self.color_to_ui(self.ui.ColorContour, self.state_Color_Of_Contour)
 
-        self.CoordType = str(settings.value(SETTINGS_FormSettingsPreferredCoordinates, 'Zmatrix Cartesian'))
+        self.CoordType = str(settings.value(SETTINGS_FormSettingsPreferredCoordinates, 'Cartesian'))
 
         self.LatticeType = str(settings.value(SETTINGS_FormSettingsPreferredLattice, 'LatticeParameters'))
 

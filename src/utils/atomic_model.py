@@ -55,7 +55,7 @@ class TAtom(object):
 ##################################################################
     
 class TAtomicModel(object):
-    def __init__(self, newatoms=[]):
+    def __init__(self, newatoms: list=[]):
         self.atoms = []
         self.bonds = []
         self.bonds_per = []  # for exact calculation in form
@@ -75,6 +75,30 @@ class TAtomicModel(object):
             else:
                 atom = TAtom(at)
             self.add_atom(atom)
+
+    def get_positions(self):
+        pos = np.zeros((len(self.atoms), 3))
+        for i in range(len(self.atoms)):
+            pos[i,:] = self.atoms[i].x, self.atoms[i].y, self.atoms[i].z
+        return pos
+
+    def get_atomic_numbers(self):
+        numb = np.zeros(len(self.atoms))
+        for i in range(len(self.atoms)):
+            numb[i] = self.atoms[i].charge
+        return numb
+
+    def get_center_of_mass(self):
+        return np.array(self.centr_mass())
+
+    def get_tags(self):
+        return []
+
+    def get_cell(self):
+        cell = np.zeros((3,3))
+        cell[0, :] = self.LatVect1
+        cell[1, :] = self.LatVect2
+        cell[2, :] = self.LatVect3
 
     @staticmethod
     def atoms_from_ani(filename):
@@ -1128,13 +1152,10 @@ class TAtomicModel(object):
         for i in range(0, self.nAtoms()):
             self.atoms[i].x -= xm
             self.atoms[i].x = self.minus0(self.atoms[i].x)
-            #self.atoms[i].x += 0.1
             self.atoms[i].y -= ym
             self.atoms[i].y = self.minus0(self.atoms[i].y)
-            #self.atoms[i].y += 0.1
             self.atoms[i].z -= zm
             self.atoms[i].z = self.minus0(self.atoms[i].z)
-            #self.atoms[i].z += 0.1
 
     def minus0(self, fl):
         res = fl
@@ -1167,7 +1188,7 @@ class TAtomicModel(object):
         return newModel
 
     def growX(self):
-        """ модель транслируется в измерении X """
+        """ translate model in X direction """
         newAtList = deepcopy(self.atoms)
         vect = self.LatVect1
         copyOfModel = TAtomicModel(self.atoms)
@@ -1179,7 +1200,7 @@ class TAtomicModel(object):
         return newModel
 
     def growY(self):
-        """ модель транслируется в измерении X """
+        """ translate model in Y direction """
         newAtList = deepcopy(self.atoms)
         vect = self.LatVect2
         copyOfModel = TAtomicModel(self.atoms)
@@ -1191,7 +1212,7 @@ class TAtomicModel(object):
         return newModel
 
     def growZ(self):
-        """ модель транслируется в измерении X """
+        """ translate model in Z direction """
         newAtList = deepcopy(self.atoms)
         vect = self.LatVect3
         copyOfModel = TAtomicModel(self.atoms)
@@ -1203,7 +1224,7 @@ class TAtomicModel(object):
         return newModel
         
     def move(self, Lx, Ly, Lz):
-        """ смещает модель на указанный вектор """
+        """ move model by the vector """
         for atom in self.atoms:
             atom.x += Lx
             atom.y += Ly
@@ -1304,6 +1325,14 @@ class TAtomicModel(object):
             data += '%block AtomicCoordinatesAndAtomicSpecies\n'
             data += self.coords_for_export(coord_style)
             data += '%endblock AtomicCoordinatesAndAtomicSpecies\n'
+
+        if coord_style == "Cartesian":
+            self.sort_atoms_by_type()
+            data += 'AtomicCoordinatesFormat Ang\n'
+            data += '%block AtomicCoordinatesAndAtomicSpecies\n'
+            data += self.coords_for_export(coord_style)
+            data += '%endblock AtomicCoordinatesAndAtomicSpecies\n'
+
         return data
 
     def toCUBEfile(self, fname, volumeric_data):
@@ -1372,7 +1401,7 @@ class TAtomicModel(object):
     def coords_for_export(self, coord_style):
         data = ""
         types = self.typesOfAtoms()
-        if coord_style == "Fractional":
+        if (coord_style == "Fractional") or (coord_style == "Cartesian"):
             for i in range(0, len(self.atoms)):
                 str1 = ' '
                 for j in range(0, len(types)):
