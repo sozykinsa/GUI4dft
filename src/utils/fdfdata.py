@@ -105,10 +105,10 @@ class TFDFFile:
         print("block '" + prop + "' not found\n")
         return val
 
-    def get_all_data(self, _structure, coord_type, latt_type):
+    def get_all_data(self, _structure, coord_type, units_type, latt_type):
         structure = deepcopy(_structure)
 
-        st = structure.toSIESTAfdfdata(coord_type, latt_type)
+        st = structure.toSIESTAfdfdata(coord_type, units_type, latt_type)
 
         for prop in self.properties:
             f = True

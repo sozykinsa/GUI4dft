@@ -241,6 +241,13 @@ class mainWindow(QMainWindow):
         self.ui.FormSettingsPreferredCoordinates.currentIndexChanged.connect(
             self.save_state_preferred_coordinates)
 
+        form_settings_preferred_units_type = QStandardItemModel()
+        form_settings_preferred_units_type.appendRow(QStandardItem("Bohr"))
+        form_settings_preferred_units_type.appendRow(QStandardItem("Ang"))
+        self.ui.FormSettingsPreferredUnits.setModel(form_settings_preferred_units_type)
+        self.ui.FormSettingsPreferredUnits.setCurrentText(self.units_type)
+        self.ui.FormSettingsPreferredUnits.currentIndexChanged.connect(self.save_state_preferred_units)
+
         form_settings_preferred_lattice_type = QStandardItemModel()
         form_settings_preferred_lattice_type.appendRow(QStandardItem("LatticeParameters"))
         form_settings_preferred_lattice_type.appendRow(QStandardItem("LatticeVectors"))
@@ -1156,6 +1163,7 @@ class mainWindow(QMainWindow):
         self.color_to_ui(self.ui.ColorContour, self.state_Color_Of_Contour)
 
         self.CoordType = str(settings.value(SETTINGS_FormSettingsPreferredCoordinates, 'Cartesian'))
+        self.units_type = str(settings.value(SETTINGS_FormSettingsPreferredUnits, 'Ang'))
 
         self.LatticeType = str(settings.value(SETTINGS_FormSettingsPreferredLattice, 'LatticeParameters'))
 
@@ -2088,6 +2096,11 @@ class mainWindow(QMainWindow):
                            self.ui.FormSettingsPreferredCoordinates.currentText())
         self.CoordType = self.ui.FormSettingsPreferredCoordinates.currentText()
 
+    def save_state_preferred_units(self):
+        self.save_property(SETTINGS_FormSettingsPreferredUnits,
+                           self.ui.FormSettingsPreferredUnits.currentText())
+        self.units_type = self.ui.FormSettingsPreferredUnits.currentText()
+
     def save_state_preferred_lattice(self):
         self.save_property(SETTINGS_FormSettingsPreferredLattice, self.ui.FormSettingsPreferredLattice.currentText())
         self.LatticeType = self.ui.FormSettingsPreferredLattice.currentText()
@@ -2114,7 +2127,7 @@ class mainWindow(QMainWindow):
     def fdf_data_to_form(self):
         try:
             model = self.MainForm.get_model()
-            text = self.FDFData.get_all_data(model, self.CoordType, self.LatticeType)
+            text = self.FDFData.get_all_data(model, self.CoordType, self.units_type, self.LatticeType)
             self.ui.FormActionsPreTextFDF.setText(text)
         except Exception:
             print("There are no atoms in the model")
@@ -2877,6 +2890,7 @@ SETTINGS_FormSettingsViewSpinContourWidth = 'view/SpinContourWidth'
 SETTINGS_FormSettingsActionOnStart = 'action/OnStart'
 
 SETTINGS_FormSettingsPreferredCoordinates = 'model/FormSettingsPreferredCoordinates'
+SETTINGS_FormSettingsPreferredUnits = 'model/FormSettingsPreferred/units'
 SETTINGS_FormSettingsPreferredLattice = 'model/FormSettingsPreferredLattice'
 
 SETTINGS_Color_Of_Atoms = 'colors/atoms'

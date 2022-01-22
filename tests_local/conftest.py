@@ -1,5 +1,5 @@
 from pathlib import Path
-from pyqt_graph_widget.pygrwidget import PyqtGraphWidget
+from pyqt_graph_widget.pyqtgraphwidget import PyqtGraphWidget
 
 import pytest
 
