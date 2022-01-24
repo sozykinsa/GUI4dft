@@ -1,6 +1,3 @@
-import pytest
-from pyqt_graph_widget.pygrwidget import PyqtGraphWidget
-
 
 def test_hello(graph_widget):
     widget = graph_widget

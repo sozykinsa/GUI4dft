@@ -12,7 +12,7 @@ from PySide2.QtCore import *
 from PySide2.QtGui import *
 from PySide2.QtWidgets import *
 
-from pyqt_graph_widget.pygrwidget import PyqtGraphWidget, PyqtGraphWidgetImage
+from pyqt_graph_widget.pyqtgraphwidget import PyqtGraphWidget, PyqtGraphWidgetImage
 
 
 class Ui_MainWindow(object):
@@ -983,7 +983,7 @@ class Ui_MainWindow(object):
         self.toolBox_6.setSizePolicy(sizePolicy2)
         self.page_29 = QWidget()
         self.page_29.setObjectName(u"page_29")
-        self.page_29.setGeometry(QRect(0, 0, 337, 258))
+        self.page_29.setGeometry(QRect(0, 0, 371, 593))
         self.verticalLayout_26 = QVBoxLayout(self.page_29)
         self.verticalLayout_26.setObjectName(u"verticalLayout_26")
         self.frame_28 = QFrame(self.page_29)
@@ -2973,7 +2973,7 @@ class Ui_MainWindow(object):
         self.toolBox_2.addItem(self.page_2, u"Isosurface and Contours")
         self.page_24 = QWidget()
         self.page_24.setObjectName(u"page_24")
-        self.page_24.setGeometry(QRect(0, 0, 370, 482))
+        self.page_24.setGeometry(QRect(0, 0, 399, 675))
         self.verticalLayout_44 = QVBoxLayout(self.page_24)
         self.verticalLayout_44.setObjectName(u"verticalLayout_44")
         self.tabWidget_6 = QTabWidget(self.page_24)
@@ -4687,6 +4687,27 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_13.addWidget(self.FormSettingsViewCheckXYZasCritic2)
 
+        self.frame_122 = QFrame(self.page_5)
+        self.frame_122.setObjectName(u"frame_122")
+        self.frame_122.setFrameShape(QFrame.StyledPanel)
+        self.frame_122.setFrameShadow(QFrame.Raised)
+        self.horizontalLayout_127 = QHBoxLayout(self.frame_122)
+        self.horizontalLayout_127.setObjectName(u"horizontalLayout_127")
+        self.horizontalLayout_127.setContentsMargins(0, 11, 0, 0)
+        self.label_92 = QLabel(self.frame_122)
+        self.label_92.setObjectName(u"label_92")
+
+        self.horizontalLayout_127.addWidget(self.label_92)
+
+        self.FormSettingsPreferredUnits = QComboBox(self.frame_122)
+        self.FormSettingsPreferredUnits.setObjectName(u"FormSettingsPreferredUnits")
+        self.FormSettingsPreferredUnits.setEditable(False)
+
+        self.horizontalLayout_127.addWidget(self.FormSettingsPreferredUnits)
+
+
+        self.verticalLayout_13.addWidget(self.frame_122)
+
         self.frame_80 = QFrame(self.page_5)
         self.frame_80.setObjectName(u"frame_80")
         self.frame_80.setFrameShape(QFrame.NoFrame)
@@ -5139,11 +5160,11 @@ class Ui_MainWindow(object):
         self.tabWidget_3.setCurrentIndex(0)
         self.toolBox.setCurrentIndex(0)
         self.toolBox_6.setCurrentIndex(0)
-        self.toolBox_2.setCurrentIndex(0)
+        self.toolBox_2.setCurrentIndex(2)
         self.tabWidget_5.setCurrentIndex(0)
         self.tabWidget_4.setCurrentIndex(0)
         self.tabWidget_2.setCurrentIndex(0)
-        self.tabWidget_6.setCurrentIndex(2)
+        self.tabWidget_6.setCurrentIndex(0)
         self.toolBox_4.setCurrentIndex(0)
         self.tabWidget_7.setCurrentIndex(2)
         self.tabWidget_8.setCurrentIndex(0)
@@ -5529,6 +5550,8 @@ class Ui_MainWindow(object):
         self.FormSettingsViewCheckAtomSelection.setText(QCoreApplication.translate("MainWindow", u"Allow atom selection", None))
         self.FormSettingsViewCheckModelMove.setText(QCoreApplication.translate("MainWindow", u"Allow model move", None))
         self.FormSettingsViewCheckXYZasCritic2.setText(QCoreApplication.translate("MainWindow", u"XYZ as critic2 output", None))
+        self.label_92.setText(QCoreApplication.translate("MainWindow", u"Preferred units", None))
+        self.FormSettingsPreferredUnits.setCurrentText("")
         self.label_49.setText(QCoreApplication.translate("MainWindow", u"Preferred coordinates", None))
         self.FormSettingsPreferredCoordinates.setCurrentText("")
         self.label_50.setText(QCoreApplication.translate("MainWindow", u"Preferred lattice", None))

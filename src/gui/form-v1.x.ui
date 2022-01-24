@@ -1733,8 +1733,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>337</width>
-                 <height>258</height>
+                 <width>371</width>
+                 <height>593</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -2993,7 +2993,7 @@
            <string notr="true"/>
           </property>
           <property name="currentIndex">
-           <number>0</number>
+           <number>2</number>
           </property>
           <widget class="QWidget" name="page_19">
            <property name="geometry">
@@ -5691,8 +5691,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>370</width>
-             <height>482</height>
+             <width>399</width>
+             <height>675</height>
             </rect>
            </property>
            <attribute name="label">
@@ -5702,7 +5702,7 @@
             <item>
              <widget class="QTabWidget" name="tabWidget_6">
               <property name="currentIndex">
-               <number>2</number>
+               <number>0</number>
               </property>
               <widget class="QWidget" name="tab_16">
                <attribute name="title">
@@ -8861,6 +8861,47 @@ p, li { white-space: pre-wrap; }
               <property name="text">
                <string>XYZ as critic2 output</string>
               </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QFrame" name="frame_122">
+              <property name="frameShape">
+               <enum>QFrame::StyledPanel</enum>
+              </property>
+              <property name="frameShadow">
+               <enum>QFrame::Raised</enum>
+              </property>
+              <layout class="QHBoxLayout" name="horizontalLayout_127">
+               <property name="leftMargin">
+                <number>0</number>
+               </property>
+               <property name="topMargin">
+                <number>11</number>
+               </property>
+               <property name="rightMargin">
+                <number>0</number>
+               </property>
+               <property name="bottomMargin">
+                <number>0</number>
+               </property>
+               <item>
+                <widget class="QLabel" name="label_92">
+                 <property name="text">
+                  <string>Preferred units</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QComboBox" name="FormSettingsPreferredUnits">
+                 <property name="editable">
+                  <bool>false</bool>
+                 </property>
+                 <property name="currentText">
+                  <string/>
+                 </property>
+                </widget>
+               </item>
+              </layout>
              </widget>
             </item>
             <item>

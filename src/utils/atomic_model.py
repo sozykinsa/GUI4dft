@@ -55,7 +55,7 @@ class TAtom(object):
 ##################################################################
     
 class TAtomicModel(object):
-    def __init__(self, newatoms=[]):
+    def __init__(self, newatoms: list=[]):
         self.atoms = []
         self.bonds = []
         self.bonds_per = []  # for exact calculation in form
@@ -75,6 +75,30 @@ class TAtomicModel(object):
             else:
                 atom = TAtom(at)
             self.add_atom(atom)
+
+    def get_positions(self):
+        pos = np.zeros((len(self.atoms), 3))
+        for i in range(len(self.atoms)):
+            pos[i,:] = self.atoms[i].x, self.atoms[i].y, self.atoms[i].z
+        return pos
+
+    def get_atomic_numbers(self):
+        numb = np.zeros(len(self.atoms))
+        for i in range(len(self.atoms)):
+            numb[i] = self.atoms[i].charge
+        return numb
+
+    def get_center_of_mass(self):
+        return np.array(self.centr_mass())
+
+    def get_tags(self):
+        return []
+
+    def get_cell(self):
+        cell = np.zeros((3,3))
+        cell[0, :] = self.LatVect1
+        cell[1, :] = self.LatVect2
+        cell[2, :] = self.LatVect3
 
     @staticmethod
     def atoms_from_ani(filename):
@@ -1128,13 +1152,10 @@ class TAtomicModel(object):
         for i in range(0, self.nAtoms()):
             self.atoms[i].x -= xm
             self.atoms[i].x = self.minus0(self.atoms[i].x)
-            #self.atoms[i].x += 0.1
             self.atoms[i].y -= ym
             self.atoms[i].y = self.minus0(self.atoms[i].y)
-            #self.atoms[i].y += 0.1
             self.atoms[i].z -= zm
             self.atoms[i].z = self.minus0(self.atoms[i].z)
-            #self.atoms[i].z += 0.1
 
     def minus0(self, fl):
         res = fl
@@ -1167,7 +1188,7 @@ class TAtomicModel(object):
         return newModel
 
     def growX(self):
-        """ модель транслируется в измерении X """
+        """ translate model in X direction """
         newAtList = deepcopy(self.atoms)
         vect = self.LatVect1
         copyOfModel = TAtomicModel(self.atoms)
@@ -1179,7 +1200,7 @@ class TAtomicModel(object):
         return newModel
 
     def growY(self):
-        """ модель транслируется в измерении X """
+        """ translate model in Y direction """
         newAtList = deepcopy(self.atoms)
         vect = self.LatVect2
         copyOfModel = TAtomicModel(self.atoms)
@@ -1191,7 +1212,7 @@ class TAtomicModel(object):
         return newModel
 
     def growZ(self):
-        """ модель транслируется в измерении X """
+        """ translate model in Z direction """
         newAtList = deepcopy(self.atoms)
         vect = self.LatVect3
         copyOfModel = TAtomicModel(self.atoms)
@@ -1203,7 +1224,7 @@ class TAtomicModel(object):
         return newModel
         
     def move(self, Lx, Ly, Lz):
-        """ смещает модель на указанный вектор """
+        """ move model by the vector """
         for atom in self.atoms:
             atom.x += Lx
             atom.y += Ly
@@ -1251,7 +1272,7 @@ class TAtomicModel(object):
     def toSIESTAfdf(self, filename):
         """ созадет входной файл для пакета SIESTA """
         f = open(filename, 'w')
-        text = self.toSIESTAfdfdata("Fractional", "LatticeVectors")
+        text = self.toSIESTAfdfdata("Fractional", "Ang", "LatticeVectors")
         print(text, file=f)
         f.close()
         
@@ -1262,8 +1283,8 @@ class TAtomicModel(object):
         print(text, file=f)
         f.close()     
 
-    def toSIESTAfdfdata(self, coord_style, latt_style='LatticeParameters'):
-        """ возвращает данные для входного файла пакета SIESTA """
+    def toSIESTAfdfdata(self, coord_style, units_type,  latt_style='LatticeParameters'):
+        """ returns data for SIESTA fdf file """
         data = ""
         PerTab = TPeriodTable()
         data += 'NumberOfAtoms ' + str(len(self.atoms)) + "\n"
@@ -1274,19 +1295,27 @@ class TAtomicModel(object):
             data += ' ' + str(i + 1) + '  ' + str(types[i][0]) + '  ' + str(PerTab.get_let(int(types[i][0]))) + "\n"
         data += '%endblock ChemicalSpeciesLabel\n'
 
-        # LatticeConstant
-        data +='LatticeConstant       1.0 Ang\n'
+        mult = 1
+        LatticeConstant = 'LatticeConstant       1.0 Ang\n'
+
+        if (coord_style != "Zmatrix Cartesian") and (units_type == "Bohr"):
+            mult = 1.0 / 0.52917720859
+            LatticeConstant = 'LatticeConstant       1.0 Bohr\n'
+
+        data += LatticeConstant
 
         if latt_style == 'LatticeParameters':
             data += '%block LatticeParameters\n'
-            data += '  '+str(self.get_LatVect1_norm())+'  '+str(self.get_LatVect2_norm())+'  '+str(self.get_LatVect3_norm()) + '  '+str(self.get_angle_alpha())+'  '+ str(self.get_angle_beta()) +'  '+  str(self.get_angle_gamma()) +   '\n'
+            data += '  ' + str(self.get_LatVect1_norm() * mult) + '  ' + str(self.get_LatVect2_norm() * mult) + '  ' + \
+                    str(self.get_LatVect3_norm() * mult) + '  ' +str(self.get_angle_alpha()) +'  ' + \
+                    str(self.get_angle_beta()) + '  ' +  str(self.get_angle_gamma()) +   '\n'
             data += '%endblock LatticeParameters\n'
         #or
         if latt_style == 'LatticeVectors':
             data += '%block LatticeVectors\n'
-            data += '  ' + str(self.LatVect1[0]) + '  ' + str(self.LatVect1[1]) + '  ' + str(self.LatVect1[2]) + '\n'
-            data += '  ' + str(self.LatVect2[0]) + '  ' + str(self.LatVect2[1]) + '  ' + str(self.LatVect2[2]) + '\n'
-            data += '  ' + str(self.LatVect3[0]) + '  ' + str(self.LatVect3[1]) + '  ' + str(self.LatVect3[2]) + '\n'
+            data += '  ' + str(self.LatVect1[0] * mult) + '  ' + str(self.LatVect1[1] * mult) + '  ' + str(self.LatVect1[2] * mult) + '\n'
+            data += '  ' + str(self.LatVect2[0] * mult) + '  ' + str(self.LatVect2[1] * mult) + '  ' + str(self.LatVect2[2] * mult) + '\n'
+            data += '  ' + str(self.LatVect3[0] * mult) + '  ' + str(self.LatVect3[1] * mult) + '  ' + str(self.LatVect3[2] * mult) + '\n'
             data += '%endblock LatticeVectors\n'
 
         if coord_style == "Zmatrix Cartesian":
@@ -1304,6 +1333,14 @@ class TAtomicModel(object):
             data += '%block AtomicCoordinatesAndAtomicSpecies\n'
             data += self.coords_for_export(coord_style)
             data += '%endblock AtomicCoordinatesAndAtomicSpecies\n'
+
+        if coord_style == "Cartesian":
+            self.sort_atoms_by_type()
+            data += 'AtomicCoordinatesFormat ' + units_type + '\n'
+            data += '%block AtomicCoordinatesAndAtomicSpecies\n'
+            data += self.coords_for_export(coord_style, units_type)
+            data += '%endblock AtomicCoordinatesAndAtomicSpecies\n'
+
         return data
 
     def toCUBEfile(self, fname, volumeric_data):
@@ -1369,9 +1406,17 @@ class TAtomicModel(object):
         print(text, file=f)
         f.close()
 
-    def coords_for_export(self, coord_style):
+    def coords_for_export(self, coord_style, units="Ang"):
         data = ""
         types = self.typesOfAtoms()
+        if coord_style == "Cartesian":
+            for i in range(0, len(self.atoms)):
+                str1 = ' '
+                for j in range(0, len(types)):
+                    if types[j][0] == self.atoms[i].charge:
+                        str1 = ' ' + str(j + 1)
+                data += self.xyz_string(i, units) + str1 + "\n"
+
         if coord_style == "Fractional":
             for i in range(0, len(self.atoms)):
                 str1 = ' '
@@ -1402,10 +1447,13 @@ class TAtomicModel(object):
             data += ' $END'
         return data
 
-    def xyz_string(self, i):
-        sx = Helpers.float_to_string(self.atoms[i].x)
-        sy = Helpers.float_to_string(self.atoms[i].y)
-        sz = Helpers.float_to_string(self.atoms[i].z)
+    def xyz_string(self, i, units="Ang"):
+        mult = 1.0
+        if units == "Bohr":
+            mult = 1.0 / 0.52917720859
+        sx = Helpers.float_to_string(self.atoms[i].x * mult)
+        sy = Helpers.float_to_string(self.atoms[i].y * mult)
+        sz = Helpers.float_to_string(self.atoms[i].z * mult)
         str2 = '  ' + sx + '  ' + sy + '  ' + sz
         return str2
 
