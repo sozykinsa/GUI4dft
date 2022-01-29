@@ -25,8 +25,6 @@ v1.2 - Contains some additional features. For example, it allows visualizing the
 
 v1.3 - This is the next release in 1.x branch. This version will use pyqtgraph instead of matplotlib and pyside2 instead of PyQt5.
 
-v2.0 - This is the next release in 2.x branch. Most of its functions are currently experimental. To install it, you need a sisl module.
-
 The master branch contains more or less stable 1.x version functions.
 
 ## Authors and acknowledgment
