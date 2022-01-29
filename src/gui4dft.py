@@ -2552,7 +2552,9 @@ class mainWindow(QMainWindow):
                 text = self.models[self.active_model].toCriticXYZfile(bcp_seleted)
             else:
                 for b in bcp_seleted:
-                    bcp.remove(b)
+                    for cp in bcp:
+                        if cp.to_string() == b.to_string():
+                            bcp.remove(cp)
                 text = self.models[self.active_model].toCriticXYZfile(bcp)
 
             print(text, file=f)
