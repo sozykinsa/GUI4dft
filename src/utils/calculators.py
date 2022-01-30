@@ -9,7 +9,7 @@ from scipy.optimize import leastsq
 from scipy.spatial import ConvexHull
 from scipy.spatial import Voronoi
 
-from utils.helpers import Helpers
+from utils import helpers
 from utils.atomic_model import TAtom, TAtomicModel
 
 
@@ -60,7 +60,7 @@ class TCalculators:
     
     @staticmethod
     def ApproxParabola(DATA):
-        xdata, ydata = Helpers.ListN2Split(DATA)
+        xdata, ydata = helpers.ListN2Split(DATA)
         # y = ax^2 + bx + c
         a, b, c = polyfit(xdata, ydata, 2)
 
@@ -99,7 +99,7 @@ class TCalculators:
 
     @staticmethod
     def ApproxMurnaghan(DATA):
-        v, e = Helpers.ListN2Split(DATA)
+        v, e = helpers.ListN2Split(DATA)
         vfit = np.linspace(min(v), max(v), 100)
         # y = ax^2 + bx + c
         a, b, c = polyfit(v, e, 2)
@@ -116,7 +116,7 @@ class TCalculators:
 
     @staticmethod
     def ApproxBirchMurnaghan(DATA):
-        v, e = Helpers.ListN2Split(DATA)
+        v, e = helpers.ListN2Split(DATA)
         vfit = np.linspace(min(v), max(v), 100)
 
         ### fit a parabola to the data

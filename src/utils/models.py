@@ -4,7 +4,7 @@ import math
 
 import numpy as np
 
-from utils.helpers import Helpers
+from utils import helpers
 from utils.atomic_model import TAtom, TAtomicModel
 
 
@@ -209,7 +209,7 @@ class TSWNT(TGraphene):
         dia = Ch / pi
         theta = math.atan((math.sqrt(3) * m / (2.0 * n + m)))
         theta = theta * 180.0 / pi
-        d = Helpers.cdev(n, m)
+        d = helpers.cdev(n, m)
         if (n - m) % (3 * d) != 0:
             dR = d
         else:

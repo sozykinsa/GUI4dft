@@ -4,7 +4,7 @@ from copy import deepcopy
 import os
 from utils.atomic_model import TAtomicModel
 from utils.periodic_table import TPeriodTable
-from utils.helpers import Helpers
+from utils import helpers
 import numpy as np
 import math
 import skimage
@@ -58,7 +58,7 @@ class TVolumericData:
                 self.data3D[0, ind] = float(data)
                 ind += 1
         f.readline()
-        Helpers.spacedel(f.readline())
+        helpers.spacedel(f.readline())
 
         self.min = np.min(self.data3D)
         self.max = np.max(self.data3D)
@@ -179,16 +179,16 @@ class TXSF(TVolumericData):
                 if row.find("BEGIN_BLOCK_DATAGRID") > -1:
                     row = f.readline()
                     while row.find("DATA_from:") > -1:
-                        row = Helpers.spacedel(f.readline())
+                        row = helpers.spacedel(f.readline())
                         while row.find("BEGIN_DATAGRID") > -1:
                             row = f.readline()
                             origin = f.readline()
                             vec1 = f.readline().split()
-                            vec1 = Helpers.list_str_to_float(vec1)
+                            vec1 = helpers.list_str_to_float(vec1)
                             vec2 = f.readline().split()
-                            vec2 = Helpers.list_str_to_float(vec2)
+                            vec2 = helpers.list_str_to_float(vec2)
                             vec3 = f.readline().split()
-                            vec3 = Helpers.list_str_to_float(vec3)
+                            vec3 = helpers.list_str_to_float(vec3)
                             f.close()
 
                             AllAtoms = TAtomicModel(atoms)
@@ -213,7 +213,7 @@ class TXSF(TVolumericData):
                         datas = []
                         row = f.readline()
                         while row.find("BEGIN_DATAGRID") > -1:
-                            row = Helpers.spacedel(row)
+                            row = helpers.spacedel(row)
                             data3D = TVolumericDataBlock(row)
                             while row.find("END_") == -1:
                                 row = f.readline()
@@ -230,13 +230,13 @@ class TXSF(TVolumericData):
         row = f.readline()
         while row != '':
             if row.find(getChildNode) > -1:
-                row = Helpers.spacedel(f.readline()).split()
+                row = helpers.spacedel(f.readline()).split()
                 self.Nx = int(row[0])
                 self.Ny = int(row[1])
                 self.Nz = int(row[2])
                 self.data3D = np.zeros((1, self.Nx*self.Ny*self.Nz))
 
-                origin = Helpers.list_str_to_float(f.readline().split())
+                origin = helpers.list_str_to_float(f.readline().split())
                 self.origin = np.array(origin)
                 self.origin_to_export = deepcopy(self.origin)
                 tmp_model = TAtomicModel(self.atoms)

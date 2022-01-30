@@ -1,23 +1,5 @@
 # -*- coding: utf-8 -*-
 # Python 3
-import copy
-import math
-import os
-import random
-import re
-from copy import deepcopy
-from operator import itemgetter
-
-import numpy as np
-from numpy.linalg import inv
-from numpy.linalg import norm
-from numpy import polyfit
-from scipy.optimize import leastsq
-from scipy.spatial import ConvexHull
-from scipy.spatial import Voronoi
-
-from utils.helpers import Helpers
-
 
 ##################################################################
 ######################## TPeriodTable ############################

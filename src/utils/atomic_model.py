@@ -9,7 +9,7 @@ import numpy as np
 from numpy.linalg import inv
 from numpy.linalg import norm
 
-from utils.helpers import Helpers
+from utils import helpers
 from utils.periodic_table import TPeriodTable
 from utils.siesta import TSIESTA
 
@@ -45,9 +45,9 @@ class TAtom(object):
 
     def to_string(self):
         let = self.let
-        sx = Helpers.float_to_string(self.x)
-        sy = Helpers.float_to_string(self.y)
-        sz = Helpers.float_to_string(self.z)
+        sx = helpers.float_to_string(self.x)
+        sy = helpers.float_to_string(self.y)
+        sz = helpers.float_to_string(self.z)
         return let + '  ' + sx + '  ' + sy + '  ' + sz
         
 ##################################################################
@@ -135,7 +135,7 @@ class TAtomicModel(object):
         NumberOfAtoms = TSIESTA.number_of_atoms(filename)
         AtomicCoordinatesFormat = TSIESTA.atomic_coordinates_format(filename)
         lat = ""
-        units = Helpers.fromFileProperty(filename, 'ZM.UnitsLength', 1, 'string')
+        units = helpers.fromFileProperty(filename, 'ZM.UnitsLength', 1, 'string')
         if AtomicCoordinatesFormat == "ScaledCartesian":
             lat = TSIESTA.lattice_constant(filename)
             units = "ang"
@@ -226,18 +226,18 @@ class TAtomicModel(object):
                 if (str1 != '') and (str1.find("siesta: Atomic coordinates (Bohr) and species") >= 0) and (isSpesF == 0):
                     str1 = siesta_file.readline()
                     while str1.find('siesta') >= 0:
-                        str1 = Helpers.spacedel(str1)
+                        str1 = helpers.spacedel(str1)
                         sl.append(int(str.split(str1, ' ')[4]))
                         str1 = siesta_file.readline()
                     isSpesF = 1
 
                 if (str1 != '') and (str1.find("outcell: Unit cell vectors (Ang):") >= 0) and (isSpesF == 1):
                     lat_vect_1 = siesta_file.readline().split()
-                    lat_vect_1 = Helpers.list_str_to_float(lat_vect_1)
+                    lat_vect_1 = helpers.list_str_to_float(lat_vect_1)
                     lat_vect_2 = siesta_file.readline().split()
-                    lat_vect_2 = Helpers.list_str_to_float(lat_vect_2)
+                    lat_vect_2 = helpers.list_str_to_float(lat_vect_2)
                     lat_vect_3 = siesta_file.readline().split()
-                    lat_vect_3 = Helpers.list_str_to_float(lat_vect_3)
+                    lat_vect_3 = helpers.list_str_to_float(lat_vect_3)
                     isFectF = 1
 
                     if len(atoms) > 0:
@@ -265,7 +265,7 @@ class TAtomicModel(object):
                     atoms = []
 
                     for i1 in range(0, number_of_atoms):
-                        str1 = Helpers.spacedel(siesta_file.readline())
+                        str1 = helpers.spacedel(siesta_file.readline())
                         S = str1.split(' ')
                         d1 = float(S[0]) * mult
                         d2 = float(S[1]) * mult
@@ -297,13 +297,13 @@ class TAtomicModel(object):
                         isSpesF == 0):
                     str1 = MdSiestaFile.readline()
                     while str1.find('siesta') >= 0:
-                        str1 = Helpers.spacedel(str1)
+                        str1 = helpers.spacedel(str1)
                         sl.append(int(str.split(str1, ' ')[4]))
                         str1 = MdSiestaFile.readline()
                     isSpesF = 1
                 if (str1 != '') and (str1.find("ChemicalSpeciesLabel") >= 0) and (isSpesFinde == 0):
                     for i in range(0, NumberOfSpecies):
-                        str1 = Helpers.spacedel(MdSiestaFile.readline())
+                        str1 = helpers.spacedel(MdSiestaFile.readline())
                         S = str.split(str1, ' ')
                         speciesLabel[int(S[0])] = S[1]
                     isSpesFinde = 1
@@ -321,7 +321,7 @@ class TAtomicModel(object):
 
                     atoms = []
                     for i1 in range(0, NumberOfAtoms):
-                        str1 = Helpers.spacedel(MdSiestaFile.readline())
+                        str1 = helpers.spacedel(MdSiestaFile.readline())
                         if str1 == "":
                             return []
                         S = str1.split(' ')
@@ -336,11 +336,11 @@ class TAtomicModel(object):
                     while str1.find("outcell: Unit cell vectors (Ang):") == -1:
                         str1 = MdSiestaFile.readline()
                     vec1 = MdSiestaFile.readline().split()
-                    vec1 = Helpers.list_str_to_float(vec1)
+                    vec1 = helpers.list_str_to_float(vec1)
                     vec2 = MdSiestaFile.readline().split()
-                    vec2 = Helpers.list_str_to_float(vec2)
+                    vec2 = helpers.list_str_to_float(vec2)
                     vec3 = MdSiestaFile.readline().split()
-                    vec3 = Helpers.list_str_to_float(vec3)
+                    vec3 = helpers.list_str_to_float(vec3)
                     AllAtoms = TAtomicModel(atoms)
                     AllAtoms.set_lat_vectors(vec1, vec2, vec3)
                     molecules.append(AllAtoms)
@@ -359,23 +359,23 @@ class TAtomicModel(object):
             while str1.find("---") >= 0:
                 newStr = TAtomicModel()
                 LatConst = float(struct_file.readline())
-                lat1 = Helpers.spacedel(struct_file.readline()).split()
-                lat1 = Helpers.list_str_to_float(lat1)
+                lat1 = helpers.spacedel(struct_file.readline()).split()
+                lat1 = helpers.list_str_to_float(lat1)
                 lat1 = LatConst*np.array(lat1)
-                lat2 = Helpers.spacedel(struct_file.readline()).split()
-                lat2 = Helpers.list_str_to_float(lat2)
+                lat2 = helpers.spacedel(struct_file.readline()).split()
+                lat2 = helpers.list_str_to_float(lat2)
                 lat2 = LatConst * np.array(lat2)
-                lat3 = Helpers.spacedel(struct_file.readline()).split()
-                lat3 = Helpers.list_str_to_float(lat3)
+                lat3 = helpers.spacedel(struct_file.readline()).split()
+                lat3 = helpers.list_str_to_float(lat3)
                 lat3 = LatConst * np.array(lat3)
-                NumbersOfAtoms = Helpers.spacedel(struct_file.readline()).split()
-                NumbersOfAtoms = Helpers.list_str_to_int(NumbersOfAtoms)
+                NumbersOfAtoms = helpers.spacedel(struct_file.readline()).split()
+                NumbersOfAtoms = helpers.list_str_to_int(NumbersOfAtoms)
                 str1 = struct_file.readline()
-                if Helpers.spacedel(str1) == "Direct":
+                if helpers.spacedel(str1) == "Direct":
                     for i in range(0,len(NumbersOfAtoms)):
                         for j in range(0, NumbersOfAtoms[i]):
-                            row = Helpers.spacedel(struct_file.readline()).split()
-                            row = Helpers.list_str_to_float(row)
+                            row = helpers.spacedel(struct_file.readline()).split()
+                            row = helpers.list_str_to_float(row)
 
                             let = "Direct"
                             charge = 200 + i
@@ -424,13 +424,13 @@ class TAtomicModel(object):
             else:
                 if (n_vec == 0) and f2:
                     lat_vect_1 = line.split()
-                    lat_vect_1 = Helpers.list_str_to_float(lat_vect_1)
+                    lat_vect_1 = helpers.list_str_to_float(lat_vect_1)
                 if (n_vec == 1) and f2:
                     lat_vect_2 = line.split()
-                    lat_vect_2 = Helpers.list_str_to_float(lat_vect_2)
+                    lat_vect_2 = helpers.list_str_to_float(lat_vect_2)
                 if (n_vec == 2) and f2:
                     lat_vect_3 = line.split()
-                    lat_vect_3 = Helpers.list_str_to_float(lat_vect_3)
+                    lat_vect_3 = helpers.list_str_to_float(lat_vect_3)
                     f2 = False
                 if f2 == True:
                     n_vec += 1
@@ -467,27 +467,27 @@ class TAtomicModel(object):
         molecules = []
         if os.path.exists(filename):
             struct_file = open(filename)
-            str1 = Helpers.spacedel(struct_file.readline())
-            latConst = float(Helpers.spacedel(struct_file.readline()))
-            lat1 = Helpers.spacedel(struct_file.readline()).split()
-            lat1 = np.array(Helpers.list_str_to_float(lat1))*latConst
-            lat2 = Helpers.spacedel(struct_file.readline()).split()
-            lat2 = np.array(Helpers.list_str_to_float(lat2))*latConst
-            lat3 = Helpers.spacedel(struct_file.readline()).split()
-            lat3 = np.array(Helpers.list_str_to_float(lat3))*latConst
-            SortsOfAtoms = Helpers.spacedel(struct_file.readline()).split()
-            NumbersOfAtoms = Helpers.spacedel(struct_file.readline()).split()
-            NumbersOfAtoms = Helpers.list_str_to_int(NumbersOfAtoms)
+            str1 = helpers.spacedel(struct_file.readline())
+            latConst = float(helpers.spacedel(struct_file.readline()))
+            lat1 = helpers.spacedel(struct_file.readline()).split()
+            lat1 = np.array(helpers.list_str_to_float(lat1))*latConst
+            lat2 = helpers.spacedel(struct_file.readline()).split()
+            lat2 = np.array(helpers.list_str_to_float(lat2))*latConst
+            lat3 = helpers.spacedel(struct_file.readline()).split()
+            lat3 = np.array(helpers.list_str_to_float(lat3))*latConst
+            SortsOfAtoms = helpers.spacedel(struct_file.readline()).split()
+            NumbersOfAtoms = helpers.spacedel(struct_file.readline()).split()
+            NumbersOfAtoms = helpers.list_str_to_int(NumbersOfAtoms)
             NumberOfAtoms = 0
             for number in NumbersOfAtoms:
                 NumberOfAtoms += number
 
-            if Helpers.spacedel(struct_file.readline()).lower() == "direct":
+            if helpers.spacedel(struct_file.readline()).lower() == "direct":
                 new_str = TAtomicModel()
                 for i in range(0, len(NumbersOfAtoms)):
                     number = NumbersOfAtoms[i]
                     for j in range(0, number):
-                        str1 = Helpers.spacedel(struct_file.readline())
+                        str1 = helpers.spacedel(struct_file.readline())
                         s = str1.split(' ')
                         x = float(s[0])
                         y = float(s[1])
@@ -508,17 +508,17 @@ class TAtomicModel(object):
         molecules = []
         if os.path.exists(filename):
             struct_file = open(filename)
-            lat1 = Helpers.spacedel(struct_file.readline()).split()
-            lat1 = Helpers.list_str_to_float(lat1)
-            lat2 = Helpers.spacedel(struct_file.readline()).split()
-            lat2 = Helpers.list_str_to_float(lat2)
-            lat3 = Helpers.spacedel(struct_file.readline()).split()
-            lat3 = Helpers.list_str_to_float(lat3)
+            lat1 = helpers.spacedel(struct_file.readline()).split()
+            lat1 = helpers.list_str_to_float(lat1)
+            lat2 = helpers.spacedel(struct_file.readline()).split()
+            lat2 = helpers.list_str_to_float(lat2)
+            lat3 = helpers.spacedel(struct_file.readline()).split()
+            lat3 = helpers.list_str_to_float(lat3)
             NumberOfAtoms = int(struct_file.readline())
 
             newStr = TAtomicModel()
             for i1 in range(0, NumberOfAtoms):
-                str1 = Helpers.spacedel(struct_file.readline())
+                str1 = helpers.spacedel(struct_file.readline())
                 S = str1.split(' ')
                 x = float(S[2])
                 y = float(S[3])
@@ -606,10 +606,10 @@ class TAtomicModel(object):
     @staticmethod
     def atoms_from_xyz_structure(NumberOfAtoms, ani_file, periodTable, indexes=[0, 1, 2, 3]):
         if indexes[0] == 0:
-            str1 = Helpers.spacedel(ani_file.readline())
+            str1 = helpers.spacedel(ani_file.readline())
         atoms = []
         for i1 in range(0, NumberOfAtoms):
-            str1 = Helpers.spacedel(ani_file.readline())
+            str1 = helpers.spacedel(ani_file.readline())
             S = str1.split(' ')
             d1 = float(S[indexes[1]])
             d2 = float(S[indexes[2]])
@@ -1451,9 +1451,9 @@ class TAtomicModel(object):
         mult = 1.0
         if units == "Bohr":
             mult = 1.0 / 0.52917720859
-        sx = Helpers.float_to_string(self.atoms[i].x * mult)
-        sy = Helpers.float_to_string(self.atoms[i].y * mult)
-        sz = Helpers.float_to_string(self.atoms[i].z * mult)
+        sx = helpers.float_to_string(self.atoms[i].x * mult)
+        sy = helpers.float_to_string(self.atoms[i].y * mult)
+        sz = helpers.float_to_string(self.atoms[i].z * mult)
         str2 = '  ' + sx + '  ' + sy + '  ' + sz
         return str2
 

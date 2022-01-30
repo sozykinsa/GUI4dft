@@ -3,42 +3,32 @@ import math
 import os
 import re
 from operator import itemgetter
-
 import numpy as np
 
 
-##################################################################
-############################ Helpers  ############################
-##################################################################
-
-class Helpers:
-    @staticmethod
-    def spacedel(stroka):
+def spacedel(stroka):
         """ Удаление лишних пробелов, перводов строк """
         stroka = stroka.replace('\n', ' ')
         stroka = stroka.replace('\r', ' ')
         stroka = stroka.strip()
-        while stroka.find('  ')>=0:
+        while stroka.find('  ') >= 0:
             stroka = stroka.replace('  ', ' ')
         return stroka
 
-    @staticmethod
-    def float_to_string(fl):
+def float_to_string(fl):
         res = '{0:12.8f}'.format(fl)
         if res == "-0.00000000":
             res = " 0.00000000"
         return res
 
-    @staticmethod
-    def is_number(row):
+def is_number(row):
         try:
             float(row)
             return True
         except ValueError:
             return False
 
-    @staticmethod
-    def is_integer(n):
+def is_integer(n):
         try:
             float(n)
         except ValueError:
@@ -46,26 +36,21 @@ class Helpers:
         else:
             return float(n).is_integer()
 
-    @staticmethod
-    def list_plus_list(x, y):
+def list_plus_list(x, y):
         """ поэлементное сложение списков """
         return list(map(lambda a, b: a + b, x, y))
 
-    @staticmethod
-    def float_mult_list(x, y):
+def float_mult_list(x, y):
         """ умножение числа на список """
         return [float(x * item) for item in y]
 
-    @staticmethod
-    def list_str_to_float(x):
+def list_str_to_float(x):
         return [float(item) for item in x]
 
-    @staticmethod
-    def list_str_to_int(x):
+def list_str_to_int(x):
         return [int(item) for item in x]
 
-    @staticmethod
-    def nearest(latEn, nextLat):
+def nearest(latEn, nextLat):
         """ This example shows how to """
         res = abs(float(latEn[0][0]) - nextLat)
         for i in range(1, len(latEn)):
@@ -73,8 +58,7 @@ class Helpers:
                 res = abs(float(latEn[i][0]) - nextLat)
         return res
 
-    @staticmethod
-    def NextLat(latEn, eps):
+def NextLat(latEn, eps):
         """ This example shows how to """
         nextLat = 0
         if len(latEn) == 1:
@@ -86,7 +70,7 @@ class Helpers:
                 nextLat = float(latEn[0][0]) - 0.5
         if len(latEn) > 2:
             latEn.sort(key=lambda x: x[0])
-            imin = Helpers.mini(latEn)
+            imin = mini(latEn)
             start = imin - 1
             if imin == 0:
                 start = 0
@@ -104,7 +88,7 @@ class Helpers:
             sign = 1
             st = 0
             # errxrange = AT.Helpers.errorsrange(latEn)
-            while (Helpers.nearest(latEn, nextLat) < eps / 4) and (st < 5):
+            while (nearest(latEn, nextLat) < eps / 4) and (st < 5):
                 if (len(latEn) <= imin + sign) or (imin + sign < 0):
                     nextLat = float(latEn[imin][0]) + sign * eps / 2
                 else:
@@ -114,9 +98,13 @@ class Helpers:
             if st == 5:
                 nextLat = 0
         return nextLat
+
+def write_text_to_file(fname, text):
+        f = open(fname, 'w')
+        print(text, file=f)
+        f.close()
         
-    @staticmethod
-    def getsubs(dir):
+def getsubs(dir):
         """ Получение списка директорий и файлов """
         dirs = []
         subdirs = []
@@ -131,8 +119,7 @@ class Helpers:
         dirs.sort()
         return dirs, files
             
-    @staticmethod
-    def cdev(ii, jj):
+def cdev(ii, jj):
         i = abs(ii)
         j = abs(jj)
         if j > i:
@@ -147,8 +134,7 @@ class Helpers:
                 i = j
                 j = ir
 
-    @staticmethod    
-    def mini(List2D):
+def mini(List2D):
         """ Сортирует список по возрастанию первого столбца и возвращает индекс минимального элемента во втором столбце """
         List2D = sorted(List2D, key=itemgetter(0))
         imin = 0
@@ -157,8 +143,7 @@ class Helpers:
                 imin = i
         return imin
 
-    @staticmethod
-    def ListN2Split(DATA):
+def ListN2Split(DATA):
         # из списка N x 2 получаем 2 списка по N элементов
         x = []
         y = []
@@ -167,14 +152,13 @@ class Helpers:
             y.append(row[1])
         return np.array(x), np.array(y)
     
-    @staticmethod    
-    def errorsrange(ListLatEn):
+def errorsrange(ListLatEn):
         """ Возвращает ширину доверительного интервала при поиске оптимального параметра """
         ListLatEn = sorted(ListLatEn, key=itemgetter(0))
         if len(ListLatEn)<3:
             return 10
         ans = float(ListLatEn[len(ListLatEn)-1][0]) - float(ListLatEn[0][0])
-        imin = Helpers.mini(ListLatEn)
+        imin = mini(ListLatEn)
         if imin == 0:
             ans = float(ListLatEn[1][0]) - float(ListLatEn[0][0])
         if imin == len(ListLatEn)-1:
@@ -183,8 +167,7 @@ class Helpers:
             ans = float(ListLatEn[imin+1][0]) - float(ListLatEn[imin-1][0])
         return ans
 
-    @staticmethod
-    def fromFileProperty(filename, prop, count=1, type='int'):
+def fromFileProperty(filename, prop, count=1, type='int'):
         """
         Возвращает  значение параметра property из файла filename.
         Значене может быть целым или дробным числом с фиксированной точкой.
@@ -193,14 +176,13 @@ class Helpers:
         Параметр type указывает тип возвращаемого значения (int, float или string)
         """
         k = 1
-        is_found, k, property = Helpers.property_from_sub_file(filename, k, prop, count, type)
+        is_found, k, property = property_from_sub_file(filename, k, prop, count, type)
         if is_found:
             return property
         else:
             return None
 
-    @staticmethod
-    def property_from_sub_file(filename, k, prop, count, typen):
+def property_from_sub_file(filename, k, prop, count, typen):
         property = None
         is_found = False
         k = 1
@@ -217,7 +199,7 @@ class Helpers:
                     if typen == "unformatted":
                         property = str1
                     if typen == 'string':
-                        property = Helpers.spacedel(str1)
+                        property = spacedel(str1)
                     else:
                         prop1 = re.findall(r"[0-9,\.,-]+", str1)[0]
                         if typen == 'int':
@@ -237,8 +219,7 @@ class Helpers:
             MyFile.close()
         return is_found, k, property
 
-    @staticmethod
-    def RoundToPlane(atom, R):
+def RoundToPlane(atom, R):
         """ RoundToPlane  """
 
         z = atom.z
@@ -248,8 +229,7 @@ class Helpers:
         x = -R*fi
         return [x, z]
 
-    @staticmethod
-    def dos_from_file(filename, n, nlines = 0):
+def dos_from_file(filename, n, nlines = 0):
         DOSFile = open(filename)
         strDOS = DOSFile.readline()
         energy = []
@@ -262,15 +242,14 @@ class Helpers:
                 strDOS = DOSFile.readline()
 
             for i in range(0, nlines):
-                strDOS = Helpers.read_row_of_dos_file(DOSFile, energy, n, spinDown, spinUp, strDOS)
+                strDOS = read_row_of_dos_file(DOSFile, energy, n, spinDown, spinUp, strDOS)
 
         if nlines == 0:
             while strDOS != '':
-                strDOS = Helpers.read_row_of_dos_file(DOSFile, energy, n, spinDown, spinUp, strDOS)
+                strDOS = read_row_of_dos_file(DOSFile, energy, n, spinDown, spinUp, strDOS)
         return energy, spinDown, spinUp
 
-    @staticmethod
-    def read_row_of_dos_file(DOSFile, energy, n, spinDown, spinUp, strDOS):
+def read_row_of_dos_file(DOSFile, energy, n, spinDown, spinUp, strDOS):
         line = strDOS.split(' ')
         line1 = []
         for i in range(0, len(line)):
@@ -285,8 +264,7 @@ class Helpers:
         strDOS = DOSFile.readline()
         return strDOS
 
-    @staticmethod
-    def utf8_letter(let):
+def utf8_letter(let):
         if let == r'\Gamma':
             return '\u0393'
         if let == r'\Delta':
