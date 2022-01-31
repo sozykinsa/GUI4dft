@@ -416,6 +416,7 @@ class TAtomicModel(object):
         lat_vect_1 = ""
         lat_vect_2 = ""
         lat_vect_3 = ""
+        mult = 1
 
         for line in open(filename, 'r'):
             if (line.find("outcell: Unit cell vectors (Ang):") > -1):
@@ -432,15 +433,17 @@ class TAtomicModel(object):
                     lat_vect_3 = line.split()
                     lat_vect_3 = helpers.list_str_to_float(lat_vect_3)
                     f2 = False
-                if f2 == True:
+                if f2:
                     n_vec += 1
 
-            if (line.find("outcoor: Relaxed atomic coordinates (Ang)") > -1):
+            if (line.find("outcoor: Relaxed atomic coordinates (Ang)") > -1) or (line.find("outcoor: Relaxed atomic coordinates (Bohr)") > -1):
                 f1 = True
+                if line.find("outcoor: Relaxed atomic coordinates (Bohr)") > -1:
+                    mult = 0.52917720859
             else:
                 if (len(AtList) < NumberOfAtoms) and f1:
                     line1 = line.split()
-                    line2 = [float(line1[0]), float(line1[1]), float(line1[2]), line1[5], Species[int(line1[3]) - 1][1]]
+                    line2 = [float(line1[0]) * mult, float(line1[1]) * mult, float(line1[2]) * mult, line1[5], Species[int(line1[3]) - 1][1]]
                     AtList.append(line2)
                 if len(AtList) == NumberOfAtoms:
                     AllAtoms = TAtomicModel(AtList)

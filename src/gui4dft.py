@@ -43,7 +43,7 @@ from TInterface import TXSF
 from gui.about import Ui_DialogAbout as Ui_about
 from gui.form import Ui_MainWindow as Ui_form
 
-from gui4dft import ase, critic2
+from utils import ase, critic2
 
 sys.path.append('.')
 

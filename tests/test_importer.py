@@ -1,14 +1,12 @@
 from utils.importer import Importer
 
 
-def test_importer(tests_path):
-    f_name = str(tests_path / 'ref_data' / "test_file_01.fdf")
-    model, fdf = Importer.Import(f_name, fl='all', prop=False, xyzcritic2=False)
-    assert len(model[0].atoms) == 96
-
-
 def test_importer_fdf(tests_path):
     f_name = str(tests_path / 'ref_data' / 'h2o-ang' / "siesta.fdf")
+    model, fdf = Importer.Import(f_name, fl='all', prop=False, xyzcritic2=False)
+    assert len(model[0].atoms) == 3
+
+    f_name = str(tests_path / 'ref_data' / 'h2o-bohr' / "siesta.fdf")
     model, fdf = Importer.Import(f_name, fl='all', prop=False, xyzcritic2=False)
     assert len(model[0].atoms) == 3
 
@@ -22,6 +20,10 @@ def test_importer_output(tests_path):
     model, fdf = Importer.Import(f_name, fl='all', prop=False, xyzcritic2=False)
     assert len(model[0].atoms) == 3
 
+    f_name = str(tests_path / 'ref_data' / 'h2o-bohr' / "siesta.out")
+    model, fdf = Importer.Import(f_name, fl='all', prop=False, xyzcritic2=False)
+    assert len(model[0].atoms) == 3
+
     f_name = str(tests_path / 'ref_data' / 'h2o-zmatrix' / "siesta.out")
     model, fdf = Importer.Import(f_name, fl='all', prop=False, xyzcritic2=False)
     assert len(model[0].atoms) == 3
@@ -32,6 +34,10 @@ def test_importer_xyz(tests_path):
     model, fdf = Importer.Import(f_name, fl='all', prop=False, xyzcritic2=False)
     assert len(model[0].atoms) == 3
 
+    f_name = str(tests_path / 'ref_data' / 'h2o-bohr' / "siesta.xyz")
+    model, fdf = Importer.Import(f_name, fl='all', prop=False, xyzcritic2=False)
+    assert len(model[0].atoms) == 3
+
     f_name = str(tests_path / 'ref_data' / 'h2o-zmatrix' / "siesta.xyz")
     model, fdf = Importer.Import(f_name, fl='all', prop=False, xyzcritic2=False)
     assert len(model[0].atoms) == 3
@@ -39,6 +45,10 @@ def test_importer_xyz(tests_path):
 
 def test_importer_struct_out(tests_path):
     f_name = str(tests_path / 'ref_data' / 'h2o-ang' / "siesta.STRUCT_OUT")
+    model, fdf = Importer.Import(f_name, fl='all', prop=False, xyzcritic2=False)
+    assert len(model[0].atoms) == 3
+
+    f_name = str(tests_path / 'ref_data' / 'h2o-bohr' / "siesta.STRUCT_OUT")
     model, fdf = Importer.Import(f_name, fl='all', prop=False, xyzcritic2=False)
     assert len(model[0].atoms) == 3
 

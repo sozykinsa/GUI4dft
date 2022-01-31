@@ -68,28 +68,28 @@ class Importer(object):
                 type_of_run = (TSIESTA.type_of_run(filename).split())[0].lower()
                 models = []
                 if type_of_run != "sp":
-                        if fl != 'opt':
-                            models = TAtomicModel.atoms_from_output_cg(filename)
-                            if len(models) == 0:
-                                models = TAtomicModel.atoms_from_output_md(filename)
-                        modelsopt = TAtomicModel.atoms_from_output_optim(filename)
+                    if fl != 'opt':
+                        models = TAtomicModel.atoms_from_output_cg(filename)
+                        if len(models) == 0:
+                            models = TAtomicModel.atoms_from_output_md(filename)
+                    modelsopt = TAtomicModel.atoms_from_output_optim(filename)
                 else:
-                        modelsopt = TAtomicModel.atoms_from_output_sp(filename)
+                    modelsopt = TAtomicModel.atoms_from_output_sp(filename)
                 if len(modelsopt) == 1:
-                        models.append(modelsopt[0])
+                    models.append(modelsopt[0])
                 if prop and (len(models) > 0):
-                        try:
-                            charge_mulliken = TSIESTA.get_charges_mulliken_for_atoms(filename)
-                            if len(charge_mulliken[0]) > 0:
-                                models[-1].add_atoms_property("charge Mulliken", charge_mulliken)
-                            charge_voronoi = TSIESTA.get_charges_voronoi_for_atoms(filename)
-                            if len(charge_voronoi[0]) > 0:
-                                models[-1].add_atoms_property("charge Voronoi", charge_voronoi)
-                            charge_hirshfeld = TSIESTA.get_charges_hirshfeld_for_atoms(filename)
-                            if len(charge_hirshfeld[0]) > 0:
-                                models[-1].add_atoms_property("charge Hirshfeld", charge_hirshfeld)
-                        except Exception:
-                            print("Properties failed")
+                    try:
+                        charge_mulliken = TSIESTA.get_charges_mulliken_for_atoms(filename)
+                        if len(charge_mulliken[0]) > 0:
+                            models[-1].add_atoms_property("charge Mulliken", charge_mulliken)
+                        charge_voronoi = TSIESTA.get_charges_voronoi_for_atoms(filename)
+                        if len(charge_voronoi[0]) > 0:
+                            models[-1].add_atoms_property("charge Voronoi", charge_voronoi)
+                        charge_hirshfeld = TSIESTA.get_charges_hirshfeld_for_atoms(filename)
+                        if len(charge_hirshfeld[0]) > 0:
+                            models[-1].add_atoms_property("charge Hirshfeld", charge_hirshfeld)
+                    except Exception:
+                        print("Properties failed")
                 fdf.from_out_file(filename)
 
             if fileFormat == "SIESTAANI":
