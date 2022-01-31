@@ -4992,7 +4992,7 @@
                </attribute>
                <layout class="QVBoxLayout" name="verticalLayout_70">
                 <item>
-                 <widget class="QFrame" name="frame_107">
+                 <widget class="QFrame" name="VolumrricDataGridExport">
                   <property name="frameShape">
                    <enum>QFrame::StyledPanel</enum>
                   </property>
@@ -5691,8 +5691,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>399</width>
-             <height>675</height>
+             <width>370</width>
+             <height>482</height>
             </rect>
            </property>
            <attribute name="label">
@@ -7348,8 +7348,8 @@ p, li { white-space: pre-wrap; }
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>-190</y>
-             <width>378</width>
+             <y>0</y>
+             <width>371</width>
              <height>865</height>
             </rect>
            </property>

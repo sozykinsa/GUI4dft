@@ -19,7 +19,7 @@ from PySide2.QtCore import Qt
 from PySide2.QtGui import QStandardItemModel
 from PySide2.QtGui import QStandardItem
 from image3D import Ui_MainWindow as Ui_image3D
-from gui.atomsidentify import Ui_Dialog as Ui_Dialog_Atoms
+from ui.atomsidentify import Ui_Dialog as Ui_Dialog_Atoms
 from TGui import GuiOpenGL
 
 

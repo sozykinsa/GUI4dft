@@ -40,8 +40,8 @@ from TInterface import Image3Dexporter
 from TInterface import TGaussianCube
 from TInterface import TVolumericData
 from TInterface import TXSF
-from gui.about import Ui_DialogAbout as Ui_about
-from gui.form import Ui_MainWindow as Ui_form
+from ui.about import Ui_DialogAbout as Ui_about
+from ui.form import Ui_MainWindow as Ui_form
 
 from utils import ase, critic2
 
@@ -2732,7 +2732,7 @@ class mainWindow(QMainWindow):
     def volumeric_data_load2(self):
         getSelected = self.ui.FormActionsPostTreeSurface2.selectedItems()
         if getSelected:
-            if getSelected[0].parent() != None:
+            if getSelected[0].parent() is not None:
                 getChildNode = getSelected[0].text(0)
                 self.VolumericData2.load_data(getChildNode)
 
@@ -2747,6 +2747,8 @@ class mainWindow(QMainWindow):
                     self.ui.CalculateTheVolumericDataDifference.setEnabled(True)
                     self.ui.CalculateTheVolumericDataSum.setEnabled(True)
                     self.ui.VolumrricDataGridExport.setEnabled(True)
+                    self.ui.ExportTheVolumericDataXSF.setEnabled(True)
+                    self.ui.ExportTheVolumericDataCube.setEnabled(True)
                     self.ui.VolumrricDataGrid2.setTitle("Grid: correct")
                 else:
                     self.ui.VolumrricDataGrid2.setTitle("Grid: incorrect")

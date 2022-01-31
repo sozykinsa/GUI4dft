@@ -2615,17 +2615,17 @@ class Ui_MainWindow(object):
         self.tab_22.setObjectName(u"tab_22")
         self.verticalLayout_70 = QVBoxLayout(self.tab_22)
         self.verticalLayout_70.setObjectName(u"verticalLayout_70")
-        self.frame_107 = QFrame(self.tab_22)
-        self.frame_107.setObjectName(u"frame_107")
-        self.frame_107.setFrameShape(QFrame.StyledPanel)
-        self.frame_107.setFrameShadow(QFrame.Raised)
-        self.horizontalLayout_64 = QHBoxLayout(self.frame_107)
+        self.VolumrricDataGridExport = QFrame(self.tab_22)
+        self.VolumrricDataGridExport.setObjectName(u"VolumrricDataGridExport")
+        self.VolumrricDataGridExport.setFrameShape(QFrame.StyledPanel)
+        self.VolumrricDataGridExport.setFrameShadow(QFrame.Raised)
+        self.horizontalLayout_64 = QHBoxLayout(self.VolumrricDataGridExport)
         self.horizontalLayout_64.setObjectName(u"horizontalLayout_64")
         self.horizontalSpacer_37 = QSpacerItem(25, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
         self.horizontalLayout_64.addItem(self.horizontalSpacer_37)
 
-        self.ExportTheVolumericDataXSF = QPushButton(self.frame_107)
+        self.ExportTheVolumericDataXSF = QPushButton(self.VolumrricDataGridExport)
         self.ExportTheVolumericDataXSF.setObjectName(u"ExportTheVolumericDataXSF")
 
         self.horizontalLayout_64.addWidget(self.ExportTheVolumericDataXSF)
@@ -2634,7 +2634,7 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_64.addItem(self.horizontalSpacer_35)
 
-        self.ExportTheVolumericDataCube = QPushButton(self.frame_107)
+        self.ExportTheVolumericDataCube = QPushButton(self.VolumrricDataGridExport)
         self.ExportTheVolumericDataCube.setObjectName(u"ExportTheVolumericDataCube")
         self.ExportTheVolumericDataCube.setEnabled(True)
 
@@ -2645,7 +2645,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_64.addItem(self.horizontalSpacer_36)
 
 
-        self.verticalLayout_70.addWidget(self.frame_107)
+        self.verticalLayout_70.addWidget(self.VolumrricDataGridExport)
 
         self.verticalSpacer_25 = QSpacerItem(20, 542, QSizePolicy.Minimum, QSizePolicy.Expanding)
 
@@ -2973,7 +2973,7 @@ class Ui_MainWindow(object):
         self.toolBox_2.addItem(self.page_2, u"Isosurface and Contours")
         self.page_24 = QWidget()
         self.page_24.setObjectName(u"page_24")
-        self.page_24.setGeometry(QRect(0, 0, 399, 675))
+        self.page_24.setGeometry(QRect(0, 0, 370, 482))
         self.verticalLayout_44 = QVBoxLayout(self.page_24)
         self.verticalLayout_44.setObjectName(u"verticalLayout_44")
         self.tabWidget_6 = QTabWidget(self.page_24)
@@ -3849,7 +3849,7 @@ class Ui_MainWindow(object):
         self.toolBox_4.addItem(self.page_3, u"Raman and IR (ASE)")
         self.page_23 = QWidget()
         self.page_23.setObjectName(u"page_23")
-        self.page_23.setGeometry(QRect(0, -190, 378, 865))
+        self.page_23.setGeometry(QRect(0, 0, 371, 865))
         self.verticalLayout_11 = QVBoxLayout(self.page_23)
         self.verticalLayout_11.setObjectName(u"verticalLayout_11")
         self.FormButtonAddCroData = QPushButton(self.page_23)
