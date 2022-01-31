@@ -1733,8 +1733,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>371</width>
-                 <height>593</height>
+                 <width>337</width>
+                 <height>258</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -2993,7 +2993,7 @@
            <string notr="true"/>
           </property>
           <property name="currentIndex">
-           <number>2</number>
+           <number>0</number>
           </property>
           <widget class="QWidget" name="page_19">
            <property name="geometry">
@@ -4533,8 +4533,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>359</width>
-             <height>668</height>
+             <width>399</width>
+             <height>675</height>
             </rect>
            </property>
            <attribute name="label">
@@ -7348,9 +7348,9 @@ p, li { white-space: pre-wrap; }
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>0</y>
-             <width>373</width>
-             <height>889</height>
+             <y>-190</y>
+             <width>378</width>
+             <height>865</height>
             </rect>
            </property>
            <attribute name="label">
@@ -7407,7 +7407,7 @@ p, li { white-space: pre-wrap; }
                      <item>
                       <widget class="QFrame" name="frame_110">
                        <property name="frameShape">
-                        <enum>QFrame::StyledPanel</enum>
+                        <enum>QFrame::NoFrame</enum>
                        </property>
                        <property name="frameShadow">
                         <enum>QFrame::Raised</enum>
@@ -7433,7 +7433,7 @@ p, li { white-space: pre-wrap; }
                      <item>
                       <widget class="QFrame" name="frame_111">
                        <property name="frameShape">
-                        <enum>QFrame::StyledPanel</enum>
+                        <enum>QFrame::NoFrame</enum>
                        </property>
                        <property name="frameShadow">
                         <enum>QFrame::Raised</enum>
@@ -7459,7 +7459,7 @@ p, li { white-space: pre-wrap; }
                      <item>
                       <widget class="QFrame" name="frame_112">
                        <property name="frameShape">
-                        <enum>QFrame::StyledPanel</enum>
+                        <enum>QFrame::NoFrame</enum>
                        </property>
                        <property name="frameShadow">
                         <enum>QFrame::Raised</enum>
@@ -7485,7 +7485,7 @@ p, li { white-space: pre-wrap; }
                      <item>
                       <widget class="QFrame" name="frame_113">
                        <property name="frameShape">
-                        <enum>QFrame::StyledPanel</enum>
+                        <enum>QFrame::NoFrame</enum>
                        </property>
                        <property name="frameShadow">
                         <enum>QFrame::Raised</enum>
@@ -7559,7 +7559,7 @@ p, li { white-space: pre-wrap; }
                <item>
                 <widget class="QFrame" name="frame_140">
                  <property name="frameShape">
-                  <enum>QFrame::StyledPanel</enum>
+                  <enum>QFrame::NoFrame</enum>
                  </property>
                  <property name="frameShadow">
                   <enum>QFrame::Raised</enum>
@@ -7578,7 +7578,7 @@ p, li { white-space: pre-wrap; }
                <item>
                 <widget class="QFrame" name="frame_134">
                  <property name="frameShape">
-                  <enum>QFrame::StyledPanel</enum>
+                  <enum>QFrame::NoFrame</enum>
                  </property>
                  <property name="frameShadow">
                   <enum>QFrame::Raised</enum>
@@ -7617,7 +7617,7 @@ p, li { white-space: pre-wrap; }
                <item>
                 <widget class="QFrame" name="frame_135">
                  <property name="frameShape">
-                  <enum>QFrame::StyledPanel</enum>
+                  <enum>QFrame::NoFrame</enum>
                  </property>
                  <property name="frameShadow">
                   <enum>QFrame::Raised</enum>
@@ -7670,7 +7670,7 @@ p, li { white-space: pre-wrap; }
                   </size>
                  </property>
                  <property name="frameShape">
-                  <enum>QFrame::StyledPanel</enum>
+                  <enum>QFrame::NoFrame</enum>
                  </property>
                  <property name="frameShadow">
                   <enum>QFrame::Raised</enum>
@@ -7723,7 +7723,7 @@ p, li { white-space: pre-wrap; }
                   </size>
                  </property>
                  <property name="frameShape">
-                  <enum>QFrame::StyledPanel</enum>
+                  <enum>QFrame::NoFrame</enum>
                  </property>
                  <property name="frameShadow">
                   <enum>QFrame::Raised</enum>
@@ -7789,7 +7789,7 @@ p, li { white-space: pre-wrap; }
                   </size>
                  </property>
                  <property name="frameShape">
-                  <enum>QFrame::StyledPanel</enum>
+                  <enum>QFrame::NoFrame</enum>
                  </property>
                  <property name="frameShadow">
                   <enum>QFrame::Raised</enum>
@@ -7804,7 +7804,7 @@ p, li { white-space: pre-wrap; }
                      </size>
                     </property>
                     <property name="frameShape">
-                     <enum>QFrame::StyledPanel</enum>
+                     <enum>QFrame::NoFrame</enum>
                     </property>
                     <property name="frameShadow">
                      <enum>QFrame::Raised</enum>
@@ -7843,7 +7843,7 @@ p, li { white-space: pre-wrap; }
                <item>
                 <widget class="QFrame" name="frame_139">
                  <property name="frameShape">
-                  <enum>QFrame::StyledPanel</enum>
+                  <enum>QFrame::NoFrame</enum>
                  </property>
                  <property name="frameShadow">
                   <enum>QFrame::Raised</enum>
@@ -8753,7 +8753,7 @@ p, li { white-space: pre-wrap; }
             <item>
              <widget class="QFrame" name="frame_88">
               <property name="frameShape">
-               <enum>QFrame::StyledPanel</enum>
+               <enum>QFrame::NoFrame</enum>
               </property>
               <property name="frameShadow">
                <enum>QFrame::Raised</enum>
@@ -8787,7 +8787,7 @@ p, li { white-space: pre-wrap; }
             <item>
              <widget class="QFrame" name="frame_87">
               <property name="frameShape">
-               <enum>QFrame::StyledPanel</enum>
+               <enum>QFrame::NoFrame</enum>
               </property>
               <property name="frameShadow">
                <enum>QFrame::Raised</enum>
@@ -8827,7 +8827,7 @@ p, li { white-space: pre-wrap; }
                </size>
               </property>
               <property name="frameShape">
-               <enum>QFrame::StyledPanel</enum>
+               <enum>QFrame::NoFrame</enum>
               </property>
               <property name="frameShadow">
                <enum>QFrame::Raised</enum>
@@ -8866,7 +8866,7 @@ p, li { white-space: pre-wrap; }
             <item>
              <widget class="QFrame" name="frame_122">
               <property name="frameShape">
-               <enum>QFrame::StyledPanel</enum>
+               <enum>QFrame::NoFrame</enum>
               </property>
               <property name="frameShadow">
                <enum>QFrame::Raised</enum>

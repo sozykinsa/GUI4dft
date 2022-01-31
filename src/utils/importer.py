@@ -5,7 +5,7 @@ from utils.atomic_model import TAtomicModel
 from utils.vasp import TVASP
 from utils.fdfdata import TFDFFile
 from utils.siesta import TSIESTA
-from utils.helpers import Helpers
+from utils import helpers
 import numpy as np
 from TInterface import TXSF, TGaussianCube
 
@@ -27,7 +27,7 @@ class Importer(object):
         if (filename.lower()).endswith(".xyz"):
             f = open(filename)
             f.readline()
-            str1 = Helpers.spacedel(f.readline())
+            str1 = helpers.spacedel(f.readline())
             if len(str1.split()) > 4:
                 return "XMolXYZ"
             if len(str1.split()) == 0:
@@ -135,12 +135,12 @@ class Importer(object):
     @staticmethod
     def check_cro_file(filename):
         if os.path.exists(filename) and filename.endswith("cro"):
-            box_bohr = Helpers.fromFileProperty(filename, "Lattice parameters (bohr):", 1, 'string').split()
-            box_bohr = np.array(Helpers.list_str_to_float(box_bohr))
-            box_ang = Helpers.fromFileProperty(filename, "Lattice parameters (ang):", 1, 'string').split()
-            box_ang = np.array(Helpers.list_str_to_float(box_ang))
-            box_deg = Helpers.fromFileProperty(filename, "Lattice angles (degrees):", 1, 'string').split()
-            box_deg = np.array(Helpers.list_str_to_float(box_deg))
+            box_bohr = helpers.fromFileProperty(filename, "Lattice parameters (bohr):", 1, 'string').split()
+            box_bohr = np.array(helpers.list_str_to_float(box_bohr))
+            box_ang = helpers.fromFileProperty(filename, "Lattice parameters (ang):", 1, 'string').split()
+            box_ang = np.array(helpers.list_str_to_float(box_ang))
+            box_deg = helpers.fromFileProperty(filename, "Lattice angles (degrees):", 1, 'string').split()
+            box_deg = np.array(helpers.list_str_to_float(box_deg))
 
             MyFile = open(filename)
             str1 = MyFile.readline()
