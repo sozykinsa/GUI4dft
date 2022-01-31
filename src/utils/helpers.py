@@ -60,14 +60,14 @@ def nearest(latEn, nextLat):
 
 def NextLat(latEn, eps):
         """ This example shows how to """
-        nextLat = 0
+        next_lat = 0
         if len(latEn) == 1:
-            nextLat = float(latEn[0][0]) + 0.5
+            next_lat = float(latEn[0][0]) + 0.5
         if len(latEn) == 2:
             if float(latEn[0][1]) > float(latEn[1][1]):
-                nextLat = float(latEn[1][0]) + 0.5
+                next_lat = float(latEn[1][0]) + 0.5
             else:
-                nextLat = float(latEn[0][0]) - 0.5
+                next_lat = float(latEn[0][0]) - 0.5
         if len(latEn) > 2:
             latEn.sort(key=lambda x: x[0])
             imin = mini(latEn)
@@ -84,15 +84,15 @@ def NextLat(latEn, eps):
                 y.append(float(latEn[start + i][1]))
 
             a, b, c = np.polyfit(x, y, 2)
-            nextLat = -b / (2 * a)
+            next_lat = -b / (2 * a)
             sign = 1
             st = 0
             # errxrange = AT.Helpers.errorsrange(latEn)
             while (nearest(latEn, nextLat) < eps / 4) and (st < 5):
                 if (len(latEn) <= imin + sign) or (imin + sign < 0):
-                    nextLat = float(latEn[imin][0]) + sign * eps / 2
+                    next_lat = float(latEn[imin][0]) + sign * eps / 2
                 else:
-                    nextLat = (float(latEn[imin + sign][0]) + float(latEn[imin][0])) / 2
+                    next_lat = (float(latEn[imin + sign][0]) + float(latEn[imin][0])) / 2
                 sign = -sign
                 st = st + 1
             if st == 5:
@@ -105,7 +105,6 @@ def write_text_to_file(fname, text):
         f.close()
         
 def getsubs(dir):
-        """ Получение списка директорий и файлов """
         dirs = []
         subdirs = []
         files = []
@@ -138,8 +137,8 @@ def mini(List2D):
         """ Сортирует список по возрастанию первого столбца и возвращает индекс минимального элемента во втором столбце """
         List2D = sorted(List2D, key=itemgetter(0))
         imin = 0
-        for i in range(1,len(List2D)):
-            if float(List2D[i][1]) < float(List2D[imin][1]):
+        for i in range(1, len(list_2d)):
+            if float(list_2d[i][1]) < float(list_2d[imin][1]):
                 imin = i
         return imin
 
@@ -147,24 +146,25 @@ def ListN2Split(DATA):
         # из списка N x 2 получаем 2 списка по N элементов
         x = []
         y = []
-        for row in DATA:
+        for row in data:
             x.append(row[0])
             y.append(row[1])
         return np.array(x), np.array(y)
     
 def errorsrange(ListLatEn):
         """ Возвращает ширину доверительного интервала при поиске оптимального параметра """
-        ListLatEn = sorted(ListLatEn, key=itemgetter(0))
-        if len(ListLatEn)<3:
+        list_lat_en = sorted(list_lat_en, key=itemgetter(0))
+        if len(list_lat_en) < 3:
             return 10
+
         ans = float(ListLatEn[len(ListLatEn)-1][0]) - float(ListLatEn[0][0])
         imin = mini(ListLatEn)
         if imin == 0:
-            ans = float(ListLatEn[1][0]) - float(ListLatEn[0][0])
-        if imin == len(ListLatEn)-1:
-            ans = float(ListLatEn[len(ListLatEn)-1][0]) - float(ListLatEn[len(ListLatEn)-2][0])
-        if (imin != 0) and (imin != len(ListLatEn)-1):
-            ans = float(ListLatEn[imin+1][0]) - float(ListLatEn[imin-1][0])
+            ans = float(list_lat_en[1][0]) - float(list_lat_en[0][0])
+        if imin == len(list_lat_en)-1:
+            ans = float(list_lat_en[len(list_lat_en) - 1][0]) - float(list_lat_en[len(list_lat_en) - 2][0])
+        if (imin != 0) and (imin != len(list_lat_en) - 1):
+            ans = float(list_lat_en[imin + 1][0]) - float(list_lat_en[imin - 1][0])
         return ans
 
 def fromFileProperty(filename, prop, count=1, type='int'):

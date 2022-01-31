@@ -1,0 +1,14 @@
+LatticeConstant 1.0 Ang
+%block LatticeVectors
+         20.000000000       0.000000000       0.000000000
+          0.000000000      20.000000000       0.000000000
+          0.000000000       0.000000000      20.000000000
+%endblock LatticeVectors
+ZM.UnitsLength Ang
+ZM.UnitsAngle rad
+%block Zmatrix
+cartesian
+ 1      0.70263184      0.00000000      0.77435853   1   1   1
+ 1      0.70263188     -0.00000000     -0.77435858   1   1   1
+ 2      0.12078384     -0.00000000      0.00000005   1   1   1
+%endblock Zmatrix
