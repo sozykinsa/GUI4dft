@@ -786,12 +786,18 @@ class mainWindow(QMainWindow):
     def export_volumeric_data_to_cube(self):
         try:
             fname = QFileDialog.getSaveFileName(self, 'Save File', self.WorkDir, "cube files (*.cube)")[0]
-            self.export_volumeric_data_to_file(fname)
+            x1 = self.ui.FormVolDataExportX1.value()
+            x2 = self.ui.FormVolDataExportX2.value()
+            y1 = self.ui.FormVolDataExportY1.value()
+            y2 = self.ui.FormVolDataExportY2.value()
+            z1 = self.ui.FormVolDataExportZ1.value()
+            z2 = self.ui.FormVolDataExportZ2.value()
+            self.export_volumeric_data_to_file(fname, x1, x2, y1, y2, z1, z2)
         except Exception as e:
             self.show_error(e)
 
-    def export_volumeric_data_to_file(self, fname):
-        self.MainForm.volumeric_data_to_file(fname, self.VolumericData)
+    def export_volumeric_data_to_file(self, fname, x1, x2, y1, y2, z1, z2):
+        self.MainForm.volumeric_data_to_file(fname, self.VolumericData, x1, x2, y1, y2, z1, z2)
         self.WorkDir = os.path.dirname(fname)
         self.save_active_folder()
 
@@ -2728,6 +2734,16 @@ class mainWindow(QMainWindow):
                 self.ui.FormActionsPostSliderContourXY.setMaximum(self.VolumericData.Nz)
                 self.ui.FormActionsPostSliderContourXZ.setMaximum(self.VolumericData.Ny)
                 self.ui.FormActionsPostSliderContourYZ.setMaximum(self.VolumericData.Nx)
+
+                self.ui.FormVolDataExportX1.setMaximum(self.VolumericData.Nx)
+                self.ui.FormVolDataExportX2.setMaximum(self.VolumericData.Nx)
+                self.ui.FormVolDataExportX2.setValue(self.VolumericData.Nx)
+                self.ui.FormVolDataExportY1.setMaximum(self.VolumericData.Ny)
+                self.ui.FormVolDataExportY2.setMaximum(self.VolumericData.Ny)
+                self.ui.FormVolDataExportY2.setValue(self.VolumericData.Ny)
+                self.ui.FormVolDataExportZ1.setMaximum(self.VolumericData.Nz)
+                self.ui.FormVolDataExportZ2.setMaximum(self.VolumericData.Nz)
+                self.ui.FormVolDataExportZ2.setValue(self.VolumericData.Nz)
 
     def volumeric_data_load2(self):
         getSelected = self.ui.FormActionsPostTreeSurface2.selectedItems()

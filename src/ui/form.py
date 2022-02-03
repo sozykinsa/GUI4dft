@@ -2615,6 +2615,112 @@ class Ui_MainWindow(object):
         self.tab_22.setObjectName(u"tab_22")
         self.verticalLayout_70 = QVBoxLayout(self.tab_22)
         self.verticalLayout_70.setObjectName(u"verticalLayout_70")
+        self.groupBox_18 = QGroupBox(self.tab_22)
+        self.groupBox_18.setObjectName(u"groupBox_18")
+        self.verticalLayout_77 = QVBoxLayout(self.groupBox_18)
+        self.verticalLayout_77.setObjectName(u"verticalLayout_77")
+        self.frame_107 = QFrame(self.groupBox_18)
+        self.frame_107.setObjectName(u"frame_107")
+        self.frame_107.setFrameShape(QFrame.StyledPanel)
+        self.frame_107.setFrameShadow(QFrame.Raised)
+        self.horizontalLayout_128 = QHBoxLayout(self.frame_107)
+        self.horizontalLayout_128.setObjectName(u"horizontalLayout_128")
+        self.label_33 = QLabel(self.frame_107)
+        self.label_33.setObjectName(u"label_33")
+
+        self.horizontalLayout_128.addWidget(self.label_33)
+
+        self.FormVolDataExportX1 = QSpinBox(self.frame_107)
+        self.FormVolDataExportX1.setObjectName(u"FormVolDataExportX1")
+
+        self.horizontalLayout_128.addWidget(self.FormVolDataExportX1)
+
+        self.label_96 = QLabel(self.frame_107)
+        self.label_96.setObjectName(u"label_96")
+
+        self.horizontalLayout_128.addWidget(self.label_96)
+
+        self.FormVolDataExportX2 = QSpinBox(self.frame_107)
+        self.FormVolDataExportX2.setObjectName(u"FormVolDataExportX2")
+
+        self.horizontalLayout_128.addWidget(self.FormVolDataExportX2)
+
+        self.horizontalSpacer_89 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_128.addItem(self.horizontalSpacer_89)
+
+
+        self.verticalLayout_77.addWidget(self.frame_107)
+
+        self.frame_123 = QFrame(self.groupBox_18)
+        self.frame_123.setObjectName(u"frame_123")
+        self.frame_123.setFrameShape(QFrame.StyledPanel)
+        self.frame_123.setFrameShadow(QFrame.Raised)
+        self.horizontalLayout_145 = QHBoxLayout(self.frame_123)
+        self.horizontalLayout_145.setObjectName(u"horizontalLayout_145")
+        self.label_99 = QLabel(self.frame_123)
+        self.label_99.setObjectName(u"label_99")
+
+        self.horizontalLayout_145.addWidget(self.label_99)
+
+        self.FormVolDataExportY1 = QSpinBox(self.frame_123)
+        self.FormVolDataExportY1.setObjectName(u"FormVolDataExportY1")
+
+        self.horizontalLayout_145.addWidget(self.FormVolDataExportY1)
+
+        self.label_100 = QLabel(self.frame_123)
+        self.label_100.setObjectName(u"label_100")
+
+        self.horizontalLayout_145.addWidget(self.label_100)
+
+        self.FormVolDataExportY2 = QSpinBox(self.frame_123)
+        self.FormVolDataExportY2.setObjectName(u"FormVolDataExportY2")
+
+        self.horizontalLayout_145.addWidget(self.FormVolDataExportY2)
+
+        self.horizontalSpacer_100 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_145.addItem(self.horizontalSpacer_100)
+
+
+        self.verticalLayout_77.addWidget(self.frame_123)
+
+        self.frame_124 = QFrame(self.groupBox_18)
+        self.frame_124.setObjectName(u"frame_124")
+        self.frame_124.setFrameShape(QFrame.StyledPanel)
+        self.frame_124.setFrameShadow(QFrame.Raised)
+        self.horizontalLayout_144 = QHBoxLayout(self.frame_124)
+        self.horizontalLayout_144.setObjectName(u"horizontalLayout_144")
+        self.label_101 = QLabel(self.frame_124)
+        self.label_101.setObjectName(u"label_101")
+
+        self.horizontalLayout_144.addWidget(self.label_101)
+
+        self.FormVolDataExportZ1 = QSpinBox(self.frame_124)
+        self.FormVolDataExportZ1.setObjectName(u"FormVolDataExportZ1")
+
+        self.horizontalLayout_144.addWidget(self.FormVolDataExportZ1)
+
+        self.label_102 = QLabel(self.frame_124)
+        self.label_102.setObjectName(u"label_102")
+
+        self.horizontalLayout_144.addWidget(self.label_102)
+
+        self.FormVolDataExportZ2 = QSpinBox(self.frame_124)
+        self.FormVolDataExportZ2.setObjectName(u"FormVolDataExportZ2")
+
+        self.horizontalLayout_144.addWidget(self.FormVolDataExportZ2)
+
+        self.horizontalSpacer_101 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_144.addItem(self.horizontalSpacer_101)
+
+
+        self.verticalLayout_77.addWidget(self.frame_124)
+
+
+        self.verticalLayout_70.addWidget(self.groupBox_18)
+
         self.VolumrricDataGridExport = QFrame(self.tab_22)
         self.VolumrricDataGridExport.setObjectName(u"VolumrricDataGridExport")
         self.VolumrricDataGridExport.setFrameShape(QFrame.StyledPanel)
@@ -5377,6 +5483,13 @@ class Ui_MainWindow(object):
         self.CalculateTheVolumericDataDifference.setText(QCoreApplication.translate("MainWindow", u"Difference", None))
         self.CalculateTheVolumericDataSum.setText(QCoreApplication.translate("MainWindow", u"Sum", None))
         self.tabWidget_2.setTabText(self.tabWidget_2.indexOf(self.tab_6), QCoreApplication.translate("MainWindow", u"Data 2", None))
+        self.groupBox_18.setTitle(QCoreApplication.translate("MainWindow", u"Limit to", None))
+        self.label_33.setText(QCoreApplication.translate("MainWindow", u"Vector 1", None))
+        self.label_96.setText(QCoreApplication.translate("MainWindow", u"-", None))
+        self.label_99.setText(QCoreApplication.translate("MainWindow", u"Vector 2", None))
+        self.label_100.setText(QCoreApplication.translate("MainWindow", u"-", None))
+        self.label_101.setText(QCoreApplication.translate("MainWindow", u"Vector 3", None))
+        self.label_102.setText(QCoreApplication.translate("MainWindow", u"-", None))
         self.ExportTheVolumericDataXSF.setText(QCoreApplication.translate("MainWindow", u"XSF", None))
         self.ExportTheVolumericDataCube.setText(QCoreApplication.translate("MainWindow", u"cube", None))
         self.tabWidget_2.setTabText(self.tabWidget_2.indexOf(self.tab_22), QCoreApplication.translate("MainWindow", u"Export", None))

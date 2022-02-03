@@ -4992,6 +4992,150 @@
                </attribute>
                <layout class="QVBoxLayout" name="verticalLayout_70">
                 <item>
+                 <widget class="QGroupBox" name="groupBox_18">
+                  <property name="title">
+                   <string>Limit to</string>
+                  </property>
+                  <layout class="QVBoxLayout" name="verticalLayout_77">
+                   <item>
+                    <widget class="QFrame" name="frame_107">
+                     <property name="frameShape">
+                      <enum>QFrame::StyledPanel</enum>
+                     </property>
+                     <property name="frameShadow">
+                      <enum>QFrame::Raised</enum>
+                     </property>
+                     <layout class="QHBoxLayout" name="horizontalLayout_128">
+                      <item>
+                       <widget class="QLabel" name="label_33">
+                        <property name="text">
+                         <string>Vector 1</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QSpinBox" name="FormVolDataExportX1"/>
+                      </item>
+                      <item>
+                       <widget class="QLabel" name="label_96">
+                        <property name="text">
+                         <string>-</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QSpinBox" name="FormVolDataExportX2"/>
+                      </item>
+                      <item>
+                       <spacer name="horizontalSpacer_89">
+                        <property name="orientation">
+                         <enum>Qt::Horizontal</enum>
+                        </property>
+                        <property name="sizeHint" stdset="0">
+                         <size>
+                          <width>40</width>
+                          <height>20</height>
+                         </size>
+                        </property>
+                       </spacer>
+                      </item>
+                     </layout>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QFrame" name="frame_123">
+                     <property name="frameShape">
+                      <enum>QFrame::StyledPanel</enum>
+                     </property>
+                     <property name="frameShadow">
+                      <enum>QFrame::Raised</enum>
+                     </property>
+                     <layout class="QHBoxLayout" name="horizontalLayout_145">
+                      <item>
+                       <widget class="QLabel" name="label_99">
+                        <property name="text">
+                         <string>Vector 2</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QSpinBox" name="FormVolDataExportY1"/>
+                      </item>
+                      <item>
+                       <widget class="QLabel" name="label_100">
+                        <property name="text">
+                         <string>-</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QSpinBox" name="FormVolDataExportY2"/>
+                      </item>
+                      <item>
+                       <spacer name="horizontalSpacer_100">
+                        <property name="orientation">
+                         <enum>Qt::Horizontal</enum>
+                        </property>
+                        <property name="sizeHint" stdset="0">
+                         <size>
+                          <width>40</width>
+                          <height>20</height>
+                         </size>
+                        </property>
+                       </spacer>
+                      </item>
+                     </layout>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QFrame" name="frame_124">
+                     <property name="frameShape">
+                      <enum>QFrame::StyledPanel</enum>
+                     </property>
+                     <property name="frameShadow">
+                      <enum>QFrame::Raised</enum>
+                     </property>
+                     <layout class="QHBoxLayout" name="horizontalLayout_144">
+                      <item>
+                       <widget class="QLabel" name="label_101">
+                        <property name="text">
+                         <string>Vector 3</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QSpinBox" name="FormVolDataExportZ1"/>
+                      </item>
+                      <item>
+                       <widget class="QLabel" name="label_102">
+                        <property name="text">
+                         <string>-</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QSpinBox" name="FormVolDataExportZ2"/>
+                      </item>
+                      <item>
+                       <spacer name="horizontalSpacer_101">
+                        <property name="orientation">
+                         <enum>Qt::Horizontal</enum>
+                        </property>
+                        <property name="sizeHint" stdset="0">
+                         <size>
+                          <width>40</width>
+                          <height>20</height>
+                         </size>
+                        </property>
+                       </spacer>
+                      </item>
+                     </layout>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+                <item>
                  <widget class="QFrame" name="VolumrricDataGridExport">
                   <property name="frameShape">
                    <enum>QFrame::StyledPanel</enum>

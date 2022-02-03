@@ -1346,20 +1346,28 @@ class TAtomicModel(object):
 
         return data
 
-    def toCUBEfile(self, fname, volumeric_data):
+    def toCUBEfile(self, fname, volumeric_data, x1, x2, y1, y2, z1, z2):
         f = open(fname+".cube", 'w')
         text = "DATA.cube\n"
         text += "DATA.cube\n"
         mult = 0.52917720859
+
+        n_x = x2 - x1
+        n_y = y2 - y1
+        n_z = z2 - z1
+
         multx = mult * volumeric_data.Nx
         multy = mult * volumeric_data.Ny
         multz = mult * volumeric_data.Nz
-        text += str(self.nAtoms())+"     " + str(volumeric_data.origin_to_export[0]) + "    " + str(volumeric_data.origin_to_export[1]) + "    " + str(volumeric_data.origin_to_export[2]) + "\n"
-        text += " " + str(volumeric_data.Nx) + " "
+
+        origin = volumeric_data.origin_to_export + x1 * self.LatVect1/multx + y1 * self.LatVect2/multy + x1 * self.LatVect3/multz
+
+        text += str(self.nAtoms())+"     " + str(origin[0]) + "    " + str(origin[1]) + "    " + str(origin[2]) + "\n"
+        text += " " + str(n_x) + " "
         text += " " + str(self.LatVect1[0]/multx) + "   " + str(self.LatVect1[1]/multx) + "   " + str(self.LatVect1[2]/multx) + "\n"
-        text += " " + str(volumeric_data.Ny) + " "
+        text += " " + str(n_y) + " "
         text += " " + str(self.LatVect2[0]/multy) + "   " + str(self.LatVect2[1]/multy) + "   " + str(self.LatVect2[2]/multy) + "\n"
-        text += " " + str(volumeric_data.Nz) + " "
+        text += " " + str(n_z) + " "
         text += " " + str(self.LatVect3[0]/multz) + "   " + str(self.LatVect3[1]/multz) + "   " + str(self.LatVect3[2]/multz) + "\n"
 
         for atom in self.atoms:
@@ -1367,17 +1375,21 @@ class TAtomicModel(object):
 
         orderData = 'C'
 
-        n = int(volumeric_data.Nx) * int(volumeric_data.Ny) * int(volumeric_data.Nz)
+        new_data = volumeric_data.data3D[x1:x2, y1:y2, z1:z2]
+        new_n = new_data.size
+        data3D = np.reshape(new_data, new_n, orderData)
 
-        data3D = np.reshape(volumeric_data.data3D, int(n), orderData)
+        #n = int(volumeric_data.Nx) * int(volumeric_data.Ny) * int(volumeric_data.Nz)
+        #data3D = np.reshape(volumeric_data.data3D, int(n), orderData)
 
-        for i in range(0, n):
+        for i in range(0, data3D.size):
             text += str(data3D[i]) + "   "
 
         print(text, file=f)
         f.close()
 
-    def toXSFfile(self, fname, volumeric_data):
+    def toXSFfile(self, fname, volumeric_data, x1, x2, y1, y2, z1, z2):
+        print("This is all DATA")
         f = open(fname+".XSF", 'w')
         text = "ATOMS\n"
         for atom in self.atoms:
@@ -1386,20 +1398,28 @@ class TAtomicModel(object):
         text += "BEGIN_BLOCK_DATAGRID_3D\n "
         text += "  DATA_from:GUI4DFT_diff\n"
         text += "  BEGIN_DATAGRID_3D_RHO:spin_1\n"
-        text += " " + str(volumeric_data.Nx) + " " + str(volumeric_data.Ny) + " " + str(volumeric_data.Nz) + "\n"
-        text += " " + str(volumeric_data.origin_to_export[0]) + " " + str(volumeric_data.origin_to_export[1]) + " " + str(volumeric_data.origin_to_export[2]) + "\n"
+        text += " " + str(x2 - x1) + " " + str(y2 - y1) + " " + str(z2 - z1) + "\n"
+        origin = volumeric_data.origin_to_export
+        text += " " + str(origin[0]) + " " + str(origin[1]) + " " + str(origin[2]) + "\n"
 
-        text += " " + str(self.LatVect1[0]) + "   " + str(self.LatVect1[1]) + "   " + str(self.LatVect1[2]) + "\n"
-        text += " " + str(self.LatVect2[0]) + "   " + str(self.LatVect2[1]) + "   " + str(self.LatVect2[2]) + "\n"
-        text += " " + str(self.LatVect3[0]) + "   " + str(self.LatVect3[1]) + "   " + str(self.LatVect3[2]) + "\n"
+        vector1 = self.LatVect1 * (x2 - x1) / volumeric_data.Nx
+        vector2 = self.LatVect2 * (y2 - y1) / volumeric_data.Ny
+        vector3 = self.LatVect3 * (z2 - z1) / volumeric_data.Nz
+
+        text += " " + str(vector1[0]) + "   " + str(vector1[1]) + "   " + str(vector1[2]) + "\n"
+        text += " " + str(vector2[0]) + "   " + str(vector2[1]) + "   " + str(vector2[2]) + "\n"
+        text += " " + str(vector3[0]) + "   " + str(vector3[1]) + "   " + str(vector3[2]) + "\n"
 
         orderData = 'F'
 
-        n = int(volumeric_data.Nx) * int(volumeric_data.Ny) * int(volumeric_data.Nz)
+        new_data = volumeric_data.data3D[x1:x2, y1:y2, z1:z2]
+        new_n = new_data.size
+        data3D = np.reshape(new_data, new_n, orderData)
 
-        data3D = np.reshape(volumeric_data.data3D, int(n), orderData)
+        #n = int(volumeric_data.Nx) * int(volumeric_data.Ny) * int(volumeric_data.Nz)
+        #data3D = np.reshape(volumeric_data.data3D, int(n), orderData)
 
-        for i in range(0, n):
+        for i in range(0, data3D.size):
             text += str(data3D[i]) + "   "
 
         text += "\n"

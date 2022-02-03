@@ -97,9 +97,7 @@ class GuiOpenGL(object):
             self.bondWidth = 20
             self.xScene = 0
             self.yScene = 0
-            self.x = 0
-            self.y = 0
-            self.z = -20
+            self.camera_position = np.array([0.0, 0.0, -20.0])
             self.rotX = 0
             self.rotY = 0
             self.rotZ = 0
@@ -129,9 +127,7 @@ class GuiOpenGL(object):
             self.ysOld = TheObject.ysOld
             self.xScene = TheObject.xScene
             self.yScene = TheObject.yScene
-            self.x = TheObject.x
-            self.y = TheObject.y
-            self.z = TheObject.z
+            self.camera_position = TheObject.camera_position
             self.rotX = TheObject.rotX
             self.rotY = TheObject.rotY
             self.rotZ = TheObject.rotZ
@@ -382,14 +378,14 @@ class GuiOpenGL(object):
         if fname.endswith(".xyz"):
             newModel.toSIESTAxyz(fname)
 
-    def volumeric_data_to_file(self, fname, volumeric_data):
+    def volumeric_data_to_file(self, fname, volumeric_data, x1, x2, y1, y2, z1, z2):
         newModel = self.get_model()
         if fname.find("XSF") >= 0:
             fname = fname.split(".")[0]
-            newModel.toXSFfile(fname, volumeric_data)
+            newModel.toXSFfile(fname, volumeric_data, x1, x2, y1, y2, z1, z2)
         if fname.find("cube") >= 0:
             fname = fname.split(".")[0]
-            newModel.toCUBEfile(fname, volumeric_data)
+            newModel.toCUBEfile(fname, volumeric_data, x1, x2, y1, y2, z1, z2)
 
     def delete_selected_atom(self):
         if self.selected_atom >= 0:
@@ -495,22 +491,21 @@ class GuiOpenGL(object):
     
     def scale(self, wheel):
         if self.active:
-            self.Scale += 0.05*(wheel/120)
+            self.Scale += 0.05 * (wheel/120)
             self.openGLWidget.update()
             return True
     
     def rotat(self, x, y, width, height):
         if self.active:
             xs, ys = self.screen2space(x, y, width, height)
-            self.rotY += 10*(xs-self.xsOld)
-            self.rotX -= 10*(ys-self.ysOld)
+            self.rotY += 10 * (xs-self.xsOld)
+            self.rotX -= 10 * (ys-self.ysOld)
             return True
     
     def move(self, x, y, width, height):
         if self.active:
             xs, ys = self.screen2space(x, y, width, height)
-            self.x += xs - self.xsOld
-            self.y += ys - self.ysOld
+            self.camera_position += np.array([xs - self.xsOld, ys - self.ysOld, 0.0])
             self.xsOld = xs
             self.ysOld = ys
             return True
@@ -1001,7 +996,7 @@ class GuiOpenGL(object):
         gl.glLightfv(gl.GL_LIGHT0, gl.GL_POSITION, light0_position)  # Определяем положение источника света
 
     def prepare_orientation(self):
-        gl.glTranslated(self.x, self.y, self.z)
+        gl.glTranslated(*self.camera_position)
         gl.glRotate(self.rotX, 1, 0, 0)
         gl.glRotate(self.rotY, 0, 1, 0)
         gl.glRotate(self.rotZ, 0, 0, 1)
