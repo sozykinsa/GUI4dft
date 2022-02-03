@@ -124,11 +124,10 @@ class Importer(object):
             return filename, eFermy
 
         """Check DOS file for fdf/out filename"""
-        SystemLabel = TSIESTA.SystemLabel(filename)
-        file = os.path.dirname(filename) + "/" + str(SystemLabel) + ".DOS"
+        system_label = TSIESTA.SystemLabel(filename)
+        file = os.path.dirname(filename) + "/" + str(system_label) + ".DOS"
         if os.path.exists(file):
-            eFermy = TSIESTA.FermiEnergy(filename)
-            return file, eFermy
+            return file, TSIESTA.FermiEnergy(filename)
         else:
             return False, 0
 
@@ -146,9 +145,9 @@ class Importer(object):
             str1 = MyFile.readline()
             while str1.find("Critical point list, final report (non-equivalent cps") < 0:
                 str1 = MyFile.readline()
-            str1 = MyFile.readline()
-            str1 = MyFile.readline()
-            str1 = MyFile.readline()
+            MyFile.readline()
+            MyFile.readline()
+            MyFile.readline()
 
             cps = []
             str1 = MyFile.readline()

@@ -7,37 +7,37 @@ import numpy as np
 
 
 def spacedel(stroka):
-        """ Удаление лишних пробелов, перводов строк """
-        stroka = stroka.replace('\n', ' ')
-        stroka = stroka.replace('\r', ' ')
-        stroka = stroka.strip()
-        while stroka.find('  ') >= 0:
-            stroka = stroka.replace('  ', ' ')
-        return stroka
+    """ Удаление лишних пробелов, перводов строк """
+    stroka = stroka.replace('\n', ' ')
+    stroka = stroka.replace('\r', ' ')
+    stroka = stroka.strip()
+    while stroka.find('  ') >= 0:
+        stroka = stroka.replace('  ', ' ')
+    return stroka
 
 
 def float_to_string(fl):
-        res = '{0:12.8f}'.format(fl)
-        if res == "-0.00000000":
-            res = " 0.00000000"
-        return res
+    res = '{0:12.8f}'.format(fl)
+    if res == "-0.00000000":
+        res = " 0.00000000"
+    return res
 
 
 def is_number(row):
-        try:
-            float(row)
-            return True
-        except ValueError:
-            return False
+    try:
+        float(row)
+        return True
+    except ValueError:
+        return False
 
 
 def is_integer(n):
-        try:
-            float(n)
-        except ValueError:
-            return False
-        else:
-            return float(n).is_integer()
+    try:
+        float(n)
+    except ValueError:
+        return False
+    else:
+        return float(n).is_integer()
 
 
 #def list_plus_list(x, y):
@@ -51,11 +51,11 @@ def is_integer(n):
 
 
 def list_str_to_float(x):
-        return [float(item) for item in x]
+    return [float(item) for item in x]
 
 
 def list_str_to_int(x):
-        return [int(item) for item in x]
+    return [int(item) for item in x]
 
 
 #def nearest(latEn, nextLat):
@@ -109,40 +109,40 @@ def list_str_to_int(x):
 
 
 def write_text_to_file(fname, text):
-        f = open(fname, 'w')
-        print(text, file=f)
-        f.close()
+    f = open(fname, 'w')
+    print(text, file=f)
+    f.close()
 
 
 def getsubs(dir):
-        dirs = []
-        subdirs = []
-        files = []
-        for dirname, dirnames, filenames in os.walk(dir):
-            dirs.append(dirname)
-            for subdirname in dirnames:
-                subdirs.append(os.path.join(dirname, subdirname))
-            for filename in filenames:
-                files.append(os.path.join(dirname, filename))
-        del dirs[0]
-        dirs.sort()
-        return dirs, files
+    dirs = []
+    subdirs = []
+    files = []
+    for dirname, dirnames, filenames in os.walk(dir):
+        dirs.append(dirname)
+        for subdirname in dirnames:
+            subdirs.append(os.path.join(dirname, subdirname))
+        for filename in filenames:
+            files.append(os.path.join(dirname, filename))
+    del dirs[0]
+    dirs.sort()
+    return dirs, files
 
 
 def cdev(ii, jj):
-        i = abs(ii)
-        j = abs(jj)
-        if j > i:
-            j, i = j, i
-        if j == 0:
-            return i
-        while True:
-            ir = i % j
-            if ir == 0:
-                return j
-            else:
-                i = j
-                j = ir
+    i = abs(ii)
+    j = abs(jj)
+    if j > i:
+        j, i = j, i
+    if j == 0:
+        return i
+    while True:
+        ir = i % j
+        if ir == 0:
+            return j
+        else:
+            i = j
+            j = ir
 
 
 def mini(list_2d):
@@ -181,57 +181,57 @@ def ListN2Split(data):
 #        return ans
 
 def fromFileProperty(filename, prop, count=1, type='int'):
-        """
-        Возвращает  значение параметра property из файла filename.
-        Значене может быть целым или дробным числом с фиксированной точкой.
-        Если в файле необходимый параметр встречается несколько раз, необходимо задать параметр count,
-        который показывает какое по счету найденное значение должна вернуть функция.
-        Параметр type указывает тип возвращаемого значения (int, float или string)
-        """
-        k = 1
-        is_found, k, property = property_from_sub_file(filename, k, prop, count, type)
-        if is_found:
-            return property
-        else:
-            return None
+    """
+    Returns the value of the property parameter from the file filename.
+    The value can be an integer or a fixed-point fractional number.
+    If the required parameter occurs several times in the file, you must specify the count parameter,
+    which shows what value the found value should be returned by the function.
+    The type parameter specifies the type of the return value (int, float, or string)
+    """
+    k = 1
+    is_found, k, property = property_from_sub_file(filename, k, prop, count, type)
+    if is_found:
+        return property
+    else:
+        return None
 
 
 def property_from_sub_file(filename, k, prop, count, typen):
-        property = None
-        is_found = False
-        k = 1
-        if os.path.exists(filename):
-            MyFile = open(filename)
+    property = None
+    is_found = False
+    k = 1
+    if os.path.exists(filename):
+        MyFile = open(filename)
+        str1 = MyFile.readline()
+        while str1 != '':
+            if (str1 != '') and (str1.find("%include") >= 0):
+                new_f = str1.split()[1]
+                file = os.path.dirname(filename) + "/" + new_f
+                is_found, k, property = property_from_sub_file(file, k, prop, count, typen)
+            if (str1 != '') and (str1.find(prop) >= 0):
+                str1 = str1.replace(prop, ' ')
+                if typen == "unformatted":
+                    property = str1
+                if typen == 'string':
+                    property = spacedel(str1)
+                else:
+                    prop1 = re.findall(r"[0-9,\.,-]+", str1)[0]
+                    if typen == 'int':
+                        property = int(prop1)
+                    if typen == 'float':
+                        property = float(prop1)
+
+                if k == count:
+                    is_found = True
+
+                k += 1
+            if is_found:
+                MyFile.close()
+                return is_found, k-1, property
+
             str1 = MyFile.readline()
-            while str1 != '':
-                if (str1 != '') and (str1.find("%include") >= 0):
-                    new_f = str1.split()[1]
-                    file = os.path.dirname(filename) + "/" + new_f
-                    is_found, k, property = property_from_sub_file(file, k, prop, count, typen)
-                if (str1 != '') and (str1.find(prop) >= 0):
-                    str1 = str1.replace(prop, ' ')
-                    if typen == "unformatted":
-                        property = str1
-                    if typen == 'string':
-                        property = spacedel(str1)
-                    else:
-                        prop1 = re.findall(r"[0-9,\.,-]+", str1)[0]
-                        if typen == 'int':
-                            property = int(prop1)
-                        if typen == 'float':
-                            property = float(prop1)
-
-                    if k == count:
-                        is_found = True
-
-                    k += 1
-                if is_found:
-                    MyFile.close()
-                    return is_found, k-1, property
-
-                str1 = MyFile.readline()
-            MyFile.close()
-        return is_found, k, property
+        MyFile.close()
+    return is_found, k, property
 
 
 def RoundToPlane(atom, R):
@@ -252,7 +252,7 @@ def dos_from_file(filename, n, nlines=0):
         spinDown = []
 
         if nlines > 0:
-            MyFile = open(filename)
+            #MyFile = open(filename)
             for i in range(0, 6):
                 strDOS = DOSFile.readline()
 

@@ -51,6 +51,7 @@ is_with_figure = True
 
 
 class mainWindow(QMainWindow):
+
     def __init__(self, *args):
         super(mainWindow, self).__init__(*args)
         self.ui = Ui_form()
@@ -82,7 +83,7 @@ class mainWindow(QMainWindow):
             self.save_state_action_on_start()
             self.menu_open()
 
-    def setup_ui(self):
+    def setup_ui(self):  # pragma: no cover
         self.load_settings()
         self.ui.actionOpen.triggered.connect(self.menu_open)
         self.ui.actionExport.triggered.connect(self.menu_export)

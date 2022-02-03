@@ -31,6 +31,10 @@ def test_importer_output(tests_path):
     f_name = str(tests_path / 'ref_data' / 'h2o-ang-charges' / "siesta.out")
     model, fdf = Importer.Import(f_name, fl='all', prop=True, xyzcritic2=False)
     assert len(model[0].atoms) == 3
+    atom = model[-1].atoms[0]
+    assert atom.getProperty("charge Voronoi") == 0.091
+    assert atom.getProperty("charge Hirshfeld") == 0.12
+    assert atom.getProperty("charge Mulliken") == -0.134
 
 
 def test_importer_xyz(tests_path):
@@ -59,6 +63,8 @@ def test_importer_struct_out(tests_path):
     f_name = str(tests_path / 'ref_data' / 'h2o-zmatrix' / "siesta.STRUCT_OUT")
     model, fdf = Importer.Import(f_name, fl='all', prop=False, xyzcritic2=False)
     assert len(model[0].atoms) == 3
+    atom = model[-1].atoms[0]
+    assert atom.getProperty("charge Voronoi") is None
 
 
 def test_importer_cube(tests_path):

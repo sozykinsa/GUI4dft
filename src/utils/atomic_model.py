@@ -53,7 +53,8 @@ class TAtom(object):
 ##################################################################
 ################### The AtomicModel class ########################
 ##################################################################
-    
+
+
 class TAtomicModel(object):
     def __init__(self, newatoms: list=[]):
         self.atoms = []
@@ -1360,7 +1361,13 @@ class TAtomicModel(object):
         multy = mult * volumeric_data.Ny
         multz = mult * volumeric_data.Nz
 
-        origin = volumeric_data.origin_to_export + x1 * self.LatVect1/multx + y1 * self.LatVect2/multy + x1 * self.LatVect3/multz
+        print("self.LatVect1 ", self.LatVect1)
+        print("self.LatVect2 ", self.LatVect2)
+        print("self.LatVect3 ", self.LatVect3)
+        print("volumeric_data.origin_to_export ", volumeric_data.origin_to_export)
+        print("add ", x1 * self.LatVect1/multx + y1 * self.LatVect2/multy + z1 * self.LatVect3/multz)
+
+        origin = volumeric_data.origin_to_export + x1 * self.LatVect1/multx + y1 * self.LatVect2/multy + z1 * self.LatVect3/multz
 
         text += str(self.nAtoms())+"     " + str(origin[0]) + "    " + str(origin[1]) + "    " + str(origin[2]) + "\n"
         text += " " + str(n_x) + " "
