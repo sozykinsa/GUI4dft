@@ -242,19 +242,18 @@ class GuiOpenGL(object):
                     b = math.sqrt(vx1*vx1 + vy1*vy1 + vz1*vz1)
                     c = math.sqrt(vx2 * vx2 + vy2 * vy2 + vz2 * vz2)
 
-                    arg = a/(b*c)
+                    arg = a / (b * c)
                     if math.fabs(arg) > 1:
                         arg = 1
 
                     angle = math.acos(arg)
 
-                    text += "Angle " + str(self.history_of_atom_selection[-1] + 1) + " - " + str(
-                        self.history_of_atom_selection[-2] + 1) + " - " + str(
-                        self.history_of_atom_selection[-3] + 1) + " : " + str(round(math.degrees(angle), 3)) + " degrees\n"
+                    text += "Angle " + str(self.history_of_atom_selection[-1] + 1) + " - " + \
+                            str(self.history_of_atom_selection[-2] + 1) + " - " + \
+                            str(self.history_of_atom_selection[-3] + 1) + " : " + \
+                            str(round(math.degrees(angle), 3)) + " degrees\n"
 
         if self.selected_cp >= 0:
-            SysCoord = np.array([self.MainModel.LatVect1, self.MainModel.LatVect2, self.MainModel.LatVect3])
-            obr = np.linalg.inv(SysCoord).transpose()
             text += "\nSelected critical point: " + str(self.selected_cp) + " "
             cp = self.MainModel.bcp[self.selected_cp]
             atoms = self.MainModel.atoms
@@ -263,33 +262,8 @@ class GuiOpenGL(object):
             bond2 = cp.getProperty("bond2")
 
             ind1, ind2 = self.MainModel.atoms_of_bond_path(self.selected_cp)
-
             text += atoms[ind1].let + str(ind1) + "-" + atoms[ind2].let + str(ind2)
-
-            text += "\nCartesian: [" + str(cp.x) + "; " + str(cp.y) + "; " + str(cp.z) + "]\n"
-
-            Coord = np.array([cp.x, cp.y, cp.z])
-            res = obr.dot(Coord)
-            x = res[0]
-            y = res[1]
-            z = res[2]
-            text += "Fractional: [" + str(x) + "; " + str(y) + "; " + str(z) + "]\n"
-
-            text += "Bond critical path: " + str(len(bond1)+len(bond2)) + " points (fractional):\n"
-            for i in range(0, len(bond1)):
-                Coord = np.array([bond1[len(bond1) - i - 1].x, bond1[len(bond1) - i - 1].y, bond1[len(bond1) - i - 1].z])
-                res = obr.dot(Coord)
-                x = res[0]
-                y = res[1]
-                z = res[2]
-                text += str(x) + " " + str(y) + " " + str(z) + "\n"
-            for i in range(0, len(bond2)):
-                Coord = np.array([bond2[i].x, bond2[i].y, bond2[i].z])
-                res = obr.dot(Coord)
-                x = res[0]
-                y = res[1]
-                z = res[2]
-                text += str(x) + " " + str(y) + " " + str(z) + "\n"
+            text += "Bond critical path: " + str(len(bond1)+len(bond2)) + " points\n"
 
         if (self.selected_atom < 0) and (self.selected_cp < 0):
             text += "Select any atom or critical point"
@@ -1105,8 +1079,6 @@ class GuiOpenGL(object):
         model = gl.glGetDoublev(gl.GL_MODELVIEW_MATRIX)
         proj = gl.glGetDoublev(gl.GL_PROJECTION_MATRIX)
         view = gl.glGetIntegerv(gl.GL_VIEWPORT)
-        #winY = int(float(view[3]) - float(y))
-
         winx, winy, winz = glu.gluProject(x, y, z, model, proj, view)
         return winx, winy, winz
 

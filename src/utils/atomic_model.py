@@ -768,7 +768,7 @@ class TAtomicModel(object):
         while i < len(self.bcp):
             bond1 = self.bcp[i].getProperty("bond1")
             bond2 = self.bcp[i].getProperty("bond2")
-            if (bond1 == None) or (bond2 == None):
+            if (bond1 is None) or (bond2 is None):
                 self.bcp.pop(i)
                 i -= 1
             else:
@@ -783,7 +783,7 @@ class TAtomicModel(object):
 
     def critical_path_simplifier(self, b, cp):
         bond = deepcopy(cp.getProperty(b))
-        if bond == None:
+        if bond is None:
             print(b)
             return
         i = 2

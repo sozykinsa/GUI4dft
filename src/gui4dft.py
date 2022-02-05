@@ -1269,6 +1269,14 @@ class mainWindow(QMainWindow):
         text = self.ui.AtomPropertiesText.toPlainText().split("Selected critical point:")
         if len(text) > 1:
             text = text[1].split()[0]
+
+            model = self.models[-1]
+
+            ind1, ind2 = model.atoms_of_bond_path(int(text))
+            atom1 = model.atoms[ind1].let + str(ind1)
+            atom2 = model.atoms[ind2].let + str(ind2)
+            title = text + ":" + atom1 + "-" + atom2
+
             self.ui.FormSelectedCP.setText(text)
             f = self.models[-1].bcp[int(text)].getProperty("field")
             self.ui.FormSelectedCP_f.setText(f)
@@ -2527,17 +2535,20 @@ class mainWindow(QMainWindow):
         self.MainForm.set_color_of_box(boxcolor)
 
     def add_cp_to_list(self):
-        newCP = self.ui.FormSelectedCP.text()
-        if newCP == "...":
+        new_cp = self.ui.FormSelectedCP.text()
+        if new_cp == "...":
             return
 
         fl = True
 
         for i in range(0, self.ui.FormCPlist.count()):
-            if self.ui.FormCPlist.item(i).text() == newCP:
+            if self.ui.FormCPlist.item(i).text() == new_cp:
                 fl = False
         if fl:
-            QListWidgetItem(newCP, self.ui.FormCPlist)
+            QListWidgetItem(new_cp, self.ui.FormCPlist)
+            model = self.models[self.active_model]
+            ind = int(new_cp)
+            bcp_seleсted = model.bcp[ind]
 
     def delete_cp_from_list(self):
         itemrow = self.ui.FormCPlist.currentRow()
@@ -2555,7 +2566,7 @@ class mainWindow(QMainWindow):
                 ind = int(self.ui.FormCPlist.item(i).text())
                 bcp_seleсted.append(model.bcp[ind])
             is_with_selected = self.ui.radio_with_cp.isChecked()
-            text = critic2.create_critic2_xyz_file(bcp, bcp_seleсted, fname, is_with_selected, model)
+            text = critic2.create_critic2_xyz_file(bcp, bcp_seleсted, is_with_selected, model)
             self.write_text_to_file(fname, text)
 
     def write_text_to_file(self, fname, text):
@@ -2594,12 +2605,25 @@ class mainWindow(QMainWindow):
 
             cp_list = []
             if self.ui.form_critic_all_cp.isChecked():
-                cp_list = model.bcp
+                cp_list = range(model.bcp)
             else:
                 for i in range(0, self.ui.FormCPlist.count()):
                     ind = int(self.ui.FormCPlist.item(i).text())
-                    cp_list.append(model.bcp[ind])
-            critic2.create_cri_file(cp_list, extra_points, fname, is_form_bp, model, text_prop)
+                    cp_list.append(ind)
+            textl, lines, te, text = critic2.create_cri_file(cp_list, extra_points, is_form_bp, model, text_prop)
+
+            f = open(fname, 'w')
+            print(textl + lines, file=f)
+            f.close()
+
+            fname_dir = os.path.dirname(fname)
+            f = open(fname_dir + "/POINTS.txt", 'w')
+            print(te, file=f)
+            f.close()
+
+            f = open(fname_dir + "/POINTSatoms.txt", 'w')
+            print(text, file=f)
+            f.close()
 
     def select_voronoi_color(self):
         voronoicolor = self.change_color(self.ui.ColorVoronoi, SETTINGS_Color_Of_Voronoi)
