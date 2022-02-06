@@ -1,4 +1,4 @@
-from utils.models import TSWNT, TGraphene, TBiNT, TCapedSWNT
+from models.models import TSWNT, TGraphene, TBiNT, TCapedSWNT
 
 
 def test_swnt():

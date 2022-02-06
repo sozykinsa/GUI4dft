@@ -194,7 +194,7 @@ class TSWNT(TGraphene):
 
     @staticmethod
     def radius(n, m):
-        return math.sqrt(n*n + n*m +m*m)
+        return math.sqrt(n * n + n * m + m * m)
 
     @staticmethod
     def unitlength(n, m, acc): 

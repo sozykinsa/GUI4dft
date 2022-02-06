@@ -18,13 +18,13 @@ import numpy as np
 from utils import helpers
 from utils.atomic_model import TAtomicModel
 from utils.calculators import TCalculators as Calculator
-from utils.models import TCapedSWNT
-from utils.models import TBiNT
+from models.models import TCapedSWNT
+from models.models import TBiNT
 from utils.fdfdata import TFDFFile
-from utils.models import TGraphene
+from models.models import TGraphene
 from utils.periodic_table import TPeriodTable
 from utils.siesta import TSIESTA
-from utils.models import TSWNT
+from models.models import TSWNT
 from utils.vasp import TVASP
 from utils.importer import Importer
 from PySide2.QtCore import QCoreApplication, QLocale, QSettings, Qt, QSize
@@ -34,7 +34,7 @@ from PySide2.QtGui import QColor, QIcon, QImage, QKeySequence, QPixmap, QStandar
 from PySide2.QtWidgets import QListWidgetItem, QAction, QApplication, QDialog, QFileDialog, QMessageBox, QColorDialog
 from PySide2.QtWidgets import QDoubleSpinBox, QMainWindow, QShortcut, QTableWidgetItem, QTreeWidgetItem
 from PySide2.QtWidgets import QTreeWidgetItemIterator
-from TGui import GuiOpenGL
+from guiopengl import GuiOpenGL
 from TInterface import AtomsIdentifier
 from TInterface import Image3Dexporter
 from TInterface import TGaussianCube

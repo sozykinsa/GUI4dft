@@ -40,72 +40,12 @@ def is_integer(n):
         return float(n).is_integer()
 
 
-#def list_plus_list(x, y):
-#        """ поэлементное сложение списков """
-#        return list(map(lambda a, b: a + b, x, y))
-
-
-#def float_mult_list(x, y):
-#        """ умножение числа на список """
-#        return [float(x * item) for item in y]
-
-
 def list_str_to_float(x):
     return [float(item) for item in x]
 
 
 def list_str_to_int(x):
     return [int(item) for item in x]
-
-
-#def nearest(latEn, nextLat):
-#        """ This example shows how to """
-#        res = abs(float(latEn[0][0]) - nextLat)
-#        for i in range(1, len(latEn)):
-#            if res > abs(float(latEn[i][0]) - nextLat):
-#                res = abs(float(latEn[i][0]) - nextLat)
-#        return res
-
-
-#def NextLat(latEn, eps):
-#        """ This example shows how to """
-#        next_lat = 0
-#        if len(latEn) == 1:
-#            next_lat = float(latEn[0][0]) + 0.5
-#        if len(latEn) == 2:
-#            if float(latEn[0][1]) > float(latEn[1][1]):
-#                next_lat = float(latEn[1][0]) + 0.5
-#            else:
-#                next_lat = float(latEn[0][0]) - 0.5
-#        if len(latEn) > 2:
-#            latEn.sort(key=lambda x: x[0])
-#            imin = mini(latEn)
-#            start = imin - 1
-#            if imin == 0:
-#                start = 0
-#            if imin == len(latEn) - 1:
-#                start = len(latEn) - 4
-#            k = 3
-#            x = []
-#            y = []
-#            for i in range(0, k):
-#                x.append(float(latEn[start + i][0]))
-#                y.append(float(latEn[start + i][1]))
-#
-#            a, b, c = np.polyfit(x, y, 2)
-#            next_lat = -b / (2 * a)
-#            sign = 1
-#            st = 0
-#            while (nearest(latEn, next_lat) < eps / 4) and (st < 5):
-#                if (len(latEn) <= imin + sign) or (imin + sign < 0):
-#                    next_lat = float(latEn[imin][0]) + sign * eps / 2
-#                else:
-#                    next_lat = (float(latEn[imin + sign][0]) + float(latEn[imin][0])) / 2
-#                sign = -sign
-#                st = st + 1
-#            if st == 5:
-#                next_lat = 0
-#        return next_lat
 
 
 def write_text_to_file(fname, text):
@@ -163,22 +103,6 @@ def ListN2Split(data):
         y.append(row[1])
     return np.array(x), np.array(y)
 
-
-#def errorsrange(list_lat_en):
-#        """ Возвращает ширину доверительного интервала при поиске оптимального параметра """
-#        list_lat_en = sorted(list_lat_en, key=itemgetter(0))
-#        if len(list_lat_en) < 3:
-#            return 10
-#
-#        ans = float(list_lat_en[-1][0]) - float(list_lat_en[0][0])
-#        imin = mini(list_lat_en)
-#        if imin == 0:
-#            ans = float(list_lat_en[1][0]) - float(list_lat_en[0][0])
-#        if imin == len(list_lat_en)-1:
-#            ans = float(list_lat_en[len(list_lat_en) - 1][0]) - float(list_lat_en[len(list_lat_en) - 2][0])
-#        if (imin != 0) and (imin != len(list_lat_en) - 1):
-#            ans = float(list_lat_en[imin + 1][0]) - float(list_lat_en[imin - 1][0])
-#        return ans
 
 def fromFileProperty(filename, prop, count=1, type='int'):
     """

@@ -254,7 +254,7 @@ class GuiOpenGL(object):
                             str(round(math.degrees(angle), 3)) + " degrees\n"
 
         if self.selected_cp >= 0:
-            text += "\nSelected critical point: " + str(self.selected_cp) + " "
+            text += "\nSelected critical point: " + str(self.selected_cp) + " ("
             cp = self.MainModel.bcp[self.selected_cp]
             atoms = self.MainModel.atoms
 
@@ -262,7 +262,7 @@ class GuiOpenGL(object):
             bond2 = cp.getProperty("bond2")
 
             ind1, ind2 = self.MainModel.atoms_of_bond_path(self.selected_cp)
-            text += atoms[ind1].let + str(ind1) + "-" + atoms[ind2].let + str(ind2)
+            text += atoms[ind1].let + str(ind1) + "-" + atoms[ind2].let + str(ind2) + ")\n"
             text += "Bond critical path: " + str(len(bond1)+len(bond2)) + " points\n"
 
         if (self.selected_atom < 0) and (self.selected_cp < 0):
@@ -923,30 +923,42 @@ class GuiOpenGL(object):
                     gl.glCallList(self.object + 9)  # Bondpath
 
                 if self.ViewAtomNumbers:
+                    text_to_render = []
                     for i in range(0, len(self.MainModel.atoms)):
-                       at = self.MainModel.atoms[i]
-                       self.renderText(at.x, at.y, at.z, at.let+str(i))
+                        at = self.MainModel.atoms[i]
+                        text_to_render.append([at.x, at.y, at.z, at.let+str(i)])
 
                     for i in range(0, len(self.MainModel.bcp)):
-                       at = self.MainModel.bcp[i]
-                       self.renderText(at.x, at.y, at.z, at.let+str(i))
+                        at = self.MainModel.bcp[i]
+                        text_to_render.append([at.x, at.y, at.z, at.let + str(i)])
+                    self.render_text(text_to_render)
         except Exception as exc:
             print(exc)
             pass
 
-    def renderText(self, x, y, z, st, font=QFont()):
-        # Identify x and y locations to render text within widget
+    def render_text(self, text_to_render, font=QFont()):
         height = self.openGLWidget.height()
-        textPosX, textPosY, textPosZ = self.getScreenCoords(x, y, z)
-        textPosY = height - textPosY  # y is inverted
-
         fontColor = QColor.fromRgbF(0.0, 0.0, 0.0, 1)
+
+        text_to_render.sort(key=lambda i: i[2], reverse=True)
+        used_space = []
 
         # Render text
         painter = QPainter(self.openGLWidget)
         painter.setPen(fontColor)
         painter.setFont(font)
-        painter.drawText(textPosX, textPosY, st)
+        for row in text_to_render:
+            fl = True
+            x, y, z, st = row[0], row[1], row[2], row[3]
+            pos_x, pos_y, pos_z = self.getScreenCoords(x, y, z)
+            pos_y = height - pos_y  # y is inverted
+            for old in used_space:
+                if ((pos_x - old[0]) * (pos_x - old[0]) < 250) and ((pos_y - old[1]) * (pos_y - old[1]) < 250):
+                    fl = False
+            if fl:
+                used_space.append([pos_x, pos_y])
+                painter.drawText(pos_x, pos_y, st)
+
         painter.end()
 
     def light_prepare(self):
