@@ -1607,6 +1607,7 @@ class mainWindow(QMainWindow):
         return atom_index, number_l, number_m, number_n, number_z, species
 
     def plot_bonds_histogram(self):
+        self.ui.PyqtGraphWidget.set_xticks(None)
         self.ui.Form3Dand2DTabs.setCurrentIndex(1)
         c1, c2 = self.fill_bonds_charges()
         bonds = self.MainForm.MainModel.find_bonds_exact()
@@ -1624,6 +1625,7 @@ class mainWindow(QMainWindow):
         self.ui.PyqtGraphWidget.add_histogram(b, num_bins, (0, 0, 255, 90), x_label, y_label)
 
     def plot_pdos(self):
+        self.ui.PyqtGraphWidget.set_xticks(None)
         file = self.ui.FormActionsLinePDOSfile.text()
         self.ui.Form3Dand2DTabs.setCurrentIndex(1)
         if os.path.exists(file):
@@ -1670,6 +1672,7 @@ class mainWindow(QMainWindow):
             self.ui.FormActionsButtonPlotPDOSselected.setEnabled(True)
 
     def plot_selected_pdos(self):
+        self.ui.PyqtGraphWidget.set_xticks(None)
         self.ui.Form3Dand2DTabs.setCurrentIndex(1)
 
         selected = self.ui.FormActionsListPDOS.selectedItems()
@@ -1914,6 +1917,7 @@ class mainWindow(QMainWindow):
         self.ui.FormActionsTabeDOSProperty.update()
 
     def plot_volume_param_energy(self):
+        self.ui.PyqtGraphWidget.set_xticks(None)
         self.ui.Form3Dand2DTabs.setCurrentIndex(1)
         items = []
         method = self.ui.FormActionsPostComboCellParam.currentText()
