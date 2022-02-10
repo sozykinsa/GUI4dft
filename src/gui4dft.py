@@ -29,7 +29,7 @@ from utils.vasp import TVASP
 from utils.importer import Importer
 from PySide2.QtCore import QCoreApplication, QLocale, QSettings, Qt, QSize
 import PySide2.QtCore as QtCore
-QtCore.QVariant = "QVariant"
+#QtCore.QVariant = "QVariant"
 from PySide2.QtGui import QColor, QIcon, QImage, QKeySequence, QPixmap, QStandardItem, QStandardItemModel
 from PySide2.QtWidgets import QListWidgetItem, QAction, QApplication, QDialog, QFileDialog, QMessageBox, QColorDialog
 from PySide2.QtWidgets import QDoubleSpinBox, QMainWindow, QShortcut, QTableWidgetItem, QTreeWidgetItem
@@ -744,11 +744,11 @@ class mainWindow(QMainWindow):
             atomscolor.append(col)
         return atomscolor
 
-    def create_checkable_item(self, QuantumNumbersList, value):
-        item = QStandardItem(value)
-        item.setFlags(Qt.ItemIsUserCheckable | Qt.ItemIsEnabled)
-        item.setData(QVariant(Qt.Checked), Qt.CheckStateRole)
-        QuantumNumbersList.appendRow(item)
+    #def create_checkable_item(self, QuantumNumbersList, value):
+    #    item = QStandardItem(value)
+    #    item.setFlags(Qt.ItemIsUserCheckable | Qt.ItemIsEnabled)
+    #    #item.setData(QVariant(Qt.Checked), Qt.CheckStateRole)
+    #    QuantumNumbersList.appendRow(item)
 
     def delete_cell_param_row(self):
         row = self.ui.FormActionsPostTableCellParam.currentRow()
