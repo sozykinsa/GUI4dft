@@ -1,3 +1,6 @@
+import sys
+sys.path.append('../src')
+
 from pathlib import Path
 from pyqt_graph_widget.pyqtgraphwidget import PyqtGraphWidget
 
