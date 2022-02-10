@@ -1848,6 +1848,7 @@ class mainWindow(QMainWindow):
         return gap, gap_ind
 
     def plot_dos(self):
+        self.ui.PyqtGraphWidget.set_xticks(None)
         self.ui.Form3Dand2DTabs.setCurrentIndex(1)
 
         is_fermi_level_show = self.ui.FormActionsCheckBANDSfermyShow_3.isChecked()
