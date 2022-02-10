@@ -1,3 +1,6 @@
+import sys
+sys.path.append('../src')
+
 
 def test_hello(graph_widget):
     widget = graph_widget
