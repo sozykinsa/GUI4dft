@@ -12,7 +12,7 @@ on:
        - '**'        # matches every branch
 
 jobs:
-  build:
+  test:
 
     runs-on: ubuntu-latest
 
