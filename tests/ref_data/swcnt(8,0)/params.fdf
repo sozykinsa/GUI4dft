@@ -1,0 +1,24 @@
+SystemName	siesta
+SystemLabel	siesta
+
+COOP.Write	True
+DM.MixingWeight	0.3
+DM.NumberPulay	4
+DM.Tolerance	0.0001
+DM.UseSaveDM	True
+MD.MaxForceTol	0.02	eV/Ang
+MD.NumCGsteps	300
+MaxSCFIterations	10000
+PAO.BasisType	split
+SCFMustConverge	False
+WriteCoorXmol	True
+WriteDenchar	True
+XML.Write	True
+
+Spin     	non-polarized
+XC.functional	LDA
+XC.authors	CA
+
+MeshCutoff	2721.1386	eV
+PAO.EnergyShift	0.05	eV
+

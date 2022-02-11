@@ -3,7 +3,7 @@
 import os
 from copy import deepcopy
 
-from utils.helpers import Helpers
+from utils import helpers
 
 
 ##################################################################
@@ -137,7 +137,7 @@ class TFDFFile:
     @staticmethod
     def updateAtominSIESTAfdf(filename, model):
         """ заменяет атомы во входном файле SIESTA """
-        NumberOfAtoms = Helpers.fromFileProperty(filename, 'NumberOfAtoms')
+        NumberOfAtoms = helpers.fromFileProperty(filename, 'NumberOfAtoms')
         f = open(filename)
         lines = f.readlines()
         i = 0
@@ -151,7 +151,7 @@ class TFDFFile:
                     newlines.append(lines[i])
                     i += 1
                     for j in range(0, NumberOfAtoms):
-                        row = Helpers.spacedel(lines[i])
+                        row = helpers.spacedel(lines[i])
                         ind = row.split(' ')[0]
                         dx = row.split(' ')[4]
                         dy = row.split(' ')[5]

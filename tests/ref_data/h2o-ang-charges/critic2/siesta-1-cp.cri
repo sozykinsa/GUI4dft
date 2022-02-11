@@ -1,0 +1,6 @@
+crystal siesta.BADER.cube
+load siesta.BADER.cube
+AUTO SEED PAIR DIST 7 NPTS 3 
+CPREPORT VERYLONG
+CPREPORT cp-file.xyz GRAPH 
+

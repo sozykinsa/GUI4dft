@@ -15,7 +15,7 @@ from scipy.optimize import leastsq
 from scipy.spatial import ConvexHull
 from scipy.spatial import Voronoi
 
-from utils.helpers import Helpers
+from utils import helpers
 from utils.periodic_table import TPeriodTable
 from utils.atomic_model import TAtom, TAtomicModel
 from utils.siesta import TSIESTA
@@ -52,5 +52,5 @@ class TVASP:
         MyFile.close()
         nlines = int(str1.split()[2])
         if os.path.exists(filename):
-            energy, spinDown, spinUp = Helpers.dos_from_file(filename, 3, nlines)
+            energy, spinDown, spinUp = helpers.dos_from_file(filename, 3, nlines)
             return np.array(spinUp), np.array(spinDown), np.array(energy)

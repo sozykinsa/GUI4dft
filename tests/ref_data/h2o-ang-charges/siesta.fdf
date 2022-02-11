@@ -1,0 +1,56 @@
+NumberOfAtoms 3
+NumberOfSpecies 2
+%block ChemicalSpeciesLabel
+ 1  1  H
+ 2  8  O
+%endblock ChemicalSpeciesLabel
+LatticeConstant       1.0 Ang
+%block LatticeVectors
+  5.0  0.0  0.0
+  0.0  5.0  0.0
+  0.0  0.0  5.0
+%endblock LatticeVectors
+AtomicCoordinatesFormat Ang
+%block AtomicCoordinatesAndAtomicSpecies
+    0.69944719    0.00000000    0.77490595 1
+    0.69944719    0.00000000   -0.77490594 1
+    0.12775474    0.00000000    0.00000000 2
+%endblock AtomicCoordinatesAndAtomicSpecies
+SystemName          H2O
+SystemLabel         siesta
+WriteMullikenPop    1
+PAO.BasisSize  DZP
+MeshCutoff       400.0 Ry
+Spin non-polarized
+MaxSCFIterations       150
+SolutionMethod         diagon
+NetCharge     0.00
+DM.NumberPulay    4
+DM.MixingWeight   0.3
+DM.UseSaveDM      .true.
+NeglNonOverlapInt False
+XC.functional=LDA
+XC.authors=CA
+ZM.UnitsLength = Ang
+WriteCoorXmol     True
+WriteForces .true.
+WriteMullikenPop     1
+MD.TypeOfRun           cg               # Type of dynamics: Conjugate gradients
+MD.NumCGsteps          320              # number of CG steps
+MD.MaxCGDispl          0.15 Ang
+MD.MaxForceTol         0.04 eV/Ang
+MD.UseSaveXV           yes
+MD.VariableCell        .false.
+%block kgrid_Monkhorst_Pack
+  1  0  0   0.0
+  0  1  0   0.0
+  0  0  16  0.0
+%endblock kgrid_Monkhorst_Pack
+
+SaveBaderCharge   .true.
+WriteHirshfeldPop   .true.
+WriteVoronoiPop  .true.
+
+WriteCoorStep True
+bader-core-radius-standard 1.5 Bohr
+bader-core-radius-hydrogen 0.8 Bohr

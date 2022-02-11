@@ -5,7 +5,7 @@ from utils.atomic_model import TAtomicModel
 from utils.vasp import TVASP
 from utils.fdfdata import TFDFFile
 from utils.siesta import TSIESTA
-from utils.helpers import Helpers
+from utils import helpers
 import numpy as np
 from TInterface import TXSF, TGaussianCube
 
@@ -27,7 +27,7 @@ class Importer(object):
         if (filename.lower()).endswith(".xyz"):
             f = open(filename)
             f.readline()
-            str1 = Helpers.spacedel(f.readline())
+            str1 = helpers.spacedel(f.readline())
             if len(str1.split()) > 4:
                 return "XMolXYZ"
             if len(str1.split()) == 0:
@@ -68,28 +68,28 @@ class Importer(object):
                 type_of_run = (TSIESTA.type_of_run(filename).split())[0].lower()
                 models = []
                 if type_of_run != "sp":
-                        if fl != 'opt':
-                            models = TAtomicModel.atoms_from_output_cg(filename)
-                            if len(models) == 0:
-                                models = TAtomicModel.atoms_from_output_md(filename)
-                        modelsopt = TAtomicModel.atoms_from_output_optim(filename)
+                    if fl != 'opt':
+                        models = TAtomicModel.atoms_from_output_cg(filename)
+                        if len(models) == 0:
+                            models = TAtomicModel.atoms_from_output_md(filename)
+                    modelsopt = TAtomicModel.atoms_from_output_optim(filename)
                 else:
-                        modelsopt = TAtomicModel.atoms_from_output_sp(filename)
+                    modelsopt = TAtomicModel.atoms_from_output_sp(filename)
                 if len(modelsopt) == 1:
-                        models.append(modelsopt[0])
+                    models.append(modelsopt[0])
                 if prop and (len(models) > 0):
-                        try:
-                            charge_mulliken = TSIESTA.get_charges_mulliken_for_atoms(filename)
-                            if len(charge_mulliken[0]) > 0:
-                                models[-1].add_atoms_property("charge Mulliken", charge_mulliken)
-                            charge_voronoi = TSIESTA.get_charges_voronoi_for_atoms(filename)
-                            if len(charge_voronoi[0]) > 0:
-                                models[-1].add_atoms_property("charge Voronoi", charge_voronoi)
-                            charge_hirshfeld = TSIESTA.get_charges_hirshfeld_for_atoms(filename)
-                            if len(charge_hirshfeld[0]) > 0:
-                                models[-1].add_atoms_property("charge Hirshfeld", charge_hirshfeld)
-                        except Exception:
-                            print("Properties failed")
+                    try:
+                        charge_mulliken = TSIESTA.get_charges_mulliken_for_atoms(filename)
+                        if len(charge_mulliken[0]) > 0:
+                            models[-1].add_atoms_property("charge Mulliken", charge_mulliken)
+                        charge_voronoi = TSIESTA.get_charges_voronoi_for_atoms(filename)
+                        if len(charge_voronoi[0]) > 0:
+                            models[-1].add_atoms_property("charge Voronoi", charge_voronoi)
+                        charge_hirshfeld = TSIESTA.get_charges_hirshfeld_for_atoms(filename)
+                        if len(charge_hirshfeld[0]) > 0:
+                            models[-1].add_atoms_property("charge Hirshfeld", charge_hirshfeld)
+                    except Exception:
+                        print("Properties failed")
                 fdf.from_out_file(filename)
 
             if fileFormat == "SIESTAANI":
@@ -124,31 +124,30 @@ class Importer(object):
             return filename, eFermy
 
         """Check DOS file for fdf/out filename"""
-        SystemLabel = TSIESTA.SystemLabel(filename)
-        file = os.path.dirname(filename) + "/" + str(SystemLabel) + ".DOS"
+        system_label = TSIESTA.SystemLabel(filename)
+        file = os.path.dirname(filename) + "/" + str(system_label) + ".DOS"
         if os.path.exists(file):
-            eFermy = TSIESTA.FermiEnergy(filename)
-            return file, eFermy
+            return file, TSIESTA.FermiEnergy(filename)
         else:
             return False, 0
 
     @staticmethod
     def check_cro_file(filename):
         if os.path.exists(filename) and filename.endswith("cro"):
-            box_bohr = Helpers.fromFileProperty(filename, "Lattice parameters (bohr):", 1, 'string').split()
-            box_bohr = np.array(Helpers.list_str_to_float(box_bohr))
-            box_ang = Helpers.fromFileProperty(filename, "Lattice parameters (ang):", 1, 'string').split()
-            box_ang = np.array(Helpers.list_str_to_float(box_ang))
-            box_deg = Helpers.fromFileProperty(filename, "Lattice angles (degrees):", 1, 'string').split()
-            box_deg = np.array(Helpers.list_str_to_float(box_deg))
+            box_bohr = helpers.fromFileProperty(filename, "Lattice parameters (bohr):", 1, 'string').split()
+            box_bohr = np.array(helpers.list_str_to_float(box_bohr))
+            box_ang = helpers.fromFileProperty(filename, "Lattice parameters (ang):", 1, 'string').split()
+            box_ang = np.array(helpers.list_str_to_float(box_ang))
+            box_deg = helpers.fromFileProperty(filename, "Lattice angles (degrees):", 1, 'string').split()
+            box_deg = np.array(helpers.list_str_to_float(box_deg))
 
             MyFile = open(filename)
             str1 = MyFile.readline()
             while str1.find("Critical point list, final report (non-equivalent cps") < 0:
                 str1 = MyFile.readline()
-            str1 = MyFile.readline()
-            str1 = MyFile.readline()
-            str1 = MyFile.readline()
+            MyFile.readline()
+            MyFile.readline()
+            MyFile.readline()
 
             cps = []
             str1 = MyFile.readline()

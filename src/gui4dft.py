@@ -15,33 +15,35 @@ import matplotlib.pyplot as plt
 #from pyqt_graph_widget.pygrwidget import PyqtGraphWidget
 #import pyqtgraph as pg  # pip install pyqtgraph
 import numpy as np
-from utils.helpers import Helpers
+from utils import helpers
 from utils.atomic_model import TAtomicModel
 from utils.calculators import TCalculators as Calculator
-from utils.models import TCapedSWNT
-from utils.models import TBiNT
+from models.models import TCapedSWNT
+from models.models import TBiNT
 from utils.fdfdata import TFDFFile
-from utils.models import TGraphene
+from models.models import TGraphene
 from utils.periodic_table import TPeriodTable
 from utils.siesta import TSIESTA
-from utils.models import TSWNT
+from models.models import TSWNT
 from utils.vasp import TVASP
 from utils.importer import Importer
 from PySide2.QtCore import QCoreApplication, QLocale, QSettings, Qt, QSize
 import PySide2.QtCore as QtCore
-QtCore.QVariant = "QVariant"
+#QtCore.QVariant = "QVariant"
 from PySide2.QtGui import QColor, QIcon, QImage, QKeySequence, QPixmap, QStandardItem, QStandardItemModel
 from PySide2.QtWidgets import QListWidgetItem, QAction, QApplication, QDialog, QFileDialog, QMessageBox, QColorDialog
 from PySide2.QtWidgets import QDoubleSpinBox, QMainWindow, QShortcut, QTableWidgetItem, QTreeWidgetItem
 from PySide2.QtWidgets import QTreeWidgetItemIterator
-from TGui import GuiOpenGL
+from guiopengl import GuiOpenGL
 from TInterface import AtomsIdentifier
 from TInterface import Image3Dexporter
 from TInterface import TGaussianCube
 from TInterface import TVolumericData
 from TInterface import TXSF
-from gui.about import Ui_DialogAbout as Ui_about
-from gui.form import Ui_MainWindow as Ui_form
+from ui.about import Ui_DialogAbout as Ui_about
+from ui.form import Ui_MainWindow as Ui_form
+
+from utils import ase, critic2
 
 sys.path.append('.')
 
@@ -49,6 +51,7 @@ is_with_figure = True
 
 
 class mainWindow(QMainWindow):
+
     def __init__(self, *args):
         super(mainWindow, self).__init__(*args)
         self.ui = Ui_form()
@@ -80,7 +83,7 @@ class mainWindow(QMainWindow):
             self.save_state_action_on_start()
             self.menu_open()
 
-    def setup_ui(self):
+    def setup_ui(self):  # pragma: no cover
         self.load_settings()
         self.ui.actionOpen.triggered.connect(self.menu_open)
         self.ui.actionExport.triggered.connect(self.menu_export)
@@ -611,7 +614,7 @@ class mainWindow(QMainWindow):
         if fname.endswith(".out") or fname.endswith(".OUT"):
             label = TSIESTA.SystemLabel(fname)
             dir = os.path.dirname(fname)
-            dirs, content = Helpers.getsubs(dir)
+            dirs, content = helpers.getsubs(dir)
             for posFile in content:
                 file_candidat = Path(posFile).name
                 if file_candidat.startswith(label) and file_candidat.endswith(".cube"):
@@ -741,11 +744,11 @@ class mainWindow(QMainWindow):
             atomscolor.append(col)
         return atomscolor
 
-    def create_checkable_item(self, QuantumNumbersList, value):
-        item = QStandardItem(value)
-        item.setFlags(Qt.ItemIsUserCheckable | Qt.ItemIsEnabled)
-        item.setData(QVariant(Qt.Checked), Qt.CheckStateRole)
-        QuantumNumbersList.appendRow(item)
+    #def create_checkable_item(self, QuantumNumbersList, value):
+    #    item = QStandardItem(value)
+    #    item.setFlags(Qt.ItemIsUserCheckable | Qt.ItemIsEnabled)
+    #    #item.setData(QVariant(Qt.Checked), Qt.CheckStateRole)
+    #    QuantumNumbersList.appendRow(item)
 
     def delete_cell_param_row(self):
         row = self.ui.FormActionsPostTableCellParam.currentRow()
@@ -784,12 +787,18 @@ class mainWindow(QMainWindow):
     def export_volumeric_data_to_cube(self):
         try:
             fname = QFileDialog.getSaveFileName(self, 'Save File', self.WorkDir, "cube files (*.cube)")[0]
-            self.export_volumeric_data_to_file(fname)
+            x1 = self.ui.FormVolDataExportX1.value()
+            x2 = self.ui.FormVolDataExportX2.value()
+            y1 = self.ui.FormVolDataExportY1.value()
+            y2 = self.ui.FormVolDataExportY2.value()
+            z1 = self.ui.FormVolDataExportZ1.value()
+            z2 = self.ui.FormVolDataExportZ2.value()
+            self.export_volumeric_data_to_file(fname, x1, x2, y1, y2, z1, z2)
         except Exception as e:
             self.show_error(e)
 
-    def export_volumeric_data_to_file(self, fname):
-        self.MainForm.volumeric_data_to_file(fname, self.VolumericData)
+    def export_volumeric_data_to_file(self, fname, x1, x2, y1, y2, z1, z2):
+        self.MainForm.volumeric_data_to_file(fname, self.VolumericData, x1, x2, y1, y2, z1, z2)
         self.WorkDir = os.path.dirname(fname)
         self.save_active_folder()
 
@@ -840,9 +849,9 @@ class mainWindow(QMainWindow):
 
         for i in range(0, len(model)):
             self.ui.FormModelTableAtoms.setItem(i, 0, QTableWidgetItem(model[i].let))
-            self.ui.FormModelTableAtoms.setItem(i, 1, QTableWidgetItem(Helpers.float_to_string(model[i].x)))
-            self.ui.FormModelTableAtoms.setItem(i, 2, QTableWidgetItem(Helpers.float_to_string(model[i].y)))
-            self.ui.FormModelTableAtoms.setItem(i, 3, QTableWidgetItem(Helpers.float_to_string(model[i].z)))
+            self.ui.FormModelTableAtoms.setItem(i, 1, QTableWidgetItem(helpers.float_to_string(model[i].x)))
+            self.ui.FormModelTableAtoms.setItem(i, 2, QTableWidgetItem(helpers.float_to_string(model[i].y)))
+            self.ui.FormModelTableAtoms.setItem(i, 3, QTableWidgetItem(helpers.float_to_string(model[i].z)))
 
     def fill_properties_table(self):
         properties = []
@@ -1137,7 +1146,7 @@ class mainWindow(QMainWindow):
             colors = []
             col = self.state_Color_Of_Atoms.split('|')
             for item in col:
-                it = Helpers.list_str_to_float(item.split())
+                it = helpers.list_str_to_float(item.split())
                 colors.append(it)
         lets = mendeley.get_all_letters()
         for i in range(1, len(lets) - 1):
@@ -1260,6 +1269,14 @@ class mainWindow(QMainWindow):
         text = self.ui.AtomPropertiesText.toPlainText().split("Selected critical point:")
         if len(text) > 1:
             text = text[1].split()[0]
+
+            model = self.models[-1]
+
+            ind1, ind2 = model.atoms_of_bond_path(int(text))
+            atom1 = model.atoms[ind1].let + str(ind1)
+            atom2 = model.atoms[ind2].let + str(ind2)
+            title = text + ":" + atom1 + "-" + atom2
+
             self.ui.FormSelectedCP.setText(text)
             f = self.models[-1].bcp[int(text)].getProperty("field")
             self.ui.FormSelectedCP_f.setText(f)
@@ -1501,7 +1518,7 @@ class mainWindow(QMainWindow):
             atom_index = [self.MainForm.MainModel.selected_atom + 1]
         if self.ui.FormActionsComboPDOSIndexes.currentText() == 'Selected in list below':
             atom_index = (self.ui.FormActionsPDOSIndexes.toPlainText()).split()
-            atom_index = Helpers.list_str_to_int(atom_index)
+            atom_index = helpers.list_str_to_int(atom_index)
         species = []
         if self.ui.FormActionsComboPDOSspecies.currentText() == 'All':
             mendeley = TPeriodTable()
@@ -1590,6 +1607,7 @@ class mainWindow(QMainWindow):
         return atom_index, number_l, number_m, number_n, number_z, species
 
     def plot_bonds_histogram(self):
+        self.ui.PyqtGraphWidget.set_xticks(None)
         self.ui.Form3Dand2DTabs.setCurrentIndex(1)
         c1, c2 = self.fill_bonds_charges()
         bonds = self.MainForm.MainModel.find_bonds_exact()
@@ -1607,6 +1625,7 @@ class mainWindow(QMainWindow):
         self.ui.PyqtGraphWidget.add_histogram(b, num_bins, (0, 0, 255, 90), x_label, y_label)
 
     def plot_pdos(self):
+        self.ui.PyqtGraphWidget.set_xticks(None)
         file = self.ui.FormActionsLinePDOSfile.text()
         self.ui.Form3Dand2DTabs.setCurrentIndex(1)
         if os.path.exists(file):
@@ -1653,6 +1672,7 @@ class mainWindow(QMainWindow):
             self.ui.FormActionsButtonPlotPDOSselected.setEnabled(True)
 
     def plot_selected_pdos(self):
+        self.ui.PyqtGraphWidget.set_xticks(None)
         self.ui.Form3Dand2DTabs.setCurrentIndex(1)
 
         selected = self.ui.FormActionsListPDOS.selectedItems()
@@ -1700,7 +1720,7 @@ class mainWindow(QMainWindow):
             f = open(file)
             e_fermi = float(f.readline())
             str1 = f.readline().split()
-            str1 = Helpers.list_str_to_float(str1)
+            str1 = helpers.list_str_to_float(str1)
             kmin, kmax = float(str1[0]), float(str1[1])
             self.ui.FormActionsSpinBANDSxmin.setRange(kmin, kmax)
             self.ui.FormActionsSpinBANDSxmin.setValue(kmin)
@@ -1708,12 +1728,12 @@ class mainWindow(QMainWindow):
             self.ui.FormActionsSpinBANDSxmax.setValue(kmax)
 
             str1 = f.readline().split()
-            str1 = Helpers.list_str_to_float(str1)
+            str1 = helpers.list_str_to_float(str1)
             emin = float(str1[0]) - e_fermi
             emax = float(str1[1]) - e_fermi
             str1 = f.readline().split()
             f.close()
-            str1 = Helpers.list_str_to_int(str1)
+            str1 = helpers.list_str_to_int(str1)
             nspins = float(str1[1])
             if nspins == 2:
                 self.ui.FormActionsGrBoxBANDSspin.setEnabled(True)
@@ -1737,11 +1757,11 @@ class mainWindow(QMainWindow):
             f.readline()
             kmin, kmax = self.ui.FormActionsSpinBANDSxmin.value(), self.ui.FormActionsSpinBANDSxmax.value()
             str1 = f.readline().split()
-            str1 = Helpers.list_str_to_float(str1)
+            str1 = helpers.list_str_to_float(str1)
             eminf, emaxf = float(str1[0]), float(str1[1])
             emin, emax = self.ui.FormActionsSpinBANDSemin.value(), self.ui.FormActionsSpinBANDSemax.value()
             str1 = f.readline().split()
-            str1 = Helpers.list_str_to_int(str1)
+            str1 = helpers.list_str_to_int(str1)
             nbands, nspins = int(str1[0]), int(str1[1])
             kmesh = np.zeros((str1[2]))
             homo = eminf * np.ones((str1[2]))
@@ -1749,14 +1769,14 @@ class mainWindow(QMainWindow):
             bands = np.zeros((nbands * nspins, str1[2]))
             for i in range(0, str1[2]):
                 str2 = f.readline().split()
-                str2 = Helpers.list_str_to_float(str2)
+                str2 = helpers.list_str_to_float(str2)
                 kmesh[i] = str2[0]
                 for j in range(1, len(str2)):
                     bands[j - 1][i] = float(str2[j]) - e_fermi
                 kol = len(str2) - 1
                 while kol < nbands * nspins:
                     str2 = f.readline().split()
-                    str2 = Helpers.list_str_to_float(str2)
+                    str2 = helpers.list_str_to_float(str2)
                     for j in range(0, len(str2)):
                         bands[kol + j][i] = float(str2[j]) - e_fermi
                     kol += len(str2)
@@ -1782,7 +1802,7 @@ class mainWindow(QMainWindow):
                 value = float(str3[0])
                 if (round(value, 2) >= kmin) and (round(value, 2) <= kmax):
                     xticks.append(value)
-                    letter = Helpers.utf8_letter(str3[1][1:-1])
+                    letter = helpers.utf8_letter(str3[1][1:-1])
                     xticklabels.append(letter)
             f.close()
             self.ui.PyqtGraphWidget.clear()
@@ -1828,6 +1848,7 @@ class mainWindow(QMainWindow):
         return gap, gap_ind
 
     def plot_dos(self):
+        self.ui.PyqtGraphWidget.set_xticks(None)
         self.ui.Form3Dand2DTabs.setCurrentIndex(1)
 
         is_fermi_level_show = self.ui.FormActionsCheckBANDSfermyShow_3.isChecked()
@@ -1897,6 +1918,7 @@ class mainWindow(QMainWindow):
         self.ui.FormActionsTabeDOSProperty.update()
 
     def plot_volume_param_energy(self):
+        self.ui.PyqtGraphWidget.set_xticks(None)
         self.ui.Form3Dand2DTabs.setCurrentIndex(1)
         items = []
         method = self.ui.FormActionsPostComboCellParam.currentText()
@@ -2297,7 +2319,7 @@ class mainWindow(QMainWindow):
 
                     if len(rows[i].split()) == 4:
                         row = rows[i].split()
-                        if (row[0]).isdigit() and Helpers.is_number(row[1]):
+                        if (row[0]).isdigit() and helpers.is_number(row[1]):
                             if (float(row[1]) > 0) and (float(row[3]) > 0):
                                 if is_raman:
                                     raman_en_ev.append(float(row[1]))
@@ -2518,17 +2540,20 @@ class mainWindow(QMainWindow):
         self.MainForm.set_color_of_box(boxcolor)
 
     def add_cp_to_list(self):
-        newCP = self.ui.FormSelectedCP.text()
-        if newCP == "...":
+        new_cp = self.ui.FormSelectedCP.text()
+        if new_cp == "...":
             return
 
         fl = True
 
         for i in range(0, self.ui.FormCPlist.count()):
-            if self.ui.FormCPlist.item(i).text() == newCP:
+            if self.ui.FormCPlist.item(i).text() == new_cp:
                 fl = False
         if fl:
-            QListWidgetItem(newCP, self.ui.FormCPlist)
+            QListWidgetItem(new_cp, self.ui.FormCPlist)
+            model = self.models[self.active_model]
+            ind = int(new_cp)
+            bcp_seleсted = model.bcp[ind]
 
     def delete_cp_from_list(self):
         itemrow = self.ui.FormCPlist.currentRow()
@@ -2539,146 +2564,64 @@ class mainWindow(QMainWindow):
         name = QFileDialog.getSaveFileName(self, 'Save File', self.WorkDir)
         fname = name[0]
         if len(fname) > 0:
-            f = open(fname, 'w')
-
-            bcp = deepcopy(self.models[self.active_model].bcp)
-
-            bcp_seleted = []
+            model = self.models[self.active_model]
+            bcp = deepcopy(model.bcp)
+            bcp_seleсted = []
             for i in range(0, self.ui.FormCPlist.count()):
                 ind = int(self.ui.FormCPlist.item(i).text())
-                bcp_seleted.append(self.models[self.active_model].bcp[ind])
+                bcp_seleсted.append(model.bcp[ind])
+            is_with_selected = self.ui.radio_with_cp.isChecked()
+            text = critic2.create_critic2_xyz_file(bcp, bcp_seleсted, is_with_selected, model)
+            self.write_text_to_file(fname, text)
 
-            if self.ui.radio_with_cp.isChecked():
-                text = self.models[self.active_model].toCriticXYZfile(bcp_seleted)
-            else:
-                for b in bcp_seleted:
-                    for cp in bcp:
-                        if cp.to_string() == b.to_string():
-                            bcp.remove(cp)
-                text = self.models[self.active_model].toCriticXYZfile(bcp)
-
-            print(text, file=f)
-            f.close()
+    def write_text_to_file(self, fname, text):
+        f = open(fname, 'w')
+        print(text, file=f)
+        f.close()
 
     def create_cri_file(self):
         name = QFileDialog.getSaveFileName(self, 'Save File', self.WorkDir)
+        extra_points = self.ui.FormExtraPoints.value() + 1
+        is_form_bp = self.ui.formCriticBPradio.isChecked()
+
+        text_prop = ""
+        if self.ui.form_critic_prop_gtf.isChecked():
+            text_prop += 'POINTPROP GTF\n'
+        if self.ui.form_critic_prop_vtf.isChecked():
+            text_prop += 'POINTPROP VTF\n'
+        if self.ui.form_critic_prop_htf.isChecked():
+            text_prop += 'POINTPROP HTF\n'
+        if self.ui.form_critic_prop_gtf_kir.isChecked():
+            text_prop += 'POINTPROP GTF_KIR\n'
+        if self.ui.form_critic_prop_vtf_kir.isChecked():
+            text_prop += 'POINTPROP VTF_KIR\n'
+        if self.ui.form_critic_prop_htf_kir.isChecked():
+            text_prop += 'POINTPROP HTF_KIR\n'
+        if self.ui.form_critic_prop_lag.isChecked():
+            text_prop += 'POINTPROP LAG\n'
+        if self.ui.form_critic_prop_lol_kir.isChecked():
+            text_prop += 'POINTPROP LOL_KIR\n'
+        if self.ui.form_critic_prop_rdg.isChecked():
+            text_prop += 'POINTPROP RDG\n'
+
         fname = name[0]
         if len(fname) > 0:
-            f = open(fname, 'w')
-
-            textl = "crystal model.BADER.cube\n"
-            textl += "WRITE model.xyz\n"
-            textl += "load model.BADER.cube\n"
-            textl += "load model.VT.DN.cube\n"
-            textl += "load model.VT.UP.cube\n"
-            textl += 'LOAD AS "-$2-$3"\n'
-            textl += 'LOAD AS LAP 1\n'
-            textl += "REFERENCE 1\n"
-
-            text = ""
-            te = ""
-            lines = ""
-
-            SysCoord = np.array([self.models[-1].LatVect1, self.models[-1].LatVect2, self.models[-1].LatVect3])
-            obr = np.linalg.inv(SysCoord).transpose()
+            model = self.models[self.active_model]
 
             cp_list = []
             if self.ui.form_critic_all_cp.isChecked():
-                cp_list = self.models[self.active_model].bcp
+                cp_list = range(model.bcp)
             else:
                 for i in range(0, self.ui.FormCPlist.count()):
                     ind = int(self.ui.FormCPlist.item(i).text())
-                    cp_list.append(self.models[self.active_model].bcp[ind])
+                    cp_list.append(ind)
+            textl, lines, te, text = critic2.create_cri_file(cp_list, extra_points, is_form_bp, model, text_prop)
 
-            for ind in range(0, len(cp_list)):
-                cp = cp_list[ind]
-                text += "Bond Critical Point: " + str(ind) + "  :  "
-                ind1, ind2 = self.models[-1].atoms_of_bond_path(ind)
-                atom1 = self.models[-1].atoms[ind1].let + str(ind1)
-                atom2 = self.models[-1].atoms[ind2].let + str(ind2)
-                title = atom1 + "-" + atom2
-                text += title + "\n"
-
-                if self.ui.formCriticBPradio.isChecked():
-                    """ bond path """
-                    bond1 = cp.getProperty("bond1")
-                    bond2 = cp.getProperty("bond2")
-
-                    path_low = []
-                    for i in range(0, len(bond1)):
-                        Coord = np.array(
-                            [bond1[len(bond1) - i - 1].x, bond1[len(bond1) - i - 1].y, bond1[len(bond1) - i - 1].z])
-                        res = obr.dot(Coord)
-                        path_low.append(np.array([float(res[0]), float(res[1]), float(res[2])]))
-
-                    from_to = "{0:14.10} {1:14.10} {2:14.10} {3:14.10} {4:14.10} {5:14.10} ".format(path_low[0][0],
-                                                                                                path_low[0][1],
-                                                                                                path_low[0][2],
-                                                                                                path_low[-1][0],
-                                                                                                path_low[-1][1],
-                                                                                                path_low[-1][2])
-
-                    lines += "# " + title + "\n"
-                    lines += "REFERENCE 1\n"
-                    lines += "LINE " + from_to + " 100 FILE ./lines/lines-" + title + "-00-charge.txt\n"
-                    lines += "REFERENCE 4\n"
-                    lines += "LINE " + from_to + " 100 FILE ./lines/lines-" + title + "-00-elpot.txt\n"
-                    lines += "REFERENCE 5\n"
-                    lines += "LINE " + from_to + " 100 FILE ./lines/lines-" + title + "-00-lapl.txt\n"
-
-                    first = "{0:14.10} {1:14.10} {2:14.10} ".format(path_low[-1][0], path_low[-1][1], path_low[-1][2])
-
-                    for i in range(1, len(bond2)):
-                        Coord = np.array([bond2[i].x, bond2[i].y, bond2[i].z])
-                        res = obr.dot(Coord)
-                        path_low.append(np.array([float(res[0]), float(res[1]), float(res[2])]))
-
-                    last = "{0:14.10} {1:14.10} {2:14.10} ".format(path_low[-1][0], path_low[-1][1], path_low[-1][2])
-                    lines += "REFERENCE 1\n"
-                    lines += "LINE " + first + last + " 100 FILE ./lines/lines-" + title + "-01-charge.txt\n"
-                    lines += "REFERENCE 4\n"
-                    lines += "LINE " + first + last + " 100 FILE ./lines/lines-" + title + "-01-elpot.txt\n"
-                    lines += "REFERENCE 5\n"
-                    lines += "LINE " + first + last + " 100 FILE ./lines/lines-" + title + "-01-lapl.txt\n"
-
-                    path_fine = [path_low[0]]
-                    extra_points = self.ui.FormExtraPoints.value() + 1
-                    for i in range(1, len(path_low)):
-                        dv = (path_low[i] - path_low[i-1]) / extra_points
-                        for j in range(0, extra_points):
-                            path_fine.append(path_fine[-1] + dv)
-
-                    for i in range(0, len(path_fine)):
-                        text += "{0:20.16f} {1:20.16f} {2:20.16f}\n".format(path_fine[i][0], path_fine[i][1], path_fine[i][2])
-                        te += "{0:20.16f} {1:20.16f} {2:20.16f}\n".format(path_fine[i][0], path_fine[i][1], path_fine[i][2])
-                else:
-                    """ critical points only """
-                    Coord = np.array([cp.x, cp.y, cp.z])
-                    res = obr.dot(Coord)
-                    text += "{0:20.16f} {1:20.16f} {2:20.16f}\n".format(float(res[0]), float(res[1]), float(res[2]))
-                    te += "{0:20.16f} {1:20.16f} {2:20.16f}\n".format(float(res[0]), float(res[1]), float(res[2]))
-
-            textl += "# bond path information\n"
-            if self.ui.form_critic_prop_gtf.isChecked(): textl += 'POINTPROP GTF\n'
-            if self.ui.form_critic_prop_vtf.isChecked(): textl += 'POINTPROP VTF\n'
-            if self.ui.form_critic_prop_htf.isChecked(): textl += 'POINTPROP HTF\n'
-            if self.ui.form_critic_prop_gtf_kir.isChecked(): textl += 'POINTPROP GTF_KIR\n'
-            if self.ui.form_critic_prop_vtf_kir.isChecked(): textl += 'POINTPROP VTF_KIR\n'
-            if self.ui.form_critic_prop_htf_kir.isChecked(): textl += 'POINTPROP HTF_KIR\n'
-            if self.ui.form_critic_prop_lag.isChecked(): textl += 'POINTPROP LAG\n'
-            if self.ui.form_critic_prop_lol_kir.isChecked(): textl += 'POINTPROP LOL_KIR\n'
-            if self.ui.form_critic_prop_rdg.isChecked(): textl += 'POINTPROP RDG\n'
-
-            textl += 'POINTPROP elpot "$4"\n'
-            textl += 'POINTPROP lapl "$5"\n'
-            textl += "POINT ./POINTS.txt\n"
-
-            lines += "UNLOAD ALL\nEND"
+            f = open(fname, 'w')
             print(textl + lines, file=f)
             f.close()
 
             fname_dir = os.path.dirname(fname)
-
             f = open(fname_dir + "/POINTS.txt", 'w')
             print(te, file=f)
             f.close()
@@ -2822,10 +2765,20 @@ class mainWindow(QMainWindow):
                 self.ui.FormActionsPostSliderContourXZ.setMaximum(self.VolumericData.Ny)
                 self.ui.FormActionsPostSliderContourYZ.setMaximum(self.VolumericData.Nx)
 
+                self.ui.FormVolDataExportX1.setMaximum(self.VolumericData.Nx)
+                self.ui.FormVolDataExportX2.setMaximum(self.VolumericData.Nx)
+                self.ui.FormVolDataExportX2.setValue(self.VolumericData.Nx)
+                self.ui.FormVolDataExportY1.setMaximum(self.VolumericData.Ny)
+                self.ui.FormVolDataExportY2.setMaximum(self.VolumericData.Ny)
+                self.ui.FormVolDataExportY2.setValue(self.VolumericData.Ny)
+                self.ui.FormVolDataExportZ1.setMaximum(self.VolumericData.Nz)
+                self.ui.FormVolDataExportZ2.setMaximum(self.VolumericData.Nz)
+                self.ui.FormVolDataExportZ2.setValue(self.VolumericData.Nz)
+
     def volumeric_data_load2(self):
         getSelected = self.ui.FormActionsPostTreeSurface2.selectedItems()
         if getSelected:
-            if getSelected[0].parent() != None:
+            if getSelected[0].parent() is not None:
                 getChildNode = getSelected[0].text(0)
                 self.VolumericData2.load_data(getChildNode)
 
@@ -2840,6 +2793,8 @@ class mainWindow(QMainWindow):
                     self.ui.CalculateTheVolumericDataDifference.setEnabled(True)
                     self.ui.CalculateTheVolumericDataSum.setEnabled(True)
                     self.ui.VolumrricDataGridExport.setEnabled(True)
+                    self.ui.ExportTheVolumericDataXSF.setEnabled(True)
+                    self.ui.ExportTheVolumericDataCube.setEnabled(True)
                     self.ui.VolumrricDataGrid2.setTitle("Grid: correct")
                 else:
                     self.ui.VolumrricDataGrid2.setTitle("Grid: incorrect")
