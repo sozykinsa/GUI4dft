@@ -138,7 +138,7 @@ class TAtomicModel(object):
         NumberOfAtoms = TSIESTA.number_of_atoms(filename)
         AtomicCoordinatesFormat = TSIESTA.atomic_coordinates_format(filename)
         lat = ""
-        units = helpers.fromFileProperty(filename, 'ZM.UnitsLength', 1, 'string')
+        units = helpers.from_file_property(filename, 'ZM.UnitsLength', 1, 'string')
         if AtomicCoordinatesFormat == "ScaledCartesian":
             lat = TSIESTA.lattice_constant(filename)
             units = "ang"

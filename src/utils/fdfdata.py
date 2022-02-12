@@ -31,17 +31,23 @@ class TFDFFile:
     def add_property(self, row):
         self.properties.append(row)
 
-    def fdf_parser(self, data):
+    def fdf_parser(self, data, filename):
         i = 0
         while i < len(data):
             if not data[i].lstrip().startswith('#'):
-                if data[i].find("%block") >= 0:
-                    newBlock = Block(data[i].split()[1])
+                if data[i].find("%include") >= 0:
+                    new_f = data[i].split()[1]
+                    dirname = os.path.dirname(filename)
+                    print(dirname + "/" + new_f)
+                    self.from_fdf_file(dirname + "/" + new_f)
+                    i += 1
+                elif data[i].find("%block") >= 0:
+                    new_block = Block(data[i].split()[1])
                     i += 1
                     while data[i].find("%endblock") == -1:
-                        newBlock.add_row(data[i])
+                        new_block.add_row(data[i])
                         i += 1
-                    self.add_block(newBlock)
+                    self.add_block(new_block)
                     i += 1
                 else:
                     if data[i] != "" and data[i] != "\n":
@@ -55,13 +61,13 @@ class TFDFFile:
             f = open(filename)
             lines = f.readlines()
             f.close()
-            self.fdf_parser(lines)
+            self.fdf_parser(lines, filename)
             return self
 
     def from_out_file(self, filename):
         if os.path.exists(filename):
             fdf = TFDFFile.fdf_data_dump(filename)
-            self.fdf_parser(fdf)
+            self.fdf_parser(fdf, filename)
             return self
 
     @staticmethod
@@ -136,8 +142,8 @@ class TFDFFile:
 
     @staticmethod
     def updateAtominSIESTAfdf(filename, model):
-        """ заменяет атомы во входном файле SIESTA """
-        NumberOfAtoms = helpers.fromFileProperty(filename, 'NumberOfAtoms')
+        """Replaces atoms in the input file SIESTA."""
+        NumberOfAtoms = helpers.from_file_property(filename, 'NumberOfAtoms')
         f = open(filename)
         lines = f.readlines()
         i = 0

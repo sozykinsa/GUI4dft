@@ -1,3 +1,7 @@
+<a href="https://codecov.io/gh/sozykinsa/GUI4dft">
+  <img src="https://codecov.io/gh/sozykinsa/GUI4dft/branch/master/graph/badge.svg?token=DFP49S1OVG"/>
+</a>
+
 GUI4dft (Graphical User Interface for support of Density Functional Theory calculations) - first free SIESTA oriented GUI. It is a cross-platform program. 
 
 ## Install

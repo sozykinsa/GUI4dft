@@ -6,14 +6,14 @@ from operator import itemgetter
 import numpy as np
 
 
-def spacedel(stroka):
-    """ Удаление лишних пробелов, перводов строк """
-    stroka = stroka.replace('\n', ' ')
-    stroka = stroka.replace('\r', ' ')
-    stroka = stroka.strip()
-    while stroka.find('  ') >= 0:
-        stroka = stroka.replace('  ', ' ')
-    return stroka
+def spacedel(row: str) -> str:
+    """Removing extra spaces, line breaks."""
+    row = row.replace('\n', ' ')
+    row = row.replace('\r', ' ')
+    row = row.strip()
+    while row.find('  ') >= 0:
+        row = row.replace('  ', ' ')
+    return row
 
 
 def float_to_string(fl):
@@ -104,16 +104,15 @@ def ListN2Split(data):
     return np.array(x), np.array(y)
 
 
-def fromFileProperty(filename, prop, count=1, type='int'):
-    """
-    Returns the value of the property parameter from the file filename.
+def from_file_property(filename, prop, count=1, prop_type='int'):
+    """Returns the value of the property parameter from the file filename.
     The value can be an integer or a fixed-point fractional number.
     If the required parameter occurs several times in the file, you must specify the count parameter,
     which shows what value the found value should be returned by the function.
     The type parameter specifies the type of the return value (int, float, or string)
     """
     k = 1
-    is_found, k, property = property_from_sub_file(filename, k, prop, count, type)
+    is_found, k, property = property_from_sub_file(filename, k, prop, count, prop_type)
     if is_found:
         return property
     else:
@@ -123,7 +122,7 @@ def fromFileProperty(filename, prop, count=1, type='int'):
 def property_from_sub_file(filename, k, prop, count, typen):
     property = None
     is_found = False
-    k = 1
+    #k = 1
     if os.path.exists(filename):
         MyFile = open(filename)
         str1 = MyFile.readline()
@@ -164,58 +163,57 @@ def RoundToPlane(atom, R):
     fi = math.asin(atom.x/R)
     if atom.y <= -1e-3:
         fi = 3.14 - fi
-    x = -R*fi
+    x = -R * fi
     return [x, z]
 
 
-def dos_from_file(filename, n, nlines=0):
-        DOSFile = open(filename)
-        strDOS = DOSFile.readline()
-        energy = []
-        spinUp = []
-        spinDown = []
+def dos_from_file(filename, n, n_lines=0):
+    dos_file = open(filename)
+    str_dos = dos_file.readline()
+    energy = []
+    spin_up = []
+    spin_down = []
 
-        if nlines > 0:
-            #MyFile = open(filename)
-            for i in range(0, 6):
-                strDOS = DOSFile.readline()
+    if n_lines > 0:
+        for i in range(0, 6):
+            str_dos = dos_file.readline()
 
-            for i in range(0, nlines):
-                strDOS = read_row_of_dos_file(DOSFile, energy, n, spinDown, spinUp, strDOS)
+        for i in range(0, n_lines):
+            str_dos = read_row_of_dos_file(dos_file, energy, n, spin_down, spin_up, str_dos)
 
-        if nlines == 0:
-            while strDOS != '':
-                strDOS = read_row_of_dos_file(DOSFile, energy, n, spinDown, spinUp, strDOS)
-        return energy, spinDown, spinUp
+    if n_lines == 0:
+        while str_dos != '':
+            str_dos = read_row_of_dos_file(dos_file, energy, n, spin_down, spin_up, str_dos)
+    return energy, spin_down, spin_up
 
 
-def read_row_of_dos_file(DOSFile, energy, n, spinDown, spinUp, strDOS):
-        line = strDOS.split(' ')
-        line1 = []
-        for i in range(0, len(line)):
-            if line[i] != '':
-                line1.append(line[i])
-        energy.append(float(line1[0]))
-        spinUp.append(float(line1[1]))
-        if len(line1) > n:
-            spinDown.append(float(line1[2]))
-        else:
-            spinDown.append(0)
-        strDOS = DOSFile.readline()
-        return strDOS
+def read_row_of_dos_file(dos_file, energy, n, spin_down, spin_up, str_dos):
+    line = str_dos.split(' ')
+    line1 = []
+    for i in range(0, len(line)):
+        if line[i] != '':
+            line1.append(line[i])
+    energy.append(float(line1[0]))
+    spin_up.append(float(line1[1]))
+    if len(line1) > n:
+        spin_down.append(float(line1[2]))
+    else:
+        spin_down.append(0)
+    str_dos = dos_file.readline()
+    return str_dos
 
 
 def utf8_letter(let):
-        if let == r'\Gamma':
-            return '\u0393'
-        if let == r'\Delta':
-            return '\u0394'
-        if let == r'\Lambda':
-            return '\u039B'
-        if let == r'\Pi':
-            return '\u03A0'
-        if let == r'\Sigma':
-            return '\u03A3'
-        if let == r'\Omega':
-            return '\u03A9'
-        return let
+    if let == r'\Gamma':
+        return '\u0393'
+    if let == r'\Delta':
+        return '\u0394'
+    if let == r'\Lambda':
+        return '\u039B'
+    if let == r'\Pi':
+        return '\u03A0'
+    if let == r'\Sigma':
+        return '\u03A3'
+    if let == r'\Omega':
+        return '\u03A9'
+    return let

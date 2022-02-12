@@ -19,7 +19,7 @@ class TSIESTA:
     def lattice_constant(filename):
         """ Returns the LatticeConstant from SIESTA output file """
         mult = 1
-        latc = helpers.fromFileProperty(filename, 'LatticeConstant', 1, 'unformatted')
+        latc = helpers.from_file_property(filename, 'LatticeConstant', 1, 'unformatted')
         if latc is None:
             return 1
         property = latc.split()
@@ -121,7 +121,7 @@ class TSIESTA:
                 number_of_species = len(pseudo_charges)
                 species = TSIESTA.get_species(filename)
 
-                is_spin_polarized = int(helpers.fromFileProperty(filename, 'redata: Number of spin components', 1, 'string').split("=")[1])
+                is_spin_polarized = int(helpers.from_file_property(filename, 'redata: Number of spin components', 1, 'string').split("=")[1])
 
                 MdSiestaFile = open(filename)
                 str1 = MdSiestaFile.readline()
@@ -249,7 +249,7 @@ class TSIESTA:
     def Etot(filename):
         """ Returns the Etot from SIESTA output file """
         if os.path.exists(filename):
-            return helpers.fromFileProperty(filename, 'siesta: Etot    =', 2, 'float')
+            return helpers.from_file_property(filename, 'siesta: Etot    =', 2, 'float')
         else:
             return None
 
@@ -264,7 +264,7 @@ class TSIESTA:
         if os.path.exists(filename):
             energy = 0
             try:
-                energy = float(helpers.fromFileProperty(filename, 'siesta:         Fermi =', 2, 'float'))
+                energy = float(helpers.from_file_property(filename, 'siesta:         Fermi =', 2, 'float'))
             except Exception:
                 MdSiestaFile = open(filename)
                 str1 = MdSiestaFile.readline()
@@ -292,7 +292,7 @@ class TSIESTA:
     @staticmethod
     def number_of_atoms(filename):
         """ Returns the NumberOfAtoms from SIESTA output file """
-        number = helpers.fromFileProperty(filename, 'NumberOfAtoms')
+        number = helpers.from_file_property(filename, 'NumberOfAtoms')
         if number is None:
             block = TSIESTA.get_block_from_siesta_fdf(filename, "AtomicCoordinatesAndAtomicSpecies")
             if len(block) > 0:
@@ -302,7 +302,7 @@ class TSIESTA:
     @staticmethod
     def number_of_species(filename):
         """ Returns the NumberOfSpecies from SIESTA output file """
-        return helpers.fromFileProperty(filename, 'NumberOfSpecies')
+        return helpers.from_file_property(filename, 'NumberOfSpecies')
 
     @staticmethod
     def pseudo_charge_of_species(filename):
@@ -334,7 +334,7 @@ class TSIESTA:
     @staticmethod
     def atomic_coordinates_format(filename):
         """ Returns the AtomicCoordinatesFormat from SIESTA output file """
-        format = helpers.fromFileProperty(filename, 'AtomicCoordinatesFormat', 1, 'string')
+        format = helpers.from_file_property(filename, 'AtomicCoordinatesFormat', 1, 'string')
         if format == None:
             formatlow = ""
         else:
@@ -374,7 +374,7 @@ class TSIESTA:
     @staticmethod
     def SystemLabel(filename):
         """ Returns the NumberOfAtomsfrom SIESTA output file """
-        res = helpers.fromFileProperty(filename,'SystemLabel',1,"string")
+        res = helpers.from_file_property(filename, 'SystemLabel', 1, "string")
         if res == None:
             res = "siesta"
         return res
@@ -382,7 +382,7 @@ class TSIESTA:
     @staticmethod
     def SpinPolarized(filename):
         """ Returns the SpinPolarized from SIESTA output file """
-        return helpers.fromFileProperty(filename,'SpinPolarized')
+        return helpers.from_file_property(filename, 'SpinPolarized')
 
     @staticmethod    
     def ListOfValues(filename, prop):
@@ -399,8 +399,8 @@ class TSIESTA:
     @staticmethod
     def Replaceatominsiestafdf(filename, atom, string):
         """ not documented """
-        NumberOfAtoms = helpers.fromFileProperty(filename, 'number_of_atoms')
-        NumberOfSpecies = helpers.fromFileProperty(filename, 'number_of_species')
+        NumberOfAtoms = helpers.from_file_property(filename, 'number_of_atoms')
+        NumberOfSpecies = helpers.from_file_property(filename, 'number_of_species')
         #lines = []
         f = open(filename)
         lines = f.readlines()    
@@ -448,17 +448,17 @@ class TSIESTA:
 
     @staticmethod
     def type_of_run(filename):
-        steps = helpers.fromFileProperty(filename, 'MD.NumCGsteps', 1, 'int')
+        steps = helpers.from_file_property(filename, 'MD.NumCGsteps', 1, 'int')
         if steps == 0:
             """ single point"""
             return "sp"
         """ MD or CG? """
-        res = helpers.fromFileProperty(filename, 'MD.TypeOfRun', 1, 'string')
+        res = helpers.from_file_property(filename, 'MD.TypeOfRun', 1, 'string')
         if res is None:
-            res = helpers.fromFileProperty(filename, "Begin CG opt. move =", 1, 'string')
+            res = helpers.from_file_property(filename, "Begin CG opt. move =", 1, 'string')
             if res == "0":
                 return "cg"
-            res = helpers.fromFileProperty(filename, "Begin MD step =", 1, 'string')
+            res = helpers.from_file_property(filename, "Begin MD step =", 1, 'string')
             if res == "1":
                 return "mg"
         return res
@@ -467,6 +467,6 @@ class TSIESTA:
     def volume(filename):
         """ Returns cell volume from SIESTA output file """
         if os.path.exists(filename):
-            return helpers.fromFileProperty(filename, 'siesta: Cell volume = ', 2, 'float')
+            return helpers.from_file_property(filename, 'siesta: Cell volume = ', 2, 'float')
         else:
             return None
