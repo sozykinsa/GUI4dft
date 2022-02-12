@@ -37,4 +37,14 @@ jobs:
     - name: Test with pytest
       run: |
         sudo apt-get install libxkbcommon-x11-0 libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-randr0 libxcb-render-util0 libxcb-xinerama0 libxcb-xfixes0
-        python -m pytest tests --color=yes --cov=src --cov-report=html --cov-report=term-missing
+        python -m pytest tests --color=yes --cov=src --cov-report=xml --cov-report=term-missing
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v1
+      with:
+          files: coverage.xml
+          flags: unittests
+          env_vars: OS,PYTHON
+          fail_ci_if_error: true
+          name: codecov-umbrella
+          path_to_write_report: ./coverage/codecov_report.txt
+          verbose: true
