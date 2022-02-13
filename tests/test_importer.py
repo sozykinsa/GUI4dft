@@ -77,3 +77,18 @@ def test_importer_xsf(tests_path):
     f_name = str(tests_path / 'ref_data' / 'h2o-ang-charges' / 'cube_and_xsf' / "siesta.XSF")
     model, fdf = Importer.Import(f_name, fl='all', prop=False, xyzcritic2=False)
     assert len(model[0].atoms) == 3
+
+
+def test_importer_check_dos_pdos_bands(tests_path):
+    f_name = str(tests_path / 'ref_data' / 'swcnt(8,0)' / "siesta.out")
+
+    dos_file, e_fermy = Importer.check_dos_file(f_name)
+    assert e_fermy == -4.804823
+    assert dos_file.endswith("siesta.DOS")
+
+    pdos_file = Importer.check_pdos_file(f_name)
+    assert pdos_file.endswith("siesta.PDOS")
+
+    bands_file = Importer.check_bands_file(f_name)
+    assert bands_file.endswith("siesta.bands")
+

@@ -415,7 +415,7 @@ class mainWindow(QMainWindow):
     def add_cell_param(self):
         """ add cell params"""
         try:
-            fname = QFileDialog.getOpenFileName(self, 'Open file', self.WorkDir)[0]
+            fname = QFileDialog.getOpenFileName(self, 'Open file', self.work_dir)[0]
             if Importer.check_format(fname) == "SIESTAout":
                 self.fill_cell_info(fname)
         except Exception as e:
@@ -428,8 +428,8 @@ class mainWindow(QMainWindow):
     def add_data_cell_param(self):
         """ add cell params from file"""
         try:
-            fname = QFileDialog.getOpenFileName(self, 'Open file', self.WorkDir)[0]
-            self.WorkDir = os.path.dirname(fname)
+            fname = QFileDialog.getOpenFileName(self, 'Open file', self.work_dir)[0]
+            self.work_dir = os.path.dirname(fname)
 
             if os.path.exists(fname):
                 f = open(fname)
@@ -456,8 +456,8 @@ class mainWindow(QMainWindow):
 
     def add_critic2_cro_file(self):
         try:
-            fname = QFileDialog.getOpenFileName(self, 'Open file', self.WorkDir)[0]
-            self.WorkDir = os.path.dirname(fname)
+            fname = QFileDialog.getOpenFileName(self, 'Open file', self.work_dir)[0]
+            self.work_dir = os.path.dirname(fname)
 
             box_bohr, box_ang, box_deg, cps = Importer.check_cro_file(fname)
             al = math.radians(box_deg[0])
@@ -493,8 +493,8 @@ class mainWindow(QMainWindow):
 
     def add_dos_file(self):
         try:
-            fname = QFileDialog.getOpenFileName(self, 'Open file', self.WorkDir)[0]
-            self.WorkDir = os.path.dirname(fname)
+            fname = QFileDialog.getOpenFileName(self, 'Open file', self.work_dir)[0]
+            self.work_dir = os.path.dirname(fname)
             self.check_dos(fname)
         except Exception as e:
             self.show_error(e)
@@ -527,21 +527,21 @@ class mainWindow(QMainWindow):
     def add_left_electrode_file(self):
         fname = self.get_fdf_file_name()
         if os.path.exists(fname):
-            self.WorkDir = os.path.dirname(fname)
+            self.work_dir = os.path.dirname(fname)
             self.save_active_folder()
             self.ui.FormActionsPreLeftElectrode.setText(fname)
 
     def add_right_electrode_file(self):
         fname = self.get_fdf_file_name()
         if os.path.exists(fname):
-            self.WorkDir = os.path.dirname(fname)
+            self.work_dir = os.path.dirname(fname)
             self.save_active_folder()
             self.ui.FormActionsPreRightElectrode.setText(fname)
 
     def add_scat_region_file(self):
         fname = self.get_fdf_file_name()
         if os.path.exists(fname):
-            self.WorkDir = os.path.dirname(fname)
+            self.work_dir = os.path.dirname(fname)
             self.save_active_folder()
             self.ui.FormActionsPreScatRegion.setText(fname)
 
@@ -575,33 +575,33 @@ class mainWindow(QMainWindow):
             bond = 0
         self.ui.FormBondLenSpinBox.setValue(bond)
 
-    def clear_form_isosurface_data2_N(self):
+    def clear_form_isosurface_data2_n(self):
         self.ui.FormActionsPostLabelSurfaceNx.setText("")
         self.ui.FormActionsPostLabelSurfaceNy.setText("")
         self.ui.FormActionsPostLabelSurfaceNz.setText("")
 
-    def check_pdos(self, fname):
-        PDOSfile = Importer.check_pdos_file(fname)
-        if PDOSfile != False:
-            self.ui.FormActionsLinePDOSfile.setText(PDOSfile)
+    def check_pdos(self, f_name: str) -> None:   # pragma: no cover
+        pdos_file = Importer.check_pdos_file(f_name)
+        if pdos_file:
+            self.ui.FormActionsLinePDOSfile.setText(pdos_file)
             self.ui.FormActionsButtonPlotPDOS.setEnabled(True)
 
-    def check_bands(self, fname):
-        BANDSfile = Importer.check_bands_file(fname)
-        if BANDSfile != False:
-            self.ui.FormActionsLineBANDSfile.setText(BANDSfile)
+    def check_bands(self, f_name: str) -> None:   # pragma: no cover
+        bands_file = Importer.check_bands_file(f_name)
+        if bands_file:
+            self.ui.FormActionsLineBANDSfile.setText(bands_file)
             self.ui.FormActionsButtonParseBANDS.setEnabled(True)
 
-    def check_dos(self, fname):
-        DOSfile, eFermy = Importer.check_dos_file(fname)
-        if DOSfile:
+    def check_dos(self, f_name: str) -> None:   # pragma: no cover
+        dos_file, e_fermy = Importer.check_dos_file(f_name)
+        if dos_file:
             i = self.ui.FormActionsTabeDOSProperty.rowCount() + 1
             self.ui.FormActionsTabeDOSProperty.setRowCount(i)
-            line = "..." + str(DOSfile)[-15:]
-            QTabWidg = QTableWidgetItem(line)
-            QTabWidg.setToolTip(DOSfile)
-            self.ui.FormActionsTabeDOSProperty.setItem(i - 1, 0, QTabWidg)
-            self.ui.FormActionsTabeDOSProperty.setItem(i - 1, 1, QTableWidgetItem(str(eFermy)))
+            line = "..." + str(dos_file)[-15:]
+            q_tab_widg = QTableWidgetItem(line)
+            q_tab_widg.setToolTip(dos_file)
+            self.ui.FormActionsTabeDOSProperty.setItem(i - 1, 0, q_tab_widg)
+            self.ui.FormActionsTabeDOSProperty.setItem(i - 1, 1, QTableWidgetItem(str(e_fermy)))
             self.ui.FormActionsTabeDOSProperty.update()
 
     def check_volumeric_data(self, fname):
@@ -779,14 +779,14 @@ class mainWindow(QMainWindow):
 
     def export_volumeric_data_to_xsf(self):
         try:
-            fname = QFileDialog.getSaveFileName(self, 'Save File', self.WorkDir, "XSF files (*.XSF)")[0]
+            fname = QFileDialog.getSaveFileName(self, 'Save File', self.work_dir, "XSF files (*.XSF)")[0]
             self.export_volumeric_data_to_file(fname)
         except Exception as e:
             self.show_error(e)
 
     def export_volumeric_data_to_cube(self):
         try:
-            fname = QFileDialog.getSaveFileName(self, 'Save File', self.WorkDir, "cube files (*.cube)")[0]
+            fname = QFileDialog.getSaveFileName(self, 'Save File', self.work_dir, "cube files (*.cube)")[0]
             x1 = self.ui.FormVolDataExportX1.value()
             x2 = self.ui.FormVolDataExportX2.value()
             y1 = self.ui.FormVolDataExportY1.value()
@@ -799,7 +799,7 @@ class mainWindow(QMainWindow):
 
     def export_volumeric_data_to_file(self, fname, x1, x2, y1, y2, z1, z2):
         self.MainForm.volumeric_data_to_file(fname, self.VolumericData, x1, x2, y1, y2, z1, z2)
-        self.WorkDir = os.path.dirname(fname)
+        self.work_dir = os.path.dirname(fname)
         self.save_active_folder()
 
     def fill_gui(self, title=""):
@@ -948,7 +948,7 @@ class mainWindow(QMainWindow):
         c = model.get_LatVect3_norm()
         self.fill_cell_info_row(energy, volume, a, b, c)
         self.ui.FormActionsPreZSizeFillSpace.setValue(c)
-        self.WorkDir = os.path.dirname(fname)
+        self.work_dir = os.path.dirname(fname)
         self.save_active_folder()
 
     def fill_cell_info_row(self, energy, volume, a, b, c):
@@ -1042,7 +1042,7 @@ class mainWindow(QMainWindow):
         return QColor.fromRgb(0, 0, 0, 1).getRgbF()
 
     def get_fdf_file_name(self):
-        fname = QFileDialog.getOpenFileName(self, 'Open file', self.WorkDir, "FDF files (*.fdf)")[0]
+        fname = QFileDialog.getOpenFileName(self, 'Open file', self.work_dir, "FDF files (*.fdf)")[0]
         if not fname.endswith(".fdf"):
             fname += ".fdf"
         return fname
@@ -1108,7 +1108,7 @@ class mainWindow(QMainWindow):
         self.ui.FormSettingsViewCheckShowBonds.setChecked(state_FormSettingsViewCheckShowBonds)
         self.ui.FormSettingsViewCheckShowBonds.clicked.connect(self.save_state_view_show_bonds)
 
-        self.WorkDir = str(settings.value(SETTINGS_Folder, "/home"))
+        self.work_dir = str(settings.value(SETTINGS_Folder, "/home"))
         self.ColorType = str(settings.value(SETTINGS_FormSettingsColorsScale, 'rainbow'))
         self.ui.FormSettingsColorsScale.currentIndexChanged.connect(self.save_state_colors_scale)
         self.ui.FormSettingsColorsScale.currentTextChanged.connect(self.state_changed_form_settings_colors_scale)
@@ -1181,11 +1181,11 @@ class mainWindow(QMainWindow):
     def menu_export(self):
         if self.MainForm.MainModel.nAtoms() > 0:
             try:
-                long_name = QFileDialog.getSaveFileName(self, 'Save File', self.WorkDir,
+                long_name = QFileDialog.getSaveFileName(self, 'Save File', self.work_dir,
                     "FDF files (*.fdf);;XYZ files (*.xyz);;FireFly input files (*.inp);;VASP POSCAR file (POSCAR)")
                 fname = long_name[0]
                 self.MainForm.atomic_structure_to_file(fname)
-                self.WorkDir = os.path.dirname(fname)
+                self.work_dir = os.path.dirname(fname)
                 self.save_active_folder()
             except Exception as e:
                 self.show_error(e)
@@ -1196,10 +1196,10 @@ class mainWindow(QMainWindow):
             self.save_state_action_on_start()
             os.execl(sys.executable, sys.executable, *sys.argv)
         self.ui.Form3Dand2DTabs.setCurrentIndex(0)
-        fname = QFileDialog.getOpenFileName(self, 'Open file', self.WorkDir)[0]
+        fname = QFileDialog.getOpenFileName(self, 'Open file', self.work_dir)[0]
         if os.path.exists(fname):
             self.filename = fname
-            self.WorkDir = os.path.dirname(fname)
+            self.work_dir = os.path.dirname(fname)
             try:
                 self.get_atomic_model_and_fdf(fname)
             except Exception as e:
@@ -1991,7 +1991,7 @@ class mainWindow(QMainWindow):
         if len(self.models) == 0:
             return
         try:
-            name = QFileDialog.getSaveFileName(self, 'Save File', self.WorkDir,
+            name = QFileDialog.getSaveFileName(self, 'Save File', self.work_dir,
                                            "PNG files (*.png);;JPG files (*.jpg);;BMP files (*.bmp)")
             fname = name[0]
             ext = ""
@@ -2010,7 +2010,7 @@ class mainWindow(QMainWindow):
 
                 new_window.MainForm.image3D_to_file(fname)
                 new_window.destroy()
-                self.WorkDir = os.path.dirname(fname)
+                self.work_dir = os.path.dirname(fname)
                 self.save_active_folder()
         except Exception as e:
             self.show_error(e)
@@ -2040,7 +2040,7 @@ class mainWindow(QMainWindow):
         self.MainForm.update()
 
     def save_active_folder(self):
-        self.save_property(SETTINGS_Folder, self.WorkDir)
+        self.save_property(SETTINGS_Folder, self.work_dir)
 
     def save_state_open_only_optimal(self):
         self.save_property(SETTINGS_FormSettingsOpeningCheckOnlyOptimal,
@@ -2158,7 +2158,7 @@ class mainWindow(QMainWindow):
         try:
             text = self.ui.FormActionsPreTextFDF.toPlainText()
             if len(text) > 0:
-                name = QFileDialog.getSaveFileName(self, 'Save File', self.WorkDir, "FDF files (*.fdf)")[0]
+                name = QFileDialog.getSaveFileName(self, 'Save File', self.work_dir, "FDF files (*.fdf)")[0]
                 if len(name) > 0:
                     with open(name, 'w') as f:
                         f.write(text)
@@ -2270,7 +2270,7 @@ class mainWindow(QMainWindow):
             text += "ir.summary()\n"
 
             if len(text) > 0:
-                name = QFileDialog.getSaveFileName(self, 'Save File', self.WorkDir, "Python file (*.py)")[0]
+                name = QFileDialog.getSaveFileName(self, 'Save File', self.work_dir, "Python file (*.py)")[0]
                 if len(name) > 0:
                     with open(name, 'w') as f:
                         f.write(text)
@@ -2279,10 +2279,10 @@ class mainWindow(QMainWindow):
 
     def ase_raman_and_ir_parse(self):
         try:
-            fname = QFileDialog.getOpenFileName(self, 'Open file', self.WorkDir)[0]
+            fname = QFileDialog.getOpenFileName(self, 'Open file', self.work_dir)[0]
             if os.path.exists(fname):
                 self.filename = fname
-                self.WorkDir = os.path.dirname(fname)
+                self.work_dir = os.path.dirname(fname)
                 f = open(fname)
                 rows = f.readlines()
 
@@ -2405,7 +2405,7 @@ class mainWindow(QMainWindow):
                     z = str(model1.atoms[i].y)
                     text += "2" + str(ch) + "   " + x + "   " + y + "   " + z + "\n"
             if len(text) > 0:
-                name = QFileDialog.getSaveFileName(self, 'Save File', self.WorkDir, "Crystal d12 (*.d12)")[0]
+                name = QFileDialog.getSaveFileName(self, 'Save File', self.work_dir, "Crystal d12 (*.d12)")[0]
                 if len(name) > 0:
                     with open(name, 'w') as f:
                         f.write(text)
@@ -2460,7 +2460,7 @@ class mainWindow(QMainWindow):
             self.ui.FormActionsPostButSurfaceLoadData.setEnabled(True)
             self.clearQTreeWidget(self.ui.FormActionsPostTreeSurface2)
             self.ui.FormActionsPosEdit3DData2.setText("")
-            self.clear_form_isosurface_data2_N()
+            self.clear_form_isosurface_data2_n()
             self.ui.CalculateTheVolumericDataDifference.setEnabled(False)
             self.ui.CalculateTheVolumericDataSum.setEnabled(False)
             self.ui.VolumrricDataGrid2.setTitle("Grid")
@@ -2468,7 +2468,7 @@ class mainWindow(QMainWindow):
 
     def parse_volumeric_data2(self):
         try:
-            fname = QFileDialog.getOpenFileName(self, 'Open file', self.WorkDir)
+            fname = QFileDialog.getOpenFileName(self, 'Open file', self.work_dir)
             if len(fname) > 0:
                 fname = fname[0]
                 if fname.endswith(".XSF"):
@@ -2480,7 +2480,7 @@ class mainWindow(QMainWindow):
 
                 self.ui.FormActionsPostButSurfaceLoadData2.setEnabled(True)
                 self.ui.FormActionsPosEdit3DData2.setText(fname)
-                self.clear_form_isosurface_data2_N()
+                self.clear_form_isosurface_data2_n()
                 self.ui.CalculateTheVolumericDataDifference.setEnabled(False)
                 self.ui.CalculateTheVolumericDataSum.setEnabled(False)
                 self.ui.ExportTheVolumericDataXSF.setEnabled(False)
@@ -2561,7 +2561,7 @@ class mainWindow(QMainWindow):
 
     def create_critic2_xyz_file(self):
         """ add code here"""
-        name = QFileDialog.getSaveFileName(self, 'Save File', self.WorkDir)
+        name = QFileDialog.getSaveFileName(self, 'Save File', self.work_dir)
         fname = name[0]
         if len(fname) > 0:
             model = self.models[self.active_model]
@@ -2580,7 +2580,7 @@ class mainWindow(QMainWindow):
         f.close()
 
     def create_cri_file(self):
-        name = QFileDialog.getSaveFileName(self, 'Save File', self.WorkDir)
+        name = QFileDialog.getSaveFileName(self, 'Save File', self.work_dir)
         extra_points = self.ui.FormExtraPoints.value() + 1
         is_form_bp = self.ui.formCriticBPradio.isChecked()
 
