@@ -28,7 +28,7 @@ from utils.siesta import TSIESTA
 from models.models import TSWNT
 from utils.vasp import TVASP
 from utils.importer import Importer
-from utils.importer import read_siesta_bands
+from utils.electronic_prop_reader import read_siesta_bands
 from PySide2.QtCore import QCoreApplication, QLocale, QSettings, Qt, QSize
 import PySide2.QtCore as QtCore
 #QtCore.QVariant = "QVariant"

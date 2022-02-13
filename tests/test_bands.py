@@ -1,4 +1,4 @@
-from utils.importer import read_siesta_bands
+from utils.electronic_prop_reader import read_siesta_bands
 from utils.calculators import gaps
 
 

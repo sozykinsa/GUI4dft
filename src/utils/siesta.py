@@ -6,6 +6,7 @@ import re
 import numpy as np
 
 from utils import helpers
+from utils.electronic_prop_reader import dos_from_file
 from utils.periodic_table import TPeriodTable
 
 
@@ -220,12 +221,11 @@ class TSIESTA:
     def get_charges_mulliken_for_atoms(filename):
         return TSIESTA.get_charges_for_atoms(filename, "Mulliken")
 
-
     @staticmethod
     def DOS(filename):
         """DOS"""
         if os.path.exists(filename):
-            energy, spinDown, spinUp = helpers.dos_from_file(filename, 2)
+            energy, spinDown, spinUp = dos_from_file(filename, 2)
             return np.array(spinUp), np.array(spinDown), np.array(energy)
 
     @staticmethod

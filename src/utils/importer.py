@@ -10,59 +10,6 @@ import numpy as np
 from TInterface import TXSF, TGaussianCube
 
 
-def read_siesta_bands(file, is_check_bands_spin, kmax, kmin):
-    f = open(file)
-    e_fermi = float(f.readline())
-    f.readline()
-    str1 = f.readline().split()
-    str1 = helpers.list_str_to_float(str1)
-    eminf, emaxf = float(str1[0]), float(str1[1])
-    str1 = f.readline().split()
-    str1 = helpers.list_str_to_int(str1)
-    nbands, nspins = int(str1[0]), int(str1[1])
-    n_k_points = int(str1[2])
-    kmesh = np.zeros((str1[2]))
-    homo = eminf * np.ones(n_k_points)
-    lumo = emaxf * np.ones(n_k_points)
-    bands = np.zeros((nbands * nspins, n_k_points))
-    for i in range(0, str1[2]):
-        str2 = f.readline().split()
-        str2 = helpers.list_str_to_float(str2)
-        kmesh[i] = str2[0]
-        for j in range(1, len(str2)):
-            bands[j - 1][i] = float(str2[j]) - e_fermi
-        kol = len(str2) - 1
-        while kol < nbands * nspins:
-            str2 = f.readline().split()
-            str2 = helpers.list_str_to_float(str2)
-            for j in range(0, len(str2)):
-                bands[kol + j][i] = float(str2[j]) - e_fermi
-            kol += len(str2)
-    if is_check_bands_spin:
-        bands = bands[:nbands]
-    else:
-        bands = bands[nbands:]
-    for i in range(0, nbands):
-        for j in range(0, len(bands[0])):
-            tm = float(bands[i][j])
-            if (tm > homo[j]) and (tm <= 0):
-                homo[j] = tm
-            if (tm < lumo[j]) and (tm > 0):
-                lumo[j] = tm
-    nsticks = int(f.readline())
-    xticks = []
-    xticklabels = []
-    for i in range(0, nsticks):
-        str3 = f.readline().split()
-        value = float(str3[0])
-        if (round(value, 2) >= kmin) and (round(value, 2) <= kmax):
-            xticks.append(value)
-            letter = helpers.utf8_letter(str3[1][1:-1])
-            xticklabels.append(letter)
-    f.close()
-    return bands, emaxf, eminf, homo, kmesh, lumo, xticklabels, xticks
-
-
 class Importer(object):
 
     @staticmethod

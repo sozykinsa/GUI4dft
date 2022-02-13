@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from typing import Tuple
+
 import math
 import random
 
@@ -13,7 +15,7 @@ from utils import helpers
 from utils.atomic_model import TAtom, TAtomicModel
 
 
-def gaps(bands, emaxf, eminf, homo, lumo) -> tuple[float, float]:
+def gaps(bands, emaxf, eminf, homo, lumo) -> Tuple[float, float]:
     gap = emaxf - eminf
     for band in bands:
         for i in range(0, len(band) - 1):
