@@ -940,7 +940,7 @@ class mainWindow(QMainWindow):
 
     def fill_cell_info(self, fname):
         volume = TSIESTA.volume(fname)
-        energy = TSIESTA.Etot(fname)
+        energy = TSIESTA.energy_tot(fname)
 
         models, FDFData = Importer.Import(fname)
         model = models[-1]

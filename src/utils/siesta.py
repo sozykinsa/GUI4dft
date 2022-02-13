@@ -30,7 +30,7 @@ class TSIESTA:
 
     @staticmethod
     def lattice_parameters_abc_angles(filename):
-        """ returns data from LatticeParameters block of file """
+        """Returns data from LatticeParameters block of file."""
         LatticeParameters = TSIESTA.get_block_from_siesta_fdf(filename, 'LatticeParameters')
         LatConstant = float(TSIESTA.lattice_constant(filename))
         if len(LatticeParameters) > 0:
@@ -223,7 +223,7 @@ class TSIESTA:
         return TSIESTA.get_charges_for_atoms(filename, "Mulliken")
 
     @staticmethod
-    def Etot(filename):
+    def energy_tot(filename):
         """ Returns the Etot from SIESTA output file """
         if os.path.exists(filename):
             return helpers.from_file_property(filename, 'siesta: Etot    =', 2, 'float')
@@ -231,9 +231,9 @@ class TSIESTA:
             return None
 
     @staticmethod
-    def Energies(filename):
-        """ Energy from each step """
-        return TSIESTA.ListOfValues(filename, "siesta: E_KS(eV) =")
+    def energies(filename):
+        """Energy from each step."""
+        return TSIESTA.list_of_values(filename, "siesta: E_KS(eV) =")
         
     @staticmethod
     def FermiEnergy(filename):
@@ -333,7 +333,7 @@ class TSIESTA:
             NumberOfSpecies = TSIESTA.number_of_species(filename)
             MdSiestaFile = open(filename)
             str1 = MdSiestaFile.readline()
-            while str1!='':
+            while str1 != '':
                 if str1 != '' and (str1.find("block ChemicalSpeciesLabel")>=0):
                     str1 = MdSiestaFile.readline()
                     for i in range(0,NumberOfSpecies):
@@ -352,23 +352,26 @@ class TSIESTA:
     def SystemLabel(filename):
         """ Returns the NumberOfAtomsfrom SIESTA output file """
         res = helpers.from_file_property(filename, 'SystemLabel', 1, "string")
-        if res == None:
+        if res is None:
             res = "siesta"
         return res
         
     @staticmethod
-    def SpinPolarized(filename):
-        """ Returns the SpinPolarized from SIESTA output file """
-        return helpers.from_file_property(filename, 'SpinPolarized')
+    def spin_polarized(filename):
+        """Returns the SpinPolarized from SIESTA output file."""
+        res = helpers.from_file_property(filename, 'SpinPolarized')
+        if res is None:
+            res = False
+        return res
 
     @staticmethod    
-    def ListOfValues(filename, prop):
-        """ return all float values of prop from filename """
+    def list_of_values(filename, prop):
+        """Return all float values of prop from filename."""
         ListOfVal = []
         if os.path.exists(filename):
             f = open(filename)
             for st in f:
-                if st.find(prop)>=0:
+                if st.find(prop) >= 0:
                     ListOfVal.append(float(re.findall(r"[0-9,\.,-]+", st)[0]))
             f.close()
         return ListOfVal
@@ -378,7 +381,6 @@ class TSIESTA:
         """ not documented """
         NumberOfAtoms = helpers.from_file_property(filename, 'number_of_atoms')
         NumberOfSpecies = helpers.from_file_property(filename, 'number_of_species')
-        #lines = []
         f = open(filename)
         lines = f.readlines()    
     
@@ -387,7 +389,7 @@ class TSIESTA:
         
         while i < len(lines):    
             if lines[i].find("%block ChemicalSpeciesLabel") >= 0:
-                for j in range(0,NumberOfSpecies):
+                for j in range(0, NumberOfSpecies):
                     newlines.append(lines[i])
                     i += 1
     
@@ -396,7 +398,7 @@ class TSIESTA:
                 i += 1
                 if lines[i].find("cartesian") >= 0:
                     for j in range(0, NumberOfAtoms):
-                        if (j == atom):
+                        if j == atom:
                             newlines.append(string+'\n')
                         else:
                             newlines.append(lines[i])
