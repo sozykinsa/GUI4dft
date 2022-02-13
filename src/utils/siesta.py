@@ -6,7 +6,7 @@ import re
 import numpy as np
 
 from utils import helpers
-from utils.electronic_prop_reader import dos_from_file
+import xml.etree.ElementTree as ET
 from utils.periodic_table import TPeriodTable
 
 
@@ -83,16 +83,17 @@ class TSIESTA:
         return [False, False, False], [False, False, False], [False, False, False]
 
     @staticmethod
-    def calc_pdos(root, atom_index, species, number_l, number_m, number_n, number_z):
+    def calc_pdos(file, atom_index, species, number_l, number_m, number_n, number_z):
+        tree = ET.parse(file)
+        root = tree.getroot()
         pdos = np.zeros((2, 1000))
         energy = np.zeros((1, 10))
         nspin = 1
         for child in root:
             if child.tag == "nspin":
                 nspin = int(child.text)
-            # print(child.tag)
             if child.tag == "energy_values":
-                data = (child.text).split()
+                data = child.text.split()
                 data = helpers.list_str_to_float(data)
                 energy = np.array(data)
                 pdos = np.zeros((nspin, len(energy)))
@@ -220,30 +221,6 @@ class TSIESTA:
     @staticmethod
     def get_charges_mulliken_for_atoms(filename):
         return TSIESTA.get_charges_for_atoms(filename, "Mulliken")
-
-    @staticmethod
-    def DOS(filename):
-        """DOS"""
-        if os.path.exists(filename):
-            energy, spinDown, spinUp = dos_from_file(filename, 2)
-            return np.array(spinUp), np.array(spinDown), np.array(energy)
-
-    @staticmethod
-    def DOSsiestaV(filename, Ef=0):
-        """DOS Vertical. Spin up only"""
-        if os.path.exists(filename):
-            DOSFile = open(filename)
-            strDOS = DOSFile.readline()            
-            DOS = []
-            while strDOS != '':
-                line = strDOS.split(' ')
-                line1 = []
-                for i in range(0, len(line)):
-                    if line[i] != '':
-                        line1.append(line[i])                
-                DOS.append([float(line1[1]), round(float(line1[0]) - Ef, 5)])
-                strDOS = DOSFile.readline()
-            return DOS
 
     @staticmethod
     def Etot(filename):

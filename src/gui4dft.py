@@ -8,7 +8,6 @@ except Exception as e:
 import math
 import sys
 from pathlib import Path
-import xml.etree.ElementTree as ET
 from copy import deepcopy
 from operator import itemgetter
 import matplotlib.pyplot as plt
@@ -1633,12 +1632,8 @@ class mainWindow(QMainWindow):
         file = self.ui.FormActionsLinePDOSfile.text()
         self.ui.Form3Dand2DTabs.setCurrentIndex(1)
         if os.path.exists(file):
-            tree = ET.parse(file)
-            root = tree.getroot()
-
             atom_index, number_l, number_m, number_n, number_z, species = self.pdos_filter()
-
-            pdos, energy = TSIESTA.calc_pdos(root, atom_index, species, number_l, number_m, number_n, number_z)
+            pdos, energy = TSIESTA.calc_pdos(file, atom_index, species, number_l, number_m, number_n, number_z)
             e_fermi = TSIESTA.FermiEnergy(self.filename)
             energy -= e_fermi
             labels = [None]
