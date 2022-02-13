@@ -123,7 +123,7 @@ def ase_raman_and_ir_script_create(self):
             text += "ir.summary()\n"
 
             if len(text) > 0:
-                name = QFileDialog.getSaveFileName(self, 'Save File', self.WorkDir, "Python file (*.py)")[0]
+                name = QFileDialog.getSaveFileName(self, 'Save File', self.work_dir, "Python file (*.py)")[0]
                 if len(name) > 0:
                     with open(name, 'w') as f:
                         f.write(text)
@@ -133,10 +133,10 @@ def ase_raman_and_ir_script_create(self):
 
 def ase_raman_and_ir_parse(self):
         try:
-            fname = QFileDialog.getOpenFileName(self, 'Open file', self.WorkDir)[0]
+            fname = QFileDialog.getOpenFileName(self, 'Open file', self.work_dir)[0]
             if os.path.exists(fname):
                 self.filename = fname
-                self.WorkDir = os.path.dirname(fname)
+                self.work_dir = os.path.dirname(fname)
                 f = open(fname)
                 rows = f.readlines()
 

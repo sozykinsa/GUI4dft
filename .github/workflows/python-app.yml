@@ -11,8 +11,11 @@ on:
     branches:
        - '**'        # matches every branch
 
+env:
+  PYTHONPATH: ./src
+
 jobs:
-  test:
+  linux-test:
 
     runs-on: ubuntu-latest
 
@@ -48,3 +51,22 @@ jobs:
           name: codecov-umbrella
           path_to_write_report: ./coverage/codecov_report.txt
           verbose: true
+
+  windows-test:
+
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python 3.8
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pytest pytest-qt pytest-xvfb
+        pip install -r requirements.txt
+    - name: Test with pytest
+      run: |
+        python -m pytest tests --color=yes --cov=src --cov-report=xml --cov-report=term-missing

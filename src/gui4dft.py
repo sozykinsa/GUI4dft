@@ -18,6 +18,7 @@ import numpy as np
 from utils import helpers
 from utils.atomic_model import TAtomicModel
 from utils.calculators import TCalculators as Calculator
+from utils.calculators import gaps
 from models.models import TCapedSWNT
 from models.models import TBiNT
 from utils.fdfdata import TFDFFile
@@ -27,6 +28,7 @@ from utils.siesta import TSIESTA
 from models.models import TSWNT
 from utils.vasp import TVASP
 from utils.importer import Importer
+from utils.electronic_prop_reader import read_siesta_bands
 from PySide2.QtCore import QCoreApplication, QLocale, QSettings, Qt, QSize
 import PySide2.QtCore as QtCore
 #QtCore.QVariant = "QVariant"
@@ -77,7 +79,7 @@ class mainWindow(QMainWindow):
         self.shortcut.activated.connect(self.atom_delete)
         self.active_model = -1
 
-    def start_program(self):
+    def start_program(self):  # pragma: no cover
         if self.action_on_start == 'Open':
             self.action_on_start = 'Nothing'
             self.save_state_action_on_start()
@@ -415,7 +417,7 @@ class mainWindow(QMainWindow):
     def add_cell_param(self):
         """ add cell params"""
         try:
-            fname = QFileDialog.getOpenFileName(self, 'Open file', self.WorkDir)[0]
+            fname = QFileDialog.getOpenFileName(self, 'Open file', self.work_dir)[0]
             if Importer.check_format(fname) == "SIESTAout":
                 self.fill_cell_info(fname)
         except Exception as e:
@@ -428,8 +430,8 @@ class mainWindow(QMainWindow):
     def add_data_cell_param(self):
         """ add cell params from file"""
         try:
-            fname = QFileDialog.getOpenFileName(self, 'Open file', self.WorkDir)[0]
-            self.WorkDir = os.path.dirname(fname)
+            fname = QFileDialog.getOpenFileName(self, 'Open file', self.work_dir)[0]
+            self.work_dir = os.path.dirname(fname)
 
             if os.path.exists(fname):
                 f = open(fname)
@@ -456,8 +458,8 @@ class mainWindow(QMainWindow):
 
     def add_critic2_cro_file(self):
         try:
-            fname = QFileDialog.getOpenFileName(self, 'Open file', self.WorkDir)[0]
-            self.WorkDir = os.path.dirname(fname)
+            fname = QFileDialog.getOpenFileName(self, 'Open file', self.work_dir)[0]
+            self.work_dir = os.path.dirname(fname)
 
             box_bohr, box_ang, box_deg, cps = Importer.check_cro_file(fname)
             al = math.radians(box_deg[0])
@@ -493,8 +495,8 @@ class mainWindow(QMainWindow):
 
     def add_dos_file(self):
         try:
-            fname = QFileDialog.getOpenFileName(self, 'Open file', self.WorkDir)[0]
-            self.WorkDir = os.path.dirname(fname)
+            fname = QFileDialog.getOpenFileName(self, 'Open file', self.work_dir)[0]
+            self.work_dir = os.path.dirname(fname)
             self.check_dos(fname)
         except Exception as e:
             self.show_error(e)
@@ -527,21 +529,21 @@ class mainWindow(QMainWindow):
     def add_left_electrode_file(self):
         fname = self.get_fdf_file_name()
         if os.path.exists(fname):
-            self.WorkDir = os.path.dirname(fname)
+            self.work_dir = os.path.dirname(fname)
             self.save_active_folder()
             self.ui.FormActionsPreLeftElectrode.setText(fname)
 
     def add_right_electrode_file(self):
         fname = self.get_fdf_file_name()
         if os.path.exists(fname):
-            self.WorkDir = os.path.dirname(fname)
+            self.work_dir = os.path.dirname(fname)
             self.save_active_folder()
             self.ui.FormActionsPreRightElectrode.setText(fname)
 
     def add_scat_region_file(self):
         fname = self.get_fdf_file_name()
         if os.path.exists(fname):
-            self.WorkDir = os.path.dirname(fname)
+            self.work_dir = os.path.dirname(fname)
             self.save_active_folder()
             self.ui.FormActionsPreScatRegion.setText(fname)
 
@@ -575,33 +577,33 @@ class mainWindow(QMainWindow):
             bond = 0
         self.ui.FormBondLenSpinBox.setValue(bond)
 
-    def clear_form_isosurface_data2_N(self):
+    def clear_form_isosurface_data2_n(self):
         self.ui.FormActionsPostLabelSurfaceNx.setText("")
         self.ui.FormActionsPostLabelSurfaceNy.setText("")
         self.ui.FormActionsPostLabelSurfaceNz.setText("")
 
-    def check_pdos(self, fname):
-        PDOSfile = Importer.check_pdos_file(fname)
-        if PDOSfile != False:
-            self.ui.FormActionsLinePDOSfile.setText(PDOSfile)
+    def check_pdos(self, f_name: str) -> None:   # pragma: no cover
+        pdos_file = Importer.check_pdos_file(f_name)
+        if pdos_file:
+            self.ui.FormActionsLinePDOSfile.setText(pdos_file)
             self.ui.FormActionsButtonPlotPDOS.setEnabled(True)
 
-    def check_bands(self, fname):
-        BANDSfile = Importer.check_bands_file(fname)
-        if BANDSfile != False:
-            self.ui.FormActionsLineBANDSfile.setText(BANDSfile)
+    def check_bands(self, f_name: str) -> None:   # pragma: no cover
+        bands_file = Importer.check_bands_file(f_name)
+        if bands_file:
+            self.ui.FormActionsLineBANDSfile.setText(bands_file)
             self.ui.FormActionsButtonParseBANDS.setEnabled(True)
 
-    def check_dos(self, fname):
-        DOSfile, eFermy = Importer.check_dos_file(fname)
-        if DOSfile:
+    def check_dos(self, f_name: str) -> None:   # pragma: no cover
+        dos_file, e_fermy = Importer.check_dos_file(f_name)
+        if dos_file:
             i = self.ui.FormActionsTabeDOSProperty.rowCount() + 1
             self.ui.FormActionsTabeDOSProperty.setRowCount(i)
-            line = "..." + str(DOSfile)[-15:]
-            QTabWidg = QTableWidgetItem(line)
-            QTabWidg.setToolTip(DOSfile)
-            self.ui.FormActionsTabeDOSProperty.setItem(i - 1, 0, QTabWidg)
-            self.ui.FormActionsTabeDOSProperty.setItem(i - 1, 1, QTableWidgetItem(str(eFermy)))
+            line = "..." + str(dos_file)[-15:]
+            q_tab_widg = QTableWidgetItem(line)
+            q_tab_widg.setToolTip(dos_file)
+            self.ui.FormActionsTabeDOSProperty.setItem(i - 1, 0, q_tab_widg)
+            self.ui.FormActionsTabeDOSProperty.setItem(i - 1, 1, QTableWidgetItem(str(e_fermy)))
             self.ui.FormActionsTabeDOSProperty.update()
 
     def check_volumeric_data(self, fname):
@@ -779,14 +781,14 @@ class mainWindow(QMainWindow):
 
     def export_volumeric_data_to_xsf(self):
         try:
-            fname = QFileDialog.getSaveFileName(self, 'Save File', self.WorkDir, "XSF files (*.XSF)")[0]
+            fname = QFileDialog.getSaveFileName(self, 'Save File', self.work_dir, "XSF files (*.XSF)")[0]
             self.export_volumeric_data_to_file(fname)
         except Exception as e:
             self.show_error(e)
 
     def export_volumeric_data_to_cube(self):
         try:
-            fname = QFileDialog.getSaveFileName(self, 'Save File', self.WorkDir, "cube files (*.cube)")[0]
+            fname = QFileDialog.getSaveFileName(self, 'Save File', self.work_dir, "cube files (*.cube)")[0]
             x1 = self.ui.FormVolDataExportX1.value()
             x2 = self.ui.FormVolDataExportX2.value()
             y1 = self.ui.FormVolDataExportY1.value()
@@ -799,7 +801,7 @@ class mainWindow(QMainWindow):
 
     def export_volumeric_data_to_file(self, fname, x1, x2, y1, y2, z1, z2):
         self.MainForm.volumeric_data_to_file(fname, self.VolumericData, x1, x2, y1, y2, z1, z2)
-        self.WorkDir = os.path.dirname(fname)
+        self.work_dir = os.path.dirname(fname)
         self.save_active_folder()
 
     def fill_gui(self, title=""):
@@ -845,7 +847,7 @@ class mainWindow(QMainWindow):
 
     def fill_atoms_table(self):
         model = self.MainForm.get_model().atoms
-        self.ui.FormModelTableAtoms.setRowCount(len(model))  # и одну строку в таблице
+        self.ui.FormModelTableAtoms.setRowCount(len(model))
 
         for i in range(0, len(model)):
             self.ui.FormModelTableAtoms.setItem(i, 0, QTableWidgetItem(model[i].let))
@@ -948,7 +950,7 @@ class mainWindow(QMainWindow):
         c = model.get_LatVect3_norm()
         self.fill_cell_info_row(energy, volume, a, b, c)
         self.ui.FormActionsPreZSizeFillSpace.setValue(c)
-        self.WorkDir = os.path.dirname(fname)
+        self.work_dir = os.path.dirname(fname)
         self.save_active_folder()
 
     def fill_cell_info_row(self, energy, volume, a, b, c):
@@ -980,7 +982,7 @@ class mainWindow(QMainWindow):
         self.fill_bonds()
         self.ui.FormActionsPostButPlotBondsHistogram.setEnabled(True)
 
-    def get_bond(self):
+    def get_bond(self):   # pragma: no cover
         i = self.ui.PropertyAtomAtomDistanceAt1.value()
         j = self.ui.PropertyAtomAtomDistanceAt2.value()
         bond = round(self.MainForm.MainModel.atom_atom_distance(i - 1, j - 1), 4)
@@ -1018,7 +1020,7 @@ class mainWindow(QMainWindow):
             for j in range(0, Ny):
                 value = float(points[i][j][3])
                 prev = self.colors_cash.get(value)
-                if prev == None:
+                if prev is None:
                     color = mainWindow.get_color(cmap, minv, maxv, value, color_scale)
                     self.colors_cash[value] = [color[0], color[1], color[2]]
                     row.append([color[0], color[1], color[2]])
@@ -1042,7 +1044,7 @@ class mainWindow(QMainWindow):
         return QColor.fromRgb(0, 0, 0, 1).getRgbF()
 
     def get_fdf_file_name(self):
-        fname = QFileDialog.getOpenFileName(self, 'Open file', self.WorkDir, "FDF files (*.fdf)")[0]
+        fname = QFileDialog.getOpenFileName(self, 'Open file', self.work_dir, "FDF files (*.fdf)")[0]
         if not fname.endswith(".fdf"):
             fname += ".fdf"
         return fname
@@ -1055,11 +1057,10 @@ class mainWindow(QMainWindow):
         bondscolor = [float(r) / 255, float(g) / 255, float(b) / 255]
         return bondscolor
 
-    def load_settings(self):
-        # The SETTINGS
+    def load_settings(self) -> None:
         settings = QSettings()
-        state_form_settings_opening_check_only_optimal = settings.value(SETTINGS_FormSettingsOpeningCheckOnlyOptimal, False,
-                                                                   type=bool)
+        state_form_settings_opening_check_only_optimal = settings.value(SETTINGS_FormSettingsOpeningCheckOnlyOptimal,
+                                                                        False, type=bool)
         self.ui.FormSettingsOpeningCheckOnlyOptimal.setChecked(state_form_settings_opening_check_only_optimal)
         self.ui.FormSettingsOpeningCheckOnlyOptimal.clicked.connect(self.save_state_open_only_optimal)
         state_FormSettingsParseAtomicProperties = settings.value(SETTINGS_FormSettingsParseAtomicProperties, False,
@@ -1078,8 +1079,8 @@ class mainWindow(QMainWindow):
         self.ui.FormSettingsViewCheckAtomSelection.clicked.connect(self.save_state_view_atom_selection)
         self.ui.FormSettingsViewCheckModelMove.clicked.connect(self.save_state_view_atom_selection)
 
-        state_FormSettingsViewRadioColorBondsManual = settings.value(SETTINGS_FormSettingsViewRadioColorBondsManual, False,
-                                                                  type=bool)
+        state_FormSettingsViewRadioColorBondsManual = settings.value(SETTINGS_FormSettingsViewRadioColorBondsManual,
+                                                                     False, type=bool)
         if state_FormSettingsViewRadioColorBondsManual:
             self.ui.FormSettingsViewRadioColorBondsManual.setChecked(True)
         else:
@@ -1096,7 +1097,8 @@ class mainWindow(QMainWindow):
         self.ui.FormSettingsViewCheckShowAtoms.setChecked(state_FormSettingsViewCheckShowAtoms)
         self.ui.FormSettingsViewCheckShowAtoms.clicked.connect(self.save_state_view_show_atoms)
 
-        state_FormSettingsViewCheckShowAtomNumber = settings.value(SETTINGS_FormSettingsViewCheckShowAtomNumber, True, type=bool)
+        state_FormSettingsViewCheckShowAtomNumber = settings.value(SETTINGS_FormSettingsViewCheckShowAtomNumber, True,
+                                                                   type=bool)
         self.ui.FormSettingsViewCheckShowAtomNumber.setChecked(state_FormSettingsViewCheckShowAtomNumber)
         self.ui.FormSettingsViewCheckShowAtomNumber.clicked.connect(self.save_state_view_show_atom_number)
 
@@ -1108,7 +1110,7 @@ class mainWindow(QMainWindow):
         self.ui.FormSettingsViewCheckShowBonds.setChecked(state_FormSettingsViewCheckShowBonds)
         self.ui.FormSettingsViewCheckShowBonds.clicked.connect(self.save_state_view_show_bonds)
 
-        self.WorkDir = str(settings.value(SETTINGS_Folder, "/home"))
+        self.work_dir = str(settings.value(SETTINGS_Folder, "/home"))
         self.ColorType = str(settings.value(SETTINGS_FormSettingsColorsScale, 'rainbow'))
         self.ui.FormSettingsColorsScale.currentIndexChanged.connect(self.save_state_colors_scale)
         self.ui.FormSettingsColorsScale.currentTextChanged.connect(self.state_changed_form_settings_colors_scale)
@@ -1130,7 +1132,8 @@ class mainWindow(QMainWindow):
         state_form_settings_view_spin_bond_width = int(settings.value(SETTINGS_FormSettingsViewSpinBondWidth, '20'))
         self.ui.FormSettingsViewSpinBondWidth.setValue(state_form_settings_view_spin_bond_width)
         self.ui.FormSettingsViewSpinBondWidth.valueChanged.connect(self.save_state_view_spin_bond_width)
-        state_form_settings_view_spin_contour_width = int(settings.value(SETTINGS_FormSettingsViewSpinContourWidth, '20'))
+        state_form_settings_view_spin_contour_width = int(settings.value(SETTINGS_FormSettingsViewSpinContourWidth,
+                                                                         '20'))
         self.ui.FormSettingsViewSpinContourWidth.setValue(state_form_settings_view_spin_contour_width)
         self.ui.FormSettingsViewSpinContourWidth.valueChanged.connect(self.save_state_view_spin_contour_width)
         self.ui.ColorsOfAtomsTable.setColumnCount(1)
@@ -1181,11 +1184,11 @@ class mainWindow(QMainWindow):
     def menu_export(self):
         if self.MainForm.MainModel.nAtoms() > 0:
             try:
-                long_name = QFileDialog.getSaveFileName(self, 'Save File', self.WorkDir,
+                long_name = QFileDialog.getSaveFileName(self, 'Save File', self.work_dir,
                     "FDF files (*.fdf);;XYZ files (*.xyz);;FireFly input files (*.inp);;VASP POSCAR file (POSCAR)")
                 fname = long_name[0]
                 self.MainForm.atomic_structure_to_file(fname)
-                self.WorkDir = os.path.dirname(fname)
+                self.work_dir = os.path.dirname(fname)
                 self.save_active_folder()
             except Exception as e:
                 self.show_error(e)
@@ -1196,10 +1199,10 @@ class mainWindow(QMainWindow):
             self.save_state_action_on_start()
             os.execl(sys.executable, sys.executable, *sys.argv)
         self.ui.Form3Dand2DTabs.setCurrentIndex(0)
-        fname = QFileDialog.getOpenFileName(self, 'Open file', self.WorkDir)[0]
+        fname = QFileDialog.getOpenFileName(self, 'Open file', self.work_dir)[0]
         if os.path.exists(fname):
             self.filename = fname
-            self.WorkDir = os.path.dirname(fname)
+            self.work_dir = os.path.dirname(fname)
             try:
                 self.get_atomic_model_and_fdf(fname)
             except Exception as e:
@@ -1373,8 +1376,9 @@ class mainWindow(QMainWindow):
         boxcolor = self.get_color_from_setting(self.state_Color_Of_Box)
         atomscolor = self.colors_of_atoms()
         contour_width = (self.ui.FormSettingsViewSpinContourWidth.value()) / 1000.0
-        self.MainForm.set_atomic_structure(self.models[self.active_model], atomscolor, view_atoms, view_atom_numbers, view_box, boxcolor, view_bonds,
-                                           bondscolor, bond_width, color_of_bonds_by_atoms, view_axes, axescolor, contour_width)
+        self.MainForm.set_atomic_structure(self.models[self.active_model], atomscolor, view_atoms, view_atom_numbers,
+                                           view_box, boxcolor, view_bonds, bondscolor, bond_width,
+                                           color_of_bonds_by_atoms, view_axes, axescolor, contour_width)
         self.prepare_form_actions_combo_pdos_species()
         self.prepare_form_actions_combo_pdos_indexes()
 
@@ -1751,60 +1755,12 @@ class mainWindow(QMainWindow):
     def plot_bands(self):
         file = self.ui.FormActionsLineBANDSfile.text()
         self.ui.Form3Dand2DTabs.setCurrentIndex(1)
+        kmin, kmax = self.ui.FormActionsSpinBANDSxmin.value(), self.ui.FormActionsSpinBANDSxmax.value()
+        emin, emax = self.ui.FormActionsSpinBANDSemin.value(), self.ui.FormActionsSpinBANDSemax.value()
+        is_check_bands_spin = self.ui.FormActionsCheckBANDSspinUp.isChecked()
         if os.path.exists(file):
-            f = open(file)
-            e_fermi = float(f.readline())
-            f.readline()
-            kmin, kmax = self.ui.FormActionsSpinBANDSxmin.value(), self.ui.FormActionsSpinBANDSxmax.value()
-            str1 = f.readline().split()
-            str1 = helpers.list_str_to_float(str1)
-            eminf, emaxf = float(str1[0]), float(str1[1])
-            emin, emax = self.ui.FormActionsSpinBANDSemin.value(), self.ui.FormActionsSpinBANDSemax.value()
-            str1 = f.readline().split()
-            str1 = helpers.list_str_to_int(str1)
-            nbands, nspins = int(str1[0]), int(str1[1])
-            kmesh = np.zeros((str1[2]))
-            homo = eminf * np.ones((str1[2]))
-            lumo = emaxf * np.ones((str1[2]))
-            bands = np.zeros((nbands * nspins, str1[2]))
-            for i in range(0, str1[2]):
-                str2 = f.readline().split()
-                str2 = helpers.list_str_to_float(str2)
-                kmesh[i] = str2[0]
-                for j in range(1, len(str2)):
-                    bands[j - 1][i] = float(str2[j]) - e_fermi
-                kol = len(str2) - 1
-                while kol < nbands * nspins:
-                    str2 = f.readline().split()
-                    str2 = helpers.list_str_to_float(str2)
-                    for j in range(0, len(str2)):
-                        bands[kol + j][i] = float(str2[j]) - e_fermi
-                    kol += len(str2)
-
-            if self.ui.FormActionsCheckBANDSspinUp.isChecked():
-                bands = bands[:nbands]
-            else:
-                bands = bands[nbands:]
-
-            for i in range(0, nbands):
-                for j in range(0, len(bands[0])):
-                    tm = float(bands[i][j])
-                    if (tm > homo[j]) and (tm <= 0):
-                        homo[j] = tm
-                    if (tm < lumo[j]) and (tm > 0):
-                        lumo[j] = tm
-
-            nsticks = int(f.readline())
-            xticks = []
-            xticklabels = []
-            for i in range(0, nsticks):
-                str3 = f.readline().split()
-                value = float(str3[0])
-                if (round(value, 2) >= kmin) and (round(value, 2) <= kmax):
-                    xticks.append(value)
-                    letter = helpers.utf8_letter(str3[1][1:-1])
-                    xticklabels.append(letter)
-            f.close()
+            bands, emaxf, eminf, homo, kmesh, lumo, xticklabels, xticks = read_siesta_bands(file, is_check_bands_spin,
+                                                                                            kmax, kmin)
             self.ui.PyqtGraphWidget.clear()
             delta = 0.05 * (kmax - kmin)
             self.ui.PyqtGraphWidget.set_limits(kmin - delta, kmax + delta, emin, emax)
@@ -1821,31 +1777,10 @@ class mainWindow(QMainWindow):
             if self.ui.FormActionsCheckBANDSfermyShow.isChecked():
                 self.ui.PyqtGraphWidget.add_line(0, 0, 2, Qt.SolidLine)
 
-            gap, gap_ind = self.gaps(bands, emaxf, eminf, homo, lumo)
+            gap, gap_ind = gaps(bands, emaxf, eminf, homo, lumo)
 
             self.ui.FormActionsLabelBANDSgap.setText(
                 "Band gap = " + str(round(gap, 3)) + "  " + "Indirect gap = " + str(round(gap_ind, 3)))
-
-    def gaps(self, bands, emaxf, eminf, homo, lumo):
-        # Gap
-        gap = emaxf - eminf
-        for band in bands:
-            for i in range(0, len(band) - 1):
-                if band[i] * band[i + 1] <= 0:
-                    gap = 0
-        if gap > 0:
-            for i in range(0, len(bands[0])):
-                if lumo[i] - homo[i] < gap:
-                    gap = lumo[i] - homo[i]
-        homo_max = homo[0]
-        lumo_min = lumo[0]
-        for i in range(0, len(bands[0])):
-            if homo[i] > homo_max:
-                homo_max = homo[i]
-            if lumo[i] < lumo_min:
-                lumo_min = lumo[i]
-        gap_ind = lumo_min - homo_max
-        return gap, gap_ind
 
     def plot_dos(self):
         self.ui.PyqtGraphWidget.set_xticks(None)
@@ -1991,7 +1926,7 @@ class mainWindow(QMainWindow):
         if len(self.models) == 0:
             return
         try:
-            name = QFileDialog.getSaveFileName(self, 'Save File', self.WorkDir,
+            name = QFileDialog.getSaveFileName(self, 'Save File', self.work_dir,
                                            "PNG files (*.png);;JPG files (*.jpg);;BMP files (*.bmp)")
             fname = name[0]
             ext = ""
@@ -2010,7 +1945,7 @@ class mainWindow(QMainWindow):
 
                 new_window.MainForm.image3D_to_file(fname)
                 new_window.destroy()
-                self.WorkDir = os.path.dirname(fname)
+                self.work_dir = os.path.dirname(fname)
                 self.save_active_folder()
         except Exception as e:
             self.show_error(e)
@@ -2040,7 +1975,7 @@ class mainWindow(QMainWindow):
         self.MainForm.update()
 
     def save_active_folder(self):
-        self.save_property(SETTINGS_Folder, self.WorkDir)
+        self.save_property(SETTINGS_Folder, self.work_dir)
 
     def save_state_open_only_optimal(self):
         self.save_property(SETTINGS_FormSettingsOpeningCheckOnlyOptimal,
@@ -2158,7 +2093,7 @@ class mainWindow(QMainWindow):
         try:
             text = self.ui.FormActionsPreTextFDF.toPlainText()
             if len(text) > 0:
-                name = QFileDialog.getSaveFileName(self, 'Save File', self.WorkDir, "FDF files (*.fdf)")[0]
+                name = QFileDialog.getSaveFileName(self, 'Save File', self.work_dir, "FDF files (*.fdf)")[0]
                 if len(name) > 0:
                     with open(name, 'w') as f:
                         f.write(text)
@@ -2270,7 +2205,7 @@ class mainWindow(QMainWindow):
             text += "ir.summary()\n"
 
             if len(text) > 0:
-                name = QFileDialog.getSaveFileName(self, 'Save File', self.WorkDir, "Python file (*.py)")[0]
+                name = QFileDialog.getSaveFileName(self, 'Save File', self.work_dir, "Python file (*.py)")[0]
                 if len(name) > 0:
                     with open(name, 'w') as f:
                         f.write(text)
@@ -2279,10 +2214,10 @@ class mainWindow(QMainWindow):
 
     def ase_raman_and_ir_parse(self):
         try:
-            fname = QFileDialog.getOpenFileName(self, 'Open file', self.WorkDir)[0]
+            fname = QFileDialog.getOpenFileName(self, 'Open file', self.work_dir)[0]
             if os.path.exists(fname):
                 self.filename = fname
-                self.WorkDir = os.path.dirname(fname)
+                self.work_dir = os.path.dirname(fname)
                 f = open(fname)
                 rows = f.readlines()
 
@@ -2405,7 +2340,7 @@ class mainWindow(QMainWindow):
                     z = str(model1.atoms[i].y)
                     text += "2" + str(ch) + "   " + x + "   " + y + "   " + z + "\n"
             if len(text) > 0:
-                name = QFileDialog.getSaveFileName(self, 'Save File', self.WorkDir, "Crystal d12 (*.d12)")[0]
+                name = QFileDialog.getSaveFileName(self, 'Save File', self.work_dir, "Crystal d12 (*.d12)")[0]
                 if len(name) > 0:
                     with open(name, 'w') as f:
                         f.write(text)
@@ -2460,7 +2395,7 @@ class mainWindow(QMainWindow):
             self.ui.FormActionsPostButSurfaceLoadData.setEnabled(True)
             self.clearQTreeWidget(self.ui.FormActionsPostTreeSurface2)
             self.ui.FormActionsPosEdit3DData2.setText("")
-            self.clear_form_isosurface_data2_N()
+            self.clear_form_isosurface_data2_n()
             self.ui.CalculateTheVolumericDataDifference.setEnabled(False)
             self.ui.CalculateTheVolumericDataSum.setEnabled(False)
             self.ui.VolumrricDataGrid2.setTitle("Grid")
@@ -2468,7 +2403,7 @@ class mainWindow(QMainWindow):
 
     def parse_volumeric_data2(self):
         try:
-            fname = QFileDialog.getOpenFileName(self, 'Open file', self.WorkDir)
+            fname = QFileDialog.getOpenFileName(self, 'Open file', self.work_dir)
             if len(fname) > 0:
                 fname = fname[0]
                 if fname.endswith(".XSF"):
@@ -2480,7 +2415,7 @@ class mainWindow(QMainWindow):
 
                 self.ui.FormActionsPostButSurfaceLoadData2.setEnabled(True)
                 self.ui.FormActionsPosEdit3DData2.setText(fname)
-                self.clear_form_isosurface_data2_N()
+                self.clear_form_isosurface_data2_n()
                 self.ui.CalculateTheVolumericDataDifference.setEnabled(False)
                 self.ui.CalculateTheVolumericDataSum.setEnabled(False)
                 self.ui.ExportTheVolumericDataXSF.setEnabled(False)
@@ -2561,7 +2496,7 @@ class mainWindow(QMainWindow):
 
     def create_critic2_xyz_file(self):
         """ add code here"""
-        name = QFileDialog.getSaveFileName(self, 'Save File', self.WorkDir)
+        name = QFileDialog.getSaveFileName(self, 'Save File', self.work_dir)
         fname = name[0]
         if len(fname) > 0:
             model = self.models[self.active_model]
@@ -2580,7 +2515,7 @@ class mainWindow(QMainWindow):
         f.close()
 
     def create_cri_file(self):
-        name = QFileDialog.getSaveFileName(self, 'Save File', self.WorkDir)
+        name = QFileDialog.getSaveFileName(self, 'Save File', self.work_dir)
         extra_points = self.ui.FormExtraPoints.value() + 1
         is_form_bp = self.ui.formCriticBPradio.isChecked()
 
