@@ -12,7 +12,7 @@ on:
        - '**'        # matches every branch
 
 env:
-  PYTHONPATH=: ./src
+  PYTHONPATH: ./src
 
 jobs:
   linux-test:

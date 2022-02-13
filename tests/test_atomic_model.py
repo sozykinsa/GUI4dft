@@ -24,3 +24,9 @@ def test_find_bonds_exact(h2o_model):
     assert len(bonds) == 2
     assert bonds[0][-1] == 1
     assert bonds[1][-1] == 2
+
+
+def test_atom_atom_distance(h2o_model):
+    model = h2o_model
+    assert round(model.atom_atom_distance(0, 1), 4) == 1.2
+    assert round(model.atom_atom_distance(1, 2), 4) == 2.4

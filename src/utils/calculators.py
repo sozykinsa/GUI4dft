@@ -13,6 +13,27 @@ from utils import helpers
 from utils.atomic_model import TAtom, TAtomicModel
 
 
+def gaps(bands, emaxf, eminf, homo, lumo) -> tuple[float, float]:
+    gap = emaxf - eminf
+    for band in bands:
+        for i in range(0, len(band) - 1):
+            if band[i] * band[i + 1] <= 0:
+                gap = 0
+    if gap > 0:
+        for i in range(0, len(bands[0])):
+            if lumo[i] - homo[i] < gap:
+                gap = lumo[i] - homo[i]
+    homo_max = homo[0]
+    lumo_min = lumo[0]
+    for i in range(0, len(bands[0])):
+        if homo[i] > homo_max:
+            homo_max = homo[i]
+        if lumo[i] < lumo_min:
+            lumo_min = lumo[i]
+    gap_ind = lumo_min - homo_max
+    return gap, gap_ind
+
+
 ##################################################################
 #################### The Tcalculators class ######################
 ##################################################################

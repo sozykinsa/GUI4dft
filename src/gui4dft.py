@@ -18,6 +18,7 @@ import numpy as np
 from utils import helpers
 from utils.atomic_model import TAtomicModel
 from utils.calculators import TCalculators as Calculator
+from utils.calculators import gaps
 from models.models import TCapedSWNT
 from models.models import TBiNT
 from utils.fdfdata import TFDFFile
@@ -27,6 +28,7 @@ from utils.siesta import TSIESTA
 from models.models import TSWNT
 from utils.vasp import TVASP
 from utils.importer import Importer
+from utils.importer import read_siesta_bands
 from PySide2.QtCore import QCoreApplication, QLocale, QSettings, Qt, QSize
 import PySide2.QtCore as QtCore
 #QtCore.QVariant = "QVariant"
@@ -77,7 +79,7 @@ class mainWindow(QMainWindow):
         self.shortcut.activated.connect(self.atom_delete)
         self.active_model = -1
 
-    def start_program(self):
+    def start_program(self):  # pragma: no cover
         if self.action_on_start == 'Open':
             self.action_on_start = 'Nothing'
             self.save_state_action_on_start()
@@ -980,7 +982,7 @@ class mainWindow(QMainWindow):
         self.fill_bonds()
         self.ui.FormActionsPostButPlotBondsHistogram.setEnabled(True)
 
-    def get_bond(self):
+    def get_bond(self):   # pragma: no cover
         i = self.ui.PropertyAtomAtomDistanceAt1.value()
         j = self.ui.PropertyAtomAtomDistanceAt2.value()
         bond = round(self.MainForm.MainModel.atom_atom_distance(i - 1, j - 1), 4)
@@ -1018,7 +1020,7 @@ class mainWindow(QMainWindow):
             for j in range(0, Ny):
                 value = float(points[i][j][3])
                 prev = self.colors_cash.get(value)
-                if prev == None:
+                if prev is None:
                     color = mainWindow.get_color(cmap, minv, maxv, value, color_scale)
                     self.colors_cash[value] = [color[0], color[1], color[2]]
                     row.append([color[0], color[1], color[2]])
@@ -1055,11 +1057,10 @@ class mainWindow(QMainWindow):
         bondscolor = [float(r) / 255, float(g) / 255, float(b) / 255]
         return bondscolor
 
-    def load_settings(self):
-        # The SETTINGS
+    def load_settings(self) -> None:
         settings = QSettings()
-        state_form_settings_opening_check_only_optimal = settings.value(SETTINGS_FormSettingsOpeningCheckOnlyOptimal, False,
-                                                                   type=bool)
+        state_form_settings_opening_check_only_optimal = settings.value(SETTINGS_FormSettingsOpeningCheckOnlyOptimal,
+                                                                        False, type=bool)
         self.ui.FormSettingsOpeningCheckOnlyOptimal.setChecked(state_form_settings_opening_check_only_optimal)
         self.ui.FormSettingsOpeningCheckOnlyOptimal.clicked.connect(self.save_state_open_only_optimal)
         state_FormSettingsParseAtomicProperties = settings.value(SETTINGS_FormSettingsParseAtomicProperties, False,
@@ -1078,8 +1079,8 @@ class mainWindow(QMainWindow):
         self.ui.FormSettingsViewCheckAtomSelection.clicked.connect(self.save_state_view_atom_selection)
         self.ui.FormSettingsViewCheckModelMove.clicked.connect(self.save_state_view_atom_selection)
 
-        state_FormSettingsViewRadioColorBondsManual = settings.value(SETTINGS_FormSettingsViewRadioColorBondsManual, False,
-                                                                  type=bool)
+        state_FormSettingsViewRadioColorBondsManual = settings.value(SETTINGS_FormSettingsViewRadioColorBondsManual,
+                                                                     False, type=bool)
         if state_FormSettingsViewRadioColorBondsManual:
             self.ui.FormSettingsViewRadioColorBondsManual.setChecked(True)
         else:
@@ -1096,7 +1097,8 @@ class mainWindow(QMainWindow):
         self.ui.FormSettingsViewCheckShowAtoms.setChecked(state_FormSettingsViewCheckShowAtoms)
         self.ui.FormSettingsViewCheckShowAtoms.clicked.connect(self.save_state_view_show_atoms)
 
-        state_FormSettingsViewCheckShowAtomNumber = settings.value(SETTINGS_FormSettingsViewCheckShowAtomNumber, True, type=bool)
+        state_FormSettingsViewCheckShowAtomNumber = settings.value(SETTINGS_FormSettingsViewCheckShowAtomNumber, True,
+                                                                   type=bool)
         self.ui.FormSettingsViewCheckShowAtomNumber.setChecked(state_FormSettingsViewCheckShowAtomNumber)
         self.ui.FormSettingsViewCheckShowAtomNumber.clicked.connect(self.save_state_view_show_atom_number)
 
@@ -1130,7 +1132,8 @@ class mainWindow(QMainWindow):
         state_form_settings_view_spin_bond_width = int(settings.value(SETTINGS_FormSettingsViewSpinBondWidth, '20'))
         self.ui.FormSettingsViewSpinBondWidth.setValue(state_form_settings_view_spin_bond_width)
         self.ui.FormSettingsViewSpinBondWidth.valueChanged.connect(self.save_state_view_spin_bond_width)
-        state_form_settings_view_spin_contour_width = int(settings.value(SETTINGS_FormSettingsViewSpinContourWidth, '20'))
+        state_form_settings_view_spin_contour_width = int(settings.value(SETTINGS_FormSettingsViewSpinContourWidth,
+                                                                         '20'))
         self.ui.FormSettingsViewSpinContourWidth.setValue(state_form_settings_view_spin_contour_width)
         self.ui.FormSettingsViewSpinContourWidth.valueChanged.connect(self.save_state_view_spin_contour_width)
         self.ui.ColorsOfAtomsTable.setColumnCount(1)
@@ -1373,8 +1376,9 @@ class mainWindow(QMainWindow):
         boxcolor = self.get_color_from_setting(self.state_Color_Of_Box)
         atomscolor = self.colors_of_atoms()
         contour_width = (self.ui.FormSettingsViewSpinContourWidth.value()) / 1000.0
-        self.MainForm.set_atomic_structure(self.models[self.active_model], atomscolor, view_atoms, view_atom_numbers, view_box, boxcolor, view_bonds,
-                                           bondscolor, bond_width, color_of_bonds_by_atoms, view_axes, axescolor, contour_width)
+        self.MainForm.set_atomic_structure(self.models[self.active_model], atomscolor, view_atoms, view_atom_numbers,
+                                           view_box, boxcolor, view_bonds, bondscolor, bond_width,
+                                           color_of_bonds_by_atoms, view_axes, axescolor, contour_width)
         self.prepare_form_actions_combo_pdos_species()
         self.prepare_form_actions_combo_pdos_indexes()
 
@@ -1751,60 +1755,12 @@ class mainWindow(QMainWindow):
     def plot_bands(self):
         file = self.ui.FormActionsLineBANDSfile.text()
         self.ui.Form3Dand2DTabs.setCurrentIndex(1)
+        kmin, kmax = self.ui.FormActionsSpinBANDSxmin.value(), self.ui.FormActionsSpinBANDSxmax.value()
+        emin, emax = self.ui.FormActionsSpinBANDSemin.value(), self.ui.FormActionsSpinBANDSemax.value()
+        is_check_bands_spin = self.ui.FormActionsCheckBANDSspinUp.isChecked()
         if os.path.exists(file):
-            f = open(file)
-            e_fermi = float(f.readline())
-            f.readline()
-            kmin, kmax = self.ui.FormActionsSpinBANDSxmin.value(), self.ui.FormActionsSpinBANDSxmax.value()
-            str1 = f.readline().split()
-            str1 = helpers.list_str_to_float(str1)
-            eminf, emaxf = float(str1[0]), float(str1[1])
-            emin, emax = self.ui.FormActionsSpinBANDSemin.value(), self.ui.FormActionsSpinBANDSemax.value()
-            str1 = f.readline().split()
-            str1 = helpers.list_str_to_int(str1)
-            nbands, nspins = int(str1[0]), int(str1[1])
-            kmesh = np.zeros((str1[2]))
-            homo = eminf * np.ones((str1[2]))
-            lumo = emaxf * np.ones((str1[2]))
-            bands = np.zeros((nbands * nspins, str1[2]))
-            for i in range(0, str1[2]):
-                str2 = f.readline().split()
-                str2 = helpers.list_str_to_float(str2)
-                kmesh[i] = str2[0]
-                for j in range(1, len(str2)):
-                    bands[j - 1][i] = float(str2[j]) - e_fermi
-                kol = len(str2) - 1
-                while kol < nbands * nspins:
-                    str2 = f.readline().split()
-                    str2 = helpers.list_str_to_float(str2)
-                    for j in range(0, len(str2)):
-                        bands[kol + j][i] = float(str2[j]) - e_fermi
-                    kol += len(str2)
-
-            if self.ui.FormActionsCheckBANDSspinUp.isChecked():
-                bands = bands[:nbands]
-            else:
-                bands = bands[nbands:]
-
-            for i in range(0, nbands):
-                for j in range(0, len(bands[0])):
-                    tm = float(bands[i][j])
-                    if (tm > homo[j]) and (tm <= 0):
-                        homo[j] = tm
-                    if (tm < lumo[j]) and (tm > 0):
-                        lumo[j] = tm
-
-            nsticks = int(f.readline())
-            xticks = []
-            xticklabels = []
-            for i in range(0, nsticks):
-                str3 = f.readline().split()
-                value = float(str3[0])
-                if (round(value, 2) >= kmin) and (round(value, 2) <= kmax):
-                    xticks.append(value)
-                    letter = helpers.utf8_letter(str3[1][1:-1])
-                    xticklabels.append(letter)
-            f.close()
+            bands, emaxf, eminf, homo, kmesh, lumo, xticklabels, xticks = read_siesta_bands(file, is_check_bands_spin,
+                                                                                            kmax, kmin)
             self.ui.PyqtGraphWidget.clear()
             delta = 0.05 * (kmax - kmin)
             self.ui.PyqtGraphWidget.set_limits(kmin - delta, kmax + delta, emin, emax)
@@ -1821,31 +1777,10 @@ class mainWindow(QMainWindow):
             if self.ui.FormActionsCheckBANDSfermyShow.isChecked():
                 self.ui.PyqtGraphWidget.add_line(0, 0, 2, Qt.SolidLine)
 
-            gap, gap_ind = self.gaps(bands, emaxf, eminf, homo, lumo)
+            gap, gap_ind = gaps(bands, emaxf, eminf, homo, lumo)
 
             self.ui.FormActionsLabelBANDSgap.setText(
                 "Band gap = " + str(round(gap, 3)) + "  " + "Indirect gap = " + str(round(gap_ind, 3)))
-
-    def gaps(self, bands, emaxf, eminf, homo, lumo):
-        # Gap
-        gap = emaxf - eminf
-        for band in bands:
-            for i in range(0, len(band) - 1):
-                if band[i] * band[i + 1] <= 0:
-                    gap = 0
-        if gap > 0:
-            for i in range(0, len(bands[0])):
-                if lumo[i] - homo[i] < gap:
-                    gap = lumo[i] - homo[i]
-        homo_max = homo[0]
-        lumo_min = lumo[0]
-        for i in range(0, len(bands[0])):
-            if homo[i] > homo_max:
-                homo_max = homo[i]
-            if lumo[i] < lumo_min:
-                lumo_min = lumo[i]
-        gap_ind = lumo_min - homo_max
-        return gap, gap_ind
 
     def plot_dos(self):
         self.ui.PyqtGraphWidget.set_xticks(None)
