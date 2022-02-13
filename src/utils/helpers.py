@@ -119,6 +119,12 @@ def from_file_property(filename, prop, count=1, prop_type='int'):
         return None
 
 
+def write_text_to_file(self, fname, text):
+    f = open(fname, 'w')
+    print(text, file=f)
+    f.close()
+
+
 def property_from_sub_file(filename, k, prop, count, typen):
     property = None
     is_found = False
