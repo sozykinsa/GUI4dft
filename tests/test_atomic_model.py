@@ -7,10 +7,8 @@ def test_atomic_model():
     assert len(model.atoms) == 0
 
 
-def test_atomic_model_quack_as_ase():
-    #         x    y    z   let charge
-    atoms = [[0.0, 0.0, 0.0, "O", 8], [-1.2, 0.0, 0.0, "H", 1], [1.2, 0.0, 0.0, "H", 1]]
-    model = TAtomicModel(atoms)
+def test_atomic_model_quack_as_ase(h2o_model):
+    model = h2o_model
     assert len(model.atoms) == 3
     pos = model.get_positions()
     assert type(pos) == np.ndarray
@@ -18,3 +16,11 @@ def test_atomic_model_quack_as_ase():
     num = model.get_atomic_numbers()
     assert type(num) == np.ndarray
     assert len(num) == 3
+
+
+def test_find_bonds_exact(h2o_model):
+    model = h2o_model
+    bonds = model.find_bonds_exact()
+    assert len(bonds) == 2
+    assert bonds[0][-1] == 1
+    assert bonds[1][-1] == 2

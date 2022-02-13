@@ -1,5 +1,6 @@
 from pathlib import Path
 from pyqt_graph_widget.pyqtgraphwidget import PyqtGraphWidget
+from utils.atomic_model import TAtomicModel
 
 import pytest
 
@@ -7,6 +8,13 @@ import pytest
 @pytest.fixture
 def tests_path() -> Path:
     return Path(__file__).parent
+
+
+@pytest.fixture
+def h2o_model() -> Path:
+    #         x    y    z   let charge
+    atoms = [[0.0, 0.0, 0.0, "O", 8], [-1.2, 0.0, 0.0, "H", 1], [1.2, 0.0, 0.0, "H", 1]]
+    return TAtomicModel(atoms)
 
 
 @pytest.fixture

@@ -845,7 +845,7 @@ class mainWindow(QMainWindow):
 
     def fill_atoms_table(self):
         model = self.MainForm.get_model().atoms
-        self.ui.FormModelTableAtoms.setRowCount(len(model))  # и одну строку в таблице
+        self.ui.FormModelTableAtoms.setRowCount(len(model))
 
         for i in range(0, len(model)):
             self.ui.FormModelTableAtoms.setItem(i, 0, QTableWidgetItem(model[i].let))
