@@ -1186,7 +1186,7 @@ class mainWindow(QMainWindow):
                 long_name = QFileDialog.getSaveFileName(self, 'Save File', self.work_dir,
                     "FDF files (*.fdf);;XYZ files (*.xyz);;FireFly input files (*.inp);;VASP POSCAR file (POSCAR)")
                 fname = long_name[0]
-                self.MainForm.atomic_structure_to_file(fname)
+                self.models[self.active_model].export_to_file(fname)
                 self.work_dir = os.path.dirname(fname)
                 self.save_active_folder()
             except Exception as e:

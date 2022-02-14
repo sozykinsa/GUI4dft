@@ -282,6 +282,17 @@ class TAtomicModel(object):
             siesta_file.close()
         return molecules
 
+    def export_to_file(self, fname):
+        if fname.find("POSCAR") >= 0:
+            fname = fname.split(".")[0]
+            self.toVASPposcar(fname)
+        if fname.endswith(".inp"):
+            self.toFireflyINP(fname)
+        if fname.endswith(".fdf"):
+            self.toSIESTAfdf(fname)
+        if fname.endswith(".xyz"):
+            self.toSIESTAxyz(fname)
+
     @staticmethod
     def atoms_from_output_md(filename):
         """import from MD output """

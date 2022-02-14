@@ -340,18 +340,6 @@ class GuiOpenGL(object):
     def image3D_to_file(self, fname):
         self.openGLWidget.grabFramebuffer().save(fname)
 
-    def atomic_structure_to_file(self, fname):
-        newModel = self.get_model()
-        if fname.find("POSCAR") >= 0:
-            fname = fname.split(".")[0]
-            newModel.toVASPposcar(fname)
-        if fname.endswith(".inp"):
-            newModel.toFireflyINP(fname)
-        if fname.endswith(".fdf"):
-            newModel.toSIESTAfdf(fname)
-        if fname.endswith(".xyz"):
-            newModel.toSIESTAxyz(fname)
-
     def volumeric_data_to_file(self, fname, volumeric_data, x1, x2, y1, y2, z1, z2):
         newModel = self.get_model()
         if fname.find("XSF") >= 0:
