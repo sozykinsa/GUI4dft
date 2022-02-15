@@ -18,8 +18,8 @@ def spacedel(row: str) -> str:
 
 def float_to_string(fl):
     res = '{0:12.8f}'.format(fl)
-    if res == "-0.00000000":
-        res = " 0.00000000"
+    if res == " -0.00000000":
+        res = "  0.00000000"
     return res
 
 
@@ -85,17 +85,18 @@ def cdev(ii, jj):
             j = ir
 
 
-def mini(list_2d):
-    """ Сортирует список по возрастанию первого столбца и возвращает индекс минимального элемента во втором столбце """
-    list_2d = sorted(list_2d, key=itemgetter(0))
-    imin = 0
-    for i in range(1, len(list_2d)):
-        if float(list_2d[i][1]) < float(list_2d[imin][1]):
-            imin = i
-    return imin
+#def mini(list_2d):
+#    """Sorts the list in ascending order of the first column.
+#    The method returns the index of the minimum element in the second column."""
+#    list_2d = sorted(list_2d, key=itemgetter(0))
+#    imin = 0
+#    for i in range(1, len(list_2d)):
+#        if float(list_2d[i][1]) < float(list_2d[imin][1]):
+#            imin = i
+#    return imin
 
 
-def ListN2Split(data):
+def list_n2_split(data):
     x = []
     y = []
     for row in data:
@@ -174,6 +175,7 @@ def RoundToPlane(atom, R):
 
 
 def utf8_letter(let):
+    print(let)
     if let == r'\Gamma':
         return '\u0393'
     if let == r'\Delta':

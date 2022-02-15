@@ -1,6 +1,7 @@
 from pathlib import Path
 from pyqtgraphwidget import PyqtGraphWidget
 from utils.atomic_model import TAtomicModel
+from utils.periodic_table import TPeriodTable
 
 import pytest
 
@@ -15,6 +16,11 @@ def h2o_model() -> Path:
     #         x    y    z   let charge
     atoms = [[0.0, 0.0, 0.0, "O", 8], [-1.2, 0.0, 0.0, "H", 1], [1.2, 0.0, 0.0, "H", 1]]
     return TAtomicModel(atoms)
+
+
+@pytest.fixture
+def period_table() -> Path:
+    return TPeriodTable()
 
 
 @pytest.fixture

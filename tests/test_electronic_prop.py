@@ -18,13 +18,18 @@ def test_dos_siesta_vert(tests_path):
 
 
 def test_s(tests_path):
-    f_name = str(tests_path / 'ref_data' / 'swcnt(8,0)' / "siesta.PDOS")
     atom_index = range(1, 33)
     species = ['C']
     number_l = [0, 1, 2, 3, 4, 5, 6, 7]
     number_m = [-7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7]
     number_n = [1, 2, 3, 4, 5, 6, 7, 8]
     number_z = [1, 2, 3, 4, 5]
+
+    f_name = str(tests_path / 'ref_data' / 'swcnt(8,0)' / "siesta.PDOS")
+    pdos, energy = TSIESTA.calc_pdos(f_name, atom_index, species, number_l, number_m, number_n, number_z)
+    assert len(energy) == 1000
+
+    f_name = str(tests_path / 'ref_data' / 'swcnt(8,0)spin_polarized' / "siesta.PDOS")
     pdos, energy = TSIESTA.calc_pdos(f_name, atom_index, species, number_l, number_m, number_n, number_z)
     assert len(energy) == 1000
 

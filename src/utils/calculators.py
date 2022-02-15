@@ -83,7 +83,7 @@ class TCalculators:
     
     @staticmethod
     def ApproxParabola(DATA):
-        xdata, ydata = helpers.ListN2Split(DATA)
+        xdata, ydata = helpers.list_n2_split(DATA)
         # y = ax^2 + bx + c
         a, b, c = polyfit(xdata, ydata, 2)
 
@@ -122,7 +122,7 @@ class TCalculators:
 
     @staticmethod
     def ApproxMurnaghan(DATA):
-        v, e = helpers.ListN2Split(DATA)
+        v, e = helpers.list_n2_split(DATA)
         vfit = np.linspace(min(v), max(v), 100)
         # y = ax^2 + bx + c
         a, b, c = polyfit(v, e, 2)
@@ -139,7 +139,7 @@ class TCalculators:
 
     @staticmethod
     def ApproxBirchMurnaghan(DATA):
-        v, e = helpers.ListN2Split(DATA)
+        v, e = helpers.list_n2_split(DATA)
         vfit = np.linspace(min(v), max(v), 100)
 
         ### fit a parabola to the data

@@ -2080,6 +2080,7 @@ class mainWindow(QMainWindow):
         try:
             model = self.MainForm.get_model()
             text = self.FDFData.get_all_data(model, self.CoordType, self.units_type, self.LatticeType)
+            print(self.CoordType, self.units_type, self.LatticeType)
             self.ui.FormActionsPreTextFDF.setText(text)
         except Exception:
             print("There are no atoms in the model")
