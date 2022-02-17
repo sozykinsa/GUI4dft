@@ -37,3 +37,27 @@ def test_energies(tests_path):
 def test_spin_polarized(tests_path):
     f_name = str(tests_path / 'ref_data' / 'swcnt(8,0)' / "siesta.out")
     assert not TSIESTA.spin_polarized(f_name)
+
+
+def test_siesta_volume(tests_path):
+    f_name = str(tests_path / 'ref_data' / 'swcnt(8,0)' / "siesta.out")
+    assert TSIESTA.volume(f_name) == 6768.0
+
+    f_name = str(tests_path / 'ref_data' / 'swcnt(8,0)' / "siesta.fdf")
+    assert TSIESTA.volume(f_name) is None
+
+
+def test_system_label(tests_path):
+    f_name = str(tests_path / 'ref_data' / 'swcnt(8,0)' / "siesta.out")
+    assert TSIESTA.system_label(f_name) == "siesta"
+
+    f_name = str(tests_path / 'ref_data' / 'swcnt(8,0)' / "siesta.fdf")
+    assert TSIESTA.system_label(f_name) == "siesta"
+
+
+def test_type_of_run(tests_path):
+    f_name = str(tests_path / 'ref_data' / 'swcnt(8,0)' / "siesta.out")
+    assert TSIESTA.type_of_run(f_name) == "cg"
+
+    f_name = str(tests_path / 'ref_data' / 'swcnt(8,0)' / "siesta.fdf")
+    assert TSIESTA.type_of_run(f_name) == "cg"

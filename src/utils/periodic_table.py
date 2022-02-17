@@ -13,6 +13,7 @@ class TPeriodTableAtom:
         self.color = color
         self.mass = mass
 
+
 class TPeriodTable:
     """The TPeriodTable class provides basic fetches of Mendelevium's table. The constructor does not have arguments"""
     def __init__(self):
@@ -209,4 +210,3 @@ class TPeriodTable:
         for i in range(0, self.table_size):
             lets.append(self.Atoms[i].let)
         return lets
-    

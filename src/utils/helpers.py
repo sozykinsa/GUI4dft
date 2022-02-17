@@ -120,7 +120,7 @@ def from_file_property(filename, prop, count=1, prop_type='int'):
         return None
 
 
-def write_text_to_file(self, fname, text):
+def write_text_to_file(fname, text):
     f = open(fname, 'w')
     print(text, file=f)
     f.close()
@@ -175,17 +175,16 @@ def RoundToPlane(atom, R):
 
 
 def utf8_letter(let):
-    print(let)
-    if let == r'\Gamma':
+    if (let == r'\Gamma') or (let == 'Gamma'):
         return '\u0393'
-    if let == r'\Delta':
+    if (let == r'\Delta') or (let == 'Delta'):
         return '\u0394'
-    if let == r'\Lambda':
+    if (let == r'\Lambda') or (let == 'Lambda'):
         return '\u039B'
-    if let == r'\Pi':
+    if (let == r'\Pi') or (let == 'Pi'):
         return '\u03A0'
-    if let == r'\Sigma':
+    if (let == r'\Sigma') or (let == 'Sigma'):
         return '\u03A3'
-    if let == r'\Omega':
+    if (let == r'\Omega') or (let == 'Omega'):
         return '\u03A9'
     return let

@@ -18,6 +18,7 @@ from utils import helpers
 from utils.atomic_model import TAtomicModel
 from utils.calculators import TCalculators as Calculator
 from utils.calculators import gaps
+from utils.critic2 import check_cro_file
 from models.models import TCapedSWNT
 from models.models import TBiNT
 from utils.fdfdata import TFDFFile
@@ -27,7 +28,7 @@ from utils.siesta import TSIESTA
 from models.models import TSWNT
 from utils.vasp import TVASP
 from utils.importer import Importer
-from utils.electronic_prop_reader import read_siesta_bands
+from utils.electronic_prop_reader import read_siesta_bands, dos_from_file
 from PySide2.QtCore import QCoreApplication, QLocale, QSettings, Qt, QSize
 import PySide2.QtCore as QtCore
 #QtCore.QVariant = "QVariant"
@@ -460,7 +461,7 @@ class mainWindow(QMainWindow):
             fname = QFileDialog.getOpenFileName(self, 'Open file', self.work_dir)[0]
             self.work_dir = os.path.dirname(fname)
 
-            box_bohr, box_ang, box_deg, cps = Importer.check_cro_file(fname)
+            box_bohr, box_ang, box_deg, cps = check_cro_file(fname)
             al = math.radians(box_deg[0])
             be = math.radians(box_deg[1])
             ga = math.radians(box_deg[2])
@@ -613,7 +614,7 @@ class mainWindow(QMainWindow):
             files.append(fname)
 
         if fname.endswith(".out") or fname.endswith(".OUT"):
-            label = TSIESTA.SystemLabel(fname)
+            label = TSIESTA.system_label(fname)
             dir = os.path.dirname(fname)
             dirs, content = helpers.getsubs(dir)
             for posFile in content:
@@ -1801,7 +1802,7 @@ class mainWindow(QMainWindow):
                 if path.endswith("DOSCAR"):
                     spin_up, spin_down, energy = TVASP.DOS(path)
                 else:
-                    spin_up, spin_down, energy = TSIESTA.DOS(path)
+                    spin_up, spin_down, energy = dos_from_file(path)
 
                 energy -= path_efermy_list[index][1]
                 if is_invert_spin_down:

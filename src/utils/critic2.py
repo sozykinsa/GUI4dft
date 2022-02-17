@@ -1,7 +1,45 @@
 # -*- coding: utf-8 -*-
 import sys
+import os
 import numpy as np
+from utils import helpers
 sys.path.append('.')
+
+
+def check_cro_file(filename):
+    if os.path.exists(filename) and filename.endswith("cro"):
+        box_bohr = helpers.from_file_property(filename, "Lattice parameters (bohr):", 1, 'string').split()
+        box_bohr = np.array(helpers.list_str_to_float(box_bohr))
+        box_ang = helpers.from_file_property(filename, "Lattice parameters (ang):", 1, 'string').split()
+        box_ang = np.array(helpers.list_str_to_float(box_ang))
+        box_deg = helpers.from_file_property(filename, "Lattice angles (degrees):", 1, 'string').split()
+        box_deg = np.array(helpers.list_str_to_float(box_deg))
+
+        MyFile = open(filename)
+        str1 = MyFile.readline()
+        while str1.find("Critical point list, final report (non-equivalent cps") < 0:
+            str1 = MyFile.readline()
+        MyFile.readline()
+        MyFile.readline()
+        MyFile.readline()
+
+        cps = []
+        str1 = MyFile.readline()
+
+        while len(str1) > 3:
+            str1 = str1.split(')')[1].split()
+            x = float(str1[1]) * box_ang[0]
+            y = float(str1[2]) * box_ang[1]
+            z = float(str1[3]) * box_ang[2]
+
+            line = [str1[0], x, y, z, str1[6], str1[7], str1[8]]
+            cps.append(line)
+            str1 = MyFile.readline()
+
+        MyFile.close()
+        return box_bohr, box_ang, box_deg, cps
+    else:
+        return "", "", "", []
 
 
 def create_critic2_xyz_file(bcp, bcp_seleсted, is_with_selected, model):
