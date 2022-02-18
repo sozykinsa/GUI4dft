@@ -6,7 +6,6 @@ from utils.vasp import TVASP
 from utils.fdfdata import TFDFFile
 from utils.siesta import TSIESTA
 from utils import helpers
-import numpy as np
 from TInterface import TXSF, TGaussianCube
 
 

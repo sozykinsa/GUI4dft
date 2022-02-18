@@ -195,7 +195,7 @@ class TPeriodTable:
         for atom in self.Atoms:
             if atom.let.lower() == let.lower():
                 return int(atom.charge)
-            if let.lower() == "Direct":
+            if let.lower() == "direct":
                 return 200
         return -1
 

@@ -13,8 +13,14 @@ def test_get_rad(period_table):
     assert period_table.get_rad(300) == period_table.default_radius
 
 
+def test_get_let(period_table):
+    assert period_table.get_let(6) == "C"
+    assert period_table.get_let(300) == "Direct"
+
+
 def get_get_charge_by_letter(period_table):
     assert 200 == period_table.get_charge_by_letter("Direct")
+    assert 6 == period_table.get_charge_by_letter("C")
 
 
 def test_get_all_letters(period_table):

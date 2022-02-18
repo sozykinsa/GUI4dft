@@ -402,6 +402,7 @@ class Image3Dexporter(QMainWindow):
         self.ui.setupUi(self)
         self.setFixedSize(QSize(windowsWidth, windowsHeight))
 
-        self.MainForm = GuiOpenGL(self.ui.openGLWidget, None, quality=quality)
+        self.MainForm = GuiOpenGL(self.ui.openGLWidget)
+        self.MainForm.set_form_elements(quality=quality)
         self.MainForm.filter = None
         self.show()

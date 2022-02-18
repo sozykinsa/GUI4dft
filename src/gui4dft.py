@@ -16,7 +16,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from utils import helpers
 from utils.atomic_model import TAtomicModel
-from utils.calculators import TCalculators as Calculator
+from utils.calculators import Calculators as Calculator
 from utils.calculators import gaps
 from utils.critic2 import check_cro_file
 from models.models import TCapedSWNT
@@ -63,8 +63,8 @@ class mainWindow(QMainWindow):
         selected_atom_info = [self.ui.FormActionsPreComboAtomsList, self.ui.FormActionsPreSpinAtomsCoordX,
                               self.ui.FormActionsPreSpinAtomsCoordY, self.ui.FormActionsPreSpinAtomsCoordZ,
                               self.ui.AtomPropertiesText]
-        self.MainForm = GuiOpenGL(self.ui.openGLWidget, self.ui.FormSettingsViewCheckAtomSelection, selected_atom_info,
-                                  1)
+        self.MainForm = GuiOpenGL(self.ui.openGLWidget)
+        self.MainForm.set_form_elements(self.ui.FormSettingsViewCheckAtomSelection, selected_atom_info, 1)
         self.FDFData = TFDFFile()
         self.VolumericData = TVolumericData()
         self.VolumericData2 = TVolumericData()  # only for volumeric data difference
@@ -146,6 +146,10 @@ class mainWindow(QMainWindow):
         self.ui.FormActionsPostButGetBonds.clicked.connect(self.get_bonds)
         self.ui.PropertyAtomAtomDistanceGet.clicked.connect(self.get_bond)
         self.ui.FormStylesFor2DGraph.clicked.connect(self.set_2d_graph_styles)
+
+        self.ui.FormSelectPart1File.clicked.connect(self.set_part1_file)
+        self.ui.FormSelectPart2File.clicked.connect(self.set_part2_file)
+        self.ui.CreateModelFromParts.clicked.connect(self.create_model_from_parts)
 
         self.ui.FormIEd12Generate.clicked.connect(self.d12_to_file)
 
@@ -525,6 +529,20 @@ class mainWindow(QMainWindow):
 
         self.ui.FormActionsPostButSurface.setEnabled(True)
         self.ui.FormActionsPostButSurfaceDelete.setEnabled(True)
+
+    def set_part1_file(self) -> None:
+        fname = QFileDialog.getOpenFileName(self, 'Open file', self.work_dir)[0]
+        if os.path.exists(fname):
+            self.ui.part1_file.setText(fname)
+
+    def set_part2_file(self) -> None:
+        fname = QFileDialog.getOpenFileName(self, 'Open file', self.work_dir)[0]
+        if os.path.exists(fname):
+            self.ui.part2_file.setText(fname)
+
+    def create_model_from_parts(self) -> None:
+        fname1 = self.ui.part1_file.text()
+        fname2 = self.ui.part2_file.text()
 
     def add_left_electrode_file(self):
         fname = self.get_fdf_file_name()
@@ -1873,7 +1891,7 @@ class mainWindow(QMainWindow):
                 ys.append(items[i][1])
 
             if (method == "Murnaghan") and (len(items) > 4):
-                aprox, xs2, ys2 = Calculator.ApproxMurnaghan(items)
+                aprox, xs2, ys2 = Calculator.approx_murnaghan(items)
                 image_path = str(Path(__file__).parent / 'images' / 'murnaghan.png')  # path to your image file
                 self.ui.FormActionsPostLabelCellParamOptimExpr.setText("E(V0)=" + str(round(float(aprox[0]), 2)))
                 self.ui.FormActionsPostLabelCellParamOptimExpr2.setText("B0=" + str(round(float(aprox[1]), 2)))
@@ -1883,7 +1901,7 @@ class mainWindow(QMainWindow):
                 self.plot_curv_and_points(LabelX, xs, ys, xs2, ys2)
 
             if (method == "BirchMurnaghan") and (len(items) > 4):
-                aprox, xs2, ys2 = Calculator.ApproxBirchMurnaghan(items)
+                aprox, xs2, ys2 = Calculator.approx_birch_murnaghan(items)
                 image_path = str(Path(__file__).parent / 'images' / 'murnaghanbirch.png')  # path to your image file
                 self.ui.FormActionsPostLabelCellParamOptimExpr.setText("E(V0)=" + str(round(float(aprox[0]), 2)))
                 self.ui.FormActionsPostLabelCellParamOptimExpr2.setText("B0=" + str(round(float(aprox[1]), 2)))
@@ -1893,7 +1911,7 @@ class mainWindow(QMainWindow):
                 self.plot_curv_and_points(LabelX, xs, ys, xs2, ys2)
 
             if (method == "Parabola") and (len(items) > 2):
-                aprox, xs2, ys2 = Calculator.ApproxParabola(items)
+                aprox, xs2, ys2 = Calculator.approx_parabola(items)
                 image_path = str(Path(__file__).parent / 'images' / 'parabola.png')  # path to your image file
                 self.ui.FormActionsPostLabelCellParamOptimExpr.setText("a=" + str(round(float(aprox[2]), 2)))
                 self.ui.FormActionsPostLabelCellParamOptimExpr2.setText("b=" + str(round(float(aprox[1]), 2)))

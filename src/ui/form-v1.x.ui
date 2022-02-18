@@ -292,6 +292,14 @@
                </layout>
               </widget>
               <widget class="QWidget" name="page_4">
+               <property name="geometry">
+                <rect>
+                 <x>0</x>
+                 <y>0</y>
+                 <width>358</width>
+                 <height>582</height>
+                </rect>
+               </property>
                <attribute name="label">
                 <string>Nanotubes</string>
                </attribute>
@@ -1062,6 +1070,14 @@
                </layout>
               </widget>
               <widget class="QWidget" name="page_6">
+               <property name="geometry">
+                <rect>
+                 <x>0</x>
+                 <y>0</y>
+                 <width>371</width>
+                 <height>624</height>
+                </rect>
+               </property>
                <attribute name="label">
                 <string>From two parts</string>
                </attribute>
@@ -1098,7 +1114,7 @@
                        </widget>
                       </item>
                       <item>
-                       <widget class="QLineEdit" name="FormActionsPreLeftElectrode_2">
+                       <widget class="QLineEdit" name="part1_file">
                         <property name="readOnly">
                          <bool>true</bool>
                         </property>
@@ -1283,7 +1299,7 @@
                        </widget>
                       </item>
                       <item>
-                       <widget class="QLineEdit" name="FormActionsPreScatRegion_2">
+                       <widget class="QLineEdit" name="part2_file">
                         <property name="readOnly">
                          <bool>true</bool>
                         </property>
@@ -1465,7 +1481,7 @@
                     </spacer>
                    </item>
                    <item>
-                    <widget class="QPushButton" name="FormCreateModelFromParts">
+                    <widget class="QPushButton" name="CreateModelFromParts">
                      <property name="text">
                       <string>Create</string>
                      </property>
@@ -1510,7 +1526,7 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>350</width>
+                 <width>344</width>
                  <height>700</height>
                 </rect>
                </property>

@@ -187,6 +187,7 @@ class Ui_MainWindow(object):
         self.toolBox.addItem(self.page_17, u"Graphene")
         self.page_4 = QWidget()
         self.page_4.setObjectName(u"page_4")
+        self.page_4.setGeometry(QRect(0, 0, 358, 582))
         self.verticalLayout_95 = QVBoxLayout(self.page_4)
         self.verticalLayout_95.setObjectName(u"verticalLayout_95")
         self.tabWidget_11 = QTabWidget(self.page_4)
@@ -596,6 +597,7 @@ class Ui_MainWindow(object):
         self.toolBox.addItem(self.page_4, u"Nanotubes")
         self.page_6 = QWidget()
         self.page_6.setObjectName(u"page_6")
+        self.page_6.setGeometry(QRect(0, 0, 371, 624))
         self.verticalLayout_93 = QVBoxLayout(self.page_6)
         self.verticalLayout_93.setObjectName(u"verticalLayout_93")
         self.groupBox_40 = QGroupBox(self.page_6)
@@ -616,11 +618,11 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_148.addWidget(self.label_108)
 
-        self.FormActionsPreLeftElectrode_2 = QLineEdit(self.frame_138)
-        self.FormActionsPreLeftElectrode_2.setObjectName(u"FormActionsPreLeftElectrode_2")
-        self.FormActionsPreLeftElectrode_2.setReadOnly(True)
+        self.part1_file = QLineEdit(self.frame_138)
+        self.part1_file.setObjectName(u"part1_file")
+        self.part1_file.setReadOnly(True)
 
-        self.horizontalLayout_148.addWidget(self.FormActionsPreLeftElectrode_2)
+        self.horizontalLayout_148.addWidget(self.part1_file)
 
         self.FormSelectPart1File = QPushButton(self.frame_138)
         self.FormSelectPart1File.setObjectName(u"FormSelectPart1File")
@@ -732,11 +734,11 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_117.addWidget(self.label_95)
 
-        self.FormActionsPreScatRegion_2 = QLineEdit(self.frame_86)
-        self.FormActionsPreScatRegion_2.setObjectName(u"FormActionsPreScatRegion_2")
-        self.FormActionsPreScatRegion_2.setReadOnly(True)
+        self.part2_file = QLineEdit(self.frame_86)
+        self.part2_file.setObjectName(u"part2_file")
+        self.part2_file.setReadOnly(True)
 
-        self.horizontalLayout_117.addWidget(self.FormActionsPreScatRegion_2)
+        self.horizontalLayout_117.addWidget(self.part2_file)
 
         self.FormSelectPart2File = QPushButton(self.frame_86)
         self.FormSelectPart2File.setObjectName(u"FormSelectPart2File")
@@ -842,10 +844,10 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_151.addItem(self.horizontalSpacer_106)
 
-        self.FormCreateModelFromParts = QPushButton(self.frame_143)
-        self.FormCreateModelFromParts.setObjectName(u"FormCreateModelFromParts")
+        self.CreateModelFromParts = QPushButton(self.frame_143)
+        self.CreateModelFromParts.setObjectName(u"CreateModelFromParts")
 
-        self.horizontalLayout_151.addWidget(self.FormCreateModelFromParts)
+        self.horizontalLayout_151.addWidget(self.CreateModelFromParts)
 
         self.horizontalSpacer_107 = QSpacerItem(106, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
@@ -862,7 +864,7 @@ class Ui_MainWindow(object):
         self.page_22 = QWidget()
         self.page_22.setObjectName(u"page_22")
         self.page_22.setEnabled(True)
-        self.page_22.setGeometry(QRect(0, 0, 350, 700))
+        self.page_22.setGeometry(QRect(0, 0, 344, 700))
         self.verticalLayout_32 = QVBoxLayout(self.page_22)
         self.verticalLayout_32.setObjectName(u"verticalLayout_32")
         self.groupBox_13 = QGroupBox(self.page_22)
@@ -5636,7 +5638,7 @@ class Ui_MainWindow(object):
         self.label_98.setText(QCoreApplication.translate("MainWindow", u"Y", None))
         self.label_103.setText(QCoreApplication.translate("MainWindow", u"Z", None))
         self.groupBox_43.setTitle(QCoreApplication.translate("MainWindow", u"Center of mass", None))
-        self.FormCreateModelFromParts.setText(QCoreApplication.translate("MainWindow", u"Create", None))
+        self.CreateModelFromParts.setText(QCoreApplication.translate("MainWindow", u"Create", None))
         self.toolBox.setItemText(self.toolBox.indexOf(self.page_6), QCoreApplication.translate("MainWindow", u"From two parts", None))
         self.groupBox_13.setTitle(QCoreApplication.translate("MainWindow", u"Left electrode", None))
         self.label_37.setText(QCoreApplication.translate("MainWindow", u"*.fdf file", None))

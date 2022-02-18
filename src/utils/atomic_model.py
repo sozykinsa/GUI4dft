@@ -422,7 +422,7 @@ class TAtomicModel(object):
 
     @staticmethod
     def atoms_from_output_optim(filename):
-        """Return the relaxed AtList from output file"""
+        """Return the relaxed AtList from output file."""
         NumberOfAtoms = TSIESTA.number_of_atoms(filename)
         Species = TSIESTA.get_species(filename)
         AtList = []
@@ -434,6 +434,9 @@ class TAtomicModel(object):
         lat_vect_2 = ""
         lat_vect_3 = ""
         mult = 1
+        search1 = "outcoor: Relaxed atomic coordinates (Ang)"
+        search2 = "outcoor: Relaxed atomic coordinates (Bohr)"
+        search3 = "outcoor: Final (unrelaxed) atomic coordinates (Bohr)"
 
         for line in open(filename, 'r'):
             if (line.find("outcell: Unit cell vectors (Ang):") > -1):
@@ -453,10 +456,9 @@ class TAtomicModel(object):
                 if f2:
                     n_vec += 1
 
-            if (line.find("outcoor: Relaxed atomic coordinates (Ang)") > -1) or (
-                    line.find("outcoor: Relaxed atomic coordinates (Bohr)") > -1):
+            if (line.find(search1) > -1) or (line.find(search2) > -1) or (line.find(search3) > -1):
                 f1 = True
-                if line.find("outcoor: Relaxed atomic coordinates (Bohr)") > -1:
+                if line.find("(Bohr)") > -1:
                     mult = 0.52917720859
             else:
                 if (len(AtList) < NumberOfAtoms) and f1:

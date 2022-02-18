@@ -2,7 +2,7 @@
 
 import OpenGL.GL as gl
 import OpenGL.GLU as glu
-from PySide2.QtWidgets import QOpenGLWidget
+from qtpy.QtWidgets import QOpenGLWidget
 from PySide2.QtCore import QEvent
 from PySide2.QtCore import QObject
 from PySide2.QtCore import Qt
@@ -10,15 +10,15 @@ from PySide2.QtGui import QColor, QPainter, QFont
 from copy import deepcopy
 from utils.atomic_model import TAtom
 from utils.atomic_model import TAtomicModel
-from utils.calculators import TCalculators
+from utils.calculators import Calculators
 from utils.periodic_table import TPeriodTable
 import math
 import numpy as np
 
 
-class mouse_events_filter(QObject):
+class MouseEventsFilter(QObject):
     def __init__(self, wind):
-        super(mouse_events_filter, self).__init__()
+        super(MouseEventsFilter, self).__init__()
         self.window = wind
 
     def eventFilter(self, obj, event):
@@ -45,18 +45,18 @@ class mouse_events_filter(QObject):
         return False
 
 
-class GuiOpenGL(object):
-    def __init__(self, widget, CheckAtomSelection, selected_atom_info=[], quality=1):
+class GuiOpenGL(QOpenGLWidget):
+    def __init__(self, widget):
         self.openGLWidget = widget
         self.MainModel = TAtomicModel()
-        self.CheckAtomSelection = CheckAtomSelection
-        if len(selected_atom_info) == 5:
-            self.selected_atom_type = selected_atom_info[0]
-            self.selected_atom_X = selected_atom_info[1]
-            self.selected_atom_Y = selected_atom_info[2]
-            self.selected_atom_Z = selected_atom_info[3]
-            self.selected_atom_properties = selected_atom_info[4]
-        self.quality = quality
+
+        self.CheckAtomSelection = False
+        self.selected_atom_type = None
+        self.selected_atom_X = None
+        self.selected_atom_Y = None
+        self.selected_atom_Z = None
+        self.selected_atom_properties = None
+        self.quality: int = 1
 
         self.QuadObjS = []
         self.object = None
@@ -76,11 +76,21 @@ class GuiOpenGL(object):
         self.openGLWidget.paintGL = self.paintGL
         self.openGLWidget.initializeGL = self.initializeGL
         self.openGLWidget.setMouseTracking(True)
-        self.filter = mouse_events_filter(self)
+        self.filter = MouseEventsFilter(self)
         self.openGLWidget.installEventFilter(self.filter)
 
-    def init_params(self, TheObject=None):
-        if TheObject == None:
+    def set_form_elements(self, check_atom_selection=None, selected_atom_info=[], quality=1):
+        self.CheckAtomSelection = check_atom_selection
+        if len(selected_atom_info) == 5:
+            self.selected_atom_type = selected_atom_info[0]
+            self.selected_atom_X = selected_atom_info[1]
+            self.selected_atom_Y = selected_atom_info[2]
+            self.selected_atom_Z = selected_atom_info[3]
+            self.selected_atom_properties = selected_atom_info[4]
+        self.quality = quality
+
+    def init_params(self, the_object=None):
+        if the_object is None:
             self.ViewOrtho = True
             self.ViewAtoms = True
             self.ViewBox = False
@@ -109,47 +119,47 @@ class GuiOpenGL(object):
             self.SelectedFragmentAtomsTransp = 1.0
             self.color_of_bonds = [0, 0, 0]
         else:
-            self.ViewOrtho = TheObject.ViewOrtho
-            self.ViewAtoms = TheObject.ViewAtoms
-            self.ViewAtomNumbers = TheObject.ViewAtomNumbers
-            self.ViewBox = TheObject.ViewBox
-            self.ViewBonds = TheObject.ViewBonds
-            self.ViewSurface = TheObject.ViewSurface
-            self.ViewContour = TheObject.ViewContour
-            self.ViewContourFill = TheObject.ViewContourFill
-            self.ViewVoronoi = TheObject.ViewVoronoi
-            self.ViewBCP = TheObject.ViewBCP
-            self.ViewBondpath = TheObject.ViewBondpath
-            self.active = TheObject.active
-            self.Scale = TheObject.Scale
-            self.bondWidth = TheObject.bondWidth
-            self.xsOld = TheObject.xsOld
-            self.ysOld = TheObject.ysOld
-            self.xScene = TheObject.xScene
-            self.yScene = TheObject.yScene
-            self.camera_position = TheObject.camera_position
-            self.rotX = TheObject.rotX
-            self.rotY = TheObject.rotY
-            self.rotZ = TheObject.rotZ
-            self.selected_atom = TheObject.selected_atom
-            self.selected_cp = TheObject.selected_cp
-            self.prop = TheObject.prop
-            self.SelectedFragmentMode = TheObject.SelectedFragmentMode
-            self.SelectedFragmentAtomsListView = TheObject.SelectedFragmentAtomsListView
-            self.SelectedFragmentAtomsTransp = TheObject.SelectedFragmentAtomsTransp
-            self.MainModel = TheObject.MainModel
-            self.color_of_atoms = TheObject.color_of_atoms
-            self.color_of_bonds = TheObject.color_of_bonds
-            self.color_of_bonds_by_atoms = TheObject.color_of_bonds_by_atoms
-            self.color_of_box = TheObject.color_of_box
-            self.ViewAxes = TheObject.ViewAxes
+            self.ViewOrtho = the_object.ViewOrtho
+            self.ViewAtoms = the_object.ViewAtoms
+            self.ViewAtomNumbers = the_object.ViewAtomNumbers
+            self.ViewBox = the_object.ViewBox
+            self.ViewBonds = the_object.ViewBonds
+            self.ViewSurface = the_object.ViewSurface
+            self.ViewContour = the_object.ViewContour
+            self.ViewContourFill = the_object.ViewContourFill
+            self.ViewVoronoi = the_object.ViewVoronoi
+            self.ViewBCP = the_object.ViewBCP
+            self.ViewBondpath = the_object.ViewBondpath
+            self.active = the_object.active
+            self.Scale = the_object.Scale
+            self.bondWidth = the_object.bondWidth
+            self.xsOld = the_object.xsOld
+            self.ysOld = the_object.ysOld
+            self.xScene = the_object.xScene
+            self.yScene = the_object.yScene
+            self.camera_position = the_object.camera_position
+            self.rotX = the_object.rotX
+            self.rotY = the_object.rotY
+            self.rotZ = the_object.rotZ
+            self.selected_atom = the_object.selected_atom
+            self.selected_cp = the_object.selected_cp
+            self.prop = the_object.prop
+            self.SelectedFragmentMode = the_object.SelectedFragmentMode
+            self.SelectedFragmentAtomsListView = the_object.SelectedFragmentAtomsListView
+            self.SelectedFragmentAtomsTransp = the_object.SelectedFragmentAtomsTransp
+            self.MainModel = the_object.MainModel
+            self.color_of_atoms = the_object.color_of_atoms
+            self.color_of_bonds = the_object.color_of_bonds
+            self.color_of_bonds_by_atoms = the_object.color_of_bonds_by_atoms
+            self.color_of_box = the_object.color_of_box
+            self.ViewAxes = the_object.ViewAxes
 
     def update(self):
         self.openGLWidget.update()
 
     def setSelectedFragmentMode(self, SelectedFragmentAtomsListView, SelectedFragmentAtomsTransp):
-        if SelectedFragmentAtomsListView == None:
-            if self.SelectedFragmentMode == True:
+        if SelectedFragmentAtomsListView is None:
+            if self.SelectedFragmentMode:
                 self.SelectedFragmentAtomsListView.clear()
             self.SelectedFragmentAtomsListView = None
             self.SelectedFragmentMode = False
@@ -857,7 +867,7 @@ class GuiOpenGL(object):
         self.color_of_voronoi = color
         volume = np.inf
         if self.selected_atom >= 0:
-            ListOfPoligons, volume = TCalculators.VoronoiAnalisis(self.MainModel, self.selected_atom, maxDist)
+            ListOfPoligons, volume = Calculators.VoronoiAnalisis(self.MainModel, self.selected_atom, maxDist)
             gl.glNewList(self.object+1, gl.GL_COMPILE)
             gl.glColor4f(color[0], color[1], color[2], 0.7)
             for poligon in ListOfPoligons:
