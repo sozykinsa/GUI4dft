@@ -2,7 +2,7 @@
 
 from copy import deepcopy
 import os
-from utils.atomic_model import TAtomicModel
+from models.atomic_model import TAtomicModel
 from utils.periodic_table import TPeriodTable
 from utils import helpers
 import numpy as np

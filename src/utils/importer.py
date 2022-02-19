@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 import os
-from utils.atomic_model import TAtomicModel
-from utils.vasp import TVASP
+from models.atomic_model import TAtomicModel
+from utils.vasp import fermi_energy_from_doscar, vasp_dos, model_to_vasp_poscar
 from utils.fdfdata import TFDFFile
 from utils.siesta import TSIESTA
 from utils import helpers
@@ -119,7 +119,7 @@ class Importer(object):
     @staticmethod
     def check_dos_file(filename):
         if filename.endswith("DOSCAR"):
-            eFermy = TVASP.fermi_energy_from_doscar(filename)
+            eFermy = fermi_energy_from_doscar(filename)
             return filename, eFermy
 
         """Check DOS file for fdf/out filename"""

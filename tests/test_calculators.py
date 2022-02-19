@@ -11,7 +11,7 @@ def test_lattice_approx():
     assert np.array(params) == pytest.approx(np.array([-3039.65306723,  -558.23175345,   114.18025869]))
 
     params, x_data, y_datat = Calculators.approx_murnaghan(data)
-    assert np.array(params) == pytest.approx(np.array([-3.72195729e+03,  5.58231753e+02,  4.0,  2.44451957e+00]))
+    assert np.array(params) == pytest.approx(np.array([-3.72195729e+03,  5.58231753e+02,  4.0,  2.44451957]), rel=1e-4)
 
     params, x_data, y_data = Calculators.approx_birch_murnaghan(data)
-    assert np.array(params) == pytest.approx(np.array([-3.72195729e+03,  5.58780686e+02,  4.0,  2.44451159e+00]))
+    assert np.array(params) == pytest.approx(np.array([-3.72195729e+03,  5.58780686e+02,  4.0,  2.44451159]), rel=1e-4)

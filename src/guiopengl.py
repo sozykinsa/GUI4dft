@@ -8,8 +8,8 @@ from PySide2.QtCore import QObject
 from PySide2.QtCore import Qt
 from PySide2.QtGui import QColor, QPainter, QFont
 from copy import deepcopy
-from utils.atomic_model import TAtom
-from utils.atomic_model import TAtomicModel
+from models.atom import Atom
+from models.atomic_model import TAtomicModel
 from utils.calculators import Calculators
 from utils.periodic_table import TPeriodTable
 import math
@@ -312,7 +312,7 @@ class GuiOpenGL(QOpenGLWidget):
         self.clean()
         self.prop = "charge"
         self.MainModel = deepcopy(structure)
-        cm = self.MainModel.centr_mass()
+        cm = self.MainModel.get_center_of_mass()
         self.x0 = -cm[0]
         self.y0 = -cm[1]
         self.z0 = -cm[2]
@@ -379,7 +379,7 @@ class GuiOpenGL(QOpenGLWidget):
             x = self.selected_atom_X.value() + self.x0
             y = self.selected_atom_Y.value() + self.y0
             z = self.selected_atom_Z.value() + self.z0
-            newAtom = TAtom([x, y, z, let, charge])
+            newAtom = Atom([x, y, z, let, charge])
             self.MainModel.add_atom(newAtom)
             self.ViewContour = False
             self.ViewContourFill = False
@@ -396,7 +396,7 @@ class GuiOpenGL(QOpenGLWidget):
                 x = self.selected_atom_X.value() + self.x0
                 y = self.selected_atom_Y.value() + self.y0
                 z = self.selected_atom_Z.value() + self.z0
-                newAtom = TAtom([x, y, z, let, charge])
+                newAtom = Atom([x, y, z, let, charge])
                 self.MainModel.edit_atom(self.selected_atom, newAtom)
                 self.ViewContour = False
                 self.ViewContourFill = False

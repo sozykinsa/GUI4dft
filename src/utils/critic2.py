@@ -42,16 +42,45 @@ def check_cro_file(filename):
         return "", "", "", []
 
 
+def model_to_critic_xyz_file(model, cps):
+    """Returns data for *.xyz file with CP and BCP."""
+    text = ""
+
+    n_atoms = model.nAtoms()
+    for i in range(0, n_atoms):
+        text += model.atoms[i].to_string() + "\n"
+
+    n_cp = len(cps)
+    for cp in cps:
+        text += cp.to_string() + "\n"
+
+    n_bcp = 0
+    for cp in cps:
+        bond1 = cp.getProperty("bond1")
+        bond2 = cp.getProperty("bond2")
+
+        for i in range(0, len(bond1)):
+            n_bcp += 1
+            text += bond1[i].to_string() + "\n"
+
+        for i in range(0, len(bond2)):
+            n_bcp += 1
+            text += bond2[i].to_string() + "\n"
+
+    header = "   " + str(n_atoms + n_cp + n_bcp) + "\n\n"
+    return header + text
+
+
 def create_critic2_xyz_file(bcp, bcp_seleсted, is_with_selected, model):
     text = ""
     if is_with_selected:
-        text = model.toCriticXYZfile(bcp_seleсted)
+        text = model_to_critic_xyz_file(model, bcp_seleсted)
     else:
         for b in bcp_seleсted:
             for cp in bcp:
                 if cp.to_string() == b.to_string():
                     bcp.remove(cp)
-        text = model.toCriticXYZfile(bcp)
+        text = model_to_critic_xyz_file(model, bcp)
     return text
 
 

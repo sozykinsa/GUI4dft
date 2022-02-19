@@ -15,10 +15,10 @@ import matplotlib.pyplot as plt
 #import pyqtgraph as pg  # pip install pyqtgraph
 import numpy as np
 from utils import helpers
-from utils.atomic_model import TAtomicModel
+from models.atomic_model import TAtomicModel
 from utils.calculators import Calculators as Calculator
 from utils.calculators import gaps
-from utils.critic2 import check_cro_file
+from utils.critic2 import check_cro_file, model_to_critic_xyz_file
 from models.models import TCapedSWNT
 from models.models import TBiNT
 from utils.fdfdata import TFDFFile
@@ -26,7 +26,7 @@ from models.models import TGraphene
 from utils.periodic_table import TPeriodTable
 from utils.siesta import TSIESTA
 from models.models import TSWNT
-from utils.vasp import TVASP
+from utils.vasp import fermi_energy_from_doscar, vasp_dos, model_to_vasp_poscar
 from utils.importer import Importer
 from utils.electronic_prop_reader import read_siesta_bands, dos_from_file
 from PySide2.QtCore import QCoreApplication, QLocale, QSettings, Qt, QSize
@@ -1340,7 +1340,7 @@ class mainWindow(QMainWindow):
         angle = self.ui.FormModifyRotationAngle.value()
         model = self.MainForm.MainModel
         if self.ui.FormModifyRotationCenter.isChecked():
-            center = model.centr_mass()
+            center = model.get_center_of_mass()
             model.move(center[0], center[1], center[2])
         if self.ui.FormModifyRotationX.isChecked():
             model.rotateX(angle)
@@ -1818,7 +1818,7 @@ class mainWindow(QMainWindow):
 
             if os.path.exists(path):
                 if path.endswith("DOSCAR"):
-                    spin_up, spin_down, energy = TVASP.DOS(path)
+                    spin_up, spin_down, energy = vasp_dos(path)
                 else:
                     spin_up, spin_down, energy = dos_from_file(path)
 

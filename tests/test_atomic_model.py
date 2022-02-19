@@ -1,4 +1,5 @@
-from utils.atomic_model import TAtomicModel
+from models.atomic_model import TAtomicModel
+import pytest
 import numpy as np
 
 
@@ -16,6 +17,11 @@ def test_atomic_model_quack_as_ase(h2o_model):
     num = model.get_atomic_numbers()
     assert type(num) == np.ndarray
     assert len(num) == 3
+    cm = model.get_center_of_mass()
+    assert type(cm) == np.ndarray
+    assert cm == pytest.approx(np.array([0.0,  0.0,  0.0]))
+    tags = model.get_tags()
+    assert tags == []
 
 
 def test_find_bonds_exact(h2o_model):

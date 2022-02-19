@@ -1,6 +1,6 @@
 from pathlib import Path
 from pyqtgraphwidget import PyqtGraphWidget
-from utils.atomic_model import TAtomicModel
+from models.atomic_model import TAtomicModel
 from utils.periodic_table import TPeriodTable
 
 import pytest

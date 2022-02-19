@@ -12,7 +12,8 @@ from scipy.spatial import ConvexHull
 from scipy.spatial import Voronoi
 
 from utils import helpers
-from utils.atomic_model import TAtom, TAtomicModel
+from models.atom import Atom
+from models.atomic_model import TAtomicModel
 
 
 def gaps(bands, emaxf, eminf, homo, lumo) -> Tuple[float, float]:
@@ -57,7 +58,7 @@ class Calculators:
                 a = math.sqrt(radTube*radTube - x*x)
                 y = random.uniform(-a, a)
                 z = random.uniform(0, length)
-                Molecula.add_atom(TAtom([x, y, z, let, charge]), 2 * radAtom)
+                Molecula.add_atom(Atom([x, y, z, let, charge]), 2 * radAtom)
                 j += 1
 
             if len(Molecula.atoms) < nAtoms:

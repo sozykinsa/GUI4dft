@@ -195,8 +195,8 @@ class TPeriodTable:
         for atom in self.Atoms:
             if atom.let.lower() == let.lower():
                 return int(atom.charge)
-            if let.lower() == "direct":
-                return 200
+        if let.lower() == "direct":
+            return 200
         return -1
 
     def get_all_colors(self):

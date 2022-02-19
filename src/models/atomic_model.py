@@ -13,43 +13,7 @@ from utils import helpers
 from utils.periodic_table import TPeriodTable
 from utils.siesta import TSIESTA
 from utils.fdfdata import TFDFFile
-
-
-##################################################################
-########################### TATOM ################################
-##################################################################    
-
-class TAtom(object):
-    def __init__(self, atData):
-        """Constructor"""
-        self.x = atData[0]
-        self.y = atData[1]
-        self.z = atData[2]
-        self.let = atData[3]
-        self.charge = int(atData[4])
-        self.selected = False
-        self.fragment1 = False
-        self.properties = {}
-        pass
-
-    def setSelected(self, fl):
-        self.selected = fl
-
-    def isSelected(self):
-        return self.selected
-
-    def setProperty(self, prop, val):
-        self.properties[prop] = val
-
-    def getProperty(self, prop):
-        return self.properties.get(prop)
-
-    def to_string(self):
-        let = self.let
-        sx = helpers.float_to_string(self.x)
-        sy = helpers.float_to_string(self.y)
-        sz = helpers.float_to_string(self.z)
-        return let + '  ' + sx + '  ' + sy + '  ' + sz
+from models.atom import Atom
 
 
 ##################################################################
@@ -73,10 +37,10 @@ class TAtomicModel(object):
         self.LatVect3 = np.array([0, 0, 100])
 
         for at in newatoms:
-            if isinstance(at, TAtom):
+            if isinstance(at, Atom):
                 atom = deepcopy(at)
             else:
-                atom = TAtom(at)
+                atom = Atom(at)
             self.add_atom(atom)
 
     def get_positions(self):
@@ -400,7 +364,7 @@ class TAtomicModel(object):
                             y = row[1]
                             z = row[2]
 
-                            newStr.add_atom(TAtom([x, y, z, let, charge]))
+                            newStr.add_atom(Atom([x, y, z, let, charge]))
                     newStr.set_lat_vectors(lat1, lat2, lat3)
                     newStr.convert_from_direct_to_cart()
                     molecules.append(newStr)
@@ -518,7 +482,7 @@ class TAtomicModel(object):
                         z = float(s[2])
                         charge = periodTable.get_charge_by_letter(SortsOfAtoms[i])
                         let = SortsOfAtoms[i]
-                        new_str.add_atom(TAtom([x, y, z, let, charge]))
+                        new_str.add_atom(Atom([x, y, z, let, charge]))
                 new_str.set_lat_vectors(lat1, lat2, lat3)
                 new_str.convert_from_direct_to_cart()
                 molecules.append(new_str)
@@ -548,7 +512,7 @@ class TAtomicModel(object):
                 z = float(S[4])
                 charge = int(S[1])
                 let = periodTable.get_let(charge)
-                newStr.add_atom(TAtom([x, y, z, let, charge]))
+                newStr.add_atom(Atom([x, y, z, let, charge]))
             newStr.set_lat_vectors(lat1, lat2, lat3)
             newStr.convert_from_direct_to_cart()
             molecules.append(newStr)
@@ -858,7 +822,7 @@ class TAtomicModel(object):
         return len(self.atoms)
 
     def centr_mass(self, charge=0):
-        """The method returns the center of mass of the molecule"""
+        """The method returns the center of mass of the molecule."""
         cx = 0
         cy = 0
         cz = 0
@@ -885,7 +849,7 @@ class TAtomicModel(object):
             print("ZeroDivisionError")
             return [0, 0, 0]
 
-        return res
+        return np.array(res)
 
     def rotateX(self, alpha):
         """The method RotateAtList rotate the AtList on alpha Angle"""
@@ -1516,34 +1480,6 @@ class TAtomicModel(object):
         str2 = '  ' + sx + '  ' + sy + '  ' + sz
         return str2
 
-    def toCriticXYZfile(self, cps):
-        """ returns data for *.xyz file with CP and BCP """
-        text = ""
-
-        n_atoms = self.nAtoms()
-        for i in range(0, n_atoms):
-            text += self.atoms[i].to_string() + "\n"
-
-        n_cp = len(cps)
-        for cp in cps:
-            text += cp.to_string() + "\n"
-
-        n_bcp = 0
-        for cp in cps:
-            bond1 = cp.getProperty("bond1")
-            bond2 = cp.getProperty("bond2")
-
-            for i in range(0, len(bond1)):
-                n_bcp += 1
-                text += bond1[i].to_string() + "\n"
-
-            for i in range(0, len(bond2)):
-                n_bcp += 1
-                text += bond2[i].to_string() + "\n"
-
-        header = "   " + str(n_atoms + n_cp + n_bcp) + "\n\n"
-        return header + text
-
     def toSIESTAxyzdata(self):
         """ returns data for *.xyz file """
         data = "  "
@@ -1559,43 +1495,6 @@ class TAtomicModel(object):
         data = ""
         data += "!model \n $DATA\njob\nCn 1\n\n"
         data += self.coords_for_export("FireflyINP")
-
-        print(data, file=f)
-        f.close()
-
-    def toVASPposcar(self, filename):
-        """ create file in VASP POSCAR format """
-        f = open(filename, 'w')
-
-        data = ""
-        data += "model \n"
-        data += ' 1.0 \n'
-
-        data += '  ' + str(self.LatVect1[0]) + '  ' + str(self.LatVect1[1]) + '  ' + str(self.LatVect1[2]) + '\n'
-        data += '  ' + str(self.LatVect2[0]) + '  ' + str(self.LatVect2[1]) + '  ' + str(self.LatVect2[2]) + '\n'
-        data += '  ' + str(self.LatVect3[0]) + '  ' + str(self.LatVect3[1]) + '  ' + str(self.LatVect3[2]) + '\n'
-
-        PerTab = TPeriodTable()
-
-        types = self.typesOfAtoms()
-        for i in range(0, len(types)):
-            data += ' ' + str(PerTab.get_let(int(types[i][0])))
-        data += "\n"
-
-        for i in range(0, len(types)):
-            count = 0
-            for atom in self.atoms:
-                if atom.charge == int(types[i][0]):
-                    count += 1
-            data += ' ' + str(count)
-        data += "\n"
-
-        data += "Direct\n"
-
-        self.sort_atoms_by_type()
-        self.GoToPositiveCoordinates()
-        self.convert_from_cart_to_direct()
-        data += self.coords_for_export("FractionalPOSCAR")
 
         print(data, file=f)
         f.close()
