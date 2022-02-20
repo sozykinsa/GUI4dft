@@ -18,7 +18,7 @@ class TSIESTA:
 
     @staticmethod
     def lattice_constant(filename):
-        """/Returns the LatticeConstant from SIESTA output file."""
+        """Returns the LatticeConstant from SIESTA output file."""
         mult = 1
         latc = helpers.from_file_property(filename, 'LatticeConstant', 1, 'unformatted')
         if latc is None:
@@ -180,9 +180,10 @@ class TSIESTA:
                     str1 = md_siesta_file.readline()
                 md_siesta_file.close()
 
-                charges = charges_for_all_steps[-1]
-                for i in range(0, len(charges)):
-                    charges[i][1] = round(charges[i][1], 3)
+                if len(charges_for_all_steps) > 0:
+                    charges = charges_for_all_steps[-1]
+                    for i in range(0, len(charges)):
+                        charges[i][1] = round(charges[i][1], 3)
                 return charges
 
             searchSTR1 = ""

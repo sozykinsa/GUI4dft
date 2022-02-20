@@ -23,7 +23,7 @@ def float_to_string(fl):
     return res
 
 
-def is_number(row):
+def is_number(row) -> bool:
     try:
         float(row)
         return True
@@ -46,12 +46,6 @@ def list_str_to_float(x):
 
 def list_str_to_int(x):
     return [int(item) for item in x]
-
-
-def write_text_to_file(fname, text):
-    f = open(fname, 'w')
-    print(text, file=f)
-    f.close()
 
 
 def getsubs(dir):
@@ -120,7 +114,7 @@ def from_file_property(filename, prop, count=1, prop_type='int'):
         return None
 
 
-def write_text_to_file(fname, text):
+def write_text_to_file(fname, text):  # pragma: no cover
     f = open(fname, 'w')
     print(text, file=f)
     f.close()
@@ -164,14 +158,14 @@ def property_from_sub_file(filename, k, prop, count, typen):
     return is_found, k, property
 
 
-def RoundToPlane(atom, R):
-    """ RoundToPlane  """
-    z = atom.z
-    fi = math.asin(atom.x/R)
-    if atom.y <= -1e-3:
-        fi = 3.14 - fi
-    x = -R * fi
-    return [x, z]
+#def RoundToPlane(atom, R):
+#    """ RoundToPlane  """
+#    z = atom.z
+#    fi = math.asin(atom.x/R)
+#    if atom.y <= -1e-3:
+#        fi = 3.14 - fi
+#    x = -R * fi
+#    return [x, z]
 
 
 def utf8_letter(let):

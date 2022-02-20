@@ -118,11 +118,10 @@ class Importer(object):
 
     @staticmethod
     def check_dos_file(filename):
+        """Check DOS file for fdf/out filename."""
         if filename.endswith("DOSCAR"):
-            eFermy = fermi_energy_from_doscar(filename)
-            return filename, eFermy
+            return filename, fermi_energy_from_doscar(filename)
 
-        """Check DOS file for fdf/out filename"""
         system_label = TSIESTA.system_label(filename)
         file = os.path.dirname(filename) + "/" + str(system_label) + ".DOS"
         if os.path.exists(file):
@@ -132,9 +131,9 @@ class Importer(object):
 
     @staticmethod
     def check_pdos_file(filename):
-        """Check PDOS file for fdf/out filename"""
-        SystemLabel = TSIESTA.system_label(filename)
-        file = os.path.dirname(filename) + "/" + str(SystemLabel) + ".PDOS"
+        """Check PDOS file for fdf/out filename."""
+        system_label = TSIESTA.system_label(filename)
+        file = os.path.dirname(filename) + "/" + str(system_label) + ".PDOS"
         if os.path.exists(file):
             return file
         else:
@@ -142,9 +141,9 @@ class Importer(object):
 
     @staticmethod
     def check_bands_file(filename):
-        """Check PDOS file for fdf/out filename"""
-        SystemLabel = TSIESTA.system_label(filename)
-        file = os.path.dirname(filename) + "/" + str(SystemLabel) + ".bands"
+        """Check PDOS file for fdf/out filename."""
+        system_label = TSIESTA.system_label(filename)
+        file = os.path.dirname(filename) + "/" + str(system_label) + ".bands"
         if os.path.exists(file):
             return file
         else:

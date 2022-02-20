@@ -21,7 +21,11 @@ def test_helpers_numbers_and_strings():
 
 def test_utf8_letter():
     assert '\u0393' == helpers.utf8_letter(r'\Gamma')
+    assert '\u0394' == helpers.utf8_letter(r'\Delta')
     assert '\u039B' == helpers.utf8_letter(r'\Lambda')
+    assert '\u03A0' == helpers.utf8_letter(r'\Pi')
+    assert '\u03A3' == helpers.utf8_letter(r'\Sigma')
+    assert '\u03A9' == helpers.utf8_letter(r'\Omega')
 
 
 def test_list_n2_split():

@@ -194,8 +194,10 @@ class TPeriodTable:
     def get_charge_by_letter(self, let):
         for atom in self.Atoms:
             if atom.let.lower() == let.lower():
+                print(atom.let.lower(), let.lower)
                 return int(atom.charge)
         if let.lower() == "direct":
+            print("direct found")
             return 200
         return -1
 

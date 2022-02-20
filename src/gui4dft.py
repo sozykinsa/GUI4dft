@@ -37,8 +37,8 @@ from PySide2.QtWidgets import QListWidgetItem, QAction, QApplication, QDialog, Q
 from PySide2.QtWidgets import QDoubleSpinBox, QMainWindow, QShortcut, QTableWidgetItem, QTreeWidgetItem
 from PySide2.QtWidgets import QTreeWidgetItemIterator
 from guiopengl import GuiOpenGL
-from TInterface import AtomsIdentifier
-from TInterface import Image3Dexporter
+from atomidentifier import AtomsIdentifier
+from image3dexporter import Image3Dexporter
 from TInterface import TGaussianCube
 from TInterface import TVolumericData
 from TInterface import TXSF

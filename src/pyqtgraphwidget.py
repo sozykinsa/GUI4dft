@@ -106,7 +106,7 @@ class PyqtGraphWidget(QWidget):
         self.graphWidget.setLabel("left", self.y_title, **self.styles)
         self.graphWidget.setLabel("bottom", self.x_title, **self.styles)
 
-    def add_line(self, _pos, _angle, _width, _style):
+    def add_line(self, _pos, _angle, _width, _style):  # pragma: no cover
         # _style: Qt.SolidLine, Qt.DashLine, Qt.DotLine, Qt.DashDotLine, Qt.DashDotDotLine
         pen = pg.mkPen(color=self.COLORS[0], width=_width, style=_style)
         line = pg.InfiniteLine(pos=_pos, angle=_angle, pen=pen)
@@ -117,10 +117,10 @@ class PyqtGraphWidget(QWidget):
         self.legend_item.setLabelTextSize(str(self.font_size_legend) + 'pt')
         self.legend_item.setLabelTextColor(pg.mkColor(0, 0, 0))
 
-    def set_xticks(self, ticks):
+    def set_xticks(self, ticks) -> None:  # pragma: no cover
         self.graphWidget.getAxis("bottom").setTicks(ticks)
 
-    def add_histogram(self, vals, num_bins, facecolor, x_title, y_title):
+    def add_histogram(self, vals, num_bins, facecolor, x_title, y_title) -> None:  # pragma: no cover
         self.apply_styles()
         y, x = np.histogram(vals, bins=num_bins)
         curve = pg.PlotCurveItem(x, y, stepMode=True, fillLevel=0, brush=facecolor)
@@ -129,9 +129,9 @@ class PyqtGraphWidget(QWidget):
         self.y_title = y_title
         self.add_axes_titles()
 
-    def set_limits(self, x_min, x_max, y_min, y_max):
+    def set_limits(self, x_min, x_max, y_min, y_max):  # pragma: no cover
         self.graphWidget.setXRange(x_min, x_max, padding=0)
         self.graphWidget.setYRange(y_min, y_max, padding=0)
 
-    def enable_auto_range(self):
+    def enable_auto_range(self):  # pragma: no cover
         self.graphWidget.enableAutoRange()

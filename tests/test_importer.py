@@ -15,6 +15,18 @@ def test_importer_fdf(tests_path):
     assert len(model[0].atoms) == 3
 
 
+def test_importer_ani(tests_path):
+    f_name = str(tests_path / 'ref_data' / 'h2o-ang' / "siesta.ANI")
+    model, fdf = Importer.Import(f_name, fl='all', prop=False, xyzcritic2=False)
+    # no file
+    assert len(model) == 0
+
+    f_name = str(tests_path / 'ref_data' / 'swcnt(8,0)' / "siesta.ANI")
+    model, fdf = Importer.Import(f_name, fl='all', prop=False, xyzcritic2=False)
+    # no file
+    assert len(model[0].atoms) == 32
+
+
 def test_importer_output(tests_path):
     f_name = str(tests_path / 'ref_data' / 'h2o-ang' / "siesta.out")
     model, fdf = Importer.Import(f_name, fl='all', prop=True, xyzcritic2=False)

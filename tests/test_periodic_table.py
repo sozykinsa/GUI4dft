@@ -18,7 +18,7 @@ def test_get_let(period_table):
     assert period_table.get_let(300) == "Direct"
 
 
-def get_get_charge_by_letter(period_table):
+def test_get_get_charge_by_letter(period_table):
     assert 200 == period_table.get_charge_by_letter("Direct")
     assert 6 == period_table.get_charge_by_letter("C")
 
