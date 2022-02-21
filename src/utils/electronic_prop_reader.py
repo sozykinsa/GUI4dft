@@ -34,7 +34,7 @@ def read_row_of_dos_file(dos_file, energy, n, spin_down, spin_up, str_dos):
     energy.append(float(line1[0]))
     spin_up.append(float(line1[1]))
     if len(line1) > n:
-        spin_down.append(float(line1[2]))
+        spin_down.append(float(line1[n]))
     else:
         spin_down.append(0)
     str_dos = dos_file.readline()

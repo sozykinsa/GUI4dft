@@ -12,8 +12,12 @@ def test_fdf_parser(tests_path):
     assert bands
     pulay = fdf.get_property("DM.NumberPulay")
     assert pulay == "4"
+    pulay_er = fdf.get_property("DN.NumberPulay")
+    assert pulay_er == ""
     spin = fdf.get_property("Spin")
     assert spin == "non-polarized"
+    basis_sizes = fdf.get_block("PAO.BasisSizes")
+    assert basis_sizes[0] == "    C\tDZP\n"
 
 
 def test_get_all_data(tests_path):

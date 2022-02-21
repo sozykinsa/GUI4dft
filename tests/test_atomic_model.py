@@ -1,6 +1,7 @@
 from models.atomic_model import TAtomicModel
 import pytest
 import numpy as np
+from copy import deepcopy
 
 
 def test_atomic_model():
@@ -30,6 +31,30 @@ def test_find_bonds_exact(h2o_model):
     assert len(bonds) == 2
     assert bonds[0][-1] == 1
     assert bonds[1][-1] == 2
+
+
+def test_grow(h2o_model):
+    model = h2o_model
+    model_x = model.grow_x()
+    assert len(model_x.atoms) == 6
+    assert model_x.LatVect1 == pytest.approx(2 * model.LatVect1)
+
+    model_y = model.grow_y()
+    assert len(model_y.atoms) == 6
+    assert model_y.LatVect2 == pytest.approx(2 * model.LatVect2)
+
+    model_z = model.grow_z()
+    assert len(model_z.atoms) == 6
+    assert model_z.LatVect3 == pytest.approx(2 * model.LatVect3)
+
+
+def test_move(h2o_model):
+    model = h2o_model
+    model_move = deepcopy(h2o_model)
+    model_move.move(1.0, 2.0, 3.0)
+    assert model.atoms[0].x + 1.0 == model_move.atoms[0].x
+    assert model.atoms[0].y + 2.0 == model_move.atoms[0].y
+    assert model.atoms[0].z + 3.0 == model_move.atoms[0].z
 
 
 def test_atom_atom_distance(h2o_model):

@@ -544,13 +544,13 @@ class GuiOpenGL(QOpenGLWidget):
         vect = Mx.dot(vect)
         return vect
 
-    def add_bond(self, Atom1Pos, Atom2Pos, Radius=0.1, type = 'cylinder'):
+    def add_bond(self, Atom1Pos, Atom2Pos, Radius=0.1, type='cylinder'):
         Radius2 = Radius
         if type == 'conus':
             Radius2 = 0
         Rel = [Atom2Pos[0]-Atom1Pos[0], Atom2Pos[1]-Atom1Pos[1], Atom2Pos[2]-Atom1Pos[2]]
-        BindingLen = math.sqrt(math.pow(Rel[0], 2) + math.pow(Rel[1], 2) + math.pow(Rel[2], 2)) # высота цилиндра
-        if (BindingLen != 0):
+        BindingLen = math.sqrt(math.pow(Rel[0], 2) + math.pow(Rel[1], 2) + math.pow(Rel[2], 2))  # высота цилиндра
+        if BindingLen != 0:
             Fall = 180.0/math.pi*math.acos(Rel[2] / BindingLen)
             Yaw = 180.0/math.pi*math.atan2(Rel[1], Rel[0])
        
@@ -948,7 +948,7 @@ class GuiOpenGL(QOpenGLWidget):
         for row in text_to_render:
             fl = True
             x, y, z, st = row[0], row[1], row[2], row[3]
-            pos_x, pos_y, pos_z = self.getScreenCoords(x, y, z)
+            pos_x, pos_y, pos_z = self.get_screen_coords(x, y, z)
             pos_y = height - pos_y  # y is inverted
             for old in used_space:
                 if ((pos_x - old[0]) * (pos_x - old[0]) < 250) and ((pos_y - old[1]) * (pos_y - old[1]) < 250):
@@ -1012,7 +1012,7 @@ class GuiOpenGL(QOpenGLWidget):
         gl.glLoadIdentity()
 
     def get_atom_on_screen(self):
-        point = self.get_point_in_3D(self.xScene, self.yScene)
+        point = self.get_point_in_3d(self.xScene, self.yScene)
 
         oldSelected = self.selected_atom
         need_for_update = False
@@ -1071,21 +1071,21 @@ class GuiOpenGL(QOpenGLWidget):
                 ind1 = at
         return ind1, minr1
 
-    def get_point_in_3D(self, x, y):
+    def get_point_in_3d(self, x, y):
         model = gl.glGetDoublev(gl.GL_MODELVIEW_MATRIX)
         proj = gl.glGetDoublev(gl.GL_PROJECTION_MATRIX)
         view = gl.glGetIntegerv(gl.GL_VIEWPORT)
         winY = int(float(view[3]) - float(y))
         z = gl.glReadPixels(x, winY, 1, 1, gl.GL_DEPTH_COMPONENT, gl.GL_FLOAT)
         point = glu.gluUnProject(x, y, z, model, proj, view)
-        al = math.pi * self.rotX / 180
-        bet = 0 # math.pi * self.rotY / 180
-        gam = math.pi * self.rotZ / 180
-        point = self.rotate_un_vector(np.array(point), al, bet, gam)
-        point = self.rotate_vector(np.array(point), al, bet, gam)
+        #al = math.pi * self.rotX / 180
+        #bet = 0  # math.pi * self.rotY / 180
+        #gam = math.pi * self.rotZ / 180
+        #point = self.rotate_un_vector(np.array(point), al, bet, gam)
+        #point = self.rotate_vector(np.array(point), al, bet, gam)
         return point
 
-    def getScreenCoords(self, x, y, z):
+    def get_screen_coords(self, x, y, z):
         model = gl.glGetDoublev(gl.GL_MODELVIEW_MATRIX)
         proj = gl.glGetDoublev(gl.GL_PROJECTION_MATRIX)
         view = gl.glGetIntegerv(gl.GL_VIEWPORT)

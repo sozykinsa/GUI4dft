@@ -79,17 +79,6 @@ def cdev(ii, jj):
             j = ir
 
 
-#def mini(list_2d):
-#    """Sorts the list in ascending order of the first column.
-#    The method returns the index of the minimum element in the second column."""
-#    list_2d = sorted(list_2d, key=itemgetter(0))
-#    imin = 0
-#    for i in range(1, len(list_2d)):
-#        if float(list_2d[i][1]) < float(list_2d[imin][1]):
-#            imin = i
-#    return imin
-
-
 def list_n2_split(data):
     x = []
     y = []
@@ -132,7 +121,7 @@ def property_from_sub_file(filename, k, prop, count, typen):
                 new_f = str1.split()[1]
                 file = os.path.dirname(filename) + "/" + new_f
                 is_found, k, property = property_from_sub_file(file, k, prop, count, typen)
-            if (str1 != '') and (str1.find(prop) >= 0):
+            if (str1 != '') and (str1.find(prop) >= 0) and not str1.lstrip().startswith('#'):
                 str1 = str1.replace(prop, ' ')
                 if typen == "unformatted":
                     property = str1

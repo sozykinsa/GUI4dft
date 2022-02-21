@@ -449,46 +449,6 @@ class TAtomicModel(object):
         return []
 
     @staticmethod
-    def atoms_from_POSCAR(filename):
-        """import from xyz file"""
-        periodTable = TPeriodTable()
-        molecules = []
-        if os.path.exists(filename):
-            struct_file = open(filename)
-            str1 = helpers.spacedel(struct_file.readline())
-            latConst = float(helpers.spacedel(struct_file.readline()))
-            lat1 = helpers.spacedel(struct_file.readline()).split()
-            lat1 = np.array(helpers.list_str_to_float(lat1)) * latConst
-            lat2 = helpers.spacedel(struct_file.readline()).split()
-            lat2 = np.array(helpers.list_str_to_float(lat2)) * latConst
-            lat3 = helpers.spacedel(struct_file.readline()).split()
-            lat3 = np.array(helpers.list_str_to_float(lat3)) * latConst
-            SortsOfAtoms = helpers.spacedel(struct_file.readline()).split()
-            NumbersOfAtoms = helpers.spacedel(struct_file.readline()).split()
-            NumbersOfAtoms = helpers.list_str_to_int(NumbersOfAtoms)
-            NumberOfAtoms = 0
-            for number in NumbersOfAtoms:
-                NumberOfAtoms += number
-
-            if helpers.spacedel(struct_file.readline()).lower() == "direct":
-                new_str = TAtomicModel()
-                for i in range(0, len(NumbersOfAtoms)):
-                    number = NumbersOfAtoms[i]
-                    for j in range(0, number):
-                        str1 = helpers.spacedel(struct_file.readline())
-                        s = str1.split(' ')
-                        x = float(s[0])
-                        y = float(s[1])
-                        z = float(s[2])
-                        charge = periodTable.get_charge_by_letter(SortsOfAtoms[i])
-                        let = SortsOfAtoms[i]
-                        new_str.add_atom(Atom([x, y, z, let, charge]))
-                new_str.set_lat_vectors(lat1, lat2, lat3)
-                new_str.convert_from_direct_to_cart()
-                molecules.append(new_str)
-        return molecules
-
-    @staticmethod
     def atoms_from_struct_out(filename):
         """import from STRUCT_OUT file"""
         periodTable = TPeriodTable()
@@ -1177,8 +1137,8 @@ class TAtomicModel(object):
         newModel.set_lat_vectors(3 * self.LatVect1, 3 * self.LatVect2, 3 * self.LatVect3)
         return newModel
 
-    def growX(self):
-        """ translate model in X direction """
+    def grow_x(self):
+        """Translate model in X direction."""
         newAtList = deepcopy(self.atoms)
         vect = self.LatVect1
         copyOfModel = TAtomicModel(self.atoms)
@@ -1189,8 +1149,8 @@ class TAtomicModel(object):
         newModel.set_lat_vectors(2 * self.LatVect1, self.LatVect2, self.LatVect3)
         return newModel
 
-    def growY(self):
-        """ translate model in Y direction """
+    def grow_y(self):
+        """Translate model in Y direction."""
         newAtList = deepcopy(self.atoms)
         vect = self.LatVect2
         copyOfModel = TAtomicModel(self.atoms)
@@ -1201,8 +1161,8 @@ class TAtomicModel(object):
         newModel.set_lat_vectors(self.LatVect1, 2 * self.LatVect2, self.LatVect3)
         return newModel
 
-    def growZ(self):
-        """ translate model in Z direction """
+    def grow_z(self):
+        """Translate model in Z direction."""
         newAtList = deepcopy(self.atoms)
         vect = self.LatVect3
         copyOfModel = TAtomicModel(self.atoms)
@@ -1213,23 +1173,23 @@ class TAtomicModel(object):
         newModel.set_lat_vectors(self.LatVect1, self.LatVect2, 2 * self.LatVect3)
         return newModel
 
-    def move(self, Lx, Ly, Lz):
-        """ move model by the vector """
+    def move(self, l_x, l_y, l_z):
+        """Move model by the vector."""
         for atom in self.atoms:
-            atom.x += Lx
-            atom.y += Ly
-            atom.z += Lz
+            atom.x += l_x
+            atom.y += l_y
+            atom.z += l_z
 
         for point in self.bcp:
-            point.x += Lx
-            point.y += Ly
-            point.z += Lz
+            point.x += l_x
+            point.y += l_y
+            point.z += l_z
 
-            self.move_bond_path(Lx, Ly, Lz, point.getProperty("bond1"))
-            self.move_bond_path(Lx, Ly, Lz, point.getProperty("bond2"))
+            self.move_bond_path(l_x, l_y, l_z, point.getProperty("bond1"))
+            self.move_bond_path(l_x, l_y, l_z, point.getProperty("bond2"))
 
-            self.move_bond_path(Lx, Ly, Lz, point.getProperty("bond1opt"))
-            self.move_bond_path(Lx, Ly, Lz, point.getProperty("bond2opt"))
+            self.move_bond_path(l_x, l_y, l_z, point.getProperty("bond1opt"))
+            self.move_bond_path(l_x, l_y, l_z, point.getProperty("bond2opt"))
         return self.atoms
 
     def move_bond_path(self, Lx, Ly, Lz, bond):
@@ -1240,7 +1200,7 @@ class TAtomicModel(object):
                 bp.z += Lz
 
     def typesOfAtoms(self):
-        elements = np.zeros((200))
+        elements = np.zeros(200)
         for atom in self.atoms:
             elements[atom.charge] += 1
         types = []

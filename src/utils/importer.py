@@ -2,7 +2,7 @@
 
 import os
 from models.atomic_model import TAtomicModel
-from utils.vasp import fermi_energy_from_doscar, vasp_dos, model_to_vasp_poscar
+from utils.vasp import fermi_energy_from_doscar, vasp_dos, model_to_vasp_poscar, atoms_from_POSCAR
 from utils.fdfdata import TFDFFile
 from utils.siesta import TSIESTA
 from utils import helpers
@@ -113,7 +113,7 @@ class Importer(object):
                 models = TAtomicModel.atoms_from_XMOLxyz(filename)
 
             if fileFormat == "VASPposcar":
-                models = TAtomicModel.atoms_from_POSCAR(filename)
+                models = atoms_from_POSCAR(filename)
         return models, fdf
 
     @staticmethod

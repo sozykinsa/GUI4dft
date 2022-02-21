@@ -31,5 +31,5 @@ class PyqtGraphWidgetImage(QWidget):
         self.graphWidget.nextRow()
         self.graphWidget.setFixedHeight(self.bar_width + 5)
 
-    def clear(self):
+    def clear(self):  # pragma: no cover
         self.graphWidget.clear()

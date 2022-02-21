@@ -10,6 +10,7 @@ NumberOfAtoms	32
     C	DZP
 %endblock PAO.BasisSizes
 
+# LatticeConstant	2.0 Ang
 
 LatticeConstant	1.0 Ang
 %block LatticeVectors

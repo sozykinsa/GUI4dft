@@ -1356,7 +1356,7 @@ class mainWindow(QMainWindow):
         if self.MainForm.MainModel.nAtoms() == 0:
             return
         model = self.MainForm.MainModel
-        model = model.growX()
+        model = model.grow_x()
         self.models.append(model)
         self.fill_models_list()
         self.model_to_screen(-1)
@@ -1365,7 +1365,7 @@ class mainWindow(QMainWindow):
         if self.MainForm.MainModel.nAtoms() == 0:
             return
         model = self.MainForm.MainModel
-        model = model.growY()
+        model = model.grow_y()
         self.models.append(model)
         self.fill_models_list()
         self.model_to_screen(-1)
@@ -1374,7 +1374,7 @@ class mainWindow(QMainWindow):
         if self.MainForm.MainModel.nAtoms() == 0:
             return
         model = self.MainForm.MainModel
-        model = model.growZ()
+        model = model.grow_z()
         self.models.append(model)
         self.fill_models_list()
         self.model_to_screen(-1)

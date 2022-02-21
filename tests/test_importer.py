@@ -104,3 +104,8 @@ def test_importer_check_dos_pdos_bands(tests_path):
     bands_file = Importer.check_bands_file(f_name)
     assert bands_file.endswith("siesta.bands")
 
+
+def test_importer_poscar(tests_path):
+    f_name = str(tests_path / 'ref_data' / 'vasp' / 'POSCAR')
+    model, fdf = Importer.Import(f_name, fl='all', prop=False, xyzcritic2=False)
+    assert len(model[0].atoms) == 1
