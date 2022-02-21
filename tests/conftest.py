@@ -4,6 +4,11 @@ from pyqtgraphwidgetimage import PyqtGraphWidgetImage
 from models.atomic_model import TAtomicModel
 from utils.periodic_table import TPeriodTable
 
+from mainwindow import mainWindow
+from PySide2.QtWidgets import QApplication
+import sys
+from PySide2.QtCore import QCoreApplication, Qt
+
 import pytest
 
 
@@ -55,3 +60,30 @@ def get_graph_image_widget(qapp):
 def graph_image_widget(get_graph_image_widget):
     return get_graph_image_widget()
 
+
+@pytest.fixture
+def get_application(qapp):
+
+    def factory_function():
+        ORGANIZATION_NAME = 'SUSU'
+        ORGANIZATION_DOMAIN = 'susu.ru'
+        APPLICATION_NAME = 'gui4dft'
+
+        QCoreApplication.setApplicationName(ORGANIZATION_NAME)
+        QCoreApplication.setOrganizationDomain(ORGANIZATION_DOMAIN)
+        QCoreApplication.setApplicationName(APPLICATION_NAME)
+
+        QCoreApplication.setAttribute(Qt.AA_ShareOpenGLContexts)
+        #app = QApplication(sys.argv)
+        window = mainWindow()
+        window.setup_ui()
+        window.show()
+        window.start_program()
+        return window
+
+    return factory_function
+
+
+@pytest.fixture
+def gui4dft_application(get_application):
+    return get_application()
