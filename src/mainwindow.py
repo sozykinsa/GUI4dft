@@ -2618,11 +2618,7 @@ class mainWindow(QMainWindow):
         self.ui.FormActionsPostLabelSurfaceValue.setValue(round(0.5 * (maxv + minv), 5))
 
 
-#ORGANIZATION_NAME = 'SUSU'
-#ORGANIZATION_DOMAIN = 'susu.ru'
-#APPLICATION_NAME = 'gui4dft'
-
-SETTINGS_Folder = '\home'
+SETTINGS_Folder = 'home'
 SETTINGS_FormSettingsColorsScale = 'colors/ColorsScale'
 SETTINGS_FormSettingsColorsFixed = 'colors/ColorsFixed'
 SETTINGS_FormSettingsColorsFixedMin = 'colors/ColorsFixedMin'
