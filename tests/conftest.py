@@ -74,7 +74,6 @@ def get_application(qapp):
         QCoreApplication.setApplicationName(APPLICATION_NAME)
 
         QCoreApplication.setAttribute(Qt.AA_ShareOpenGLContexts)
-        #app = QApplication(sys.argv)
         window = mainWindow()
         window.setup_ui()
         window.show()
