@@ -1,5 +1,4 @@
-# This workflow will install Python dependencies, run tests and lint with a single version of Python
-# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
+# This workflow will install Python dependencies and run tests
 
 name: QT-application
 
@@ -15,7 +14,29 @@ env:
   PYTHONPATH: ./src
 
 jobs:
-  linux-test:
+  flake:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install black flake8
+          pip install -r requirements.txt
+      - name: Lint with flake8
+        run: |
+          # stop the build if there are Python syntax errors or undefined names
+          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+          # exit-zero treats all errors as warnings. black defaults to 88 characters
+          flake8 . --count --exit-zero --max-complexity=10 --max-line-length=88 --statistics
+
+  test-linux:
 
     runs-on: ubuntu-latest
 
@@ -30,17 +51,11 @@ jobs:
         python -m pip install --upgrade pip
         pip install black flake8 pytest pytest-qt pytest-xvfb
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-        echo "PYTHONPATH=./src" >> $GITHUB_ENV
-    - name: Lint with flake8
-      run: |
-        # stop the build if there are Python syntax errors or undefined names
-        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-        # exit-zero treats all errors as warnings. black defaults to 88 characters
-        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=88 --statistics
     - name: Test with pytest
       run: |
-        sudo apt-get install libxkbcommon-x11-0 libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-randr0 libxcb-render-util0 libxcb-xinerama0 libxcb-xfixes0
-        python -m pytest tests --color=yes --cov=src --cov-report=xml --cov-report=term-missing
+        sudo apt-get install libxkbcommon-x11-0 libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-randr0
+        sudo apt-get install libxcb-render-util0 libxcb-xinerama0 libxcb-xfixes0
+        python -m pytest tests --color=yes --cov=src --cov-config=.coveragerc --cov-report=xml --cov-report=term-missing
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v1
       with:
@@ -52,7 +67,7 @@ jobs:
           path_to_write_report: ./coverage/codecov_report.txt
           verbose: true
 
-  windows-test:
+  test-windows:
 
     runs-on: windows-latest
 
@@ -62,17 +77,6 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: 3.8
-    - name: Install 7zip
-      run: choco install 7zip.install
-
-    - name: Install Mesa
-      shell: cmd
-      run: |
-              curl.exe -L --output mesa.7z --url https://github.com/pal1000/mesa-dist-win/releases/download/20.3.2/mesa3d-20.3.2-release-msvc.7z
-              "C:\Program Files\7-Zip\7z.exe" x mesa.7z
-              mklink opengl32.dll "x64\opengl32.dll"
-              mklink libglapi.dll "x64\libglapi.dll"
-      working-directory: \tests
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
@@ -80,4 +84,22 @@ jobs:
         pip install -r requirements.txt
     - name: Test with pytest
       run: |
-        python -m pytest tests --color=yes --cov=src --cov-report=xml --cov-report=term-missing
+        python -m pytest tests --color=yes --cov=src --cov-config=.coveragerc --cov-report=xml --cov-report=term-missing --ignore=tests/opengl
+
+  test-mac:
+
+    runs-on: macos-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python 3.8
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
+    - name: Install dependencies
+      run: |
+            python -m pip install --upgrade pip
+            pip install -r requirements.txt
+    - name: Test with pytest
+      run: |
+        python -m pytest tests --color=yes --cov=src --cov-config=.coveragerc --cov-report=xml --cov-report=term-missing --ignore=tests/opengl
