@@ -9,3 +9,4 @@ qtpy
 pytest
 pytest-cov
 pytest-qt
+pytest-xvfb
