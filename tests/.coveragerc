@@ -1,0 +1,6 @@
+[run]
+omit =
+    about.py
+    form.py
+    atomsidentify.py
+    form-v1.x.ui
