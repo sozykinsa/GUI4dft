@@ -2,8 +2,8 @@
 
 from PySide2.QtWidgets import QMainWindow
 from PySide2.QtCore import QSize
-from image3D import Ui_MainWindow as Ui_image3D
-from guiopengl import GuiOpenGL
+from ui.image3D import Ui_MainWindow as Ui_image3D
+from qtbased.guiopengl import GuiOpenGL
 
 
 class Image3Dexporter(QMainWindow):

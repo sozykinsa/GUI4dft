@@ -1,12 +1,10 @@
 from pathlib import Path
-from pyqtgraphwidget import PyqtGraphWidget
-from pyqtgraphwidgetimage import PyqtGraphWidgetImage
+from qtbased.pyqtgraphwidget import PyqtGraphWidget
+from qtbased.pyqtgraphwidgetimage import PyqtGraphWidgetImage
 from models.atomic_model import TAtomicModel
 from utils.periodic_table import TPeriodTable
 
-from mainwindow import mainWindow
-from PySide2.QtWidgets import QApplication
-import sys
+from qtbased.mainwindow import mainWindow
 from PySide2.QtCore import QCoreApplication, Qt
 
 import pytest

@@ -34,12 +34,12 @@ from PySide2.QtGui import QColor, QIcon, QImage, QKeySequence, QPixmap, QStandar
 from PySide2.QtWidgets import QListWidgetItem, QAction, QDialog, QFileDialog, QMessageBox, QColorDialog
 from PySide2.QtWidgets import QDoubleSpinBox, QMainWindow, QShortcut, QTableWidgetItem, QTreeWidgetItem
 from PySide2.QtWidgets import QTreeWidgetItemIterator
-from guiopengl import GuiOpenGL
-from atomidentifier import AtomsIdentifier
-from image3dexporter import Image3Dexporter
-from TInterface import TGaussianCube
-from TInterface import TVolumericData
-from TInterface import TXSF
+from qtbased.guiopengl import GuiOpenGL
+from qtbased.atomidentifier import AtomsIdentifier
+from qtbased.image3dexporter import Image3Dexporter
+from utils.TInterface import TGaussianCube
+from utils.TInterface import TVolumericData
+from utils.TInterface import TXSF
 from ui.about import Ui_DialogAbout as Ui_about
 from ui.form import Ui_MainWindow as Ui_form
 

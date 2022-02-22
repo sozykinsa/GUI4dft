@@ -12,8 +12,8 @@ from PySide2.QtCore import *
 from PySide2.QtGui import *
 from PySide2.QtWidgets import *
 
-from pyqtgraphwidget import PyqtGraphWidget
-from pyqtgraphwidgetimage import PyqtGraphWidgetImage
+from qtbased.pyqtgraphwidget import PyqtGraphWidget
+from qtbased.pyqtgraphwidgetimage import PyqtGraphWidgetImage
 
 
 class Ui_MainWindow(object):
