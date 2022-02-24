@@ -1,7 +1,5 @@
-from utils import critic2
+from utils.critic2 import check_cro_file
 from utils.importer import Importer
-import pytest
-import numpy as np
 
 
 def test_open_xyz_critic_file(tests_path):
@@ -16,3 +14,10 @@ def test_create_critic2_xyz_file(tests_path):
     f_name = str(tests_path / 'ref_data' / 'h2o-ang-charges' / 'critic2' / "cp-file.xyz")
     model, fdf = Importer.Import(f_name, fl='all', prop=False, xyzcritic2=True)
     assert len(model[0].bcp) == 5
+
+
+def test_check_cro_file(tests_path):
+    f_name = str(tests_path / 'ref_data' / 'h2o-ang-charges' / 'critic2' / "siesta-1-cp.cro")
+    box_bohr, box_ang, box_deg, cps = check_cro_file(f_name)
+    assert len(box_bohr) == 3
+

@@ -12,7 +12,8 @@ from PySide2.QtCore import *
 from PySide2.QtGui import *
 from PySide2.QtWidgets import *
 
-from pyqt_graph_widget.pyqtgraphwidget import PyqtGraphWidget, PyqtGraphWidgetImage
+from qtbased.pyqtgraphwidget import PyqtGraphWidget
+from qtbased.pyqtgraphwidgetimage import PyqtGraphWidgetImage
 
 
 class Ui_MainWindow(object):
@@ -98,12 +99,104 @@ class Ui_MainWindow(object):
         self.verticalLayout_17.setObjectName(u"verticalLayout_17")
         self.toolBox = QToolBox(self.tab_5)
         self.toolBox.setObjectName(u"toolBox")
-        self.page_21 = QWidget()
-        self.page_21.setObjectName(u"page_21")
-        self.page_21.setGeometry(QRect(0, 0, 371, 624))
-        self.verticalLayout_24 = QVBoxLayout(self.page_21)
-        self.verticalLayout_24.setObjectName(u"verticalLayout_24")
-        self.groupBox_3 = QGroupBox(self.page_21)
+        self.page_17 = QWidget()
+        self.page_17.setObjectName(u"page_17")
+        self.page_17.setGeometry(QRect(0, 0, 371, 624))
+        self.verticalLayout_52 = QVBoxLayout(self.page_17)
+        self.verticalLayout_52.setObjectName(u"verticalLayout_52")
+        self.frame_81 = QFrame(self.page_17)
+        self.frame_81.setObjectName(u"frame_81")
+        self.frame_81.setFrameShape(QFrame.NoFrame)
+        self.frame_81.setFrameShadow(QFrame.Raised)
+        self.horizontalLayout_76 = QHBoxLayout(self.frame_81)
+        self.horizontalLayout_76.setObjectName(u"horizontalLayout_76")
+        self.label_75 = QLabel(self.frame_81)
+        self.label_75.setObjectName(u"label_75")
+
+        self.horizontalLayout_76.addWidget(self.label_75)
+
+        self.FormActionsPreLineGraphene_n = QSpinBox(self.frame_81)
+        self.FormActionsPreLineGraphene_n.setObjectName(u"FormActionsPreLineGraphene_n")
+        self.FormActionsPreLineGraphene_n.setValue(7)
+
+        self.horizontalLayout_76.addWidget(self.FormActionsPreLineGraphene_n)
+
+        self.horizontalSpacer_39 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_76.addItem(self.horizontalSpacer_39)
+
+        self.label_76 = QLabel(self.frame_81)
+        self.label_76.setObjectName(u"label_76")
+
+        self.horizontalLayout_76.addWidget(self.label_76)
+
+        self.FormActionsPreLineGraphene_m = QSpinBox(self.frame_81)
+        self.FormActionsPreLineGraphene_m.setObjectName(u"FormActionsPreLineGraphene_m")
+        self.FormActionsPreLineGraphene_m.setValue(7)
+
+        self.horizontalLayout_76.addWidget(self.FormActionsPreLineGraphene_m)
+
+        self.horizontalSpacer_40 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_76.addItem(self.horizontalSpacer_40)
+
+        self.label_77 = QLabel(self.frame_81)
+        self.label_77.setObjectName(u"label_77")
+
+        self.horizontalLayout_76.addWidget(self.label_77)
+
+        self.FormActionsPreLineGraphene_len = QDoubleSpinBox(self.frame_81)
+        self.FormActionsPreLineGraphene_len.setObjectName(u"FormActionsPreLineGraphene_len")
+        self.FormActionsPreLineGraphene_len.setMinimumSize(QSize(0, 24))
+        self.FormActionsPreLineGraphene_len.setMaximumSize(QSize(16777215, 16777215))
+        self.FormActionsPreLineGraphene_len.setLocale(QLocale(QLocale.English, QLocale.UnitedStates))
+        self.FormActionsPreLineGraphene_len.setSingleStep(0.500000000000000)
+        self.FormActionsPreLineGraphene_len.setValue(9.800000000000001)
+
+        self.horizontalLayout_76.addWidget(self.FormActionsPreLineGraphene_len)
+
+
+        self.verticalLayout_52.addWidget(self.frame_81)
+
+        self.frame_84 = QFrame(self.page_17)
+        self.frame_84.setObjectName(u"frame_84")
+        self.frame_84.setFrameShape(QFrame.NoFrame)
+        self.frame_84.setFrameShadow(QFrame.Raised)
+        self.horizontalLayout_75 = QHBoxLayout(self.frame_84)
+        self.horizontalLayout_75.setObjectName(u"horizontalLayout_75")
+        self.horizontalSpacer_42 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_75.addItem(self.horizontalSpacer_42)
+
+        self.FormActionsPreButGrapheneGenerate = QPushButton(self.frame_84)
+        self.FormActionsPreButGrapheneGenerate.setObjectName(u"FormActionsPreButGrapheneGenerate")
+
+        self.horizontalLayout_75.addWidget(self.FormActionsPreButGrapheneGenerate)
+
+        self.horizontalSpacer_43 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_75.addItem(self.horizontalSpacer_43)
+
+
+        self.verticalLayout_52.addWidget(self.frame_84)
+
+        self.verticalSpacer_14 = QSpacerItem(20, 387, QSizePolicy.Minimum, QSizePolicy.Expanding)
+
+        self.verticalLayout_52.addItem(self.verticalSpacer_14)
+
+        self.toolBox.addItem(self.page_17, u"Graphene")
+        self.page_4 = QWidget()
+        self.page_4.setObjectName(u"page_4")
+        self.page_4.setGeometry(QRect(0, 0, 358, 582))
+        self.verticalLayout_95 = QVBoxLayout(self.page_4)
+        self.verticalLayout_95.setObjectName(u"verticalLayout_95")
+        self.tabWidget_11 = QTabWidget(self.page_4)
+        self.tabWidget_11.setObjectName(u"tabWidget_11")
+        self.tab_36 = QWidget()
+        self.tab_36.setObjectName(u"tab_36")
+        self.verticalLayout_94 = QVBoxLayout(self.tab_36)
+        self.verticalLayout_94.setObjectName(u"verticalLayout_94")
+        self.groupBox_3 = QGroupBox(self.tab_36)
         self.groupBox_3.setObjectName(u"groupBox_3")
         self.groupBox_3.setMinimumSize(QSize(0, 0))
         self.groupBox_3.setMaximumSize(QSize(16777215, 16777215))
@@ -252,9 +345,9 @@ class Ui_MainWindow(object):
         self.horizontalLayout_43.addWidget(self.frame_24)
 
 
-        self.verticalLayout_24.addWidget(self.groupBox_3)
+        self.verticalLayout_94.addWidget(self.groupBox_3)
 
-        self.groupBox_8 = QGroupBox(self.page_21)
+        self.groupBox_8 = QGroupBox(self.tab_36)
         self.groupBox_8.setObjectName(u"groupBox_8")
         self.groupBox_8.setMinimumSize(QSize(0, 0))
         self.groupBox_8.setMaximumSize(QSize(16777215, 16777215))
@@ -297,9 +390,9 @@ class Ui_MainWindow(object):
         self.horizontalLayout_30.addWidget(self.FormActionsPreComboSWNTind)
 
 
-        self.verticalLayout_24.addWidget(self.groupBox_8)
+        self.verticalLayout_94.addWidget(self.groupBox_8)
 
-        self.groupBox_2 = QGroupBox(self.page_21)
+        self.groupBox_2 = QGroupBox(self.tab_36)
         self.groupBox_2.setObjectName(u"groupBox_2")
         self.groupBox_2.setMinimumSize(QSize(0, 0))
         self.groupBox_2.setMaximumSize(QSize(16777215, 16777215))
@@ -353,9 +446,9 @@ class Ui_MainWindow(object):
         self.verticalLayout_65.addWidget(self.frame_97)
 
 
-        self.verticalLayout_24.addWidget(self.groupBox_2)
+        self.verticalLayout_94.addWidget(self.groupBox_2)
 
-        self.frame_23 = QFrame(self.page_21)
+        self.frame_23 = QFrame(self.tab_36)
         self.frame_23.setObjectName(u"frame_23")
         self.frame_23.setMinimumSize(QSize(0, 0))
         self.frame_23.setMaximumSize(QSize(16777215, 16777215))
@@ -377,19 +470,21 @@ class Ui_MainWindow(object):
         self.horizontalLayout_13.addItem(self.horizontalSpacer_16)
 
 
-        self.verticalLayout_24.addWidget(self.frame_23)
+        self.verticalLayout_94.addWidget(self.frame_23)
 
         self.verticalSpacer_4 = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
 
-        self.verticalLayout_24.addItem(self.verticalSpacer_4)
+        self.verticalLayout_94.addItem(self.verticalSpacer_4)
 
-        self.toolBox.addItem(self.page_21, u"SWCNT")
-        self.page_16 = QWidget()
-        self.page_16.setObjectName(u"page_16")
-        self.page_16.setGeometry(QRect(0, 0, 262, 258))
-        self.verticalLayout_82 = QVBoxLayout(self.page_16)
-        self.verticalLayout_82.setObjectName(u"verticalLayout_82")
-        self.frame_116 = QFrame(self.page_16)
+        self.tabWidget_11.addTab(self.tab_36, "")
+        self.tab_37 = QWidget()
+        self.tab_37.setObjectName(u"tab_37")
+        self.tabWidget_11.addTab(self.tab_37, "")
+        self.tab_38 = QWidget()
+        self.tab_38.setObjectName(u"tab_38")
+        self.verticalLayout_96 = QVBoxLayout(self.tab_38)
+        self.verticalLayout_96.setObjectName(u"verticalLayout_96")
+        self.frame_116 = QFrame(self.tab_38)
         self.frame_116.setObjectName(u"frame_116")
         self.frame_116.setFrameShape(QFrame.StyledPanel)
         self.frame_116.setFrameShadow(QFrame.Raised)
@@ -406,9 +501,9 @@ class Ui_MainWindow(object):
         self.horizontalLayout_118.addWidget(self.FormNanotypeTypeSelector)
 
 
-        self.verticalLayout_82.addWidget(self.frame_116)
+        self.verticalLayout_96.addWidget(self.frame_116)
 
-        self.groupBox_31 = QGroupBox(self.page_16)
+        self.groupBox_31 = QGroupBox(self.tab_38)
         self.groupBox_31.setObjectName(u"groupBox_31")
         self.groupBox_31.setMinimumSize(QSize(0, 0))
         self.horizontalLayout_121 = QHBoxLayout(self.groupBox_31)
@@ -441,9 +536,9 @@ class Ui_MainWindow(object):
         self.horizontalLayout_121.addWidget(self.FormBiElementN)
 
 
-        self.verticalLayout_82.addWidget(self.groupBox_31)
+        self.verticalLayout_96.addWidget(self.groupBox_31)
 
-        self.frame_117 = QFrame(self.page_16)
+        self.frame_117 = QFrame(self.tab_38)
         self.frame_117.setObjectName(u"frame_117")
         self.frame_117.setFrameShape(QFrame.StyledPanel)
         self.frame_117.setFrameShadow(QFrame.Raised)
@@ -466,9 +561,9 @@ class Ui_MainWindow(object):
         self.horizontalLayout_119.addWidget(self.FormBiElementLen)
 
 
-        self.verticalLayout_82.addWidget(self.frame_117)
+        self.verticalLayout_96.addWidget(self.frame_117)
 
-        self.frame_118 = QFrame(self.page_16)
+        self.frame_118 = QFrame(self.tab_38)
         self.frame_118.setObjectName(u"frame_118")
         self.frame_118.setFrameShape(QFrame.StyledPanel)
         self.frame_118.setFrameShadow(QFrame.Raised)
@@ -489,99 +584,283 @@ class Ui_MainWindow(object):
         self.horizontalLayout_120.addItem(self.horizontalSpacer_79)
 
 
-        self.verticalLayout_82.addWidget(self.frame_118)
+        self.verticalLayout_96.addWidget(self.frame_118)
 
-        self.verticalSpacer_29 = QSpacerItem(20, 355, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.verticalSpacer_29 = QSpacerItem(20, 270, QSizePolicy.Minimum, QSizePolicy.Expanding)
 
-        self.verticalLayout_82.addItem(self.verticalSpacer_29)
+        self.verticalLayout_96.addItem(self.verticalSpacer_29)
 
-        self.toolBox.addItem(self.page_16, u"Bi element nanotube")
-        self.page_17 = QWidget()
-        self.page_17.setObjectName(u"page_17")
-        self.page_17.setGeometry(QRect(0, 0, 299, 132))
-        self.verticalLayout_52 = QVBoxLayout(self.page_17)
-        self.verticalLayout_52.setObjectName(u"verticalLayout_52")
-        self.frame_81 = QFrame(self.page_17)
-        self.frame_81.setObjectName(u"frame_81")
-        self.frame_81.setFrameShape(QFrame.NoFrame)
-        self.frame_81.setFrameShadow(QFrame.Raised)
-        self.horizontalLayout_76 = QHBoxLayout(self.frame_81)
-        self.horizontalLayout_76.setObjectName(u"horizontalLayout_76")
-        self.label_75 = QLabel(self.frame_81)
-        self.label_75.setObjectName(u"label_75")
+        self.tabWidget_11.addTab(self.tab_38, "")
 
-        self.horizontalLayout_76.addWidget(self.label_75)
+        self.verticalLayout_95.addWidget(self.tabWidget_11)
 
-        self.FormActionsPreLineGraphene_n = QSpinBox(self.frame_81)
-        self.FormActionsPreLineGraphene_n.setObjectName(u"FormActionsPreLineGraphene_n")
-        self.FormActionsPreLineGraphene_n.setValue(7)
+        self.toolBox.addItem(self.page_4, u"Nanotubes")
+        self.page_6 = QWidget()
+        self.page_6.setObjectName(u"page_6")
+        self.page_6.setGeometry(QRect(0, 0, 371, 624))
+        self.verticalLayout_93 = QVBoxLayout(self.page_6)
+        self.verticalLayout_93.setObjectName(u"verticalLayout_93")
+        self.groupBox_40 = QGroupBox(self.page_6)
+        self.groupBox_40.setObjectName(u"groupBox_40")
+        self.groupBox_40.setEnabled(True)
+        self.verticalLayout_92 = QVBoxLayout(self.groupBox_40)
+        self.verticalLayout_92.setObjectName(u"verticalLayout_92")
+        self.frame_138 = QFrame(self.groupBox_40)
+        self.frame_138.setObjectName(u"frame_138")
+        self.frame_138.setEnabled(True)
+        self.frame_138.setFrameShape(QFrame.NoFrame)
+        self.frame_138.setFrameShadow(QFrame.Raised)
+        self.horizontalLayout_148 = QHBoxLayout(self.frame_138)
+        self.horizontalLayout_148.setObjectName(u"horizontalLayout_148")
+        self.label_108 = QLabel(self.frame_138)
+        self.label_108.setObjectName(u"label_108")
+        self.label_108.setEnabled(True)
 
-        self.horizontalLayout_76.addWidget(self.FormActionsPreLineGraphene_n)
+        self.horizontalLayout_148.addWidget(self.label_108)
 
-        self.horizontalSpacer_39 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.part1_file = QLineEdit(self.frame_138)
+        self.part1_file.setObjectName(u"part1_file")
+        self.part1_file.setReadOnly(True)
 
-        self.horizontalLayout_76.addItem(self.horizontalSpacer_39)
+        self.horizontalLayout_148.addWidget(self.part1_file)
 
-        self.label_76 = QLabel(self.frame_81)
-        self.label_76.setObjectName(u"label_76")
+        self.FormSelectPart1File = QPushButton(self.frame_138)
+        self.FormSelectPart1File.setObjectName(u"FormSelectPart1File")
 
-        self.horizontalLayout_76.addWidget(self.label_76)
-
-        self.FormActionsPreLineGraphene_m = QSpinBox(self.frame_81)
-        self.FormActionsPreLineGraphene_m.setObjectName(u"FormActionsPreLineGraphene_m")
-        self.FormActionsPreLineGraphene_m.setValue(7)
-
-        self.horizontalLayout_76.addWidget(self.FormActionsPreLineGraphene_m)
-
-        self.horizontalSpacer_40 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
-
-        self.horizontalLayout_76.addItem(self.horizontalSpacer_40)
-
-        self.label_77 = QLabel(self.frame_81)
-        self.label_77.setObjectName(u"label_77")
-
-        self.horizontalLayout_76.addWidget(self.label_77)
-
-        self.FormActionsPreLineGraphene_len = QDoubleSpinBox(self.frame_81)
-        self.FormActionsPreLineGraphene_len.setObjectName(u"FormActionsPreLineGraphene_len")
-        self.FormActionsPreLineGraphene_len.setMinimumSize(QSize(0, 24))
-        self.FormActionsPreLineGraphene_len.setMaximumSize(QSize(16777215, 16777215))
-        self.FormActionsPreLineGraphene_len.setLocale(QLocale(QLocale.English, QLocale.UnitedStates))
-        self.FormActionsPreLineGraphene_len.setSingleStep(0.500000000000000)
-        self.FormActionsPreLineGraphene_len.setValue(9.800000000000001)
-
-        self.horizontalLayout_76.addWidget(self.FormActionsPreLineGraphene_len)
+        self.horizontalLayout_148.addWidget(self.FormSelectPart1File)
 
 
-        self.verticalLayout_52.addWidget(self.frame_81)
+        self.verticalLayout_92.addWidget(self.frame_138)
 
-        self.frame_84 = QFrame(self.page_17)
-        self.frame_84.setObjectName(u"frame_84")
-        self.frame_84.setFrameShape(QFrame.NoFrame)
-        self.frame_84.setFrameShadow(QFrame.Raised)
-        self.horizontalLayout_75 = QHBoxLayout(self.frame_84)
-        self.horizontalLayout_75.setObjectName(u"horizontalLayout_75")
-        self.horizontalSpacer_42 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.groupBox_41 = QGroupBox(self.groupBox_40)
+        self.groupBox_41.setObjectName(u"groupBox_41")
+        self.groupBox_41.setMinimumSize(QSize(0, 0))
+        self.horizontalLayout_150 = QHBoxLayout(self.groupBox_41)
+        self.horizontalLayout_150.setObjectName(u"horizontalLayout_150")
+        self.label_113 = QLabel(self.groupBox_41)
+        self.label_113.setObjectName(u"label_113")
 
-        self.horizontalLayout_75.addItem(self.horizontalSpacer_42)
+        self.horizontalLayout_150.addWidget(self.label_113)
 
-        self.FormActionsPreButGrapheneGenerate = QPushButton(self.frame_84)
-        self.FormActionsPreButGrapheneGenerate.setObjectName(u"FormActionsPreButGrapheneGenerate")
+        self.FormPart1RotX = QDoubleSpinBox(self.groupBox_41)
+        self.FormPart1RotX.setObjectName(u"FormPart1RotX")
+        self.FormPart1RotX.setLocale(QLocale(QLocale.English, QLocale.UnitedStates))
+        self.FormPart1RotX.setMinimum(-360.000000000000000)
+        self.FormPart1RotX.setMaximum(360.000000000000000)
 
-        self.horizontalLayout_75.addWidget(self.FormActionsPreButGrapheneGenerate)
+        self.horizontalLayout_150.addWidget(self.FormPart1RotX)
 
-        self.horizontalSpacer_43 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.label_114 = QLabel(self.groupBox_41)
+        self.label_114.setObjectName(u"label_114")
 
-        self.horizontalLayout_75.addItem(self.horizontalSpacer_43)
+        self.horizontalLayout_150.addWidget(self.label_114)
+
+        self.FormPart1RotY = QDoubleSpinBox(self.groupBox_41)
+        self.FormPart1RotY.setObjectName(u"FormPart1RotY")
+        self.FormPart1RotY.setLocale(QLocale(QLocale.English, QLocale.UnitedStates))
+        self.FormPart1RotY.setMinimum(-360.000000000000000)
+        self.FormPart1RotY.setMaximum(360.000000000000000)
+
+        self.horizontalLayout_150.addWidget(self.FormPart1RotY)
+
+        self.label_115 = QLabel(self.groupBox_41)
+        self.label_115.setObjectName(u"label_115")
+
+        self.horizontalLayout_150.addWidget(self.label_115)
+
+        self.FormPart1RotZ = QDoubleSpinBox(self.groupBox_41)
+        self.FormPart1RotZ.setObjectName(u"FormPart1RotZ")
+        self.FormPart1RotZ.setLocale(QLocale(QLocale.English, QLocale.UnitedStates))
+        self.FormPart1RotZ.setMinimum(-360.000000000000000)
+        self.FormPart1RotZ.setMaximum(360.000000000000000)
+
+        self.horizontalLayout_150.addWidget(self.FormPart1RotZ)
 
 
-        self.verticalLayout_52.addWidget(self.frame_84)
+        self.verticalLayout_92.addWidget(self.groupBox_41)
 
-        self.verticalSpacer_14 = QSpacerItem(20, 387, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.groupBox_42 = QGroupBox(self.groupBox_40)
+        self.groupBox_42.setObjectName(u"groupBox_42")
+        self.horizontalLayout_147 = QHBoxLayout(self.groupBox_42)
+        self.horizontalLayout_147.setObjectName(u"horizontalLayout_147")
+        self.FormPart1CMx = QDoubleSpinBox(self.groupBox_42)
+        self.FormPart1CMx.setObjectName(u"FormPart1CMx")
+        self.FormPart1CMx.setLocale(QLocale(QLocale.English, QLocale.UnitedStates))
+        self.FormPart1CMx.setMinimum(-99.000000000000000)
 
-        self.verticalLayout_52.addItem(self.verticalSpacer_14)
+        self.horizontalLayout_147.addWidget(self.FormPart1CMx)
 
-        self.toolBox.addItem(self.page_17, u"Graphene")
+        self.horizontalSpacer_104 = QSpacerItem(39, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_147.addItem(self.horizontalSpacer_104)
+
+        self.FormPart1CMy = QDoubleSpinBox(self.groupBox_42)
+        self.FormPart1CMy.setObjectName(u"FormPart1CMy")
+        self.FormPart1CMy.setLocale(QLocale(QLocale.English, QLocale.UnitedStates))
+        self.FormPart1CMy.setMinimum(-99.000000000000000)
+
+        self.horizontalLayout_147.addWidget(self.FormPart1CMy)
+
+        self.horizontalSpacer_105 = QSpacerItem(39, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_147.addItem(self.horizontalSpacer_105)
+
+        self.FormPart1CMz = QDoubleSpinBox(self.groupBox_42)
+        self.FormPart1CMz.setObjectName(u"FormPart1CMz")
+        self.FormPart1CMz.setLocale(QLocale(QLocale.English, QLocale.UnitedStates))
+        self.FormPart1CMz.setMinimum(-99.000000000000000)
+
+        self.horizontalLayout_147.addWidget(self.FormPart1CMz)
+
+
+        self.verticalLayout_92.addWidget(self.groupBox_42)
+
+
+        self.verticalLayout_93.addWidget(self.groupBox_40)
+
+        self.groupBox_38 = QGroupBox(self.page_6)
+        self.groupBox_38.setObjectName(u"groupBox_38")
+        self.groupBox_38.setEnabled(True)
+        self.verticalLayout_91 = QVBoxLayout(self.groupBox_38)
+        self.verticalLayout_91.setObjectName(u"verticalLayout_91")
+        self.frame_86 = QFrame(self.groupBox_38)
+        self.frame_86.setObjectName(u"frame_86")
+        self.frame_86.setFrameShape(QFrame.NoFrame)
+        self.frame_86.setFrameShadow(QFrame.Raised)
+        self.horizontalLayout_117 = QHBoxLayout(self.frame_86)
+        self.horizontalLayout_117.setObjectName(u"horizontalLayout_117")
+        self.label_95 = QLabel(self.frame_86)
+        self.label_95.setObjectName(u"label_95")
+
+        self.horizontalLayout_117.addWidget(self.label_95)
+
+        self.part2_file = QLineEdit(self.frame_86)
+        self.part2_file.setObjectName(u"part2_file")
+        self.part2_file.setReadOnly(True)
+
+        self.horizontalLayout_117.addWidget(self.part2_file)
+
+        self.FormSelectPart2File = QPushButton(self.frame_86)
+        self.FormSelectPart2File.setObjectName(u"FormSelectPart2File")
+
+        self.horizontalLayout_117.addWidget(self.FormSelectPart2File)
+
+
+        self.verticalLayout_91.addWidget(self.frame_86)
+
+        self.groupBox_39 = QGroupBox(self.groupBox_38)
+        self.groupBox_39.setObjectName(u"groupBox_39")
+        self.groupBox_39.setMinimumSize(QSize(0, 0))
+        self.horizontalLayout_146 = QHBoxLayout(self.groupBox_39)
+        self.horizontalLayout_146.setObjectName(u"horizontalLayout_146")
+        self.label_97 = QLabel(self.groupBox_39)
+        self.label_97.setObjectName(u"label_97")
+
+        self.horizontalLayout_146.addWidget(self.label_97)
+
+        self.FormPart2RotX = QDoubleSpinBox(self.groupBox_39)
+        self.FormPart2RotX.setObjectName(u"FormPart2RotX")
+        self.FormPart2RotX.setLocale(QLocale(QLocale.English, QLocale.UnitedStates))
+        self.FormPart2RotX.setMinimum(-360.000000000000000)
+        self.FormPart2RotX.setMaximum(360.000000000000000)
+
+        self.horizontalLayout_146.addWidget(self.FormPart2RotX)
+
+        self.label_98 = QLabel(self.groupBox_39)
+        self.label_98.setObjectName(u"label_98")
+
+        self.horizontalLayout_146.addWidget(self.label_98)
+
+        self.FormPart2RotY = QDoubleSpinBox(self.groupBox_39)
+        self.FormPart2RotY.setObjectName(u"FormPart2RotY")
+        self.FormPart2RotY.setLocale(QLocale(QLocale.English, QLocale.UnitedStates))
+        self.FormPart2RotY.setMinimum(-360.000000000000000)
+        self.FormPart2RotY.setMaximum(360.000000000000000)
+
+        self.horizontalLayout_146.addWidget(self.FormPart2RotY)
+
+        self.label_103 = QLabel(self.groupBox_39)
+        self.label_103.setObjectName(u"label_103")
+
+        self.horizontalLayout_146.addWidget(self.label_103)
+
+        self.FormPart2RotZ = QDoubleSpinBox(self.groupBox_39)
+        self.FormPart2RotZ.setObjectName(u"FormPart2RotZ")
+        self.FormPart2RotZ.setLocale(QLocale(QLocale.English, QLocale.UnitedStates))
+        self.FormPart2RotZ.setMinimum(-360.000000000000000)
+        self.FormPart2RotZ.setMaximum(360.000000000000000)
+
+        self.horizontalLayout_146.addWidget(self.FormPart2RotZ)
+
+
+        self.verticalLayout_91.addWidget(self.groupBox_39)
+
+        self.groupBox_43 = QGroupBox(self.groupBox_38)
+        self.groupBox_43.setObjectName(u"groupBox_43")
+        self.horizontalLayout_149 = QHBoxLayout(self.groupBox_43)
+        self.horizontalLayout_149.setObjectName(u"horizontalLayout_149")
+        self.FormPart2CMx = QDoubleSpinBox(self.groupBox_43)
+        self.FormPart2CMx.setObjectName(u"FormPart2CMx")
+        self.FormPart2CMx.setLocale(QLocale(QLocale.English, QLocale.UnitedStates))
+        self.FormPart2CMx.setMinimum(-99.000000000000000)
+
+        self.horizontalLayout_149.addWidget(self.FormPart2CMx)
+
+        self.horizontalSpacer_102 = QSpacerItem(39, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_149.addItem(self.horizontalSpacer_102)
+
+        self.FormPart2CMy = QDoubleSpinBox(self.groupBox_43)
+        self.FormPart2CMy.setObjectName(u"FormPart2CMy")
+        self.FormPart2CMy.setLocale(QLocale(QLocale.English, QLocale.UnitedStates))
+        self.FormPart2CMy.setMinimum(-99.000000000000000)
+
+        self.horizontalLayout_149.addWidget(self.FormPart2CMy)
+
+        self.horizontalSpacer_103 = QSpacerItem(39, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_149.addItem(self.horizontalSpacer_103)
+
+        self.FormPart2CMz = QDoubleSpinBox(self.groupBox_43)
+        self.FormPart2CMz.setObjectName(u"FormPart2CMz")
+        self.FormPart2CMz.setLocale(QLocale(QLocale.English, QLocale.UnitedStates))
+        self.FormPart2CMz.setMinimum(-99.000000000000000)
+
+        self.horizontalLayout_149.addWidget(self.FormPart2CMz)
+
+
+        self.verticalLayout_91.addWidget(self.groupBox_43)
+
+
+        self.verticalLayout_93.addWidget(self.groupBox_38)
+
+        self.frame_143 = QFrame(self.page_6)
+        self.frame_143.setObjectName(u"frame_143")
+        self.frame_143.setFrameShape(QFrame.StyledPanel)
+        self.frame_143.setFrameShadow(QFrame.Raised)
+        self.horizontalLayout_151 = QHBoxLayout(self.frame_143)
+        self.horizontalLayout_151.setObjectName(u"horizontalLayout_151")
+        self.horizontalSpacer_106 = QSpacerItem(106, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_151.addItem(self.horizontalSpacer_106)
+
+        self.CreateModelFromParts = QPushButton(self.frame_143)
+        self.CreateModelFromParts.setObjectName(u"CreateModelFromParts")
+
+        self.horizontalLayout_151.addWidget(self.CreateModelFromParts)
+
+        self.horizontalSpacer_107 = QSpacerItem(106, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_151.addItem(self.horizontalSpacer_107)
+
+
+        self.verticalLayout_93.addWidget(self.frame_143)
+
+        self.verticalSpacer_16 = QSpacerItem(20, 68, QSizePolicy.Minimum, QSizePolicy.Expanding)
+
+        self.verticalLayout_93.addItem(self.verticalSpacer_16)
+
+        self.toolBox.addItem(self.page_6, u"From two parts")
         self.page_22 = QWidget()
         self.page_22.setObjectName(u"page_22")
         self.page_22.setEnabled(True)
@@ -3079,7 +3358,7 @@ class Ui_MainWindow(object):
         self.toolBox_2.addItem(self.page_2, u"Isosurface and Contours")
         self.page_24 = QWidget()
         self.page_24.setObjectName(u"page_24")
-        self.page_24.setGeometry(QRect(0, 0, 399, 675))
+        self.page_24.setGeometry(QRect(0, 0, 370, 482))
         self.verticalLayout_44 = QVBoxLayout(self.page_24)
         self.verticalLayout_44.setObjectName(u"verticalLayout_44")
         self.tabWidget_6 = QTabWidget(self.page_24)
@@ -3955,7 +4234,7 @@ class Ui_MainWindow(object):
         self.toolBox_4.addItem(self.page_3, u"Raman and IR (ASE)")
         self.page_23 = QWidget()
         self.page_23.setObjectName(u"page_23")
-        self.page_23.setGeometry(QRect(0, 0, 378, 716))
+        self.page_23.setGeometry(QRect(0, 0, 371, 716))
         self.verticalLayout_83 = QVBoxLayout(self.page_23)
         self.verticalLayout_83.setObjectName(u"verticalLayout_83")
         self.FormButtonAddCroData = QPushButton(self.page_23)
@@ -5279,6 +5558,7 @@ class Ui_MainWindow(object):
         self.tabWidget.setCurrentIndex(0)
         self.tabWidget_3.setCurrentIndex(0)
         self.toolBox.setCurrentIndex(0)
+        self.tabWidget_11.setCurrentIndex(0)
         self.toolBox_6.setCurrentIndex(0)
         self.toolBox_2.setCurrentIndex(0)
         self.tabWidget_5.setCurrentIndex(0)
@@ -5308,6 +5588,11 @@ class Ui_MainWindow(object):
         self.actionHideBox.setText(QCoreApplication.translate("MainWindow", u"Hide Box", None))
         self.actionClose.setText(QCoreApplication.translate("MainWindow", u"Close", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.FormTabModel), QCoreApplication.translate("MainWindow", u"Model", None))
+        self.label_75.setText(QCoreApplication.translate("MainWindow", u"n:", None))
+        self.label_76.setText(QCoreApplication.translate("MainWindow", u"m:", None))
+        self.label_77.setText(QCoreApplication.translate("MainWindow", u"length:", None))
+        self.FormActionsPreButGrapheneGenerate.setText(QCoreApplication.translate("MainWindow", u"Create", None))
+        self.toolBox.setItemText(self.toolBox.indexOf(self.page_17), QCoreApplication.translate("MainWindow", u"Graphene", None))
         self.groupBox_3.setTitle(QCoreApplication.translate("MainWindow", u"Type", None))
         self.FormActionsPreRadioSWNT.setText(QCoreApplication.translate("MainWindow", u"SWCNT", None))
         self.FormActionsPreRadioSWNTcap.setText(QCoreApplication.translate("MainWindow", u"SWCNT with cap", None))
@@ -5326,7 +5611,8 @@ class Ui_MainWindow(object):
         self.FormActionsPreRadioSWNTuselen.setText(QCoreApplication.translate("MainWindow", u"lenght (A)", None))
         self.radioButton_2.setText(QCoreApplication.translate("MainWindow", u"cells", None))
         self.FormActionsPreButSWNTGenerate.setText(QCoreApplication.translate("MainWindow", u"Create", None))
-        self.toolBox.setItemText(self.toolBox.indexOf(self.page_21), QCoreApplication.translate("MainWindow", u"SWCNT", None))
+        self.tabWidget_11.setTabText(self.tabWidget_11.indexOf(self.tab_36), QCoreApplication.translate("MainWindow", u"SWCNT", None))
+        self.tabWidget_11.setTabText(self.tabWidget_11.indexOf(self.tab_37), QCoreApplication.translate("MainWindow", u"SWGNT", None))
         self.label_88.setText(QCoreApplication.translate("MainWindow", u"Nanotube type", None))
         self.groupBox_31.setTitle(QCoreApplication.translate("MainWindow", u"Chirality", None))
         self.FormBiElementRadioArm.setText(QCoreApplication.translate("MainWindow", u"armchair", None))
@@ -5334,12 +5620,26 @@ class Ui_MainWindow(object):
         self.label_89.setText(QCoreApplication.translate("MainWindow", u"n", None))
         self.FormActionsPreRadioSWNTuselen_2.setText(QCoreApplication.translate("MainWindow", u"lenght (A)", None))
         self.FormActionsPreButBiElementGenerate.setText(QCoreApplication.translate("MainWindow", u"Create", None))
-        self.toolBox.setItemText(self.toolBox.indexOf(self.page_16), QCoreApplication.translate("MainWindow", u"Bi element nanotube", None))
-        self.label_75.setText(QCoreApplication.translate("MainWindow", u"n:", None))
-        self.label_76.setText(QCoreApplication.translate("MainWindow", u"m:", None))
-        self.label_77.setText(QCoreApplication.translate("MainWindow", u"length:", None))
-        self.FormActionsPreButGrapheneGenerate.setText(QCoreApplication.translate("MainWindow", u"Create", None))
-        self.toolBox.setItemText(self.toolBox.indexOf(self.page_17), QCoreApplication.translate("MainWindow", u"Graphene", None))
+        self.tabWidget_11.setTabText(self.tabWidget_11.indexOf(self.tab_38), QCoreApplication.translate("MainWindow", u"Bi element", None))
+        self.toolBox.setItemText(self.toolBox.indexOf(self.page_4), QCoreApplication.translate("MainWindow", u"Nanotubes", None))
+        self.groupBox_40.setTitle(QCoreApplication.translate("MainWindow", u"Part 1", None))
+        self.label_108.setText(QCoreApplication.translate("MainWindow", u"File", None))
+        self.FormSelectPart1File.setText("")
+        self.groupBox_41.setTitle(QCoreApplication.translate("MainWindow", u"Rotation", None))
+        self.label_113.setText(QCoreApplication.translate("MainWindow", u"X", None))
+        self.label_114.setText(QCoreApplication.translate("MainWindow", u"Y", None))
+        self.label_115.setText(QCoreApplication.translate("MainWindow", u"Z", None))
+        self.groupBox_42.setTitle(QCoreApplication.translate("MainWindow", u"Center of mass", None))
+        self.groupBox_38.setTitle(QCoreApplication.translate("MainWindow", u"Part 2", None))
+        self.label_95.setText(QCoreApplication.translate("MainWindow", u"File", None))
+        self.FormSelectPart2File.setText("")
+        self.groupBox_39.setTitle(QCoreApplication.translate("MainWindow", u"Rotation", None))
+        self.label_97.setText(QCoreApplication.translate("MainWindow", u"X", None))
+        self.label_98.setText(QCoreApplication.translate("MainWindow", u"Y", None))
+        self.label_103.setText(QCoreApplication.translate("MainWindow", u"Z", None))
+        self.groupBox_43.setTitle(QCoreApplication.translate("MainWindow", u"Center of mass", None))
+        self.CreateModelFromParts.setText(QCoreApplication.translate("MainWindow", u"Create", None))
+        self.toolBox.setItemText(self.toolBox.indexOf(self.page_6), QCoreApplication.translate("MainWindow", u"From two parts", None))
         self.groupBox_13.setTitle(QCoreApplication.translate("MainWindow", u"Left electrode", None))
         self.label_37.setText(QCoreApplication.translate("MainWindow", u"*.fdf file", None))
         self.FormActionsPreButSelectLeftElectrode.setText("")

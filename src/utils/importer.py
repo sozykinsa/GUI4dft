@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
 
 import os
-from utils.atomic_model import TAtomicModel
-from utils.vasp import TVASP
+from models.atomic_model import TAtomicModel
+from utils.vasp import fermi_energy_from_doscar, atoms_from_POSCAR
 from utils.fdfdata import TFDFFile
 from utils.siesta import TSIESTA
 from utils import helpers
-import numpy as np
-from TInterface import TXSF, TGaussianCube
+from utils.TInterface import TXSF, TGaussianCube
 
 
 class Importer(object):
@@ -114,17 +113,16 @@ class Importer(object):
                 models = TAtomicModel.atoms_from_XMOLxyz(filename)
 
             if fileFormat == "VASPposcar":
-                models = TAtomicModel.atoms_from_POSCAR(filename)
+                models = atoms_from_POSCAR(filename)
         return models, fdf
 
     @staticmethod
     def check_dos_file(filename):
+        """Check DOS file for fdf/out filename."""
         if filename.endswith("DOSCAR"):
-            eFermy = TVASP.fermi_energy_from_doscar(filename)
-            return filename, eFermy
+            return filename, fermi_energy_from_doscar(filename)
 
-        """Check DOS file for fdf/out filename"""
-        system_label = TSIESTA.SystemLabel(filename)
+        system_label = TSIESTA.system_label(filename)
         file = os.path.dirname(filename) + "/" + str(system_label) + ".DOS"
         if os.path.exists(file):
             return file, TSIESTA.FermiEnergy(filename)
@@ -132,47 +130,10 @@ class Importer(object):
             return False, 0
 
     @staticmethod
-    def check_cro_file(filename):
-        if os.path.exists(filename) and filename.endswith("cro"):
-            box_bohr = helpers.from_file_property(filename, "Lattice parameters (bohr):", 1, 'string').split()
-            box_bohr = np.array(helpers.list_str_to_float(box_bohr))
-            box_ang = helpers.from_file_property(filename, "Lattice parameters (ang):", 1, 'string').split()
-            box_ang = np.array(helpers.list_str_to_float(box_ang))
-            box_deg = helpers.from_file_property(filename, "Lattice angles (degrees):", 1, 'string').split()
-            box_deg = np.array(helpers.list_str_to_float(box_deg))
-
-            MyFile = open(filename)
-            str1 = MyFile.readline()
-            while str1.find("Critical point list, final report (non-equivalent cps") < 0:
-                str1 = MyFile.readline()
-            MyFile.readline()
-            MyFile.readline()
-            MyFile.readline()
-
-            cps = []
-            str1 = MyFile.readline()
-
-            while len(str1) > 3:
-                str1 = str1.split(')')[1].split()
-                x = float(str1[1]) * box_ang[0]
-                y = float(str1[2]) * box_ang[1]
-                z = float(str1[3]) * box_ang[2]
-
-                line = [str1[0], x, y, z, str1[6], str1[7], str1[8]]
-                cps.append(line)
-                #print(line)
-                str1 = MyFile.readline()
-
-            MyFile.close()
-            return box_bohr, box_ang, box_deg, cps
-        else:
-            return "", "", "", []
-
-    @staticmethod
     def check_pdos_file(filename):
-        """Check PDOS file for fdf/out filename"""
-        SystemLabel = TSIESTA.SystemLabel(filename)
-        file = os.path.dirname(filename) + "/" + str(SystemLabel) + ".PDOS"
+        """Check PDOS file for fdf/out filename."""
+        system_label = TSIESTA.system_label(filename)
+        file = os.path.dirname(filename) + "/" + str(system_label) + ".PDOS"
         if os.path.exists(file):
             return file
         else:
@@ -180,9 +141,9 @@ class Importer(object):
 
     @staticmethod
     def check_bands_file(filename):
-        """Check PDOS file for fdf/out filename"""
-        SystemLabel = TSIESTA.SystemLabel(filename)
-        file = os.path.dirname(filename) + "/" + str(SystemLabel) + ".bands"
+        """Check PDOS file for fdf/out filename."""
+        system_label = TSIESTA.system_label(filename)
+        file = os.path.dirname(filename) + "/" + str(system_label) + ".bands"
         if os.path.exists(file):
             return file
         else:

@@ -12,7 +12,8 @@ from scipy.spatial import ConvexHull
 from scipy.spatial import Voronoi
 
 from utils import helpers
-from utils.atomic_model import TAtom, TAtomicModel
+from models.atom import Atom
+from models.atomic_model import TAtomicModel
 
 
 def gaps(bands, emaxf, eminf, homo, lumo) -> Tuple[float, float]:
@@ -37,10 +38,10 @@ def gaps(bands, emaxf, eminf, homo, lumo) -> Tuple[float, float]:
 
 
 ##################################################################
-#################### The Tcalculators class ######################
+##################### The Calculators class ######################
 ##################################################################
     
-class TCalculators:
+class Calculators:
     @staticmethod
     def FillTube(radTube, length, nAtoms, radAtom, delta, nPrompts, let, charge):
         """ Получение списка конфигураций из nAtoms радиусом radAtom в цилиндре радиусом radTube
@@ -57,7 +58,7 @@ class TCalculators:
                 a = math.sqrt(radTube*radTube - x*x)
                 y = random.uniform(-a, a)
                 z = random.uniform(0, length)
-                Molecula.add_atom(TAtom([x, y, z, let, charge]), 2 * radAtom)
+                Molecula.add_atom(Atom([x, y, z, let, charge]), 2 * radAtom)
                 j += 1
 
             if len(Molecula.atoms) < nAtoms:
@@ -82,8 +83,8 @@ class TCalculators:
         return b0 + b1 * x + b2 * x**2
     
     @staticmethod
-    def ApproxParabola(DATA):
-        xdata, ydata = helpers.ListN2Split(DATA)
+    def approx_parabola(DATA):
+        xdata, ydata = helpers.list_n2_split(DATA)
         # y = ax^2 + bx + c
         a, b, c = polyfit(xdata, ydata, 2)
 
@@ -91,12 +92,12 @@ class TCalculators:
         xmax = xdata.max()
 
         x = np.linspace(xmin, xmax, 200)
-        y = TCalculators.fParabola(x, c, b, a)
+        y = Calculators.fParabola(x, c, b, a)
 
         return [c, b, a], x.tolist(), y.tolist()
 
     @staticmethod
-    def fMurnaghan(parameters,vol):
+    def fMurnaghan(parameters, vol):
         E0 = parameters[0]
         B0 = parameters[1]
         BP = parameters[2]
@@ -113,16 +114,16 @@ class TCalculators:
         return E0 + 9*V0*B0/16*(((alpha-1)**3)*BP + (alpha-1)**2*(6-4*alpha))
 
     def objectiveMurnaghan(pars, y, x):
-        err = y - TCalculators.fMurnaghan(pars, x)
+        err = y - Calculators.fMurnaghan(pars, x)
         return err
 
     def objectiveBirchMurnaghan(pars, y, x):
-        err = y - TCalculators.fBirchMurnaghan(pars, x)
+        err = y - Calculators.fBirchMurnaghan(pars, x)
         return err
 
     @staticmethod
-    def ApproxMurnaghan(DATA):
-        v, e = helpers.ListN2Split(DATA)
+    def approx_murnaghan(DATA):
+        v, e = helpers.list_n2_split(DATA)
         vfit = np.linspace(min(v), max(v), 100)
         # y = ax^2 + bx + c
         a, b, c = polyfit(v, e, 2)
@@ -134,12 +135,12 @@ class TCalculators:
         bP = 4
 
         x0 = [e0, b0, bP, v0]
-        murnpars, ier = leastsq(TCalculators.objectiveMurnaghan, x0, args=(e, v))
-        return murnpars, vfit.tolist(), TCalculators.fMurnaghan(murnpars, vfit).tolist()
+        murnpars, ier = leastsq(Calculators.objectiveMurnaghan, x0, args=(e, v))
+        return murnpars, vfit.tolist(), Calculators.fMurnaghan(murnpars, vfit).tolist()
 
     @staticmethod
-    def ApproxBirchMurnaghan(DATA):
-        v, e = helpers.ListN2Split(DATA)
+    def approx_birch_murnaghan(data):
+        v, e = helpers.list_n2_split(data)
         vfit = np.linspace(min(v), max(v), 100)
 
         ### fit a parabola to the data
@@ -153,8 +154,8 @@ class TCalculators:
         bP = 4
 
         x0 = np.array([e0, b0, bP, v0])
-        murnpars, ier = leastsq(TCalculators.objectiveBirchMurnaghan, x0, args=(e, v))
-        return murnpars, vfit.tolist(), TCalculators.fMurnaghan(murnpars, vfit).tolist()
+        murnpars, ier = leastsq(Calculators.objectiveBirchMurnaghan, x0, args=(e, v))
+        return murnpars, vfit.tolist(), Calculators.fMurnaghan(murnpars, vfit).tolist()
 
     @staticmethod
     def VoronoiAnalisis(Molecula, selectedAtom, maxDist):
@@ -171,7 +172,6 @@ class TCalculators:
 
         vor = Voronoi(points)
 
-        vol = 0
         indices = vor.regions[vor.point_region[0]]
         if -1 in indices:  # some regions can be opened
             vol = np.inf
@@ -179,7 +179,7 @@ class TCalculators:
             vol = ConvexHull(vor.vertices[indices]).volume
 
         regions = []
-        for i in range(0,len(vor.point_region)):
+        for i in range(0, len(vor.point_region)):
             regions.append(vor.regions[vor.point_region[i]])
 
         point_ridges = []
@@ -187,7 +187,7 @@ class TCalculators:
             if (len(list(set(ridge) - set(regions[0]))) == 0) and (len(ridge) > 0):
                 point_ridges.append(ridge)
 
-        ListOfPoligons = []
+        list_of_poligons = []
 
         if point_ridges.count(-1) == 0:
             for rid in point_ridges:
@@ -197,7 +197,7 @@ class TCalculators:
                     y = vor.vertices[ind1][1]
                     z = vor.vertices[ind1][2]
                     poligon.append([x, y, z])
-                    ListOfPoligons.append(poligon)
+                    list_of_poligons.append(poligon)
 
-        return ListOfPoligons, vol
+        return list_of_poligons, vol
 
