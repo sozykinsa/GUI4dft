@@ -6,19 +6,19 @@ import re
 import numpy as np
 
 from utils import helpers
-from utils.electronic_prop_reader import dos_from_file
+import xml.etree.ElementTree as ET
 from utils.periodic_table import TPeriodTable
 
 
 ##################################################################
 #########################  The SIESTA class ######################
 ##################################################################
-    
+
 class TSIESTA:
 
     @staticmethod
     def lattice_constant(filename):
-        """ Returns the LatticeConstant from SIESTA output file """
+        """Returns the LatticeConstant from SIESTA output file."""
         mult = 1
         latc = helpers.from_file_property(filename, 'LatticeConstant', 1, 'unformatted')
         if latc is None:
@@ -26,18 +26,18 @@ class TSIESTA:
         property = latc.split()
         if property[1].lower() == "bohr":
             mult = 0.52917720859
-        return mult*float(property[0])
+        return mult * float(property[0])
 
     @staticmethod
     def lattice_parameters_abc_angles(filename):
-        """ returns data from LatticeParameters block of file """
+        """Returns data from LatticeParameters block of file."""
         LatticeParameters = TSIESTA.get_block_from_siesta_fdf(filename, 'LatticeParameters')
         LatConstant = float(TSIESTA.lattice_constant(filename))
         if len(LatticeParameters) > 0:
             data = helpers.spacedel(LatticeParameters[0]).split()
-            a = LatConstant*float(data[0])
-            b = LatConstant*float(data[1])
-            c = LatConstant*float(data[2])
+            a = LatConstant * float(data[0])
+            b = LatConstant * float(data[1])
+            c = LatConstant * float(data[2])
             alpha = math.radians(float(data[3]))
             beta = math.radians(float(data[4]))
             gamma = math.radians(float(data[5]))
@@ -79,20 +79,21 @@ class TSIESTA:
             lat_vect_2 = np.array(helpers.list_str_to_float(lat_vect_2))
             lat_vect_3 = helpers.spacedel(LatticeVectors[2]).split()
             lat_vect_3 = np.array(helpers.list_str_to_float(lat_vect_3))
-            return LatConstant*lat_vect_1, LatConstant*lat_vect_2, LatConstant*lat_vect_3
+            return LatConstant * lat_vect_1, LatConstant * lat_vect_2, LatConstant * lat_vect_3
         return [False, False, False], [False, False, False], [False, False, False]
 
     @staticmethod
-    def calc_pdos(root, atom_index, species, number_l, number_m, number_n, number_z):
+    def calc_pdos(file, atom_index, species, number_l, number_m, number_n, number_z):
+        tree = ET.parse(file)
+        root = tree.getroot()
         pdos = np.zeros((2, 1000))
         energy = np.zeros((1, 10))
         nspin = 1
         for child in root:
             if child.tag == "nspin":
                 nspin = int(child.text)
-            # print(child.tag)
             if child.tag == "energy_values":
-                data = (child.text).split()
+                data = child.text.split()
                 data = helpers.list_str_to_float(data)
                 energy = np.array(data)
                 pdos = np.zeros((nspin, len(energy)))
@@ -122,10 +123,11 @@ class TSIESTA:
                 number_of_species = len(pseudo_charges)
                 species = TSIESTA.get_species(filename)
 
-                is_spin_polarized = int(helpers.from_file_property(filename, 'redata: Number of spin components', 1, 'string').split("=")[1])
+                is_spin_polarized = int(helpers.from_file_property(filename, 'redata: Number of spin components', 1,
+                                                                   'string').split("=")[1])
 
-                MdSiestaFile = open(filename)
-                str1 = MdSiestaFile.readline()
+                md_siesta_file = open(filename)
+                str1 = md_siesta_file.readline()
 
                 if is_spin_polarized == 2:
                     number_of_species *= 2
@@ -138,29 +140,29 @@ class TSIESTA:
 
                         charges_m = []
                         for i in range(0, len(charges)):
-                            charges_m.append(["",0])
+                            charges_m.append(["", 0])
 
                         while nsp < number_of_species:
                             atoms = 0
-                            AtomSort = -1
+                            atom_sort = -1
                             while str1.find("mulliken:") >= 0 or len(str1) < 2 or str1.find("Species:") >= 0:
                                 if str1.find("Species:") >= 0:
                                     str1 = helpers.spacedel(str1)
                                     nsp += 1
-                                    for i in range(0,len(species)):
+                                    for i in range(0, len(species)):
                                         if str1.split(' ')[1] == species[i][2]:
-                                            AtomSort = i
-                                str1 = MdSiestaFile.readline()
-                            neutral = pseudo_charges[AtomSort]
+                                            atom_sort = i
+                                str1 = md_siesta_file.readline()
+                            neutral = pseudo_charges[atom_sort]
                             if is_spin_polarized == 2:
                                 neutral /= 2.0
 
                             skip = 0
-                            str1 = helpers.spacedel(MdSiestaFile.readline())
+                            str1 = helpers.spacedel(md_siesta_file.readline())
                             while not helpers.is_integer(str1.split()[0]):
-                                str1 = helpers.spacedel(MdSiestaFile.readline())
+                                str1 = helpers.spacedel(md_siesta_file.readline())
                                 if len(str1) == 0:
-                                    str1 = helpers.spacedel(MdSiestaFile.readline())
+                                    str1 = helpers.spacedel(md_siesta_file.readline())
                                 skip += 1
 
                             while str1 != '\n':
@@ -169,18 +171,19 @@ class TSIESTA:
                                     str1 = helpers.spacedel(str1)
                                     at = int(str1.split(' ')[0])
                                     chr = float(str1.split(' ')[1])
-                                    charges_m[at-1][0] = species[AtomSort][1]
-                                    charges_m[at-1][1] += neutral - chr
+                                    charges_m[at - 1][0] = species[atom_sort][1]
+                                    charges_m[at - 1][1] += neutral - chr
                                 for i in range(0, skip):
-                                    str1 = MdSiestaFile.readline()
+                                    str1 = md_siesta_file.readline()
 
                         charges_for_all_steps.append(charges_m)
-                    str1 = MdSiestaFile.readline()
-                MdSiestaFile.close()
+                    str1 = md_siesta_file.readline()
+                md_siesta_file.close()
 
-                charges = charges_for_all_steps[-1]
-                for i in range(0, len(charges)):
-                    charges[i][1] = round(charges[i][1],3)
+                if len(charges_for_all_steps) > 0:
+                    charges = charges_for_all_steps[-1]
+                    for i in range(0, len(charges)):
+                        charges[i][1] = round(charges[i][1], 3)
                 return charges
 
             searchSTR1 = ""
@@ -193,20 +196,20 @@ class TSIESTA:
                 searchSTR1 = "Voronoi Net Atomic Populations:"
                 searchSTR2 = "Voronoi Atomic Populations:"
 
-            MdSiestaFile = open(filename)
-            str1 = MdSiestaFile.readline()
+            md_siesta_file = open(filename)
+            str1 = md_siesta_file.readline()
             mendeley = TPeriodTable()
 
             while str1 != '':
                 if str1 != '' and ((str1.find(searchSTR1) >= 0) or (str1.find(searchSTR2) >= 0)):
-                    str1 = MdSiestaFile.readline()
+                    str1 = md_siesta_file.readline()
                     for i in range(0, number_of_atoms):
-                        data = (helpers.spacedel(MdSiestaFile.readline())).split(' ')
+                        data = (helpers.spacedel(md_siesta_file.readline())).split(' ')
                         charge = float(data[1])
                         atom_sort = mendeley.get_charge_by_letter(data[-1])
                         charges[i] = [atom_sort, charge]
-                str1 = MdSiestaFile.readline()
-            MdSiestaFile.close()
+                str1 = md_siesta_file.readline()
+            md_siesta_file.close()
         return charges
 
     @staticmethod
@@ -222,31 +225,7 @@ class TSIESTA:
         return TSIESTA.get_charges_for_atoms(filename, "Mulliken")
 
     @staticmethod
-    def DOS(filename):
-        """DOS"""
-        if os.path.exists(filename):
-            energy, spinDown, spinUp = dos_from_file(filename, 2)
-            return np.array(spinUp), np.array(spinDown), np.array(energy)
-
-    @staticmethod
-    def DOSsiestaV(filename, Ef=0):
-        """DOS Vertical. Spin up only"""
-        if os.path.exists(filename):
-            DOSFile = open(filename)
-            strDOS = DOSFile.readline()            
-            DOS = []
-            while strDOS != '':
-                line = strDOS.split(' ')
-                line1 = []
-                for i in range(0, len(line)):
-                    if line[i] != '':
-                        line1.append(line[i])                
-                DOS.append([float(line1[1]), round(float(line1[0]) - Ef, 5)])
-                strDOS = DOSFile.readline()
-            return DOS
-
-    @staticmethod
-    def Etot(filename):
+    def energy_tot(filename):
         """ Returns the Etot from SIESTA output file """
         if os.path.exists(filename):
             return helpers.from_file_property(filename, 'siesta: Etot    =', 2, 'float')
@@ -254,10 +233,10 @@ class TSIESTA:
             return None
 
     @staticmethod
-    def Energies(filename):
-        """ Energy from each step """
-        return TSIESTA.ListOfValues(filename, "siesta: E_KS(eV) =")
-        
+    def energies(filename):
+        """Energy from each step."""
+        return TSIESTA.list_of_values(filename, "siesta: E_KS(eV) =")
+
     @staticmethod
     def FermiEnergy(filename):
         """ Fermy Energy from SIESTA output file """
@@ -266,24 +245,24 @@ class TSIESTA:
             try:
                 energy = float(helpers.from_file_property(filename, 'siesta:         Fermi =', 2, 'float'))
             except Exception:
-                MdSiestaFile = open(filename)
-                str1 = MdSiestaFile.readline()
+                md_siesta_file = open(filename)
+                str1 = md_siesta_file.readline()
                 energy_string = "0 0 0 0 0 0 0"
+                search1 = "siesta: iscf   Eharris(eV)      E_KS(eV)   FreeEng(eV)   dDmax  Ef(eV)"
+                search2 = "scf: iscf   Eharris(eV)      E_KS(eV)   FreeEng(eV)    dDmax  Ef(eV)"
+                search3 = "iscf     Eharris(eV)        E_KS(eV)     FreeEng(eV)     dDmax    Ef(eV) dHmax(eV)"
                 while str1 != '':
-                    if str1 != '' and (str1.find(
-                            "siesta: iscf   Eharris(eV)      E_KS(eV)   FreeEng(eV)   dDmax  Ef(eV)") >= 0) or (
-                            str1.find("scf: iscf   Eharris(eV)      E_KS(eV)   FreeEng(eV)    dDmax  Ef(eV)") >= 0) or (
-                            str1.find(
-                                    "iscf     Eharris(eV)        E_KS(eV)     FreeEng(eV)     dDmax    Ef(eV) dHmax(eV)") >= 0):
-                        str1 = MdSiestaFile.readline()
+                    if str1 != '' and (str1.find(search1) >= 0) or (str1.find(search2) >= 0) or \
+                            (str1.find(search3) >= 0):
+                        str1 = md_siesta_file.readline()
                         while (str1.find('siesta') >= 0) or (str1.find('timer') >= 0) or (str1.find('elaps') >= 0) or (
                                 str1.find('scf:') >= 0) or (str1.find('spin moment:') >= 0):
                             str1 = helpers.spacedel(str1)
                             if (str1.find('siesta') >= 0) or (str1.find('scf:') >= 0):
                                 energy_string = str1
-                            str1 = MdSiestaFile.readline()
-                    str1 = MdSiestaFile.readline()
-                MdSiestaFile.close()
+                            str1 = md_siesta_file.readline()
+                    str1 = md_siesta_file.readline()
+                md_siesta_file.close()
                 energy = float(energy_string.split(' ')[6])
             return energy
         else:
@@ -291,14 +270,14 @@ class TSIESTA:
 
     @staticmethod
     def number_of_atoms(filename):
-        """ Returns the NumberOfAtoms from SIESTA output file """
+        """Returns the NumberOfAtoms from SIESTA output file."""
         number = helpers.from_file_property(filename, 'NumberOfAtoms')
         if number is None:
             block = TSIESTA.get_block_from_siesta_fdf(filename, "AtomicCoordinatesAndAtomicSpecies")
             if len(block) > 0:
                 return len(block)
         return number
-    
+
     @staticmethod
     def number_of_species(filename):
         """ Returns the NumberOfSpecies from SIESTA output file """
@@ -308,34 +287,34 @@ class TSIESTA:
     def pseudo_charge_of_species(filename):
         """ Returns the pseudo charge from SIESTA output file (from pseudopotential file) """
         species = TSIESTA.get_species(filename)
-        MdSiestaFile = open(filename)
-        str1 = MdSiestaFile.readline()
+        siesta_file = open(filename)
+        str1 = siesta_file.readline()
         pseudo_charges = []
 
         while str1 != '':
             if str1 != '' and (str1.find("initatom: Reading input for the pseudopotentials and atomic orbitals") >= 0):
-                for i in range(0, len(species)+1):
-                    str1 = MdSiestaFile.readline()
+                for i in range(0, len(species) + 1):
+                    str1 = siesta_file.readline()
                 for j in range(0, len(species)):
                     pseudo_charges.append(0)
                     while str1.find("Ground state valence configuration:") < 0:
-                        str1 = MdSiestaFile.readline()
+                        str1 = siesta_file.readline()
                     states = (helpers.spacedel(str1.split(":")[1])).split(" ")
                     n_states = len(states)
                     while str1.find("Valence configuration for pseudopotential generation") < 0:
-                        str1 = MdSiestaFile.readline()
+                        str1 = siesta_file.readline()
                     for i in range(0, n_states):
-                        str1 = MdSiestaFile.readline()
+                        str1 = siesta_file.readline()
                         pseudo_charges[j] += float(((str1).split("(")[1]).split(")")[0])
                 return pseudo_charges
-            str1 = MdSiestaFile.readline()
+            str1 = siesta_file.readline()
         return pseudo_charges
 
     @staticmethod
     def atomic_coordinates_format(filename):
-        """ Returns the AtomicCoordinatesFormat from SIESTA output file """
+        """Returns the AtomicCoordinatesFormat from SIESTA output file."""
         format = helpers.from_file_property(filename, 'AtomicCoordinatesFormat', 1, 'string')
-        if format == None:
+        if format is None:
             formatlow = ""
         else:
             formatlow = format.lower()
@@ -344,89 +323,91 @@ class TSIESTA:
             ans = "NotScaledCartesianAng"
         if (formatlow == "fractional") or (formatlow == "scaledbylatticevectors"):
             ans = "ScaledByLatticeVectors"
-        if (formatlow == "scaledcartesian"):
+        if formatlow == "scaledcartesian":
             ans = "ScaledCartesian"
         return ans
 
-    @staticmethod    
+    @staticmethod
     def get_species(filename):
-        """ Returns the LIST of Speciecies from SIESTA output or fdf file """
-        Species = []
+        """Returns the LIST of Speciecies from SIESTA output or fdf file."""
+        species = []
         if os.path.exists(filename):
             NumberOfSpecies = TSIESTA.number_of_species(filename)
             MdSiestaFile = open(filename)
             str1 = MdSiestaFile.readline()
-            while str1!='':
-                if str1 != '' and (str1.find("block ChemicalSpeciesLabel")>=0):
+            while str1 != '':
+                if str1 != '' and (str1.find("block ChemicalSpeciesLabel") >= 0):
                     str1 = MdSiestaFile.readline()
-                    for i in range(0,NumberOfSpecies):
+                    for i in range(0, NumberOfSpecies):
                         row = helpers.spacedel(str1).split(' ')[:3]
                         row[0] = int(row[0])
                         row[1] = int(row[1])
-                        Species.append(row)
+                        species.append(row)
                         str1 = MdSiestaFile.readline()
-                    Species.sort(key=lambda line: line[0])
-                    return Species
+                    species.sort(key=lambda line: line[0])
+                    return species
                 str1 = MdSiestaFile.readline()
-        Species.sort(key=lambda line: line[0])
-        return Species
-    
+        species.sort(key=lambda line: line[0])
+        return species
+
     @staticmethod
-    def SystemLabel(filename):
-        """ Returns the NumberOfAtomsfrom SIESTA output file """
+    def system_label(filename):
+        """Returns the SystemLabel SIESTA output file."""
         res = helpers.from_file_property(filename, 'SystemLabel', 1, "string")
-        if res == None:
+        if res is None:
             res = "siesta"
         return res
-        
-    @staticmethod
-    def SpinPolarized(filename):
-        """ Returns the SpinPolarized from SIESTA output file """
-        return helpers.from_file_property(filename, 'SpinPolarized')
 
-    @staticmethod    
-    def ListOfValues(filename, prop):
-        """ return all float values of prop from filename """
-        ListOfVal = []
+    @staticmethod
+    def spin_polarized(filename):
+        """Returns the SpinPolarized from SIESTA output file."""
+        res = helpers.from_file_property(filename, 'SpinPolarized')
+        if res is None:
+            res = False
+        return res
+
+    @staticmethod
+    def list_of_values(filename, prop):
+        """Return all float values of prop from filename."""
+        list_of_val = []
         if os.path.exists(filename):
             f = open(filename)
             for st in f:
-                if st.find(prop)>=0:
-                    ListOfVal.append(float(re.findall(r"[0-9,\.,-]+", st)[0]))
+                if st.find(prop) >= 0:
+                    list_of_val.append(float(re.findall(r"[0-9,\.,-]+", st)[0]))
             f.close()
-        return ListOfVal
+        return list_of_val
 
-    @staticmethod
-    def Replaceatominsiestafdf(filename, atom, string):
-        """ not documented """
-        NumberOfAtoms = helpers.from_file_property(filename, 'number_of_atoms')
-        NumberOfSpecies = helpers.from_file_property(filename, 'number_of_species')
-        #lines = []
-        f = open(filename)
-        lines = f.readlines()    
-    
-        i = 0        
-        newlines = []
-        
-        while i < len(lines):    
-            if lines[i].find("%block ChemicalSpeciesLabel") >= 0:
-                for j in range(0,NumberOfSpecies):
-                    newlines.append(lines[i])
-                    i += 1
-    
-            if lines[i].find("%block Zmatrix") >= 0:
-                newlines.append(lines[i])
-                i += 1
-                if lines[i].find("cartesian") >= 0:
-                    for j in range(0, NumberOfAtoms):
-                        if (j == atom):
-                            newlines.append(string+'\n')
-                        else:
-                            newlines.append(lines[i])
-                        i += 1    
-            newlines.append(lines[i])
-            i += 1
-        return newlines
+    # @staticmethod
+    # def Replaceatominsiestafdf(filename, atom, string):
+    #    """ not documented """
+    #    NumberOfAtoms = helpers.from_file_property(filename, 'number_of_atoms')
+    #    NumberOfSpecies = helpers.from_file_property(filename, 'number_of_species')
+    #    f = open(filename)
+    #    lines = f.readlines()
+
+    #    i = 0
+    #    newlines = []
+
+    #    while i < len(lines):
+    #        if lines[i].find("%block ChemicalSpeciesLabel") >= 0:
+    #            for j in range(0, NumberOfSpecies):
+    #                newlines.append(lines[i])
+    #                i += 1
+
+    #        if lines[i].find("%block Zmatrix") >= 0:
+    #            newlines.append(lines[i])
+    #            i += 1
+    #            if lines[i].find("cartesian") >= 0:
+    #                for j in range(0, NumberOfAtoms):
+    #                    if j == atom:
+    #                        newlines.append(string+'\n')
+    #                    else:
+    #                        newlines.append(lines[i])
+    #                    i += 1
+    #        newlines.append(lines[i])
+    #        i += 1
+    #    return newlines
 
     @staticmethod
     def get_block_from_siesta_fdf(filename, blockname):
@@ -450,7 +431,7 @@ class TSIESTA:
     def type_of_run(filename):
         steps = helpers.from_file_property(filename, 'MD.NumCGsteps', 1, 'int')
         if steps == 0:
-            """ single point"""
+            """ single point """
             return "sp"
         """ MD or CG? """
         res = helpers.from_file_property(filename, 'MD.TypeOfRun', 1, 'string')
@@ -461,12 +442,13 @@ class TSIESTA:
             res = helpers.from_file_property(filename, "Begin MD step =", 1, 'string')
             if res == "1":
                 return "mg"
+            res = "cg"
         return res
 
     @staticmethod
     def volume(filename):
-        """ Returns cell volume from SIESTA output file """
+        """Returns cell volume from SIESTA output file."""
         if os.path.exists(filename):
-            return helpers.from_file_property(filename, 'siesta: Cell volume = ', 2, 'float')
+            return helpers.from_file_property(filename, 'siesta: Cell volume = ', 1, 'float')
         else:
             return None

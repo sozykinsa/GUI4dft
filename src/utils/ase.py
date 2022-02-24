@@ -1,27 +1,10 @@
 # -*- coding: utf-8 -*-
-import os
 import math
-import sys
-from copy import deepcopy
-
 import numpy as np
 from utils import helpers
-import PySide2.QtCore as QtCore
-QtCore.QVariant = "QVariant"
-from PySide2.QtGui import QColor, QIcon, QImage, QKeySequence, QPixmap, QStandardItem, QStandardItemModel
-from PySide2.QtWidgets import QListWidgetItem, QAction, QApplication, QDialog, QFileDialog, QMessageBox, QColorDialog
 
 
-sys.path.append('.')
-
-is_with_figure = True
-
-
-
-def ase_raman_and_ir_script_create(self):
-        if len(self.models) == 0:
-            return
-        try:
+def ase_raman_and_ir_script_create(model2, FDFData):
             text = "import numpy as np\n"
             text += "from ase import Atoms\n"
             text += "from ase.calculators.siesta import Siesta\n"
@@ -30,7 +13,6 @@ def ase_raman_and_ir_script_create(self):
             text += "from ase.vibrations.placzek import PlaczekStatic\n"
             text += "from ase.units import Ry, eV, Ha\n"
 
-            model2 = deepcopy(self.models[self.active_model])
             nat = model2.nAtoms()
 
             formula = model2.formula()
@@ -50,34 +32,34 @@ def ase_raman_and_ir_script_create(self):
 
             text += "# set-up the Siesta parameters\n"
             text += "model.calc = Siesta(\n"
-            mesh = self.FDFData.get_property("MeshCutoff")
+            mesh = FDFData.get_property("MeshCutoff")
             if len(mesh) == 0:
                 mesh = "200 Ry"
             mesh = mesh.split()
             text += "mesh_cutoff=" + str(mesh[0]) + " * " + str(mesh[1]) + ",\n"
-            basis = self.FDFData.get_property("PAO.BasisSize")
+            basis = FDFData.get_property("PAO.BasisSize")
             if len(basis) == 0:
                 basis = "DZP"
             text += "basis_set='" + basis + "',\n"
-            func = self.FDFData.get_property("XC.functional")
+            func = FDFData.get_property("XC.functional")
             if len(func) == 0:
                 func = "DZP"
             text += "pseudo_qualifier='" + func + "',\n"
 
-            aut = self.FDFData.get_property("XC.authors")
+            aut = FDFData.get_property("XC.authors")
             if len(aut) == 0:
                 aut = "PZ"
             text += "xc='" + aut + "',\n"
-            shift = self.FDFData.get_property("PAO.EnergyShift")
+            shift = FDFData.get_property("PAO.EnergyShift")
             if len(shift) == 0:
                 shift = "0.03374 Ry"
             shift = shift.split()
             text += "energy_shift=" + str(shift[0]) + " * " + str(shift[1]) + ",\n"
-            spin = self.FDFData.get_property("spin")
+            spin = FDFData.get_property("spin")
             if (len(spin) == 0) or (len(spin.split()) > 1):
                 spin = "non-polarized"
             text += "spin='" + spin + "',\n"
-            kpts = self.FDFData.get_block("kgrid_Monkhorst_Pack")
+            kpts = FDFData.get_block("kgrid_Monkhorst_Pack")
             kpts = kpts[0].split()[0] + ", " + kpts[1].split()[1] + ", " + kpts[2].split()[2]
             text += "kpts=[" + kpts + "],\n"
             text += "fdf_arguments={\n"
@@ -85,7 +67,7 @@ def ase_raman_and_ir_script_create(self):
             text += "'COOP.Write': True,\n"
             text += "'WriteDenchar': True,\n"
             text += "'PAO.BasisType': 'split',\n"
-            split_norm = self.FDFData.get_property("PAO.SplitNorm")
+            split_norm = FDFData.get_property("PAO.SplitNorm")
             if (len(split_norm) == 0) or (len(split_norm.split()) > 1):
                 split_norm = "0.15"
             text += "'PAO.SplitNorm': " + str(split_norm) + ",\n"
@@ -93,11 +75,11 @@ def ase_raman_and_ir_script_create(self):
             text += "'MD.NumCGsteps': 0,\n"
             text += "'MD.MaxForceTol': (0.02, 'eV/Ang'),\n"
             text += "'MaxSCFIterations': 10000,\n"
-            Pulay = self.FDFData.get_property("DM.NumberPulay")
+            Pulay = FDFData.get_property("DM.NumberPulay")
             if len(Pulay) == 0:
                 Pulay = "4"
             text += "'DM.NumberPulay': " + str(Pulay) +",\n"
-            Mixing = self.FDFData.get_property("DM.MixingWeight")
+            Mixing = FDFData.get_property("DM.MixingWeight")
             if len(Mixing) == 0:
                 Mixing = "0.01"
             text += "'DM.MixingWeight': " + str(Mixing) + ",\n"
@@ -121,22 +103,10 @@ def ase_raman_and_ir_script_create(self):
             text += "ir = Infrared(model, name=name)\n"
             text += "ir.run()\n"
             text += "ir.summary()\n"
-
-            if len(text) > 0:
-                name = QFileDialog.getSaveFileName(self, 'Save File', self.work_dir, "Python file (*.py)")[0]
-                if len(name) > 0:
-                    with open(name, 'w') as f:
-                        f.write(text)
-        except Exception as e:
-            self.show_error(e)
+            return text
 
 
-def ase_raman_and_ir_parse(self):
-        try:
-            fname = QFileDialog.getOpenFileName(self, 'Open file', self.work_dir)[0]
-            if os.path.exists(fname):
-                self.filename = fname
-                self.work_dir = os.path.dirname(fname)
+def ase_raman_and_ir_parse(fname):
                 f = open(fname)
                 rows = f.readlines()
 
@@ -185,56 +155,5 @@ def ase_raman_and_ir_parse(self):
                                     ir_en_cm.append(float(row[2]))
                                     ir_inten.append(float(row[3]))
                     i += 1
-            raman_text = "meV cm^-1 Intensity " + units_r + "\n"
-            for i in range(0, len(raman_inten)):
-                raman_text += "{0:10.1f} {1:10.1f} {2:10.2f}\n".format(raman_en_ev[i], raman_en_cm[i], raman_inten[i])
-            self.ui.FormRamanSpectraText.setPlainText(raman_text)
-
-            ir_text = "meV cm^-1 Intensity " + units_i + "\n"
-            for i in range(0, len(ir_inten)):
-                ir_text += "{0:10.1f} {1:10.1f} {2:10.4f}\n".format(ir_en_ev[i], ir_en_cm[i], ir_inten[i])
-            self.ui.FormIrSpectraText.setPlainText(ir_text)
-
-        except Exception as e:
-            self.show_error(e)
-
-
-def ase_raman_and_ir_plot(self):
-        if self.ui.form_raman_radio.isChecked():
-            data = self.ui.FormRamanSpectraText.toPlainText()
-            y_title = "Raman"
-        else:
-            data = self.ui.FormIrSpectraText.toPlainText()
-            y_title = "IR"
-
-        col = 1
-        x_title = "cm^-1"
-        if self.ui.form_spectra_mev_radio.isChecked():
-            col = 0
-            x_title = "meV"
-
-        x = []
-        y = []
-
-        rows = data.split("\n")
-        for i in range(1, len(rows)):
-            row = rows[i].split()
-            if len(row) > 2:
-                x.append(float(row[col]))
-                y.append(math.log(float(row[2])))
-
-        x_max = max(x)
-        n = 1000
-        x_fig = np.linspace(0, x_max, n)
-        y_fig = np.zeros(n)
-
-        sigma = self.ui.formGaussWidth.value()
-
-        for i in range(0, len(x)):
-            for j in range(0, n):
-                y_fig[j] += y[i] * math.exp(-math.pow(x[i] - x_fig[j], 2) / ( 2 * sigma) )
-
-        title = "Spectrum"
-        self.ui.PyqtGraphWidget.clear()
-        self.ui.Form3Dand2DTabs.setCurrentIndex(1)
-        self.ui.PyqtGraphWidget.plot([x_fig], [y_fig], [None], title, x_title, y_title, True)
+                raman_text = "meV cm^-1 Intensity " + units_r + "\n"
+                return raman_text, units_i, raman_inten, raman_en_ev, raman_en_cm, ir_inten, ir_en_ev, ir_en_cm

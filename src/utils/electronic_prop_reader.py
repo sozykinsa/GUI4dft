@@ -1,26 +1,28 @@
 # -*- coding: utf-8 -*-
 from utils import helpers
 import numpy as np
+import os
 
 
-def dos_from_file(filename, n, n_lines=0):
-    dos_file = open(filename)
-    str_dos = dos_file.readline()
+def dos_from_file(filename, n=2, n_lines=0):
     energy = []
     spin_up = []
     spin_down = []
+    if os.path.exists(filename):
+        dos_file = open(filename)
+        str_dos = dos_file.readline()
 
-    if n_lines > 0:
-        for i in range(0, 6):
-            str_dos = dos_file.readline()
+        if n_lines > 0:
+            for i in range(0, 6):
+                str_dos = dos_file.readline()
 
-        for i in range(0, n_lines):
-            str_dos = read_row_of_dos_file(dos_file, energy, n, spin_down, spin_up, str_dos)
+            for i in range(0, n_lines):
+                str_dos = read_row_of_dos_file(dos_file, energy, n, spin_down, spin_up, str_dos)
 
-    if n_lines == 0:
-        while str_dos != '':
-            str_dos = read_row_of_dos_file(dos_file, energy, n, spin_down, spin_up, str_dos)
-    return energy, spin_down, spin_up
+        if n_lines == 0:
+            while str_dos != '':
+                str_dos = read_row_of_dos_file(dos_file, energy, n, spin_down, spin_up, str_dos)
+    return np.array(spin_up), np.array(spin_down), np.array(energy)
 
 
 def read_row_of_dos_file(dos_file, energy, n, spin_down, spin_up, str_dos):
@@ -32,11 +34,28 @@ def read_row_of_dos_file(dos_file, energy, n, spin_down, spin_up, str_dos):
     energy.append(float(line1[0]))
     spin_up.append(float(line1[1]))
     if len(line1) > n:
-        spin_down.append(float(line1[2]))
+        spin_down.append(float(line1[n]))
     else:
         spin_down.append(0)
     str_dos = dos_file.readline()
     return str_dos
+
+
+def dos_siesta_vert(filename, e_f=0):
+    """DOS Vertical. Spin up only"""
+    if os.path.exists(filename):
+        DOSFile = open(filename)
+        strDOS = DOSFile.readline()
+        DOS = []
+        while strDOS != '':
+            line = strDOS.split(' ')
+            line1 = []
+            for i in range(0, len(line)):
+                if line[i] != '':
+                    line1.append(line[i])
+            DOS.append([float(line1[1]), round(float(line1[0]) - e_f, 5)])
+            strDOS = DOSFile.readline()
+        return DOS
 
 
 def read_siesta_bands(file, is_check_bands_spin, kmax, kmin):

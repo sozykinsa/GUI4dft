@@ -1,0 +1,4 @@
+System = fcc Si
+ISTART = 0 ; ICHARG = 2
+ENCUT = 240
+ISMEAR = 0; SIGMA = 0.1

@@ -18,12 +18,12 @@ def spacedel(row: str) -> str:
 
 def float_to_string(fl):
     res = '{0:12.8f}'.format(fl)
-    if res == "-0.00000000":
-        res = " 0.00000000"
+    if res == " -0.00000000":
+        res = "  0.00000000"
     return res
 
 
-def is_number(row):
+def is_number(row) -> bool:
     try:
         float(row)
         return True
@@ -46,12 +46,6 @@ def list_str_to_float(x):
 
 def list_str_to_int(x):
     return [int(item) for item in x]
-
-
-def write_text_to_file(fname, text):
-    f = open(fname, 'w')
-    print(text, file=f)
-    f.close()
 
 
 def getsubs(dir):
@@ -85,17 +79,7 @@ def cdev(ii, jj):
             j = ir
 
 
-def mini(list_2d):
-    """ Сортирует список по возрастанию первого столбца и возвращает индекс минимального элемента во втором столбце """
-    list_2d = sorted(list_2d, key=itemgetter(0))
-    imin = 0
-    for i in range(1, len(list_2d)):
-        if float(list_2d[i][1]) < float(list_2d[imin][1]):
-            imin = i
-    return imin
-
-
-def ListN2Split(data):
+def list_n2_split(data):
     x = []
     y = []
     for row in data:
@@ -119,6 +103,12 @@ def from_file_property(filename, prop, count=1, prop_type='int'):
         return None
 
 
+def write_text_to_file(fname, text):  # pragma: no cover
+    f = open(fname, 'w')
+    print(text, file=f)
+    f.close()
+
+
 def property_from_sub_file(filename, k, prop, count, typen):
     property = None
     is_found = False
@@ -131,7 +121,7 @@ def property_from_sub_file(filename, k, prop, count, typen):
                 new_f = str1.split()[1]
                 file = os.path.dirname(filename) + "/" + new_f
                 is_found, k, property = property_from_sub_file(file, k, prop, count, typen)
-            if (str1 != '') and (str1.find(prop) >= 0):
+            if (str1 != '') and (str1.find(prop) >= 0) and not str1.lstrip().startswith('#'):
                 str1 = str1.replace(prop, ' ')
                 if typen == "unformatted":
                     property = str1
@@ -157,27 +147,27 @@ def property_from_sub_file(filename, k, prop, count, typen):
     return is_found, k, property
 
 
-def RoundToPlane(atom, R):
-    """ RoundToPlane  """
-    z = atom.z
-    fi = math.asin(atom.x/R)
-    if atom.y <= -1e-3:
-        fi = 3.14 - fi
-    x = -R * fi
-    return [x, z]
+#def RoundToPlane(atom, R):
+#    """ RoundToPlane  """
+#    z = atom.z
+#    fi = math.asin(atom.x/R)
+#    if atom.y <= -1e-3:
+#        fi = 3.14 - fi
+#    x = -R * fi
+#    return [x, z]
 
 
 def utf8_letter(let):
-    if let == r'\Gamma':
+    if (let == r'\Gamma') or (let == 'Gamma'):
         return '\u0393'
-    if let == r'\Delta':
+    if (let == r'\Delta') or (let == 'Delta'):
         return '\u0394'
-    if let == r'\Lambda':
+    if (let == r'\Lambda') or (let == 'Lambda'):
         return '\u039B'
-    if let == r'\Pi':
+    if (let == r'\Pi') or (let == 'Pi'):
         return '\u03A0'
-    if let == r'\Sigma':
+    if (let == r'\Sigma') or (let == 'Sigma'):
         return '\u03A3'
-    if let == r'\Omega':
+    if (let == r'\Omega') or (let == 'Omega'):
         return '\u03A9'
     return let
