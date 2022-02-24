@@ -743,9 +743,9 @@ class TAtomicModel(object):
                 i -= 1
         cp.setProperty(b + "opt", bond)
 
-    def add_atomic_model(self, atomic_model, minDist=0):
+    def add_atomic_model(self, atomic_model, min_dist=0):
         for at in atomic_model:
-            self.add_atom(at, minDist)
+            self.add_atom(at, min_dist)
 
     def edit_atom(self, ind, newAtom):
         if (ind >= 0) and (ind < self.nAtoms()):
@@ -812,7 +812,7 @@ class TAtomicModel(object):
         return np.array(res)
 
     def rotateX(self, alpha):
-        """The method RotateAtList rotate the AtList on alpha Angle"""
+        """The method rotates the AtList on alpha Angle."""
         alpha *= math.pi / 180
         # ox
         for i in range(0, len(self.atoms)):
@@ -822,7 +822,7 @@ class TAtomicModel(object):
             self.atoms[i].z = ynn
 
     def rotateY(self, alpha):
-        """The method RotateAtList rotate the AtList on alpha Angle"""
+        """The method rotates the AtList on alpha Angle."""
         alpha *= math.pi / 180
         # oy
         for i in range(0, len(self.atoms)):
@@ -832,7 +832,7 @@ class TAtomicModel(object):
             self.atoms[i].z = ynn
 
     def rotateZ(self, alpha):
-        """The method RotateAtList rotate the AtList on alpha Angle"""
+        """The method rotates the AtList on alpha Angle."""
         alpha *= math.pi / 180
         # oz
         for i in range(0, len(self.atoms)):
@@ -840,6 +840,11 @@ class TAtomicModel(object):
             ynn = float(self.atoms[i].x) * math.sin(alpha) + float(self.atoms[i].y) * math.cos(alpha)
             self.atoms[i].x = xnn
             self.atoms[i].y = ynn
+
+    def rotate(self, alpha, betta, gamma) -> None:
+        self.rotateX(alpha)
+        self.rotateY(betta)
+        self.rotateZ(gamma)
 
     def ProjectionToCylinder(self, atomslist, radius):
         """This method returns projections on cylinder with radius for atom at"""

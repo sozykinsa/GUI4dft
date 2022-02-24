@@ -541,6 +541,52 @@ class mainWindow(QMainWindow):
     def create_model_from_parts(self) -> None:
         fname1 = self.ui.part1_file.text()
         fname2 = self.ui.part2_file.text()
+        if self.ui.FormSettingsOpeningCheckOnlyOptimal.isChecked():
+            models1, fdf_data1 = Importer.Import(fname1, 'opt', False, False)
+        else:
+            models1, fdf_data1 = Importer.Import(fname1, 'all', False, False)
+
+        if self.ui.FormSettingsOpeningCheckOnlyOptimal.isChecked():
+            models2, fdf_data2 = Importer.Import(fname2, 'opt', False, False)
+        else:
+            models2, fdf_data2 = Importer.Import(fname2, 'all', False, False)
+
+        combo_model = TAtomicModel()
+        if len(models1) > 0:
+            part1 = models1[-1]
+            cm_old = - part1.centr_mass()
+            part1.move(*cm_old)
+            rot_x = self.ui.FormPart1RotX.value()
+            rot_y = self.ui.FormPart1RotY.value()
+            rot_z = self.ui.FormPart1RotZ.value()
+            part1.rotate(rot_x, rot_y, rot_z)
+
+            cm_x_new = self.ui.FormPart1CMx.value()
+            cm_y_new = self.ui.FormPart1CMy.value()
+            cm_z_new = self.ui.FormPart1CMz.value()
+            part1.move(cm_x_new, cm_y_new, cm_z_new)
+
+            combo_model.add_atomic_model(part1)
+
+        if len(models2) > 0:
+            part2 = models2[-1]
+
+            cm_old = - part2.centr_mass()
+            part2.move(*cm_old)
+            rot_x = self.ui.FormPart2RotX.value()
+            rot_y = self.ui.FormPart2RotY.value()
+            rot_z = self.ui.FormPart2RotZ.value()
+            part2.rotate(rot_x, rot_y, rot_z)
+
+            cm_x_new = self.ui.FormPart2CMx.value()
+            cm_y_new = self.ui.FormPart2CMy.value()
+            cm_z_new = self.ui.FormPart2CMz.value()
+            part2.move(cm_x_new, cm_y_new, cm_z_new)
+
+            combo_model.add_atomic_model(part2)
+
+        self.models.append(combo_model)
+        self.plot_last_model()
 
     def add_left_electrode_file(self):
         fname = self.get_fdf_file_name()
