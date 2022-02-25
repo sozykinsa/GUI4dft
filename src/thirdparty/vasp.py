@@ -91,7 +91,7 @@ def model_to_vasp_poscar(model, filename):
 
     PerTab = TPeriodTable()
 
-    types = model.typesOfAtoms()
+    types = model.types_of_atoms()
     for i in range(0, len(types)):
         data += ' ' + str(PerTab.get_let(int(types[i][0])))
     data += "\n"

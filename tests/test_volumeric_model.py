@@ -1,4 +1,5 @@
 from models.gaussiancube import GaussianCube
+from models.xsf import XSF
 from models.volumericdatablock import VolumericDataBlock
 
 
@@ -10,7 +11,40 @@ def test_volumeric_data_block():
 
 
 def test_cube(tests_path):
-    f_name = str(tests_path / 'ref_data' / 'h2o-ang-charges' / 'cube_and_xsf' / "siesta.XSF")
+    f_name = str(tests_path / 'ref_data' / 'h2o-ang-charges' / 'cube_and_xsf' / "siesta.BADER.cube")
     model = GaussianCube()
     assert model.type == "TGaussianCube"
+    model.parse(f_name)
+    assert len(model.atoms) == 3
+    assert len(model.blocks) == 1
+    model.load_data("BADER:spin_1")
+    assert model.Nx == 64
 
+
+def test_xsf(tests_path):
+    f_name = str(tests_path / 'ref_data' / 'h2o-ang-charges' / 'cube_and_xsf' / "siesta.XSF")
+    model = XSF()
+    assert model.type == "TXSF"
+    model.parse(f_name)
+    assert len(model.atoms) == 3
+    assert len(model.blocks) == 1
+    model.load_data("BADER:spin_1")
+    assert model.Nx == 30
+
+    f_name = str(tests_path / 'ref_data' / 'incorrect' / "siesta-empty.XSF")
+    model = XSF()
+    assert model.type == "TXSF"
+    model.parse(f_name)
+    assert len(model.atoms) == 0
+    assert len(model.blocks) == 0
+    model.load_data("BADER:spin_1")
+    assert model.Nx is None
+
+    f_name = str(tests_path / 'ref_data' / 'incorrect' / "siesta-not-exist.XSF")
+    model = XSF()
+    assert model.type == "TXSF"
+    model.parse(f_name)
+    assert len(model.atoms) == 0
+    assert len(model.blocks) == 0
+    model.load_data("BADER:spin_1")
+    assert model.Nx is None

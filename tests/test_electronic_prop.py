@@ -1,5 +1,5 @@
 from utils.electronic_prop_reader import read_siesta_bands, dos_from_file, dos_siesta_vert
-from utils.vasp import fermi_energy_from_doscar, vasp_dos, model_to_vasp_poscar
+from thirdparty.vasp import fermi_energy_from_doscar, vasp_dos, model_to_vasp_poscar
 from utils.siesta import TSIESTA
 
 from utils.calculators import gaps

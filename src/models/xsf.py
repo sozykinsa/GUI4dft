@@ -64,7 +64,10 @@ class XSF(VolumericData):
     def parse(self, filename):
         self.filename = filename
         if os.path.exists(self.filename):
-            model = XSF.get_atoms(self.filename)[0]
+            res = XSF.get_atoms(self.filename)
+            if len(res) == 0:
+                return False
+            model = res[0]
             self.atoms = model.atoms
             f = open(self.filename)
             row = f.readline()
@@ -88,6 +91,8 @@ class XSF(VolumericData):
         return False
 
     def load_data(self, getChildNode):
+        if not os.path.exists(self.filename):
+            return False
         f = open(self.filename)
         row = f.readline()
         while row != '':

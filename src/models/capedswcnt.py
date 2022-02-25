@@ -42,7 +42,7 @@ class CapedSWNT(TAtomicModel):
                 maxz = capatoms.maxZ()
 
                 capatoms.move(0, 0, minz - maxz - zaz)
-                capatoms.rotateZ(angle1)
+                capatoms.rotate_z(angle1)
                 for i in range(0, capatoms.nAtoms()):
                     self.add_atom(capatoms[i])
 
@@ -58,7 +58,7 @@ class CapedSWNT(TAtomicModel):
                 zaz = dist2
 
                 capatoms.move(0, 0, (maxz - minz) + zaz)
-                capatoms.rotateZ(angle2)
+                capatoms.rotate_z(angle2)
                 for i in range(0, capatoms.nAtoms()):
                     self.add_atom(capatoms[i])
             # end cap generation

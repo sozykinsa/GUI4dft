@@ -1,4 +1,4 @@
-from utils.critic2 import check_cro_file
+from thirdparty.critic2 import check_cro_file
 from utils.importer import Importer
 
 

@@ -18,7 +18,6 @@ from utils import helpers
 from models.atomic_model import TAtomicModel
 from utils.calculators import Calculators as Calculator
 from utils.calculators import gaps
-from utils.critic2 import check_cro_file
 from models.capedswcnt import CapedSWNT
 from models.bint import BiNT
 from utils.fdfdata import TFDFFile
@@ -26,7 +25,8 @@ from models.graphene import Graphene
 from utils.periodic_table import TPeriodTable
 from utils.siesta import TSIESTA
 from models.swnt import SWNT
-from utils.vasp import vasp_dos
+from thirdparty.critic2 import check_cro_file
+from thirdparty.vasp import vasp_dos
 from utils.importer import Importer
 from utils.electronic_prop_reader import read_siesta_bands, dos_from_file
 from PySide2.QtCore import QLocale, QSettings, Qt, QSize
@@ -42,8 +42,9 @@ from models.volumericdata import VolumericData
 from models.xsf import XSF
 from ui.about import Ui_DialogAbout as Ui_about
 from ui.form import Ui_MainWindow as Ui_form
+from thirdparty.firefly import atomic_model_to_firefly_inp
 
-from utils import ase, critic2
+from thirdparty import ase, critic2
 
 sys.path.append('.')
 
@@ -768,9 +769,9 @@ class mainWindow(QMainWindow):
             scat_rotationY = self.ui.FormActionsPreSpinScatRotY.value()
             scat_rotationZ = self.ui.FormActionsPreSpinScatRotZ.value()
 
-            model_scat.rotateX(scat_rotationX)
-            model_scat.rotateY(scat_rotationY)
-            model_scat.rotateZ(scat_rotationZ)
+            model_scat.rotate_x(scat_rotationX)
+            model_scat.rotate_y(scat_rotationY)
+            model_scat.rotate_z(scat_rotationZ)
 
             scat_move_x = self.ui.FormActionsPreMoveScatX.value()
             scat_move_y = self.ui.FormActionsPreMoveScatY.value()
@@ -1249,11 +1250,22 @@ class mainWindow(QMainWindow):
                 long_name = QFileDialog.getSaveFileName(self, 'Save File', self.work_dir,
                     "FDF files (*.fdf);;XYZ files (*.xyz);;FireFly input files (*.inp);;VASP POSCAR file (POSCAR)")
                 fname = long_name[0]
-                self.models[self.active_model].export_to_file(fname)
+                self.export_to_file(self.models[self.active_model], fname)
                 self.work_dir = os.path.dirname(fname)
                 self.save_active_folder()
             except Exception as e:
                 self.show_error(e)
+
+    def export_to_file(model, fname):
+        if fname.find("POSCAR") >= 0:
+            fname = fname.split(".")[0]
+            model.toVASPposcar(fname)
+        if fname.endswith(".inp"):
+            atomic_model_to_firefly_inp(fname)
+        if fname.endswith(".fdf"):
+            model.toSIESTAfdf(fname)
+        if fname.endswith(".xyz"):
+            model.toSIESTAxyz(fname)
 
     def menu_open(self):
         if len(self.models) > 0:
@@ -1387,11 +1399,11 @@ class mainWindow(QMainWindow):
             center = model.get_center_of_mass()
             model.move(center[0], center[1], center[2])
         if self.ui.FormModifyRotationX.isChecked():
-            model.rotateX(angle)
+            model.rotate_x(angle)
         if self.ui.FormModifyRotationY.isChecked():
-            model.rotateY(angle)
+            model.rotate_y(angle)
         if self.ui.FormModifyRotationZ.isChecked():
-            model.rotateZ(angle)
+            model.rotate_z(angle)
         self.models.append(model)
         self.fill_models_list()
         self.model_to_screen(-1)
@@ -1589,7 +1601,7 @@ class mainWindow(QMainWindow):
         if self.ui.FormActionsComboPDOSspecies.currentText() == 'All':
             mendeley = TPeriodTable()
             atoms_list = mendeley.get_all_letters()
-            types_of_atoms = self.MainForm.MainModel.typesOfAtoms()
+            types_of_atoms = self.MainForm.MainModel.types_of_atoms()
             for i in range(0, len(types_of_atoms)):
                 species.append(str(atoms_list[types_of_atoms[i][0]]))
         if self.ui.FormActionsComboPDOSspecies.currentText() == 'Selected in list below':

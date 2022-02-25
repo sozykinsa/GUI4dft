@@ -2,7 +2,7 @@
 
 import os
 from models.atomic_model import TAtomicModel
-from utils.vasp import fermi_energy_from_doscar, atoms_from_POSCAR
+from thirdparty.vasp import fermi_energy_from_doscar, atoms_from_POSCAR
 from utils.fdfdata import TFDFFile
 from utils.siesta import TSIESTA
 from utils import helpers
