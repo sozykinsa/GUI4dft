@@ -4,233 +4,17 @@ import math
 
 import numpy as np
 
-from utils import helpers
 from models.atom import Atom
 from models.atomic_model import TAtomicModel
+from models.swnt import SWNT
 
 
-##################################################################
-######################### TGRAPHENE ##############################
-##################################################################
-
-
-class TGraphene(TAtomicModel):
-    """The TGraphene class provides """
-    def __init__(self, n=0, m=0, leng=0):
-        TAtomicModel.__init__(self)
-        self.maxMol = 200000
-        self.a = 1.43
-
-        if (n == 0) and (m == 0):
-            return
-
-        np1, pi, px, py, leng = self.graphene_positions(n, m, leng)
-
-        for i_par in range(0, np1):
-            self.add_atom(Atom([px[i_par], py[i_par], 0, "C", 6]))
-
-    def graphene_positions(self, n, m, leng):
-        pi = math.pi
-        px = np.zeros(self.maxMol)
-        py = np.zeros(self.maxMol)
-        pz = np.zeros(self.maxMol)
-        hx = np.zeros(6)
-        hy = np.zeros(6)
-        hz = np.zeros(6)
-        nx = 40
-        ny = 100
-        """ calculations """
-        """ definition of a hexagon """
-        hx[0] = self.a
-        hy[0] = 0.0
-        hz[0] = 0.0
-        for i in range(1, 6):
-            hx[i] = hx[i - 1] * math.cos(pi / 3) - hy[i - 1] * math.sin(pi / 3)
-            hy[i] = hx[i - 1] * math.sin(pi / 3) + hy[i - 1] * math.cos(pi / 3)
-            hz[i] = 0.0
-        for k_par in range(0, nx):
-            hx_plus = 3 * self.a * k_par
-            for ih_par in range(0, 4):
-                i_par = ih_par + k_par * 4
-                px[i_par] = hx[ih_par] + hx_plus
-                py[i_par] = hy[ih_par]
-                pz[i_par] = hz[ih_par]
-        np1 = (nx - 1) * (nx - 1) + 4
-        px_minus = (nx - 1.0) / 2.0 * 3 * self.a
-        for i_par in range(0, np1):
-            px[i_par] -= px_minus
-        for k_par in range(0, ny):
-            py_plus = math.sqrt(3.0) * self.a * k_par
-            for i_par in range(0, np1):
-                j1 = i_par + k_par * np1
-                px[j1] = px[i_par]
-                py[j1] = py[i_par] + py_plus
-                pz[j1] = pz[i_par]
-        np1 = np1 - 1 + (ny - 1) * np1
-
-        """ centering y """
-        py_minus = (ny - 0.5) / 2.0 * math.sqrt(3.0) * self.a
-        for i_par in range(0, np1):
-            py[i_par] -= py_minus
-        """ Rotate for (m,ch_m) vector """
-        vx = (n + m) * 3.0 / 2.0 * self.a
-        vy = (n - m) * math.sqrt(3.0) / 2.0 * self.a
-        vlen = math.sqrt(vx * vx + vy * vy)
-        """ Rotation  """
-        for i_par in range(0, np1):
-            tempx_par = px[i_par]
-            tempy_par = py[i_par]
-            px[i_par] = tempx_par * vx / vlen + tempy_par * vy / vlen
-            py[i_par] = -tempx_par * vy / vlen + tempy_par * vx / vlen
-        """ Rotation is done """
-        """ trimming """
-        j = 0
-        for i in range(0, np1):
-            if (px[i] <= vlen / 2.0 * 1.00001) and (px[i] > -vlen / 2.0 * 0.99999) and (py[i] <= leng / 2.0) and (
-                    py[i] > -leng / 2.0):
-                px[j] = px[i]
-                py[j] = py[i]
-                pz[j] = pz[i]
-                j += 1
-        np1 = j
-        return np1, pi, px, py, vlen
-
-
-##################################################################
-########################### TSWNT ################################
-##################################################################
-
-
-class TBiNT(TAtomicModel):
-
-    def __init__(self, n, m, leng=1, tubetype="BN"):
-
-        TAtomicModel.__init__(self)
-        a = 1.43
-        atom1 = ["C", 6]
-        atom2 = ["C", 6]
-
-        if tubetype == "BN":
-            a = 1.434
-            atom1 = ["B", 5]
-            atom2 = ["N", 7]
-
-        if tubetype == "BC":
-            a = 1.4
-            atom1 = ["B", 5]
-            atom2 = ["C", 6]
-
-        z = 0
-
-        df = 180 / n
-        dfi = 0
-        row = 0
-
-        if (n > 0) and (m == 0):
-            rad = math.sqrt(3) / (2 * math.pi) * a * n
-
-            while z <= leng:
-                if (row % 2) == 0:
-                    dfi += df
-                if row % 2:
-                    let = atom1[0]
-                    charge = atom1[1]
-                else:
-                    let = atom2[0]
-                    charge = atom2[1]
-
-                for i in range(0, n):
-                    x = rad * math.cos(math.radians(i * 360 / n + dfi))
-                    y = rad * math.sin(math.radians(i * 360 / n + dfi))
-                    self.add_atom(Atom([x, y, z, let, charge]))
-
-                row += 1
-                if row % 2:
-                    z += a
-                else:
-                    z += a / 2
-
-        if (n == m) and (n > 0):
-            rad = 3 * n * a / (2 * math.pi)
-            while z <= leng:
-
-                dfi += df
-                for i in range(0, n):
-                    x = rad * math.cos(math.radians(i * 360 / n + dfi))
-                    y = rad * math.sin(math.radians(i * 360 / n + dfi))
-                    self.add_atom(Atom([x, y, z, atom1[0], atom1[1]]))
-
-                    x = rad * math.cos(math.radians(i * 360 / n + 120 / n + dfi))
-                    y = rad * math.sin(math.radians(i * 360 / n + 120 / n + dfi))
-                    self.add_atom(Atom([x, y, z, atom2[0], atom2[1]]))
-                row += 1
-                z += math.sqrt(3) / 2 * a
-
-##################################################################
-########################### TSWNT ################################
-##################################################################    
-
-
-class TSWNT(TGraphene):
-    """The TSWNT class provides """
-    def __init__(self, n, m, leng=0, ncell=1):
-        if leng == 0:
-            leng = ncell * TSWNT.unitlength(n, m, 1.43)
-
-        TGraphene.__init__(self)
-
-        rad = TSWNT.radius(n, m)
-        self.set_lat_vectors([10 * rad, 0, 0], [0, 10 * rad, 0], [0, 0, leng])
-        np1, pi, px, py, leng = self.graphene_positions(n, m, leng)
-
-        """ output """
-        R = leng / (2 * math.pi)
-        
-        for i_par in range(0, np1):
-            phi_par = px[i_par] / R
-            qx = R * math.sin(phi_par)
-            qy = -R * math.cos(phi_par)
-            qz = py[i_par]
-            self.add_atom(Atom([qx, qy, qz, "C", 6]))
-
-    @staticmethod
-    def radius(n, m):
-        return math.sqrt(n * n + n * m + m * m)
-
-    @staticmethod
-    def unitlength(n, m, acc): 
-        a = math.sqrt(3) * acc
-        pi = math.pi
-        
-        b1x = 2 * pi / a / math.sqrt(3)
-        b1y = 2 * pi / a
-        b2x = 2 * pi / a / math.sqrt(3)
-        b2y = -2 * pi / a
-        Ch = a * math.sqrt(n * n + n * m + m * m)
-        dia = Ch / pi
-        theta = math.atan((math.sqrt(3) * m / (2.0 * n + m)))
-        theta = theta * 180.0 / pi
-        d = helpers.cdev(n, m)
-        if (n - m) % (3 * d) != 0:
-            dR = d
-        else:
-            dR = 3 * d
-        T1 = (2 * m + n) / dR
-        T2 = -(2 * n + m) / dR
-        T = math.sqrt(3) * Ch / dR
-        return T
-
-##################################################################
-######################## TCap for SWNT ###########################
-##################################################################
-
-
-class TCapedSWNT(TAtomicModel):
+class CapedSWNT(TAtomicModel):
     def __init__(self, n, m, leng, ncell, type, dist1, angle1, dist2, angle2):
         if leng == 0:
-            leng = ncell * TSWNT.unitlength(n, m, 1.43)
+            leng = ncell * SWNT.unitlength(n, m, 1.43)
         TAtomicModel.__init__(self)
-        self.availableind = np.zeros((8))
+        self.availableind = np.zeros(8)
         self.available = False
 
         self.n = n
@@ -280,7 +64,7 @@ class TCapedSWNT(TAtomicModel):
             # end cap generation
 
     def Size(self, n, m):
-        for i in range(0,len(self.availableind)):
+        for i in range(0, len(self.availableind)):
             if (n == self.availableind[0]) and (m == self.availableind[1]):
                 return int(self.availableind[3])
         return -1
@@ -288,7 +72,7 @@ class TCapedSWNT(TAtomicModel):
     def cap4SWNT_norm(self):
         if (self.n == self.availableind[0]) and (self.m == self.availableind[1]):
                 cap1 = TAtomicModel()
-                for j in range(0,self.cap_atoms.nAtoms()):
+                for j in range(0, self.cap_atoms.nAtoms()):
                     cap1.add_atom(self.cap_atoms[j])
                 cap1.move(- 1.0 * self.availableind[4] / 2.0, - 1.0 * self.availableind[5] / 2.0, 0)
 
@@ -317,12 +101,12 @@ class TCapedSWNT(TAtomicModel):
             z_coord = 0 # z координата
             tem = 1
             # calculation of atoms
-            while (z_coord < self.length):
+            while z_coord < self.length:
                 size += self.n
-                tem +=1
+                tem += 1
                 bound = 1.421
                 if tem == 2:
-                    tem=0
+                    tem = 0
                     bound = 1.421 * math.cos(math.pi / 3.0)
                 z_coord += bound
             # end calculation of atoms
@@ -346,8 +130,6 @@ class TCapedSWNT(TAtomicModel):
                     bound = 1.421 * math.cos(math.pi / 3)
                 z_coord += bound
                 ring_nanotube +=1
-
-
 
         if (self.n == self.m) and (self.n > 0):
             # armchare nanotube

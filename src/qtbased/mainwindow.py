@@ -19,13 +19,13 @@ from models.atomic_model import TAtomicModel
 from utils.calculators import Calculators as Calculator
 from utils.calculators import gaps
 from utils.critic2 import check_cro_file
-from models.models import TCapedSWNT
-from models.models import TBiNT
+from models.capedswcnt import CapedSWNT
+from models.bint import BiNT
 from utils.fdfdata import TFDFFile
-from models.models import TGraphene
+from models.graphene import Graphene
 from utils.periodic_table import TPeriodTable
 from utils.siesta import TSIESTA
-from models.models import TSWNT
+from models.swnt import SWNT
 from utils.vasp import vasp_dos
 from utils.importer import Importer
 from utils.electronic_prop_reader import read_siesta_bands, dos_from_file
@@ -37,9 +37,9 @@ from PySide2.QtWidgets import QTreeWidgetItemIterator
 from qtbased.guiopengl import GuiOpenGL
 from qtbased.atomidentifier import AtomsIdentifier
 from qtbased.image3dexporter import Image3Dexporter
-from utils.TInterface import TGaussianCube
-from utils.TInterface import TVolumericData
-from utils.TInterface import TXSF
+from models.gaussiancube import GaussianCube
+from models.volumericdata import VolumericData
+from models.xsf import XSF
 from ui.about import Ui_DialogAbout as Ui_about
 from ui.form import Ui_MainWindow as Ui_form
 
@@ -64,8 +64,8 @@ class mainWindow(QMainWindow):
         self.MainForm = GuiOpenGL(self.ui.openGLWidget)
         self.MainForm.set_form_elements(self.ui.FormSettingsViewCheckAtomSelection, selected_atom_info, 1)
         self.FDFData = TFDFFile()
-        self.VolumericData = TVolumericData()
-        self.VolumericData2 = TVolumericData()  # only for volumeric data difference
+        self.VolumericData = VolumericData()
+        self.VolumericData2 = VolumericData()  # only for volumeric data difference
         self.PDOSdata = []
         self.filename = ""
         self.colors_cash = {}
@@ -2301,9 +2301,9 @@ class mainWindow(QMainWindow):
         if len(self.ui.FormActionsPostList3DData.selectedItems()) > 0:
             Selected = self.ui.FormActionsPostList3DData.selectedItems()[0].text()
             if Selected.endswith(".XSF"):
-                self.VolumericData = TXSF()
+                self.VolumericData = XSF()
             if Selected.endswith(".cube"):
-                self.VolumericData = TGaussianCube()
+                self.VolumericData = GaussianCube()
             if self.VolumericData.parse(Selected):
                 self.fill_volumeric_data(self.VolumericData)
 
@@ -2322,9 +2322,9 @@ class mainWindow(QMainWindow):
             if len(fname) > 0:
                 fname = fname[0]
                 if fname.endswith(".XSF"):
-                    self.VolumericData2 = TXSF()
+                    self.VolumericData2 = XSF()
                 if fname.endswith(".cube"):
-                    self.VolumericData2 = TGaussianCube()
+                    self.VolumericData2 = GaussianCube()
                 if self.VolumericData2.parse(fname):
                     self.fill_volumeric_data(self.VolumericData2, self.ui.FormActionsPostTreeSurface2)
 
@@ -2497,7 +2497,7 @@ class mainWindow(QMainWindow):
         m = self.ui.FormActionsPreLineGraphene_m.value()
         leng = self.ui.FormActionsPreLineGraphene_len.value()
 
-        model = TGraphene(n, m, leng)
+        model = Graphene(n, m, leng)
 
         self.models.append(model)
         self.plot_model(-1)
@@ -2528,14 +2528,14 @@ class mainWindow(QMainWindow):
 
         model = None
         if mytype == 0:
-            model = TSWNT(n, m, leng, cells)
+            model = SWNT(n, m, leng, cells)
 
         if mytype == 1 or mytype == 2:
             dist1 = float(self.ui.FormCreateSpinFirstCapDist.value())
             angle1 = float(self.ui.FormCreateSpinFirstCapAngle.value())
             dist2 = float(self.ui.FormCreateSpinSecondCapDist.value())
             angle2 = float(self.ui.FormCreateSpinSecondCapAngle.value())
-            model = TCapedSWNT(n, m, leng, cells, mytype, dist1, angle1, dist2, angle2)
+            model = CapedSWNT(n, m, leng, cells, mytype, dist1, angle1, dist2, angle2)
 
         self.models.append(model)
         self.plot_model(-1)
@@ -2555,7 +2555,7 @@ class mainWindow(QMainWindow):
         leng = self.ui.FormBiElementLen.value()
         t = self.ui.FormNanotypeTypeSelector.currentText()
 
-        model = TBiNT(n, m, leng, t)
+        model = BiNT(n, m, leng, t)
 
         self.models.append(model)
         self.plot_model(-1)

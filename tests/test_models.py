@@ -1,25 +1,35 @@
-from models.models import TSWNT, TGraphene, TBiNT, TCapedSWNT
+from models.capedswcnt import CapedSWNT
+from models.graphene import Graphene
+from models.bint import BiNT
+from models.swnt import SWNT
 
 
 def test_swnt():
-    model = TSWNT(7, 7, 0, 1)
+    model = SWNT(7, 7, 0, 1)
     assert len(model.atoms) == 28
-    model = TSWNT(7, 0, 0, 1)
+    model = SWNT(7, 0, 0, 1)
     assert len(model.atoms) == 28
 
 
 def test_graphene():
-    model = TGraphene(7, 7, 5)
+    model = Graphene(7, 7, 5)
     assert len(model.atoms) == 56
 
 
 def test_tbint():
-    model = TBiNT(7, 7, 5, tubetype="BN")
+    model = BiNT(7, 7, 5, tubetype="BN")
     assert len(model.atoms) == 70
+
+    model = BiNT(7, 0, 5, tubetype="BC")
+    assert len(model.atoms) == 35
 
 
 def test_caped_swnt():
-    model = TCapedSWNT(6, 6, 10, 1, 1, 2, 0, 2, 0)
+    model = CapedSWNT(6, 6, 10, 1, 1, 2, 0, 2, 0)
     assert len(model.atoms) == 144
-    model = TCapedSWNT(6, 6, 10, 1, 2, 2, 0, 2, 0)
+
+    model = CapedSWNT(6, 6, 10, 1, 2, 2, 0, 2, 0)
     assert len(model.atoms) == 180
+
+    model = CapedSWNT(6, 6, 0, 1, 2, 2, 0, 2, 0)
+    assert len(model.atoms) == 96

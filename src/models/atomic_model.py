@@ -1057,18 +1057,19 @@ class TAtomicModel(object):
                     self.bonds_per.append([t1, t2, length, self.atoms[i].let, i, self.atoms[j].let, j])
         return self.bonds_per
 
-    def find_bonds_fast(self):
-        self.bonds = []
-        Mendeley = TPeriodTable()
-        for i in range(0, len(self.atoms)):
-            for j in range(i + 1, len(self.atoms)):
-                rx2 = math.pow(self.atoms[i].x - self.atoms[j].x, 2)
-                ry2 = math.pow(self.atoms[i].y - self.atoms[j].y, 2)
-                rz2 = math.pow(self.atoms[i].z - self.atoms[j].z, 2)
-                r = math.sqrt(rx2 + ry2 + rz2)
-                r_tab = Mendeley.Bonds[self.atoms[i].charge][self.atoms[j].charge]
-                if (r > 1e-4) and (r < 1.2 * r_tab):
-                    self.bonds.append([i, j])
+    #def find_bonds_fast(self):
+    #    self.bonds = []
+    #    Mendeley = TPeriodTable()
+    #    for i in range(0, len(self.atoms)):
+    #        for j in range(i + 1, len(self.atoms)):
+    #            rx2 = math.pow(self.atoms[i].x - self.atoms[j].x, 2)
+    #            ry2 = math.pow(self.atoms[i].y - self.atoms[j].y, 2)
+    #            rz2 = math.pow(self.atoms[i].z - self.atoms[j].z, 2)
+    #            r = math.sqrt(rx2 + ry2 + rz2)
+    #            r_tab = Mendeley.Bonds[self.atoms[i].charge][self.atoms[j].charge]
+    #            if (r > 1e-4) and (r < 1.2 * r_tab):
+    #                self.bonds.append([i, j])
+    #    return self.bonds
 
     def Delta(self, newMolecula):
         """ maximum distance from atoms in self to the atoms in the newMolecula"""
