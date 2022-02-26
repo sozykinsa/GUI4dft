@@ -85,7 +85,7 @@ def create_critic2_xyz_file(bcp, bcp_seleсted, is_with_selected, model):
 
 
 def create_cri_file(cp_list, extra_points, is_form_bp, model, text_prop):
-    sys_coord = np.array([model.LatVect1, model.LatVect2, model.LatVect3])
+    sys_coord = np.array([model.lat_vector1, model.lat_vector2, model.lat_vector3])
     obr = np.linalg.inv(sys_coord).transpose()
     text = ""
     te = ""

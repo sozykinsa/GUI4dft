@@ -145,6 +145,7 @@ class mainWindow(QMainWindow):
         self.ui.FormActionsPostButGetBonds.clicked.connect(self.get_bonds)
         self.ui.PropertyAtomAtomDistanceGet.clicked.connect(self.get_bond)
         self.ui.FormStylesFor2DGraph.clicked.connect(self.set_2d_graph_styles)
+        self.ui.FormModifyTwist.clicked.connect(self.twist_model)
 
         self.ui.FormSelectPart1File.clicked.connect(self.set_part1_file)
         self.ui.FormSelectPart2File.clicked.connect(self.set_part2_file)
@@ -924,9 +925,9 @@ class mainWindow(QMainWindow):
         model = self.MainForm.get_model()
 
         properties.append(["Natoms", str(len(model.atoms))])
-        properties.append(["LatVect1", str(model.LatVect1)])
-        properties.append(["LatVect2", str(model.LatVect2)])
-        properties.append(["LatVect3", str(model.LatVect3)])
+        properties.append(["LatVect1", str(model.lat_vector1)])
+        properties.append(["LatVect2", str(model.lat_vector2)])
+        properties.append(["LatVect3", str(model.lat_vector3)])
 
         self.ui.FormModelTableProperties.setRowCount(len(properties))
 
@@ -934,15 +935,15 @@ class mainWindow(QMainWindow):
             self.ui.FormModelTableProperties.setItem(i, 0, QTableWidgetItem(properties[i][0]))
             self.ui.FormModelTableProperties.setItem(i, 1, QTableWidgetItem(properties[i][1]))
 
-        self.ui.FormModifyCellEditA1.setValue(model.LatVect1[0])
-        self.ui.FormModifyCellEditA2.setValue(model.LatVect1[1])
-        self.ui.FormModifyCellEditA3.setValue(model.LatVect1[2])
-        self.ui.FormModifyCellEditB1.setValue(model.LatVect2[0])
-        self.ui.FormModifyCellEditB2.setValue(model.LatVect2[1])
-        self.ui.FormModifyCellEditB3.setValue(model.LatVect2[2])
-        self.ui.FormModifyCellEditC1.setValue(model.LatVect3[0])
-        self.ui.FormModifyCellEditC2.setValue(model.LatVect3[1])
-        self.ui.FormModifyCellEditC3.setValue(model.LatVect3[2])
+        self.ui.FormModifyCellEditA1.setValue(model.lat_vector1[0])
+        self.ui.FormModifyCellEditA2.setValue(model.lat_vector1[1])
+        self.ui.FormModifyCellEditA3.setValue(model.lat_vector1[2])
+        self.ui.FormModifyCellEditB1.setValue(model.lat_vector2[0])
+        self.ui.FormModifyCellEditB2.setValue(model.lat_vector2[1])
+        self.ui.FormModifyCellEditB3.setValue(model.lat_vector2[2])
+        self.ui.FormModifyCellEditC1.setValue(model.lat_vector3[0])
+        self.ui.FormModifyCellEditC2.setValue(model.lat_vector3[1])
+        self.ui.FormModifyCellEditC3.setValue(model.lat_vector3[2])
 
     def fill_volumeric_data(self, data, tree=" "):
         if tree == " ":
@@ -1256,12 +1257,12 @@ class mainWindow(QMainWindow):
             except Exception as e:
                 self.show_error(e)
 
-    def export_to_file(model, fname):
+    def export_to_file(self, model, fname):
         if fname.find("POSCAR") >= 0:
             fname = fname.split(".")[0]
             model.toVASPposcar(fname)
         if fname.endswith(".inp"):
-            atomic_model_to_firefly_inp(fname)
+            atomic_model_to_firefly_inp(model, fname)
         if fname.endswith(".fdf"):
             model.toSIESTAfdf(fname)
         if fname.endswith(".xyz"):
@@ -2150,6 +2151,11 @@ class mainWindow(QMainWindow):
         self.ui.FormActionsPostLabelSurfaceValue.setValue(0)
         self.ui.FormActionsPostButSurface.setEnabled(False)
         self.ui.FormActionsPostButContour.setEnabled(False)
+
+    def twist_model(self):
+        angle = math.radians(self.ui.ModifyTwistAngle.value())
+        self.models[self.active_model].twist_z(angle)
+        self.plot_model(self.active_model)
 
     def fdf_data_to_form(self):
         try:

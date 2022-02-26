@@ -9,7 +9,7 @@ def test_atomic_model():
     assert len(model.atoms) == 0
 
 
-def test_atomic_model_quack_as_ase(h2o_model):
+def test_atomic_model_quack_as_ase(h2o_model: TAtomicModel) -> None:
     model = h2o_model
     assert len(model.atoms) == 3
     pos = model.get_positions()
@@ -23,14 +23,30 @@ def test_atomic_model_quack_as_ase(h2o_model):
     assert cm == pytest.approx(np.array([0.0,  0.0,  0.0]))
     tags = model.get_tags()
     assert tags == []
+    assert model.get_cell()[0] == pytest.approx(model.lat_vector1)
+    assert len(model.get_cell()) == 3
+    assert model.get_cell().size == 9
 
 
-def test_find_bonds_exact(h2o_model):
+def test_twist_z(h2o_model):
+    model = h2o_model
+    alpha = np.radians(90.0)
+    model.twist_z(alpha)
+    assert model.atoms[1].x == pytest.approx(-1.2)
+
+
+def test_find_bonds_exact(h2o_model: TAtomicModel) -> None:
     model = h2o_model
     bonds = model.find_bonds_exact()
     assert len(bonds) == 2
     assert bonds[0][-1] == 1
     assert bonds[1][-1] == 2
+
+
+def test_go_to_positive_coordinates(h2o_model: TAtomicModel) -> None:
+    model = h2o_model
+    model.go_to_positive_coordinates()
+    assert model.atoms[1].x >= 0
 
 
 def test_formula(h2o_model):
@@ -70,15 +86,15 @@ def test_grow(h2o_model):
     model = h2o_model
     model_x = model.grow_x()
     assert len(model_x.atoms) == 6
-    assert model_x.LatVect1 == pytest.approx(2 * model.LatVect1)
+    assert model_x.lat_vector1 == pytest.approx(2 * model.lat_vector1)
 
     model_y = model.grow_y()
     assert len(model_y.atoms) == 6
-    assert model_y.LatVect2 == pytest.approx(2 * model.LatVect2)
+    assert model_y.lat_vector2 == pytest.approx(2 * model.lat_vector2)
 
     model_z = model.grow_z()
     assert len(model_z.atoms) == 6
-    assert model_z.LatVect3 == pytest.approx(2 * model.LatVect3)
+    assert model_z.lat_vector3 == pytest.approx(2 * model.lat_vector3)
 
     model_xyz = model.grow()
     assert len(model_xyz.atoms) == 81

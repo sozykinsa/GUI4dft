@@ -671,9 +671,9 @@ class GuiOpenGL(QOpenGLWidget):
         gl.glNewList(self.object + 3, gl.GL_COMPILE)
         gl.glColor3f(self.color_of_box[0], self.color_of_box[1], self.color_of_box[2])
 
-        v1 = self.MainModel.LatVect1
-        v2 = self.MainModel.LatVect2
-        v3 = self.MainModel.LatVect3
+        v1 = self.MainModel.lat_vector1
+        v2 = self.MainModel.lat_vector2
+        v3 = self.MainModel.lat_vector3
 
         origin = - (v1 + v2 + v3) / 2
 

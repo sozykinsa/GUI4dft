@@ -85,9 +85,9 @@ def model_to_vasp_poscar(model, filename):
     data += "model \n"
     data += ' 1.0 \n'
 
-    data += '  ' + str(model.LatVect1[0]) + '  ' + str(model.LatVect1[1]) + '  ' + str(model.LatVect1[2]) + '\n'
-    data += '  ' + str(model.LatVect2[0]) + '  ' + str(model.LatVect2[1]) + '  ' + str(model.LatVect2[2]) + '\n'
-    data += '  ' + str(model.LatVect3[0]) + '  ' + str(model.LatVect3[1]) + '  ' + str(model.LatVect3[2]) + '\n'
+    data += '  ' + str(model.lat_vector1[0]) + '  ' + str(model.lat_vector1[1]) + '  ' + str(model.lat_vector1[2]) + '\n'
+    data += '  ' + str(model.lat_vector2[0]) + '  ' + str(model.lat_vector2[1]) + '  ' + str(model.lat_vector2[2]) + '\n'
+    data += '  ' + str(model.lat_vector3[0]) + '  ' + str(model.lat_vector3[1]) + '  ' + str(model.lat_vector3[2]) + '\n'
 
     PerTab = TPeriodTable()
 
@@ -107,7 +107,7 @@ def model_to_vasp_poscar(model, filename):
     data += "Direct\n"
 
     model.sort_atoms_by_type()
-    model.GoToPositiveCoordinates()
+    model.go_to_positive_coordinates()
     model.convert_from_cart_to_direct()
     data += model.coords_for_export("FractionalPOSCAR")
 
