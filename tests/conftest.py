@@ -1,6 +1,7 @@
 from pathlib import Path
 from qtbased.pyqtgraphwidget import PyqtGraphWidget
 from qtbased.pyqtgraphwidgetimage import PyqtGraphWidgetImage
+from qtbased.guiopengl import GuiOpenGL
 from models.atomic_model import TAtomicModel
 from utils.periodic_table import TPeriodTable
 
@@ -41,6 +42,22 @@ def get_graph_widget(qapp):
 @pytest.fixture
 def graph_widget(get_graph_widget):
     return get_graph_widget()
+
+
+@pytest.fixture
+def get_guiopengl_widget(qapp):
+
+    def factory_function():
+        widget = GuiOpenGL()
+        widget.show()
+        return widget
+
+    return factory_function
+
+
+@pytest.fixture
+def guiopengl_widget(get_guiopengl_widget):
+    return get_guiopengl_widget()
 
 
 @pytest.fixture

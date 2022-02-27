@@ -14,6 +14,7 @@ from PySide2.QtWidgets import *
 
 from qtbased.pyqtgraphwidget import PyqtGraphWidget
 from qtbased.pyqtgraphwidgetimage import PyqtGraphWidgetImage
+from qtbased.guiopengl import GuiOpenGL
 
 
 class Ui_MainWindow(object):
@@ -101,7 +102,7 @@ class Ui_MainWindow(object):
         self.toolBox.setObjectName(u"toolBox")
         self.page_17 = QWidget()
         self.page_17.setObjectName(u"page_17")
-        self.page_17.setGeometry(QRect(0, 0, 371, 624))
+        self.page_17.setGeometry(QRect(0, 0, 299, 132))
         self.verticalLayout_52 = QVBoxLayout(self.page_17)
         self.verticalLayout_52.setObjectName(u"verticalLayout_52")
         self.frame_81 = QFrame(self.page_17)
@@ -187,7 +188,7 @@ class Ui_MainWindow(object):
         self.toolBox.addItem(self.page_17, u"Graphene")
         self.page_4 = QWidget()
         self.page_4.setObjectName(u"page_4")
-        self.page_4.setGeometry(QRect(-9, 0, 380, 603))
+        self.page_4.setGeometry(QRect(0, 0, 380, 582))
         self.verticalLayout_95 = QVBoxLayout(self.page_4)
         self.verticalLayout_95.setObjectName(u"verticalLayout_95")
         self.tabWidget_11 = QTabWidget(self.page_4)
@@ -1265,7 +1266,7 @@ class Ui_MainWindow(object):
         self.toolBox_6.setSizePolicy(sizePolicy2)
         self.page_29 = QWidget()
         self.page_29.setObjectName(u"page_29")
-        self.page_29.setGeometry(QRect(0, 0, 371, 593))
+        self.page_29.setGeometry(QRect(0, 0, 337, 258))
         self.verticalLayout_26 = QVBoxLayout(self.page_29)
         self.verticalLayout_26.setObjectName(u"verticalLayout_26")
         self.frame_28 = QFrame(self.page_29)
@@ -1706,7 +1707,7 @@ class Ui_MainWindow(object):
         self.toolBox_6.addItem(self.page_12, u"Grow model")
         self.page_11 = QWidget()
         self.page_11.setObjectName(u"page_11")
-        self.page_11.setGeometry(QRect(0, 0, 371, 593))
+        self.page_11.setGeometry(QRect(0, 0, 293, 425))
         self.verticalLayout_82 = QVBoxLayout(self.page_11)
         self.verticalLayout_82.setObjectName(u"verticalLayout_82")
         self.groupBox_44 = QGroupBox(self.page_11)
@@ -1956,7 +1957,7 @@ class Ui_MainWindow(object):
         self.toolBox_2.setStyleSheet(u"")
         self.page_19 = QWidget()
         self.page_19.setObjectName(u"page_19")
-        self.page_19.setGeometry(QRect(0, 0, 399, 675))
+        self.page_19.setGeometry(QRect(0, 0, 357, 500))
         self.verticalLayout_6 = QVBoxLayout(self.page_19)
         self.verticalLayout_6.setSpacing(0)
         self.verticalLayout_6.setObjectName(u"verticalLayout_6")
@@ -3985,7 +3986,7 @@ class Ui_MainWindow(object):
         self.toolBox_4.setObjectName(u"toolBox_4")
         self.page_9 = QWidget()
         self.page_9.setObjectName(u"page_9")
-        self.page_9.setGeometry(QRect(0, 0, 399, 675))
+        self.page_9.setGeometry(QRect(0, 0, 109, 109))
         self.verticalLayout_72 = QVBoxLayout(self.page_9)
         self.verticalLayout_72.setObjectName(u"verticalLayout_72")
         self.textBrowser = QTextBrowser(self.page_9)
@@ -5093,7 +5094,7 @@ class Ui_MainWindow(object):
         self.toolBox_3.setMinimumSize(QSize(0, 0))
         self.page_5 = QWidget()
         self.page_5.setObjectName(u"page_5")
-        self.page_5.setGeometry(QRect(0, 0, 399, 706))
+        self.page_5.setGeometry(QRect(0, 0, 317, 250))
         self.verticalLayout_13 = QVBoxLayout(self.page_5)
         self.verticalLayout_13.setObjectName(u"verticalLayout_13")
         self.frame_88 = QFrame(self.page_5)
@@ -5561,7 +5562,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_3 = QHBoxLayout(self.page_7)
         self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
         self.horizontalLayout_3.setContentsMargins(0, 0, 0, 0)
-        self.openGLWidget = QOpenGLWidget(self.page_7)
+        self.openGLWidget = GuiOpenGL(self.page_7)
         self.openGLWidget.setObjectName(u"openGLWidget")
 
         self.horizontalLayout_3.addWidget(self.openGLWidget)
@@ -5569,7 +5570,7 @@ class Ui_MainWindow(object):
         self.Form3Dand2DTabs.addItem(self.page_7, u"3D View")
         self.page_8 = QWidget()
         self.page_8.setObjectName(u"page_8")
-        self.page_8.setGeometry(QRect(0, 0, 642, 765))
+        self.page_8.setGeometry(QRect(0, 0, 98, 100))
         self.horizontalLayout = QHBoxLayout(self.page_8)
         self.horizontalLayout.setObjectName(u"horizontalLayout")
         self.horizontalLayout.setContentsMargins(0, 0, 0, 0)

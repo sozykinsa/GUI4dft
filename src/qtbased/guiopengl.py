@@ -4,7 +4,6 @@ import OpenGL.GL as gl
 import OpenGL.GLU as glu
 from qtpy.QtWidgets import QOpenGLWidget
 from PySide2.QtCore import QEvent
-from PySide2.QtCore import QObject
 from PySide2.QtCore import Qt
 from PySide2.QtGui import QColor, QPainter, QFont
 from copy import deepcopy
@@ -16,38 +15,9 @@ import math
 import numpy as np
 
 
-class MouseEventsFilter(QObject):
-    def __init__(self, wind):
-        super(MouseEventsFilter, self).__init__()
-        self.window = wind
-
-    def eventFilter(self, obj, event):
-        if event.type() == QEvent.Wheel:
-            self.window.scale(event.angleDelta().y())
-
-        if event.type() == QEvent.MouseMove:
-            if event.buttons() == Qt.LeftButton:
-                self.window.rotat(event.x(), event.y(), self.window.openGLWidget.width(), self.window.openGLWidget.height())
-                self.window.setXY(event.x(), event.y(), self.window.openGLWidget.width(), self.window.openGLWidget.height())
-
-            elif event.buttons() == Qt.RightButton:
-                if self.window.isAtomSelected():
-                    self.window.move_atom(event.x(), event.y(), self.window.openGLWidget.width(), self.window.openGLWidget.height())
-                else:
-                    if not self.window.CheckAtomSelection.isChecked():
-                        self.window.move(event.x(), event.y(), self.window.openGLWidget.width(), self.window.openGLWidget.height())
-                self.window.setXY(event.x(), event.y(), self.window.openGLWidget.width(), self.window.openGLWidget.height())
-
-        elif event.type() == QEvent.MouseButtonPress:
-            if self.window.CheckAtomSelection.isChecked() and event.buttons() == Qt.LeftButton:
-                self.window.CanSearch = True
-            self.window.setXY(event.x(), event.y(), self.window.openGLWidget.width(), self.window.openGLWidget.height())
-        return False
-
-
 class GuiOpenGL(QOpenGLWidget):
-    def __init__(self, widget):
-        self.openGLWidget = widget
+    def __init__(self, parent=None):
+        super().__init__(parent)
         self.MainModel = TAtomicModel()
 
         self.CheckAtomSelection = False
@@ -72,12 +42,27 @@ class GuiOpenGL(QOpenGLWidget):
 
         self.init_params()
 
-        self.openGLWidget.initializeGL()
-        self.openGLWidget.paintGL = self.paintGL
-        self.openGLWidget.initializeGL = self.initializeGL
-        self.openGLWidget.setMouseTracking(True)
-        self.filter = MouseEventsFilter(self)
-        self.openGLWidget.installEventFilter(self.filter)
+    def wheelEvent(self, event: QEvent):
+        self.scale(event.angleDelta().y())
+
+    def mouseMoveEvent(self, event: QEvent):
+        if event.buttons() == Qt.LeftButton:
+            self.rotat(event.x(), event.y(), self.width(), self.height())
+            self.setXY(event.x(), event.y(), self.width(), self.height())
+
+        elif event.buttons() == Qt.RightButton:
+            if self.isAtomSelected():
+                self.move_atom(event.x(), event.y(), self.width(), self.height())
+            else:
+                if not self.CheckAtomSelection.isChecked():
+                    self.move(event.x(), event.y(), self.width(), self.height())
+            self.setXY(event.x(), event.y(), self.width(), self.height())
+
+    def mousePressEvent(self, event: QEvent):
+        if event.type() == QEvent.MouseButtonPress:
+            if self.CheckAtomSelection.isChecked() and event.buttons() == Qt.LeftButton:
+                self.CanSearch = True
+            self.setXY(event.x(), event.y(), self.width(), self.height())
 
     def set_form_elements(self, check_atom_selection=None, selected_atom_info=[], quality=1):
         self.CheckAtomSelection = check_atom_selection
@@ -153,9 +138,6 @@ class GuiOpenGL(QOpenGLWidget):
             self.color_of_bonds_by_atoms = the_object.color_of_bonds_by_atoms
             self.color_of_box = the_object.color_of_box
             self.ViewAxes = the_object.ViewAxes
-
-    def update(self):
-        self.openGLWidget.update()
 
     def setSelectedFragmentMode(self, SelectedFragmentAtomsListView, SelectedFragmentAtomsTransp):
         if SelectedFragmentAtomsListView is None:
@@ -302,7 +284,7 @@ class GuiOpenGL(QOpenGLWidget):
             self.add_colored_plane(GUI.data_contour_fill)
         if self.ViewSurface:
             self.add_surface(GUI.data_surface)
-        self.openGLWidget.update()
+        self.update()
         
     def screen2space(self, x, y, width, height):
         radius = min(width, height)*float(self.Scale)
@@ -340,7 +322,7 @@ class GuiOpenGL(QOpenGLWidget):
         self.add_axes()
         self.add_bcp()
         self.add_bondpath()
-        self.openGLWidget.update()
+        self.update()
 
     def get_model(self):
         newModel = deepcopy(self.MainModel)
@@ -348,7 +330,7 @@ class GuiOpenGL(QOpenGLWidget):
         return newModel
 
     def image3D_to_file(self, fname):
-        self.openGLWidget.grabFramebuffer().save(fname)
+        self.grabFramebuffer().save(fname)
 
     def volumeric_data_to_file(self, fname, volumeric_data, x1, x2, y1, y2, z1, z2):
         newModel = self.get_model()
@@ -370,7 +352,7 @@ class GuiOpenGL(QOpenGLWidget):
             self.MainModel.find_bonds_fast()
             self.add_atoms()
             self.add_bonds()
-            self.openGLWidget.update()
+            self.update()
 
     def add_new_atom(self):
         charge = self.selected_atom_type.currentIndex()
@@ -386,7 +368,7 @@ class GuiOpenGL(QOpenGLWidget):
             self.ViewSurface = False
             self.add_atoms()
             self.add_bonds()
-            self.openGLWidget.update()
+            self.update()
 
     def modify_selected_atom(self):
         if self.selected_atom >= 0:
@@ -403,7 +385,7 @@ class GuiOpenGL(QOpenGLWidget):
                 self.ViewSurface = False
                 self.add_atoms()
                 self.add_bonds()
-                self.openGLWidget.update()
+                self.update()
 
     def set_color_of_atoms(self, colors):
         self.color_of_atoms = colors
@@ -420,51 +402,51 @@ class GuiOpenGL(QOpenGLWidget):
     def set_color_of_box(self, color):
         self.color_of_box = color
         self.add_box()
-        self.openGLWidget.update()
+        self.update()
 
     def set_color_of_axes(self, color):
         self.color_of_axes = color
         self.add_axes()
-        self.openGLWidget.update()
+        self.update()
 
     def set_bond_width(self, width):
         self.bondWidth = width
         self.add_bonds()
-        self.openGLWidget.update()
+        self.update()
 
     def set_bond_color(self, type):
         self.color_of_bonds_by_atoms = type
         self.add_bonds()
-        self.openGLWidget.update()
+        self.update()
 
     def set_contour_width(self, width):
         self.contour_width = width
-        self.openGLWidget.update()
+        self.update()
 
     def set_atoms_visible(self, state):
         self.ViewAtoms= state
-        self.openGLWidget.update()
+        self.update()
 
     def set_atoms_numbred(self, state):
         self.ViewAtomNumbers = state
-        self.openGLWidget.update()
+        self.update()
 
     def set_box_visible(self, state):
         self.ViewBox = state
-        self.openGLWidget.update()
+        self.update()
 
     def set_bonds_visible(self, state):
         self.ViewBonds = state
-        self.openGLWidget.update()
+        self.update()
 
     def set_axes_visible(self, state):
         self.ViewAxes = state
-        self.openGLWidget.update()
+        self.update()
     
     def scale(self, wheel):
         if self.active:
             self.Scale += 0.05 * (wheel/120)
-            self.openGLWidget.update()
+            self.update()
             return True
     
     def rotat(self, x, y, width, height):
@@ -486,7 +468,7 @@ class GuiOpenGL(QOpenGLWidget):
         if self.active:
             self.xsOld, self.ysOld = self.screen2space(x, y, width, height)
             self.xScene, self.yScene = x, y
-            self.openGLWidget.update()
+            self.update()
             return True
 
     def move_atom(self, x, y, width, height):
@@ -766,7 +748,7 @@ class GuiOpenGL(QOpenGLWidget):
                 gl.glEnd()
         gl.glEndList()
         self.ViewSurface = True
-        self.openGLWidget.update()
+        self.update()
 
     def add_bcp(self):
         gl.glNewList(self.object + 8, gl.GL_COMPILE)
@@ -784,7 +766,7 @@ class GuiOpenGL(QOpenGLWidget):
 
         gl.glEndList()
         self.ViewBCP = True
-        self.openGLWidget.update()
+        self.update()
 
     def add_bondpath(self):
         gl.glNewList(self.object + 9, gl.GL_COMPILE)
@@ -795,7 +777,7 @@ class GuiOpenGL(QOpenGLWidget):
 
         gl.glEndList()
         self.ViewBondpath = True
-        self.openGLWidget.update()
+        self.update()
 
     def add_critical_path(self, bond):
         if not bond:
@@ -830,7 +812,7 @@ class GuiOpenGL(QOpenGLWidget):
                         self.add_bond(p1, p2, self.contour_width)
         gl.glEndList()
         self.ViewContour = True
-        self.openGLWidget.update()
+        self.update()
 
     def add_colored_plane(self, data):
         self.data_contour_fill = data
@@ -861,7 +843,7 @@ class GuiOpenGL(QOpenGLWidget):
             gl.glEnd()
         gl.glEndList()
         self.ViewContourFill = True
-        self.openGLWidget.update()
+        self.update()
 
     def add_voronoi(self, color, maxDist):
         self.color_of_voronoi = color
@@ -877,11 +859,11 @@ class GuiOpenGL(QOpenGLWidget):
                 gl.glEnd()
             gl.glEndList()
             self.ViewVoronoi = True
-            self.openGLWidget.update()
+            self.update()
         return self.selected_atom, volume
 
     def paintGL(self):
-        QOpenGLWidget.makeCurrent(self.openGLWidget)
+        self.makeCurrent()
         try:
             self.prepere_scene()
             self.light_prepare()
@@ -935,14 +917,14 @@ class GuiOpenGL(QOpenGLWidget):
             pass
 
     def render_text(self, text_to_render, font=QFont()):
-        height = self.openGLWidget.height()
+        height = self.height()
         fontColor = QColor.fromRgbF(0.0, 0.0, 0.0, 1)
 
         text_to_render.sort(key=lambda i: i[2], reverse=True)
         used_space = []
 
         # Render text
-        painter = QPainter(self.openGLWidget)
+        painter = QPainter(self)
         painter.setPen(fontColor)
         painter.setFont(font)
         for row in text_to_render:
@@ -1056,7 +1038,7 @@ class GuiOpenGL(QOpenGLWidget):
 
         if need_for_update:
             self.selected_atom_changed()
-            self.openGLWidget.update()
+            self.update()
 
     def nearest_point(self, ats, point):
         minr1 = 10000
@@ -1093,7 +1075,7 @@ class GuiOpenGL(QOpenGLWidget):
         return winx, winy, winz
 
     def initializeGL(self):
-        QOpenGLWidget.makeCurrent(self.openGLWidget)
+        self.makeCurrent()
         gl.glEnable(gl.GL_BLEND)
         gl.glBlendFunc(gl.GL_SRC_ALPHA, gl.GL_ONE_MINUS_SRC_ALPHA)
         gl.glEnable(gl.GL_DEPTH_TEST)

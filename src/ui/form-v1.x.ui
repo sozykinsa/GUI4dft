@@ -125,8 +125,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>371</width>
-                 <height>624</height>
+                 <width>299</width>
+                 <height>132</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -294,10 +294,10 @@
               <widget class="QWidget" name="page_4">
                <property name="geometry">
                 <rect>
-                 <x>-9</x>
+                 <x>0</x>
                  <y>0</y>
                  <width>380</width>
-                 <height>603</height>
+                 <height>582</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -2192,8 +2192,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>371</width>
-                 <height>593</height>
+                 <width>337</width>
+                 <height>258</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -3102,8 +3102,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>371</width>
-                 <height>593</height>
+                 <width>293</width>
+                 <height>425</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -3580,8 +3580,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>399</width>
-             <height>675</height>
+             <width>357</width>
+             <height>500</height>
             </rect>
            </property>
            <attribute name="label">
@@ -7444,8 +7444,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>399</width>
-             <height>675</height>
+             <width>109</width>
+             <height>109</height>
             </rect>
            </property>
            <attribute name="label">
@@ -9486,8 +9486,8 @@ p, li { white-space: pre-wrap; }
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>399</width>
-             <height>706</height>
+             <width>317</width>
+             <height>250</height>
             </rect>
            </property>
            <attribute name="label">
@@ -10448,7 +10448,7 @@ p, li { white-space: pre-wrap; }
          <number>0</number>
         </property>
         <item>
-         <widget class="QOpenGLWidget" name="openGLWidget"/>
+         <widget class="GuiOpenGL" name="openGLWidget"/>
         </item>
        </layout>
       </widget>
@@ -10457,8 +10457,8 @@ p, li { white-space: pre-wrap; }
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>642</width>
-         <height>765</height>
+         <width>98</width>
+         <height>100</height>
         </rect>
        </property>
        <attribute name="label">
@@ -10629,6 +10629,11 @@ p, li { white-space: pre-wrap; }
    <extends>QWidget</extends>
    <header>pyqtgraphwidgetimage.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>GuiOpenGL</class>
+   <extends>QOpenGLWidget</extends>
+   <header>guiopengl.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
