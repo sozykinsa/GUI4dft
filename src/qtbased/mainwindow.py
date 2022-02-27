@@ -2482,15 +2482,7 @@ class mainWindow(QMainWindow):
             helpers.write_text_to_file(fname, textl + lines)
 
             fname_dir = os.path.dirname(fname)
-            #f = open(fname_dir + "/POINTS.txt", 'w')
-            #print(te, file=f)
-            #f.close()
-
             helpers.write_text_to_file(fname_dir + "/POINTS.txt", te)
-
-            #f = open(fname_dir + "/POINTSatoms.txt", 'w')
-            #print(text, file=f)
-            #f.close()
             helpers.write_text_to_file(fname_dir + "/POINTSatoms.txt", text)
 
     def select_voronoi_color(self):
@@ -2579,14 +2571,14 @@ class mainWindow(QMainWindow):
         self.ui.openGLWidget.MainForm.add_atoms()
         self.fill_gui("Bi element NT-model")
 
-    def swnt_type1_selected(self):   # pragma: no cover
+    def swnt_type1_selected(self):
         self.ui.FormActionsPreLineSWNTn.setEnabled(True)
         self.ui.FormActionsPreLineSWNTm.setEnabled(True)
         self.ui.FormActionsPreComboSWNTind.setEnabled(False)
         self.ui.FormCreateGroupFirstCap.setEnabled(False)
         self.ui.FormCreateGroupSecondCap.setEnabled(False)
 
-    def swnt_type2_selected(self):   # pragma: no cover
+    def swnt_type2_selected(self):
         self.ui.FormActionsPreLineSWNTn.setEnabled(False)
         self.ui.FormActionsPreLineSWNTm.setEnabled(False)
         self.ui.FormActionsPreComboSWNTind.setEnabled(True)

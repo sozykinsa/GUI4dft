@@ -33,3 +33,13 @@ def test_caped_swnt():
 
     model = CapedSWNT(6, 6, 0, 1, 2, 2, 0, 2, 0)
     assert len(model.atoms) == 96
+
+    model = CapedSWNT(10, 0, 0, 1, 2, 2, 0, 2, 0)
+    assert len(model.atoms) == 90
+
+    model = CapedSWNT(10, 10, 0, 1, 2, 2, 0, 2, 0)
+    assert len(model.atoms) == 260
+
+    model = CapedSWNT(19, 0, 0, 1, 2, 2, 0, 2, 0)
+    assert len(model.atoms) == 345
+
