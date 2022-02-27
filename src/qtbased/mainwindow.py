@@ -268,7 +268,9 @@ class mainWindow(QMainWindow):
 
         swnt_ind_type = QStandardItemModel()
         swnt_ind_type.appendRow(QStandardItem("(6,6)"))
+        swnt_ind_type.appendRow(QStandardItem("(10,10)"))
         swnt_ind_type.appendRow(QStandardItem("(10,0)"))
+        swnt_ind_type.appendRow(QStandardItem("(19,0)"))
         self.ui.FormActionsPreComboSWNTind.setModel(swnt_ind_type)
 
         fill_space_model = QStandardItemModel()
