@@ -37,6 +37,14 @@ jobs:
           # exit-zero treats all errors as warnings. black defaults to 88 characters
           flake8 . --exclude src/ui/*, --count --exit-zero --max-complexity=10 --max-line-length=88 --statistics
 
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: openrndr/setup-opengl@v1.1
+      - run: xvfb-run glxinfo
+
+
   test-linux:
 
     runs-on: ubuntu-latest
@@ -57,7 +65,6 @@ jobs:
       run: |
         sudo apt-get install libxkbcommon-x11-0 libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-randr0
         sudo apt-get install libxcb-render-util0 libxcb-xinerama0 libxcb-xfixes0
-        xvfb-run glxinfo
         python -m pytest tests --color=yes --cov=src/models --cov=src/utils --cov=src/qtbased --cov-report=xml --cov-report=term-missing
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v1
