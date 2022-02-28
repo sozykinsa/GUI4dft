@@ -38,7 +38,7 @@ jobs:
           flake8 . --exclude src/ui/*, --count --exit-zero --max-complexity=10 --max-line-length=88 --statistics
 
   test:
-    runs-on: ubuntu-bionic
+    runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v2
       - uses: openrndr/setup-opengl@v1.1
@@ -47,7 +47,7 @@ jobs:
 
   test-linux:
 
-    runs-on: ubuntu-bionic
+    runs-on: ubuntu-18.04
 
     steps:
     - uses: actions/checkout@v2
