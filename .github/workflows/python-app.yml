@@ -37,12 +37,21 @@ jobs:
           # exit-zero treats all errors as warnings. black defaults to 88 characters
           flake8 . --exclude src/ui/*, --count --exit-zero --max-complexity=10 --max-line-length=88 --statistics
 
+  test:
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2
+      - uses: openrndr/setup-opengl@v1.1
+      - run: xvfb-run glxinfo
+
+
   test-linux:
 
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
 
     steps:
     - uses: actions/checkout@v2
+    - uses: openrndr/setup-opengl@v1.1
     - name: Set up Python 3.8
       uses: actions/setup-python@v2
       with:
@@ -56,7 +65,8 @@ jobs:
       run: |
         sudo apt-get install libxkbcommon-x11-0 libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-randr0
         sudo apt-get install libxcb-render-util0 libxcb-xinerama0 libxcb-xfixes0
-        python -m pytest tests --color=yes --cov=src/models --cov=src/utils --cov-report=xml --cov-report=term-missing --ignore=tests/opengl
+        sudo apt-get install libglu1-mesa-dev freeglut3-dev mesa-common-dev
+        xvfb-run python -m pytest tests --color=yes --cov=src/models --cov=src/utils --cov=src/qtbased --cov-report=xml --cov-report=term-missing
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v1
       with:
