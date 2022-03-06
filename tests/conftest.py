@@ -61,6 +61,37 @@ def guiopengl_widget(get_guiopengl_widget):
 
 
 @pytest.fixture
+def get_guiopengl_model_widget(qapp, h2o_model):
+
+    def factory_function():
+        atomscolors = [[0.0, 0.0, 0.9], [0.0, 0.0, 0.9], [0.0, 0.0, 0.9], [0.0, 0.0, 0.9], [0.0, 0.0, 0.9],
+                       [0.0, 0.0, 0.9], [0.0, 0.0, 0.9], [0.0, 0.0, 0.9], [0.0, 0.0, 0.9]]
+        ViewAtoms = True
+        ViewAtomNumbers = True
+        ViewBox = True
+        boxcolor  = (0.0, 0.0, 0.0)
+        ViewBonds = True
+        bondscolor = (0.9, 0.0, 0.9)
+        bondWidth = 2
+        Bonds_by_atoms = True
+        ViewAxes = True
+        axescolor = (0.0, 0.0, 0.9)
+        contour_width = 5
+        widget = GuiOpenGL()
+        widget.show()
+        widget.set_atomic_structure(h2o_model, atomscolors, ViewAtoms, ViewAtomNumbers, ViewBox, boxcolor, ViewBonds,
+                                    bondscolor, bondWidth, Bonds_by_atoms, ViewAxes, axescolor, contour_width)
+        return widget
+
+    return factory_function
+
+
+@pytest.fixture
+def guiopengl_model_widget(get_guiopengl_model_widget):
+    return get_guiopengl_model_widget()
+
+
+@pytest.fixture
 def get_graph_image_widget(qapp):
 
     def factory_function():

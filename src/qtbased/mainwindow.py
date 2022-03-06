@@ -1268,13 +1268,14 @@ class mainWindow(QMainWindow):
         if fname.endswith(".xyz"):
             model.toSIESTAxyz(fname)
 
-    def menu_open(self):
+    def menu_open(self, fname=""):
         if len(self.models) > 0:
             self.action_on_start = 'Open'
             self.save_state_action_on_start()
             os.execl(sys.executable, sys.executable, *sys.argv)
         self.ui.Form3Dand2DTabs.setCurrentIndex(0)
-        fname = QFileDialog.getOpenFileName(self, 'Open file', self.work_dir)[0]
+        if fname == "":
+            fname = QFileDialog.getOpenFileName(self, 'Open file', self.work_dir)[0]
         if os.path.exists(fname):
             self.filename = fname
             self.work_dir = os.path.dirname(fname)
@@ -2045,76 +2046,76 @@ class mainWindow(QMainWindow):
         self.ui.openGLWidget.rotZ -= self.rotation_step
         self.ui.openGLWidget.update()
 
-    def save_active_folder(self):
+    def save_active_folder(self): # pragma: no cover
         self.save_property(SETTINGS_Folder, self.work_dir)
 
-    def save_state_open_only_optimal(self):
+    def save_state_open_only_optimal(self): # pragma: no cover
         self.save_property(SETTINGS_FormSettingsOpeningCheckOnlyOptimal,
                            self.ui.FormSettingsOpeningCheckOnlyOptimal.isChecked())
 
-    def save_state_parse_atomic_properties(self):
+    def save_state_parse_atomic_properties(self): # pragma: no cover
         self.save_property(SETTINGS_FormSettingsParseAtomicProperties,
                            self.ui.FormSettingsParseAtomicProperties.isChecked())
 
-    def save_state_view_show_axes(self):
+    def save_state_view_show_axes(self): # pragma: no cover
         self.save_property(SETTINGS_FormSettingsViewCheckShowAxes,
                            self.ui.FormSettingsViewCheckShowAxes.isChecked())
         self.ui.openGLWidget.set_axes_visible(self.ui.FormSettingsViewCheckShowAxes.isChecked())
 
-    def save_state_view_atom_selection(self):
+    def save_state_view_atom_selection(self): # pragma: no cover
         self.save_property(SETTINGS_FormSettingsViewCheckAtomSelection,
                            self.ui.FormSettingsViewCheckAtomSelection.isChecked())
 
-    def save_state_view_bond_color(self):
+    def save_state_view_bond_color(self): # pragma: no cover
         self.save_property(SETTINGS_FormSettingsViewRadioColorBondsManual,
                            self.ui.FormSettingsViewRadioColorBondsManual.isChecked())
         self.ui.openGLWidget.set_bond_color(self.ui.FormSettingsViewRadioColorBondsManual.isChecked())
 
-    def save_state_xyz_as_critic2(self):
+    def save_state_xyz_as_critic2(self): # pragma: no cover
         self.save_property(SETTINGS_FormSettingsViewCheckXYZasCritic2, self.ui.FormSettingsViewCheckXYZasCritic2.isChecked())
 
-    def save_state_view_show_atoms(self):
+    def save_state_view_show_atoms(self): # pragma: no cover
         self.save_property(SETTINGS_FormSettingsViewCheckShowAtoms, self.ui.FormSettingsViewCheckShowAtoms.isChecked())
         self.ui.openGLWidget.set_atoms_visible(self.ui.FormSettingsViewCheckShowAtoms.isChecked())
 
-    def save_state_view_show_atom_number(self):
+    def save_state_view_show_atom_number(self): # pragma: no cover
         self.save_property(SETTINGS_FormSettingsViewCheckShowAtomNumber, self.ui.FormSettingsViewCheckShowAtomNumber.isChecked())
         self.ui.openGLWidget.set_atoms_numbred(self.ui.FormSettingsViewCheckShowAtomNumber.isChecked())
 
-    def save_state_action_on_start(self):
+    def save_state_action_on_start(self): # pragma: no cover
         self.save_property(SETTINGS_FormSettingsActionOnStart, self.action_on_start)
 
-    def save_state_view_show_box(self):
+    def save_state_view_show_box(self): # pragma: no cover
         self.save_property(SETTINGS_FormSettingsViewCheckShowBox, self.ui.FormSettingsViewCheckShowBox.isChecked())
         self.ui.openGLWidget.set_box_visible(self.ui.FormSettingsViewCheckShowBox.isChecked())
 
-    def save_state_view_show_bonds(self):
+    def save_state_view_show_bonds(self): # pragma: no cover
         self.save_property(SETTINGS_FormSettingsViewCheckShowBonds, self.ui.FormSettingsViewCheckShowBonds.isChecked())
         self.ui.openGLWidget.set_bonds_visible(self.ui.FormSettingsViewCheckShowBonds.isChecked())
 
-    def save_state_colors_fixed(self):
+    def save_state_colors_fixed(self): # pragma: no cover
         self.save_property(SETTINGS_FormSettingsColorsFixed, self.ui.FormSettingsColorsFixed.isChecked())
 
-    def save_state_view_spin_contour_width(self):
+    def save_state_view_spin_contour_width(self): # pragma: no cover
         self.save_property(SETTINGS_FormSettingsViewSpinContourWidth, self.ui.FormSettingsViewSpinContourWidth.text())
         self.ui.openGLWidget.set_contour_width(self.ui.FormSettingsViewSpinContourWidth.value() / 1000)
         self.plot_contour()
 
-    def save_state_colors_fixed_min(self):
+    def save_state_colors_fixed_min(self): # pragma: no cover
         self.save_property(SETTINGS_FormSettingsColorsFixedMin, self.ui.FormSettingsColorsFixedMin.text())
 
-    def save_state_view_spin_bond_width(self):
+    def save_state_view_spin_bond_width(self): # pragma: no cover
         self.save_property(SETTINGS_FormSettingsViewSpinBondWidth, self.ui.FormSettingsViewSpinBondWidth.text())
         self.ui.openGLWidget.set_bond_width(self.ui.FormSettingsViewSpinBondWidth.value() * 0.005)
 
-    def save_state_colors_fixed_max(self):
+    def save_state_colors_fixed_max(self): # pragma: no cover
         self.save_property(SETTINGS_FormSettingsColorsFixedMax, self.ui.FormSettingsColorsFixedMax.text())
 
-    def save_state_colors_scale(self):
+    def save_state_colors_scale(self): # pragma: no cover
         self.save_property(SETTINGS_FormSettingsColorsScale, self.ui.FormSettingsColorsScale.currentText())
         self.colors_cash = {}
 
-    def save_state_colors_scale_type(self):
+    def save_state_colors_scale_type(self): # pragma: no cover
         self.save_property(SETTINGS_FormSettingsColorsScaleType, self.ui.FormSettingsColorsScaleType.currentText())
         self.colors_cash = {}
 

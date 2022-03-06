@@ -290,7 +290,8 @@ class GuiOpenGL(QOpenGLWidget):
         radius = min(width, height)*float(self.Scale)
         return (2.*x-width)/radius, -(2.*y-height)/radius
 
-    def set_atomic_structure(self, structure, atomscolors, ViewAtoms, ViewAtomNumbers, ViewBox, boxcolor, ViewBonds, bondscolor, bondWidth, Bonds_by_atoms, ViewAxes, axescolor, contour_width):
+    def set_atomic_structure(self, structure, atomscolors, ViewAtoms, ViewAtomNumbers, ViewBox, boxcolor, ViewBonds,
+                             bondscolor, bondWidth, Bonds_by_atoms, ViewAxes, axescolor, contour_width):
         self.clean()
         self.prop = "charge"
         self.MainModel = deepcopy(structure)
