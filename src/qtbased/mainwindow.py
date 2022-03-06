@@ -1994,11 +1994,12 @@ class mainWindow(QMainWindow):
                                              transformMode=Qt.SmoothTransformation)
         self.ui.FormActionsPostLabelCellParamFig.setPixmap(QPixmap.fromImage(image_profile))
 
-    def save_image_to_file(self):
+    def save_image_to_file(self, name=""):
         if len(self.models) == 0:
             return
         try:
-            name = QFileDialog.getSaveFileName(self, 'Save File', self.work_dir,
+            if name == "":
+                name = QFileDialog.getSaveFileName(self, 'Save File', self.work_dir,
                                            "PNG files (*.png);;JPG files (*.jpg);;BMP files (*.bmp)")
             fname = name[0]
             ext = ""

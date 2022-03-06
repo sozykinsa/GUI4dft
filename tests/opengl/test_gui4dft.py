@@ -52,3 +52,7 @@ def test_plot_dos(gui4dft_application, tests_path):
     window.parse_bands()
     window.plot_bands()
     assert len(window.models) == 1
+
+
+def test_save_image_to_file(gui4dft_application):
+    gui4dft_application.save_image_to_file("1.png")
