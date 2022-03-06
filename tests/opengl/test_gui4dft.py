@@ -48,4 +48,7 @@ def test_plot_dos(gui4dft_application, tests_path):
     window = gui4dft_application
     window.menu_open(f_name)
     window.plot_dos()
+    window.plot_pdos()
+    window.parse_bands()
+    window.plot_bands()
     assert len(window.models) == 1
