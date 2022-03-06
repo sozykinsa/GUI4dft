@@ -861,16 +861,17 @@ class TAtomicModel(object):
                 Indexes.append(j)
         return Indexes
 
-    def indexes_of_atoms_in_ball(self, ats, atom, R):
-        """ Indexes of atoms in the ball of radius R with center on atom 'atom'.
+    def indexes_of_atoms_in_ball(self, ats, atom, r):
+        """Indexes of atoms in the ball of radius R with center on atom 'atom'.
         Args:
-            ats - list of indexes
-            atom- index of atom in the center of ball
+            ats: list of indexes;
+            atom: index of atom in the center of ball;
+            r: sphere radius.
         """
         newatoms = [atom]
         for at in ats:
             if at != atom:
-                if self.atom_atom_distance(at, atom) < R:
+                if self.atom_atom_distance(at, atom) < r:
                     newatoms.append(at)
         return newatoms
 
@@ -1208,21 +1209,21 @@ class TAtomicModel(object):
         return text
 
     def toSIESTAfdf(self, filename):
-        """ созадет входной файл для пакета SIESTA """
+        """Create an input file for the SIESTA."""
         f = open(filename, 'w')
         text = self.toSIESTAfdfdata("Fractional", "Ang", "LatticeVectors")
         print(text, file=f)
         f.close()
 
     def toSIESTAxyz(self, filename):
-        """ созадет xyz файл, совместимый с XMol """
+        """Create an xyz file in XMol format."""
         f = open(filename, 'w')
         text = self.toSIESTAxyzdata()
         print(text, file=f)
         f.close()
 
     def toSIESTAfdfdata(self, coord_style, units_type, latt_style='LatticeParameters'):
-        """ returns data for SIESTA fdf file """
+        """Returns data for SIESTA fdf file."""
         data = ""
         PerTab = TPeriodTable()
         data += 'NumberOfAtoms ' + str(len(self.atoms)) + "\n"
@@ -1423,7 +1424,7 @@ class TAtomicModel(object):
         return str2
 
     def toSIESTAxyzdata(self):
-        """ returns data for *.xyz file """
+        """Returns data for *.xyz file."""
         data = "  "
         nAtoms = self.nAtoms()
         data += str(nAtoms) + "\n"

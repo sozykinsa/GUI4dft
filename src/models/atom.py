@@ -4,6 +4,8 @@ from utils import helpers
 
 
 class Atom(object):
+    """The atom class."""
+
     def __init__(self, at_data):
         """Constructor"""
         self.x = at_data[0]

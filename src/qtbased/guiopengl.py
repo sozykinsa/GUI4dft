@@ -1060,11 +1060,11 @@ class GuiOpenGL(QOpenGLWidget):
         winY = int(float(view[3]) - float(y))
         z = gl.glReadPixels(x, winY, 1, 1, gl.GL_DEPTH_COMPONENT, gl.GL_FLOAT)
         point = glu.gluUnProject(x, y, z, model, proj, view)
-        #al = math.pi * self.rotX / 180
-        #bet = 0  # math.pi * self.rotY / 180
-        #gam = math.pi * self.rotZ / 180
-        #point = self.rotate_un_vector(np.array(point), al, bet, gam)
-        #point = self.rotate_vector(np.array(point), al, bet, gam)
+        al = math.pi * self.rotX / 180
+        bet = 0  # math.pi * self.rotY / 180
+        gam = math.pi * self.rotZ / 180
+        point = self.rotate_un_vector(np.array(point), al, bet, gam)
+        point = self.rotate_vector(np.array(point), al, bet, gam)
         return point
 
     def get_screen_coords(self, x, y, z):
