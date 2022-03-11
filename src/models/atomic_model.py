@@ -475,7 +475,7 @@ class TAtomicModel(object):
 
     @staticmethod
     def atoms_from_xyz(filename, xyzcritic2):
-        """import from xyz file"""
+        """Import from *.xyz file."""
         periodTable = TPeriodTable()
         molecules = []
         if os.path.exists(filename):
@@ -546,23 +546,23 @@ class TAtomicModel(object):
         return molecules
 
     @staticmethod
-    def atoms_from_xyz_structure(NumberOfAtoms, ani_file, periodTable, indexes=[0, 1, 2, 3]):
+    def atoms_from_xyz_structure(number_of_atoms, ani_file, period_table, indexes=[0, 1, 2, 3]):
         if indexes[0] == 0:
-            str1 = helpers.spacedel(ani_file.readline())
+            ani_file.readline()
         atoms = []
-        for i1 in range(0, NumberOfAtoms):
+        for i1 in range(0, number_of_atoms):
             str1 = helpers.spacedel(ani_file.readline())
-            S = str1.split(' ')
-            d1 = float(S[indexes[1]])
-            d2 = float(S[indexes[2]])
-            d3 = float(S[indexes[3]])
-            C = S[indexes[0]]
-            Charge = periodTable.get_charge_by_letter(C)
-            A = [d1, d2, d3, C, Charge]
-            atoms.append(A)
-        newModel = TAtomicModel(atoms)
-        newModel.set_lat_vectors_default()
-        return newModel
+            s = str1.split(' ')
+            d1 = float(s[indexes[1]])
+            d2 = float(s[indexes[2]])
+            d3 = float(s[indexes[3]])
+            c = s[indexes[0]]
+            charge = period_table.get_charge_by_letter(c)
+            a = [d1, d2, d3, c, charge]
+            atoms.append(a)
+        new_model = TAtomicModel(atoms)
+        new_model.set_lat_vectors_default()
+        return new_model
 
     def get_LatVect1_norm(self):
         return norm(self.lat_vector1)

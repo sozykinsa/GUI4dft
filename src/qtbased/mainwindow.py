@@ -1268,13 +1268,13 @@ class mainWindow(QMainWindow):
         if fname.endswith(".xyz"):
             model.toSIESTAxyz(fname)
 
-    def menu_open(self, fname=""):
+    def menu_open(self, fname=False):
         if len(self.models) > 0:
             self.action_on_start = 'Open'
             self.save_state_action_on_start()
             os.execl(sys.executable, sys.executable, *sys.argv)
         self.ui.Form3Dand2DTabs.setCurrentIndex(0)
-        if fname == "":
+        if not fname:
             fname = QFileDialog.getOpenFileName(self, 'Open file', self.work_dir)[0]
         if os.path.exists(fname):
             self.filename = fname
