@@ -25,6 +25,7 @@ from models.graphene import Graphene
 from utils.periodic_table import TPeriodTable
 from utils.siesta import TSIESTA
 from models.swnt import SWNT
+from models.swgnt import SWGNT
 from thirdparty.critic2 import check_cro_file
 from thirdparty.vasp import vasp_dos
 from utils.importer import Importer
@@ -334,20 +335,20 @@ class mainWindow(QMainWindow):
         self.ui.FormActionsPosTableBonds.verticalHeader().setStyleSheet(self.table_header_stylesheet)
 
         if is_with_figure and os.path.exists(Path(__file__).parent / "images" /'Open.png'):
-            openAction = QAction(QIcon(str(Path(__file__).parent / "images" / 'Open.png')), 'Open', self)
+            open_action = QAction(QIcon(str(Path(__file__).parent / "images" / 'Open.png')), 'Open', self)
         else:
-            openAction = QAction('Open', self)
-        openAction.setShortcut('Ctrl+O')
-        openAction.triggered.connect(self.menu_open)
-        self.ui.toolBar.addAction(openAction)
+            open_action = QAction('Open', self)
+        open_action.setShortcut('Ctrl+O')
+        open_action.triggered.connect(self.menu_open)
+        self.ui.toolBar.addAction(open_action)
 
         if is_with_figure and os.path.exists(Path(__file__).parent / "images" / 'Close.png'):
-            openAction = QAction(QIcon(str(Path(__file__).parent / "images" / 'Close.png')), 'Export', self)
+            open_action = QAction(QIcon(str(Path(__file__).parent / "images" / 'Close.png')), 'Export', self)
         else:
-            openAction = QAction('Export', self)
-        openAction.setShortcut('Ctrl+E')
-        openAction.triggered.connect(self.menu_export)
-        self.ui.toolBar.addAction(openAction)
+            open_action = QAction('Export', self)
+        open_action.setShortcut('Ctrl+E')
+        open_action.triggered.connect(self.menu_export)
+        self.ui.toolBar.addAction(open_action)
         self.ui.toolBar.addSeparator()
 
         if is_with_figure and os.path.exists(Path(__file__).parent / "images" / 'Save3D.png'):
@@ -359,48 +360,48 @@ class mainWindow(QMainWindow):
         self.ui.toolBar.addSeparator()
 
         if is_with_figure and os.path.exists(Path(__file__).parent / "images" / 'UndoX.png'):
-            openAction = QAction(QIcon(str(Path(__file__).parent / "images" / 'UndoX.png')), 'RotateX-', self)
+            open_action = QAction(QIcon(str(Path(__file__).parent / "images" / 'UndoX.png')), 'RotateX-', self)
         else:
-            openAction = QAction('RotateX-', self)
-        openAction.triggered.connect(self.rotate_model_xm)
-        self.ui.toolBar.addAction(openAction)
+            open_action = QAction('RotateX-', self)
+        open_action.triggered.connect(self.rotate_model_xm)
+        self.ui.toolBar.addAction(open_action)
 
         if is_with_figure and os.path.exists(Path(__file__).parent / "images" / 'RedoX.png'):
-            openAction = QAction(QIcon(str(Path(__file__).parent / "images" / 'RedoX.png')), 'RotateX+', self)
+            open_action = QAction(QIcon(str(Path(__file__).parent / "images" / 'RedoX.png')), 'RotateX+', self)
         else:
-            openAction = QAction('RotateX+', self)
-        openAction.triggered.connect(self.rotate_model_xp)
-        self.ui.toolBar.addAction(openAction)
+            open_action = QAction('RotateX+', self)
+        open_action.triggered.connect(self.rotate_model_xp)
+        self.ui.toolBar.addAction(open_action)
         self.ui.toolBar.addSeparator()
 
         if is_with_figure and os.path.exists(Path(__file__).parent / "images" / 'UndoY.png'):
-            openAction = QAction(QIcon(str(Path(__file__).parent / "images" / 'UndoY.png')), 'RotateY-', self)
+            open_action = QAction(QIcon(str(Path(__file__).parent / "images" / 'UndoY.png')), 'RotateY-', self)
         else:
-            openAction = QAction('RotateY-', self)
-        openAction.triggered.connect(self.rotate_model_ym)
-        self.ui.toolBar.addAction(openAction)
+            open_action = QAction('RotateY-', self)
+        open_action.triggered.connect(self.rotate_model_ym)
+        self.ui.toolBar.addAction(open_action)
 
         if is_with_figure and os.path.exists(Path(__file__).parent / "images" / 'RedoY.png'):
-            openAction = QAction(QIcon(str(Path(__file__).parent / "images" / 'RedoY.png')), 'RotateY+', self)
+            open_action = QAction(QIcon(str(Path(__file__).parent / "images" / 'RedoY.png')), 'RotateY+', self)
         else:
-            openAction = QAction('RotateY+', self)
-        openAction.triggered.connect(self.rotate_model_yp)
-        self.ui.toolBar.addAction(openAction)
+            open_action = QAction('RotateY+', self)
+        open_action.triggered.connect(self.rotate_model_yp)
+        self.ui.toolBar.addAction(open_action)
         self.ui.toolBar.addSeparator()
 
         if is_with_figure and os.path.exists(Path(__file__).parent / "images" /'UndoZ.png'):
-            openAction = QAction(QIcon(str(Path(__file__).parent / "images" / 'UndoZ.png')), 'RotateZ-', self)
+            open_action = QAction(QIcon(str(Path(__file__).parent / "images" / 'UndoZ.png')), 'RotateZ-', self)
         else:
-            openAction = QAction('RotateZ-', self)
-        openAction.triggered.connect(self.rotate_model_zm)
-        self.ui.toolBar.addAction(openAction)
+            open_action = QAction('RotateZ-', self)
+        open_action.triggered.connect(self.rotate_model_zm)
+        self.ui.toolBar.addAction(open_action)
 
         if is_with_figure and os.path.exists(Path(__file__).parent / "images" / 'RedoZ.png'):
-            openAction = QAction(QIcon(str(Path(__file__).parent / "images" / 'RedoZ.png')), 'RotateZ+', self)
+            open_action = QAction(QIcon(str(Path(__file__).parent / "images" / 'RedoZ.png')), 'RotateZ+', self)
         else:
-            openAction = QAction('RotateZ+', self)
-        openAction.triggered.connect(self.rotate_model_zp)
-        self.ui.toolBar.addAction(openAction)
+            open_action = QAction('RotateZ+', self)
+        open_action.triggered.connect(self.rotate_model_zp)
+        self.ui.toolBar.addAction(open_action)
         self.ui.toolBar.addSeparator()
 
     def activate_fragment_selection_mode(self):
@@ -620,14 +621,14 @@ class mainWindow(QMainWindow):
         if len(self.models) == 0:
             return
         self.ui.openGLWidget.delete_selected_atom()
-        self.models[-1] = self.ui.openGLWidget.MainModel
+        self.models[-1] = self.ui.openGLWidget.main_model
         self.model_to_screen(-1)
 
     def atom_modify(self):
         if len(self.models) == 0:
             return
         self.ui.openGLWidget.modify_selected_atom()
-        self.models.append(self.ui.openGLWidget.MainModel)
+        self.models.append(self.ui.openGLWidget.main_model)
         self.model_to_screen(-1)
 
     def bond_len_to_screen(self):
@@ -697,7 +698,7 @@ class mainWindow(QMainWindow):
     def change_fragment1_status_by_x(self):
         xmin = self.ui.xminborder.value()
         xmax = self.ui.xmaxborder.value()
-        for at in self.ui.openGLWidget.MainModel.atoms:
+        for at in self.ui.openGLWidget.main_model.atoms:
             if (at.x >= xmin) and (at.x <= xmax):
                 at.fragment1 = True
         self.ui.openGLWidget.atoms_of_selected_fragment_to_form()
@@ -706,7 +707,7 @@ class mainWindow(QMainWindow):
     def change_fragment1_status_by_y(self):
         ymin = self.ui.yminborder.value()
         ymax = self.ui.ymaxborder.value()
-        for at in self.ui.openGLWidget.MainModel.atoms:
+        for at in self.ui.openGLWidget.main_model.atoms:
             if (at.y >= ymin) and (at.y <= ymax):
                 at.fragment1 = True
         self.ui.openGLWidget.atoms_of_selected_fragment_to_form()
@@ -715,14 +716,14 @@ class mainWindow(QMainWindow):
     def change_fragment1_status_by_z(self):
         zmin = self.ui.zminborder.value()
         zmax = self.ui.zmaxborder.value()
-        for at in self.ui.openGLWidget.MainModel.atoms:
+        for at in self.ui.openGLWidget.main_model.atoms:
             if (at.z >= zmin) and (at.z <= zmax):
                 at.fragment1 = True
         self.ui.openGLWidget.atoms_of_selected_fragment_to_form()
         self.ui.openGLWidget.update_view()
 
     def fragment1_clear(self):
-        for at in self.ui.openGLWidget.MainModel.atoms:
+        for at in self.ui.openGLWidget.main_model.atoms:
             at.fragment1 = False
         self.ui.openGLWidget.atoms_of_selected_fragment_to_form()
         self.ui.openGLWidget.update_view()
@@ -839,8 +840,8 @@ class mainWindow(QMainWindow):
         c2 = float(self.ui.FormModifyCellEditC2.text())
         c3 = float(self.ui.FormModifyCellEditC3.text())
         v3 = [c1, c2, c3]
-        self.ui.openGLWidget.MainModel.set_lat_vectors(v1, v2, v3)
-        self.models.append(self.ui.openGLWidget.MainModel)
+        self.ui.openGLWidget.main_model.set_lat_vectors(v1, v2, v3)
+        self.models.append(self.ui.openGLWidget.main_model)
         self.model_to_screen(-1)
 
     def export_volumeric_data_to_xsf(self):
@@ -879,8 +880,8 @@ class mainWindow(QMainWindow):
         self.fill_properties_table()
         self.check_volumeric_data(fname)
 
-        self.ui.PropertyAtomAtomDistanceAt1.setMaximum(self.ui.openGLWidget.MainModel.nAtoms())
-        self.ui.PropertyAtomAtomDistanceAt2.setMaximum(self.ui.openGLWidget.MainModel.nAtoms())
+        self.ui.PropertyAtomAtomDistanceAt1.setMaximum(self.ui.openGLWidget.main_model.nAtoms())
+        self.ui.PropertyAtomAtomDistanceAt2.setMaximum(self.ui.openGLWidget.main_model.nAtoms())
         self.ui.PropertyAtomAtomDistance.setText("")
 
         if Importer.check_format(fname) == "SIESTAout":
@@ -890,7 +891,7 @@ class mainWindow(QMainWindow):
             self.fill_cell_info(fname)
 
         if Importer.check_format(fname) == "SIESTAfdf":
-            c = self.ui.openGLWidget.MainModel.get_LatVect3_norm()
+            c = self.ui.openGLWidget.main_model.get_LatVect3_norm()
             self.ui.FormActionsPreZSizeFillSpace.setValue(c)
 
     def fill_file_name(self, fname):
@@ -973,7 +974,7 @@ class mainWindow(QMainWindow):
 
     def fill_bonds(self):
         c1, c2 = self.fill_bonds_charges()
-        bonds = self.self.ui.openGLWidget.MainModel.find_bonds_exact()
+        bonds = self.self.ui.openGLWidget.main_model.find_bonds_exact()
         self.ui.FormActionsPosTableBonds.setRowCount(0)
 
         mean = 0
@@ -1029,7 +1030,7 @@ class mainWindow(QMainWindow):
     def get_bonds(self):
         bonds_type = QStandardItemModel()
         bonds_type.appendRow(QStandardItem("All"))
-        bonds = self.ui.openGLWidget.MainModel.find_bonds_exact()
+        bonds = self.ui.openGLWidget.main_model.find_bonds_exact()
         items = []
         for bond in bonds:
             st1 = bond[3] + "-" + bond[5]
@@ -1049,7 +1050,7 @@ class mainWindow(QMainWindow):
     def get_bond(self):   # pragma: no cover
         i = self.ui.PropertyAtomAtomDistanceAt1.value()
         j = self.ui.PropertyAtomAtomDistanceAt2.value()
-        bond = round(self.ui.openGLWidget.MainModel.atom_atom_distance(i - 1, j - 1), 4)
+        bond = round(self.ui.openGLWidget.main_model.atom_atom_distance(i - 1, j - 1), 4)
         self.ui.PropertyAtomAtomDistance.setText(str(bond) + " A")
 
     def get_colors_list(self, minv, maxv, values, cmap, color_scale):
@@ -1114,7 +1115,7 @@ class mainWindow(QMainWindow):
         return fname
 
     @staticmethod
-    def get_color_from_setting(strcolor):
+    def get_color_from_setting(strcolor: str):
         r = strcolor.split()[0]
         g = strcolor.split()[1]
         b = strcolor.split()[2]
@@ -1123,55 +1124,49 @@ class mainWindow(QMainWindow):
 
     def load_settings(self) -> None:
         settings = QSettings()
-        state_form_settings_opening_check_only_optimal = settings.value(SETTINGS_FormSettingsOpeningCheckOnlyOptimal,
-                                                                        False, type=bool)
-        self.ui.FormSettingsOpeningCheckOnlyOptimal.setChecked(state_form_settings_opening_check_only_optimal)
+        state_check_only_optimal = settings.value(SETTINGS_FormSettingsOpeningCheckOnlyOptimal, False, type=bool)
+        self.ui.FormSettingsOpeningCheckOnlyOptimal.setChecked(state_check_only_optimal)
         self.ui.FormSettingsOpeningCheckOnlyOptimal.clicked.connect(self.save_state_open_only_optimal)
-        state_FormSettingsParseAtomicProperties = settings.value(SETTINGS_FormSettingsParseAtomicProperties, False,
-                                                                 type=bool)
-        self.ui.FormSettingsParseAtomicProperties.setChecked(state_FormSettingsParseAtomicProperties)
+        state_parse_atomic_properties = settings.value(SETTINGS_FormSettingsParseAtomicProperties, False, type=bool)
+        self.ui.FormSettingsParseAtomicProperties.setChecked(state_parse_atomic_properties)
         self.ui.FormSettingsParseAtomicProperties.clicked.connect(self.save_state_parse_atomic_properties)
-        state_FormSettingsViewCheckShowAxes = settings.value(SETTINGS_FormSettingsViewCheckShowAxes, False, type=bool)
-        self.ui.FormSettingsViewCheckShowAxes.setChecked(state_FormSettingsViewCheckShowAxes)
+        state_check_show_axes = settings.value(SETTINGS_FormSettingsViewCheckShowAxes, False, type=bool)
+        self.ui.FormSettingsViewCheckShowAxes.setChecked(state_check_show_axes)
         self.ui.FormSettingsViewCheckShowAxes.clicked.connect(self.save_state_view_show_axes)
-        state_FormSettingsViewCheckAtomSelection = settings.value(SETTINGS_FormSettingsViewCheckAtomSelection, False,
-                                                                  type=bool)
-        if state_FormSettingsViewCheckAtomSelection:
+        state_check_atom_selection = settings.value(SETTINGS_FormSettingsViewCheckAtomSelection, False, type=bool)
+        if state_check_atom_selection:
             self.ui.FormSettingsViewCheckAtomSelection.setChecked(True)
         else:
             self.ui.FormSettingsViewCheckModelMove.setChecked(True)
         self.ui.FormSettingsViewCheckAtomSelection.clicked.connect(self.save_state_view_atom_selection)
         self.ui.FormSettingsViewCheckModelMove.clicked.connect(self.save_state_view_atom_selection)
 
-        state_FormSettingsViewRadioColorBondsManual = settings.value(SETTINGS_FormSettingsViewRadioColorBondsManual,
-                                                                     False, type=bool)
-        if state_FormSettingsViewRadioColorBondsManual:
+        state_color_bonds_manual = settings.value(SETTINGS_FormSettingsViewRadioColorBondsManual, False, type=bool)
+        if state_color_bonds_manual:
             self.ui.FormSettingsViewRadioColorBondsManual.setChecked(True)
         else:
             self.ui.FormSettingsViewRadioColorBondsByAtoms.setChecked(True)
         self.ui.FormSettingsViewRadioColorBondsManual.clicked.connect(self.save_state_view_bond_color)
         self.ui.FormSettingsViewRadioColorBondsByAtoms.clicked.connect(self.save_state_view_bond_color)
 
-        state_FormSettingsViewCheckXYZasCritic2 = settings.value(SETTINGS_FormSettingsViewCheckXYZasCritic2, False,
-                                                                  type=bool)
-        self.ui.FormSettingsViewCheckXYZasCritic2.setChecked(state_FormSettingsViewCheckXYZasCritic2)
+        state_check_xyz_as_critic2 = settings.value(SETTINGS_FormSettingsViewCheckXYZasCritic2, False, type=bool)
+        self.ui.FormSettingsViewCheckXYZasCritic2.setChecked(state_check_xyz_as_critic2)
         self.ui.FormSettingsViewCheckXYZasCritic2.clicked.connect(self.save_state_xyz_as_critic2)
 
-        state_FormSettingsViewCheckShowAtoms = settings.value(SETTINGS_FormSettingsViewCheckShowAtoms, True, type=bool)
-        self.ui.FormSettingsViewCheckShowAtoms.setChecked(state_FormSettingsViewCheckShowAtoms)
+        state_show_atoms = settings.value(SETTINGS_FormSettingsViewCheckShowAtoms, True, type=bool)
+        self.ui.FormSettingsViewCheckShowAtoms.setChecked(state_show_atoms)
         self.ui.FormSettingsViewCheckShowAtoms.clicked.connect(self.save_state_view_show_atoms)
 
-        state_FormSettingsViewCheckShowAtomNumber = settings.value(SETTINGS_FormSettingsViewCheckShowAtomNumber, True,
-                                                                   type=bool)
-        self.ui.FormSettingsViewCheckShowAtomNumber.setChecked(state_FormSettingsViewCheckShowAtomNumber)
+        state_show_atom_number = settings.value(SETTINGS_FormSettingsViewCheckShowAtomNumber, True, type=bool)
+        self.ui.FormSettingsViewCheckShowAtomNumber.setChecked(state_show_atom_number)
         self.ui.FormSettingsViewCheckShowAtomNumber.clicked.connect(self.save_state_view_show_atom_number)
 
-        state_FormSettingsViewCheckShowBox = settings.value(SETTINGS_FormSettingsViewCheckShowBox, False, type=bool)
-        self.ui.FormSettingsViewCheckShowBox.setChecked(state_FormSettingsViewCheckShowBox)
+        state_show_box = settings.value(SETTINGS_FormSettingsViewCheckShowBox, False, type=bool)
+        self.ui.FormSettingsViewCheckShowBox.setChecked(state_show_box)
         self.ui.FormSettingsViewCheckShowBox.clicked.connect(self.save_state_view_show_box)
 
-        state_FormSettingsViewCheckShowBonds = settings.value(SETTINGS_FormSettingsViewCheckShowBonds, True, type=bool)
-        self.ui.FormSettingsViewCheckShowBonds.setChecked(state_FormSettingsViewCheckShowBonds)
+        state_show_bonds = settings.value(SETTINGS_FormSettingsViewCheckShowBonds, True, type=bool)
+        self.ui.FormSettingsViewCheckShowBonds.setChecked(state_show_bonds)
         self.ui.FormSettingsViewCheckShowBonds.clicked.connect(self.save_state_view_show_bonds)
 
         self.work_dir = str(settings.value(SETTINGS_Folder, "/home"))
@@ -1196,9 +1191,8 @@ class mainWindow(QMainWindow):
         state_form_settings_view_spin_bond_width = int(settings.value(SETTINGS_FormSettingsViewSpinBondWidth, '20'))
         self.ui.FormSettingsViewSpinBondWidth.setValue(state_form_settings_view_spin_bond_width)
         self.ui.FormSettingsViewSpinBondWidth.valueChanged.connect(self.save_state_view_spin_bond_width)
-        state_form_settings_view_spin_contour_width = int(settings.value(SETTINGS_FormSettingsViewSpinContourWidth,
-                                                                         '20'))
-        self.ui.FormSettingsViewSpinContourWidth.setValue(state_form_settings_view_spin_contour_width)
+        state_contour_width = int(settings.value(SETTINGS_FormSettingsViewSpinContourWidth, '20'))
+        self.ui.FormSettingsViewSpinContourWidth.setValue(state_contour_width)
         self.ui.FormSettingsViewSpinContourWidth.valueChanged.connect(self.save_state_view_spin_contour_width)
         self.ui.ColorsOfAtomsTable.setColumnCount(1)
         self.ui.ColorsOfAtomsTable.setHorizontalHeaderLabels(["Color"])
@@ -1246,7 +1240,7 @@ class mainWindow(QMainWindow):
         self.action_on_start = str(settings.value(SETTINGS_FormSettingsActionOnStart, 'Nothing'))
 
     def menu_export(self):
-        if self.ui.openGLWidget.MainModel.nAtoms() > 0:
+        if self.ui.openGLWidget.main_model.nAtoms() > 0:
             try:
                 long_name = QFileDialog.getSaveFileName(self, 'Save File', self.work_dir,
                     "FDF files (*.fdf);;XYZ files (*.xyz);;FireFly input files (*.inp);;VASP POSCAR file (POSCAR)")
@@ -1374,8 +1368,8 @@ class mainWindow(QMainWindow):
         self.color_with_property_enabling()
 
     def color_with_property_enabling(self):
-        if self.ui.openGLWidget.MainModel.nAtoms() > 0:
-            atom = self.ui.openGLWidget.MainModel.atoms[0]
+        if self.ui.openGLWidget.main_model.nAtoms() > 0:
+            atom = self.ui.openGLWidget.main_model.atoms[0]
             atom_prop_type = QStandardItemModel()
             for key in atom.properties:
                 atom_prop_type.appendRow(QStandardItem(str(key)))
@@ -1393,10 +1387,10 @@ class mainWindow(QMainWindow):
         self.ui.openGLWidget.update()
 
     def model_rotation(self):
-        if self.ui.openGLWidget.MainModel.nAtoms() == 0:
+        if self.ui.openGLWidget.main_model.nAtoms() == 0:
             return
         angle = self.ui.FormModifyRotationAngle.value()
-        model = self.ui.openGLWidget.MainModel
+        model = self.ui.openGLWidget.main_model
         if self.ui.FormModifyRotationCenter.isChecked():
             center = model.get_center_of_mass()
             model.move(center[0], center[1], center[2])
@@ -1411,27 +1405,27 @@ class mainWindow(QMainWindow):
         self.model_to_screen(-1)
 
     def model_grow_x(self):
-        if self.ui.openGLWidget.MainModel.nAtoms() == 0:
+        if self.ui.openGLWidget.main_model.nAtoms() == 0:
             return
-        model = self.ui.openGLWidget.MainModel
+        model = self.ui.openGLWidget.main_model
         model = model.grow_x()
         self.models.append(model)
         self.fill_models_list()
         self.model_to_screen(-1)
 
     def model_grow_y(self):
-        if self.ui.openGLWidget.MainModel.nAtoms() == 0:
+        if self.ui.openGLWidget.main_model.nAtoms() == 0:
             return
-        model = self.ui.openGLWidget.MainModel
+        model = self.ui.openGLWidget.main_model
         model = model.grow_y()
         self.models.append(model)
         self.fill_models_list()
         self.model_to_screen(-1)
 
     def model_grow_z(self):
-        if self.ui.openGLWidget.MainModel.nAtoms() == 0:
+        if self.ui.openGLWidget.main_model.nAtoms() == 0:
             return
-        model = self.ui.openGLWidget.MainModel
+        model = self.ui.openGLWidget.main_model
         model = model.grow_z()
         self.models.append(model)
         self.fill_models_list()
@@ -1462,7 +1456,7 @@ class mainWindow(QMainWindow):
 
     def plot_surface(self):
         self.ui.Form3Dand2DTabs.setCurrentIndex(0)
-        self.ui.openGLWidget.ViewSurface = False
+        self.ui.openGLWidget.is_view_surface = False
         cmap = plt.get_cmap(self.ui.FormSettingsColorsScale.currentText())
         color_scale = self.ui.FormSettingsColorsScaleType.currentText()
         if self.ui.FormSettingsColorsFixed.isChecked():
@@ -1593,9 +1587,9 @@ class mainWindow(QMainWindow):
     def pdos_filter(self):
         atom_index = []
         if self.ui.FormActionsComboPDOSIndexes.currentText() == 'All':
-            atom_index = range(1, self.ui.openGLWidget.MainModel.nAtoms() + 1)
+            atom_index = range(1, self.ui.openGLWidget.main_model.nAtoms() + 1)
         if self.ui.FormActionsComboPDOSIndexes.currentText() == 'Selected atom (3D View)':
-            atom_index = [self.ui.openGLWidget.MainModel.selected_atom + 1]
+            atom_index = [self.ui.openGLWidget.main_model.selected_atom + 1]
         if self.ui.FormActionsComboPDOSIndexes.currentText() == 'Selected in list below':
             atom_index = (self.ui.FormActionsPDOSIndexes.toPlainText()).split()
             atom_index = helpers.list_str_to_int(atom_index)
@@ -1603,7 +1597,7 @@ class mainWindow(QMainWindow):
         if self.ui.FormActionsComboPDOSspecies.currentText() == 'All':
             mendeley = TPeriodTable()
             atoms_list = mendeley.get_all_letters()
-            types_of_atoms = self.ui.openGLWidget.MainModel.types_of_atoms()
+            types_of_atoms = self.ui.openGLWidget.main_model.types_of_atoms()
             for i in range(0, len(types_of_atoms)):
                 species.append(str(atoms_list[types_of_atoms[i][0]]))
         if self.ui.FormActionsComboPDOSspecies.currentText() == 'Selected in list below':
@@ -1690,7 +1684,7 @@ class mainWindow(QMainWindow):
         self.ui.PyqtGraphWidget.set_xticks(None)
         self.ui.Form3Dand2DTabs.setCurrentIndex(1)
         c1, c2 = self.fill_bonds_charges()
-        bonds = self.ui.openGLWidget.MainModel.find_bonds_exact()
+        bonds = self.ui.openGLWidget.main_model.find_bonds_exact()
 
         self.ui.PyqtGraphWidget.clear()
         b = []
@@ -2401,7 +2395,7 @@ class mainWindow(QMainWindow):
             text_color += str(col[0]) + " " + str(col[1]) + " " + str(col[2]) + "|"
 
         self.save_property(SETTINGS_Color_Of_Atoms, text_color)
-        if self.ui.openGLWidget.MainModel.nAtoms() > 0:
+        if self.ui.openGLWidget.main_model.nAtoms() > 0:
             self.ui.openGLWidget.set_color_of_atoms(atomscolor)
 
     def select_box_color(self):
@@ -2516,20 +2510,19 @@ class mainWindow(QMainWindow):
         self.fill_gui("Graphene-model")
 
     def create_swnt(self):
-        n = 0
-        m = 0
-        mytype = 0
-        if self.ui.FormActionsPreRadioSWNT.isChecked():
-            n = self.ui.FormActionsPreLineSWNTn.value()
-            m = self.ui.FormActionsPreLineSWNTm.value()
+        tube_type = 0
+        n = self.ui.FormActionsPreLineSWNTn.value()
+        m = self.ui.FormActionsPreLineSWNTm.value()
         if self.ui.FormActionsPreRadioSWNTcap.isChecked() or self.ui.FormActionsPreRadioSWNTcap_2.isChecked():
             nm = self.ui.FormActionsPreComboSWNTind.currentText().split(",")
             n = int(nm[0].split("(")[1])
             m = int(nm[1].split(")")[0])
         if self.ui.FormActionsPreRadioSWNTcap.isChecked():
-            mytype = 1
+            tube_type = 1
         if self.ui.FormActionsPreRadioSWNTcap_2.isChecked():
-            mytype = 2
+            tube_type = 2
+        if self.ui.createSWGNTradio.isChecked():
+            tube_type = 3
         if self.ui.FormActionsPreRadioSWNTuselen.isChecked():
             leng = float(self.ui.FormActionsPreLineSWNTlen.text())
             cells = 1
@@ -2538,23 +2531,23 @@ class mainWindow(QMainWindow):
             cells = float(self.ui.FormActionsPreLineSWNTcells.text())
 
         model = None
-        if mytype == 0:
+        if tube_type == 0:
             model = SWNT(n, m, leng, cells)
 
-        if mytype == 1 or mytype == 2:
+        if tube_type == 1 or tube_type == 2:
             dist1 = float(self.ui.FormCreateSpinFirstCapDist.value())
             angle1 = float(self.ui.FormCreateSpinFirstCapAngle.value())
             dist2 = float(self.ui.FormCreateSpinSecondCapDist.value())
             angle2 = float(self.ui.FormCreateSpinSecondCapAngle.value())
-            model = CapedSWNT(n, m, leng, cells, mytype, dist1, angle1, dist2, angle2)
+            model = CapedSWNT(n, m, leng, cells, tube_type, dist1, angle1, dist2, angle2)
+
+        if tube_type == 3:
+            model = SWGNT(n, m, leng, cells)
 
         self.models.append(model)
         self.plot_model(-1)
         self.ui.openGLWidget.add_atoms()
         self.fill_gui("SWNT-model")
-
-    def create_swgnt(self):
-        """  to do """
 
     def create_bi_el_nt(self):  # pragma: no cover
         """ to do """

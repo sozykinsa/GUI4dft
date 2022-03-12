@@ -4,7 +4,7 @@ def test_gui4dft_run(gui4dft_application, h2o_model):
     assert window.models == []
     window.models.append(h2o_model)
     window.plot_model(-1)
-    assert len(window.ui.openGLWidget.MainModel.atoms) == 3
+    assert len(window.ui.openGLWidget.main_model.atoms) == 3
 
 
 def test_create_swnt(gui4dft_application):
@@ -17,9 +17,13 @@ def test_create_swnt(gui4dft_application):
     assert len(window.models[-1].atoms) == 132
 
     window.ui.FormActionsPreRadioSWNTcap_2.setChecked(True)
-    window.ui.FormActionsPreRadioSWNTuselen.setChecked(False)
+    window.ui.FormActionsPreRadioSWNTusecell.setChecked(True)
     window.create_swnt()
-    assert len(window.models[-1].atoms) == 96
+    assert len(window.models[-1].atoms) == 168
+
+    window.ui.createSWGNTradio.setChecked(True)
+    window.create_swnt()
+    assert len(window.models[-1].atoms) == 49
 
 
 def test_create_graphene(gui4dft_application):

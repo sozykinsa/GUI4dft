@@ -9,8 +9,8 @@ from models.atomic_model import TAtomicModel
 class BiNT(TAtomicModel):
 
     def __init__(self, n, m, leng=1, tubetype="BN"):
-
-        TAtomicModel.__init__(self)
+        super().__init__()
+        #TAtomicModel.__init__(self)
         a = 1.43
         atom1 = ["C", 6]
         atom2 = ["C", 6]

@@ -125,8 +125,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>299</width>
-                 <height>132</height>
+                 <width>371</width>
+                 <height>624</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -297,7 +297,7 @@
                  <x>0</x>
                  <y>0</y>
                  <width>380</width>
-                 <height>582</height>
+                 <height>603</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -762,7 +762,7 @@
                          </property>
                          <layout class="QHBoxLayout" name="horizontalLayout_101">
                           <item>
-                           <widget class="QRadioButton" name="radioButton_2">
+                           <widget class="QRadioButton" name="FormActionsPreRadioSWNTusecell">
                             <property name="text">
                              <string>cells</string>
                             </property>
@@ -3580,8 +3580,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>357</width>
-             <height>500</height>
+             <width>399</width>
+             <height>675</height>
             </rect>
            </property>
            <attribute name="label">
@@ -7444,8 +7444,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>109</width>
-             <height>109</height>
+             <width>399</width>
+             <height>675</height>
             </rect>
            </property>
            <attribute name="label">
@@ -9486,8 +9486,8 @@ p, li { white-space: pre-wrap; }
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>317</width>
-             <height>250</height>
+             <width>399</width>
+             <height>706</height>
             </rect>
            </property>
            <attribute name="label">
@@ -10457,8 +10457,8 @@ p, li { white-space: pre-wrap; }
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>98</width>
-         <height>100</height>
+         <width>642</width>
+         <height>765</height>
         </rect>
        </property>
        <attribute name="label">
