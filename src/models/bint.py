@@ -8,19 +8,18 @@ from models.atomic_model import TAtomicModel
 
 class BiNT(TAtomicModel):
 
-    def __init__(self, n, m, leng=1, tubetype="BN"):
+    def __init__(self, n, m, length=1, tube_type="BN"):
         super().__init__()
-        #TAtomicModel.__init__(self)
         a = 1.43
         atom1 = ["C", 6]
         atom2 = ["C", 6]
 
-        if tubetype == "BN":
+        if tube_type == "BN":
             a = 1.434
             atom1 = ["B", 5]
             atom2 = ["N", 7]
 
-        if tubetype == "BC":
+        if tube_type == "BC":
             a = 1.4
             atom1 = ["B", 5]
             atom2 = ["C", 6]
@@ -34,7 +33,7 @@ class BiNT(TAtomicModel):
         if (n > 0) and (m == 0):
             rad = math.sqrt(3) / (2 * math.pi) * a * n
 
-            while z <= leng:
+            while z <= length:
                 if (row % 2) == 0:
                     dfi += df
                 if row % 2:
@@ -57,7 +56,7 @@ class BiNT(TAtomicModel):
 
         if (n == m) and (n > 0):
             rad = 3 * n * a / (2 * math.pi)
-            while z <= leng:
+            while z <= length:
 
                 dfi += df
                 for i in range(0, n):
@@ -70,5 +69,3 @@ class BiNT(TAtomicModel):
                     self.add_atom(Atom([x, y, z, atom2[0], atom2[1]]))
                 row += 1
                 z += math.sqrt(3) / 2 * a
-
-

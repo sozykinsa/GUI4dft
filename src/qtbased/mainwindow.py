@@ -787,14 +787,14 @@ class mainWindow(QMainWindow):
             right_elec_min = model_righ.minZ()
 
             left_dist = self.ui.FormActionsPreSpinLeftElectrodeDist.value()
-            righ_dist = self.ui.FormActionsPreSpinRightElectrodeDist.value()
+            right_dist = self.ui.FormActionsPreSpinRightElectrodeDist.value()
 
             model = TAtomicModel()
             model.add_atomic_model(model_left)
             model_scat.move(0, 0, -(left_bord - left_elec_max) + left_dist)
             model.add_atomic_model(model_scat)
-            righ_bord = model.maxZ()
-            model_righ.move(0, 0, (righ_bord - right_elec_min) + righ_dist)
+            right_bord = model.maxZ()
+            model_righ.move(0, 0, (right_bord - right_elec_min) + right_dist)
             model.add_atomic_model(model_righ)
 
             self.models.append(model)
@@ -805,17 +805,11 @@ class mainWindow(QMainWindow):
             self.show_error(e)
 
     def colors_of_atoms(self):
-        atomscolor = [QTableWidgetItem(self.ui.ColorsOfAtomsTable.item(1, 0)).background().color().getRgbF()]
+        atoms_color = [QTableWidgetItem(self.ui.ColorsOfAtomsTable.item(1, 0)).background().color().getRgbF()]
         for i in range(0, self.ui.ColorsOfAtomsTable.rowCount()):
             col = self.ui.ColorsOfAtomsTable.item(i, 0).background().color().getRgbF()
-            atomscolor.append(col)
-        return atomscolor
-
-    #def create_checkable_item(self, QuantumNumbersList, value):
-    #    item = QStandardItem(value)
-    #    item.setFlags(Qt.ItemIsUserCheckable | Qt.ItemIsEnabled)
-    #    #item.setData(QVariant(Qt.Checked), Qt.CheckStateRole)
-    #    QuantumNumbersList.appendRow(item)
+            atoms_color.append(col)
+        return atoms_color
 
     def delete_cell_param_row(self):
         row = self.ui.FormActionsPostTableCellParam.currentRow()
@@ -847,7 +841,13 @@ class mainWindow(QMainWindow):
     def export_volumeric_data_to_xsf(self):
         try:
             fname = QFileDialog.getSaveFileName(self, 'Save File', self.work_dir, "XSF files (*.XSF)")[0]
-            self.export_volumeric_data_to_file(fname)
+            x1 = self.ui.FormVolDataExportX1.value()
+            x2 = self.ui.FormVolDataExportX2.value()
+            y1 = self.ui.FormVolDataExportY1.value()
+            y2 = self.ui.FormVolDataExportY2.value()
+            z1 = self.ui.FormVolDataExportZ1.value()
+            z2 = self.ui.FormVolDataExportZ2.value()
+            self.export_volumeric_data_to_file(fname, x1, x2, y1, y2, z1, z2)
         except Exception as e:
             self.show_error(e)
 
@@ -1503,8 +1503,8 @@ class mainWindow(QMainWindow):
         self.ui.Form3Dand2DTabs.setCurrentIndex(0)
         if self.VolumericData.Nx is None:
             return
-        self.ui.openGLWidget.ViewContour = False
-        self.ui.openGLWidget.ViewContourFill = False
+        self.ui.openGLWidget.is_view_contour = False
+        self.ui.openGLWidget.is_view_contour_fill = False
         cmap = plt.get_cmap(self.ui.FormSettingsColorsScale.currentText())
         color_scale = self.ui.FormSettingsColorsScaleType.currentText()
         if self.ui.FormSettingsColorsFixed.isChecked():
@@ -2594,12 +2594,12 @@ class mainWindow(QMainWindow):
         return newcolor
 
     def volumeric_data_load(self):   # pragma: no cover
-        getSelected = self.ui.FormActionsPostTreeSurface.selectedItems()
-        if getSelected:
-            if not (getSelected[0].parent() is None):
-                getChildNode = getSelected[0].text(0)
+        selected_items = self.ui.FormActionsPostTreeSurface.selectedItems()
+        if selected_items:
+            if not (selected_items[0].parent() is None):
+                child_node = selected_items[0].text(0)
                 self.get_atomic_model_and_fdf(self.VolumericData.filename)
-                self.VolumericData.load_data(getChildNode)
+                self.VolumericData.load_data(child_node)
 
                 self.plot_last_model()
 
@@ -2623,11 +2623,11 @@ class mainWindow(QMainWindow):
                 self.ui.FormVolDataExportZ2.setValue(self.VolumericData.Nz)
 
     def volumeric_data_load2(self):   # pragma: no cover
-        getSelected = self.ui.FormActionsPostTreeSurface2.selectedItems()
-        if getSelected:
-            if getSelected[0].parent() is not None:
-                getChildNode = getSelected[0].text(0)
-                self.VolumericData2.load_data(getChildNode)
+        selected_items = self.ui.FormActionsPostTreeSurface2.selectedItems()
+        if selected_items:
+            if selected_items[0].parent() is not None:
+                child_node = selected_items[0].text(0)
+                self.VolumericData2.load_data(child_node)
 
                 self.ui.FormActionsPostLabelSurfaceNx.setText("Nx: " + str(self.VolumericData2.Nx))
                 self.ui.FormActionsPostLabelSurfaceNy.setText("Ny: " + str(self.VolumericData2.Ny))

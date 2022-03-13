@@ -17,10 +17,10 @@ def test_graphene():
 
 
 def test_tbint():
-    model = BiNT(7, 7, 5, tubetype="BN")
+    model = BiNT(7, 7, 5, tube_type="BN")
     assert len(model.atoms) == 70
 
-    model = BiNT(7, 0, 5, tubetype="BC")
+    model = BiNT(7, 0, 5, tube_type="BC")
     assert len(model.atoms) == 35
 
 

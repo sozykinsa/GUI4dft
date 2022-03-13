@@ -13,7 +13,7 @@ from models.swnt import SWNT
 class CapedSWNT(TAtomicModel):
     def __init__(self, n, m, leng, ncell, type, dist1, angle1, dist2, angle2):
         if leng == 0:
-            leng = ncell * SWNT.unitlength(n, m, 1.43)
+            leng = ncell * SWNT.unit_length(n, m, 1.43)
         TAtomicModel.__init__(self)
         self.availableind = np.zeros(8)
         self.available = False

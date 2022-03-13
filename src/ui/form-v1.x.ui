@@ -7475,8 +7475,8 @@ p, li { white-space: pre-wrap; }
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>384</width>
-             <height>455</height>
+             <width>399</width>
+             <height>675</height>
             </rect>
            </property>
            <attribute name="label">
@@ -7729,8 +7729,8 @@ p, li { white-space: pre-wrap; }
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>218</width>
-             <height>557</height>
+             <width>399</width>
+             <height>675</height>
             </rect>
            </property>
            <attribute name="label">
@@ -7877,10 +7877,13 @@ p, li { white-space: pre-wrap; }
                <item>
                 <widget class="QFrame" name="frame_130">
                  <property name="frameShape">
-                  <enum>QFrame::StyledPanel</enum>
+                  <enum>QFrame::NoFrame</enum>
                  </property>
                  <property name="frameShadow">
                   <enum>QFrame::Raised</enum>
+                 </property>
+                 <property name="lineWidth">
+                  <number>0</number>
                  </property>
                  <layout class="QHBoxLayout" name="horizontalLayout_124">
                   <item>
@@ -7923,55 +7926,46 @@ p, li { white-space: pre-wrap; }
                 </widget>
                </item>
                <item>
-                <widget class="QFrame" name="frame_131">
+                <widget class="QFrame" name="frame_129">
                  <property name="frameShape">
-                  <enum>QFrame::StyledPanel</enum>
+                  <enum>QFrame::NoFrame</enum>
                  </property>
                  <property name="frameShadow">
                   <enum>QFrame::Raised</enum>
                  </property>
-                 <layout class="QHBoxLayout" name="horizontalLayout_134">
+                 <property name="lineWidth">
+                  <number>0</number>
+                 </property>
+                 <layout class="QHBoxLayout" name="horizontalLayout_133">
                   <item>
-                   <widget class="QFrame" name="frame_129">
-                    <property name="frameShape">
-                     <enum>QFrame::StyledPanel</enum>
+                   <widget class="QRadioButton" name="form_raman_radio">
+                    <property name="text">
+                     <string>Raman</string>
                     </property>
-                    <property name="frameShadow">
-                     <enum>QFrame::Raised</enum>
+                    <property name="checked">
+                     <bool>true</bool>
                     </property>
-                    <layout class="QHBoxLayout" name="horizontalLayout_133">
-                     <item>
-                      <widget class="QRadioButton" name="form_raman_radio">
-                       <property name="text">
-                        <string>Raman</string>
-                       </property>
-                       <property name="checked">
-                        <bool>true</bool>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QRadioButton" name="radioButton_7">
-                       <property name="text">
-                        <string>IR</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <spacer name="horizontalSpacer_96">
-                       <property name="orientation">
-                        <enum>Qt::Horizontal</enum>
-                       </property>
-                       <property name="sizeHint" stdset="0">
-                        <size>
-                         <width>40</width>
-                         <height>20</height>
-                        </size>
-                       </property>
-                      </spacer>
-                     </item>
-                    </layout>
                    </widget>
+                  </item>
+                  <item>
+                   <widget class="QRadioButton" name="radioButton_7">
+                    <property name="text">
+                     <string>IR</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <spacer name="horizontalSpacer_96">
+                    <property name="orientation">
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>40</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                   </spacer>
                   </item>
                  </layout>
                 </widget>
@@ -7979,10 +7973,13 @@ p, li { white-space: pre-wrap; }
                <item>
                 <widget class="QFrame" name="frame_132">
                  <property name="frameShape">
-                  <enum>QFrame::StyledPanel</enum>
+                  <enum>QFrame::NoFrame</enum>
                  </property>
                  <property name="frameShadow">
                   <enum>QFrame::Raised</enum>
+                 </property>
+                 <property name="lineWidth">
+                  <number>0</number>
                  </property>
                  <layout class="QHBoxLayout" name="horizontalLayout_136">
                   <item>
@@ -8021,7 +8018,7 @@ p, li { white-space: pre-wrap; }
                <item>
                 <widget class="QFrame" name="frame_133">
                  <property name="frameShape">
-                  <enum>QFrame::StyledPanel</enum>
+                  <enum>QFrame::NoFrame</enum>
                  </property>
                  <property name="frameShadow">
                   <enum>QFrame::Raised</enum>
@@ -8073,7 +8070,7 @@ p, li { white-space: pre-wrap; }
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>371</width>
+             <width>378</width>
              <height>716</height>
             </rect>
            </property>
@@ -9021,7 +9018,7 @@ p, li { white-space: pre-wrap; }
                   </size>
                  </property>
                  <property name="frameShape">
-                  <enum>QFrame::StyledPanel</enum>
+                  <enum>QFrame::NoFrame</enum>
                  </property>
                  <property name="frameShadow">
                   <enum>QFrame::Raised</enum>
@@ -9063,7 +9060,7 @@ p, li { white-space: pre-wrap; }
                <item>
                 <widget class="QFrame" name="frame_106">
                  <property name="frameShape">
-                  <enum>QFrame::StyledPanel</enum>
+                  <enum>QFrame::NoFrame</enum>
                  </property>
                  <property name="frameShadow">
                   <enum>QFrame::Raised</enum>

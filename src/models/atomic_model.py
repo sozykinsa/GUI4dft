@@ -81,19 +81,19 @@ class TAtomicModel(object):
     @staticmethod
     def atoms_from_ani(filename):
         """import from ANI file"""
-        periodTable = TPeriodTable()
+        periodic_table = TPeriodTable()
         molecules = []
         if os.path.exists(filename):
             ani_file = open(filename)
-            NumberOfAtoms = int(ani_file.readline())
-            while NumberOfAtoms > 0:
-                newModel = TAtomicModel.atoms_from_xyz_structure(NumberOfAtoms, ani_file, periodTable)
-                molecules.append(newModel)
+            number_of_atoms = int(ani_file.readline())
+            while number_of_atoms > 0:
+                model = TAtomicModel.atoms_from_xyz_structure(number_of_atoms, ani_file, periodic_table)
+                molecules.append(model)
                 st = ani_file.readline()
                 if st != '':
-                    NumberOfAtoms = int(st)
+                    number_of_atoms = int(st)
                 else:
-                    NumberOfAtoms = 0
+                    number_of_atoms = 0
         return molecules
 
     @staticmethod
@@ -132,55 +132,55 @@ class TAtomicModel(object):
         return atomic_coordinates_format, number_of_atoms, chem_spec_info, lat, lat_vect_1, lat_vect_2, lat_vect_3, units
 
     @staticmethod
-    def atoms_from_fdf_text(AtomicCoordinatesFormat, NumberOfAtoms, chem_spec_info, lat, lat_vect_1, lat_vect_2,
+    def atoms_from_fdf_text(atomic_coordinates_format, number_of_atoms, chem_spec_info, lat, lat_vect_1, lat_vect_2,
                             lat_vect_3, lines, units):
-        AllAtoms = TAtomicModel()
-        AtList = []
-        AtList1 = []
+        all_atoms = TAtomicModel()
+        at_list = []
+        at_list1 = []
         i = 0
-        isBlockAtomicCoordinates = False
-        isBlockZMatrix = False
+        is_block_atomic_coordinates = False
+        is_block_z_matrix = False
         while i < len(lines):
             if lines[i].find("%block Zmatrix") >= 0:
-                isBlockZMatrix = True
+                is_block_z_matrix = True
                 i += 1
-                AtList = []
+                at_list = []
                 if lines[i].find("cartesian") >= 0:
-                    for j in range(0, NumberOfAtoms):
+                    for j in range(0, number_of_atoms):
                         i += 1
-                        Atom_full = lines[i].split()
-                        AtList.append([float(Atom_full[1]), float(Atom_full[2]), float(Atom_full[3]),
-                                       (chem_spec_info[str(Atom_full[0])])[1], (chem_spec_info[str(Atom_full[0])])[0]])
+                        atom_full = lines[i].split()
+                        at_list.append([float(atom_full[1]), float(atom_full[2]), float(atom_full[3]),
+                                       (chem_spec_info[str(atom_full[0])])[1], (chem_spec_info[str(atom_full[0])])[0]])
             if lines[i].find("%block AtomicCoordinatesAndAtomicSpecies") >= 0:
-                isBlockAtomicCoordinates = True
+                is_block_atomic_coordinates = True
                 mult = 1
-                if AtomicCoordinatesFormat == "NotScaledCartesianBohr":
+                if atomic_coordinates_format == "NotScaledCartesianBohr":
                     mult = 0.52917720859
-                for j in range(0, NumberOfAtoms):
+                for j in range(0, number_of_atoms):
                     i += 1
-                    Atom_full = lines[i].split()
-                    AtList1.append([mult * float(Atom_full[0]), mult * float(Atom_full[1]), mult * float(Atom_full[2]),
-                                    (chem_spec_info[str(Atom_full[3])])[1], (chem_spec_info[str(Atom_full[3])])[0]])
+                    atom_full = lines[i].split()
+                    at_list1.append([mult * float(atom_full[0]), mult * float(atom_full[1]), mult * float(atom_full[2]),
+                                    (chem_spec_info[str(atom_full[3])])[1], (chem_spec_info[str(atom_full[3])])[0]])
             i += 1
-        if isBlockZMatrix:
-            AllAtoms = TAtomicModel(AtList)
+        if is_block_z_matrix:
+            all_atoms = TAtomicModel(at_list)
         else:
-            if isBlockAtomicCoordinates:
-                AllAtoms = TAtomicModel(AtList1)
+            if is_block_atomic_coordinates:
+                all_atoms = TAtomicModel(at_list1)
         if not lat_vect_1[0]:
-            AllAtoms.set_lat_vectors_default()
+            all_atoms.set_lat_vectors_default()
         else:
-            AllAtoms.set_lat_vectors(lat_vect_1, lat_vect_2, lat_vect_3)
-        if isBlockZMatrix:
+            all_atoms.set_lat_vectors(lat_vect_1, lat_vect_2, lat_vect_3)
+        if is_block_z_matrix:
             if units.lower() == "bohr":
-                AllAtoms.convert_from_scaled_to_cart(0.52917720859)
+                all_atoms.convert_from_scaled_to_cart(0.52917720859)
         else:
-            if isBlockAtomicCoordinates:
-                if AtomicCoordinatesFormat == "ScaledByLatticeVectors":
-                    AllAtoms.convert_from_direct_to_cart()
-                if AtomicCoordinatesFormat == "ScaledCartesian":
-                    AllAtoms.convert_from_scaled_to_cart(lat)
-        return AllAtoms
+            if is_block_atomic_coordinates:
+                if atomic_coordinates_format == "ScaledByLatticeVectors":
+                    all_atoms.convert_from_direct_to_cart()
+                if atomic_coordinates_format == "ScaledCartesian":
+                    all_atoms.convert_from_scaled_to_cart(lat)
+        return all_atoms
 
     @staticmethod
     def atoms_from_output_cg(filename):
@@ -1225,13 +1225,14 @@ class TAtomicModel(object):
     def toSIESTAfdfdata(self, coord_style, units_type, latt_style='LatticeParameters'):
         """Returns data for SIESTA fdf file."""
         data = ""
-        PerTab = TPeriodTable()
+        periodic_table = TPeriodTable()
         data += 'NumberOfAtoms ' + str(len(self.atoms)) + "\n"
         types = self.types_of_atoms()
         data += 'NumberOfSpecies ' + str(len(types)) + "\n"
         data += '%block ChemicalSpeciesLabel\n'
         for i in range(0, len(types)):
-            data += ' ' + str(i + 1) + '  ' + str(types[i][0]) + '  ' + str(PerTab.get_let(int(types[i][0]))) + "\n"
+            data += ' ' + str(i + 1) + '  ' + str(types[i][0]) + '  ' +\
+                    str(periodic_table.get_let(int(types[i][0]))) + "\n"
         data += '%endblock ChemicalSpeciesLabel\n'
 
         mult = 1
@@ -1262,6 +1263,7 @@ class TAtomicModel(object):
 
         if coord_style == "Zmatrix Cartesian":
             data += 'AtomicCoordinatesFormat NotScaledCartesianAng\n'
+            data += "ZM.UnitsLength Ang\n"
             data += '%block Zmatrix\n'
             data += 'cartesian\n'
             data += self.coords_for_export(coord_style)

@@ -116,20 +116,29 @@ class TFDFFile:
 
         for prop in self.properties:
             f = True
-            if prop.lower().find("numberofatoms") >= 0: f = False
-            if prop.lower().find("numberofspecies") >= 0: f = False
-            if prop.lower().find("atomiccoordinatesformat") >= 0: f = False
-            if prop.lower().find("latticeconstant") >= 0: f = False
+            if prop.lower().find("numberofatoms") >= 0:
+                f = False
+            if prop.lower().find("numberofspecies") >= 0:
+                f = False
+            if prop.lower().find("atomiccoordinatesformat") >= 0:
+                f = False
+            if prop.lower().find("latticeconstant") >= 0:
+                f = False
             if f:
                 st += prop
 
         for block in self.blocks:
             f = True
-            if block.name.lower().find("zmatrix") >= 0: f = False
-            if block.name.lower().find("chemicalspecieslabel") >= 0: f = False
-            if block.name.lower().find("latticeparameters") >=0: f = False
-            if block.name.lower().find("latticevectors") >=0: f = False
-            if block.name.lower().find("atomiccoordinatesandatomicspecies") >= 0: f = False
+            if block.name.lower().find("zmatrix") >= 0:
+                f = False
+            if block.name.lower().find("chemicalspecieslabel") >= 0:
+                f = False
+            if block.name.lower().find("latticeparameters") >= 0:
+                f = False
+            if block.name.lower().find("latticevectors") >= 0:
+                f = False
+            if block.name.lower().find("atomiccoordinatesandatomicspecies") >= 0:
+                f = False
 
             if f:
                 st += "%block "+block.name+"\n"
