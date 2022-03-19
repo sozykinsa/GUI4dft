@@ -2,11 +2,12 @@
 
 import os
 from models.atomic_model import TAtomicModel
-from utils.vasp import fermi_energy_from_doscar, atoms_from_POSCAR
+from thirdparty.vasp import fermi_energy_from_doscar, atoms_from_POSCAR
 from utils.fdfdata import TFDFFile
 from utils.siesta import TSIESTA
 from utils import helpers
-from utils.TInterface import TXSF, TGaussianCube
+from models.gaussiancube import GaussianCube
+from models.xsf import XSF
 
 
 class Importer(object):
@@ -101,10 +102,10 @@ class Importer(object):
                 models = TAtomicModel.atoms_from_md_car(filename)
 
             if fileFormat == "SIESTAXSF":
-                models = TXSF.get_atoms(filename)
+                models = XSF.get_atoms(filename)
 
             if fileFormat == "GAUSSIAN_cube":
-                models = TGaussianCube.get_atoms(filename)
+                models = GaussianCube.get_atoms(filename)
 
             if fileFormat == "SiestaXYZ":
                 models = TAtomicModel.atoms_from_xyz(filename, xyzcritic2)

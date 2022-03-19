@@ -4,7 +4,6 @@ import OpenGL.GL as gl
 import OpenGL.GLU as glu
 from qtpy.QtWidgets import QOpenGLWidget
 from PySide2.QtCore import QEvent
-from PySide2.QtCore import QObject
 from PySide2.QtCore import Qt
 from PySide2.QtGui import QColor, QPainter, QFont
 from copy import deepcopy
@@ -16,39 +15,10 @@ import math
 import numpy as np
 
 
-class MouseEventsFilter(QObject):
-    def __init__(self, wind):
-        super(MouseEventsFilter, self).__init__()
-        self.window = wind
-
-    def eventFilter(self, obj, event):
-        if event.type() == QEvent.Wheel:
-            self.window.scale(event.angleDelta().y())
-
-        if event.type() == QEvent.MouseMove:
-            if event.buttons() == Qt.LeftButton:
-                self.window.rotat(event.x(), event.y(), self.window.openGLWidget.width(), self.window.openGLWidget.height())
-                self.window.setXY(event.x(), event.y(), self.window.openGLWidget.width(), self.window.openGLWidget.height())
-
-            elif event.buttons() == Qt.RightButton:
-                if self.window.isAtomSelected():
-                    self.window.move_atom(event.x(), event.y(), self.window.openGLWidget.width(), self.window.openGLWidget.height())
-                else:
-                    if not self.window.CheckAtomSelection.isChecked():
-                        self.window.move(event.x(), event.y(), self.window.openGLWidget.width(), self.window.openGLWidget.height())
-                self.window.setXY(event.x(), event.y(), self.window.openGLWidget.width(), self.window.openGLWidget.height())
-
-        elif event.type() == QEvent.MouseButtonPress:
-            if self.window.CheckAtomSelection.isChecked() and event.buttons() == Qt.LeftButton:
-                self.window.CanSearch = True
-            self.window.setXY(event.x(), event.y(), self.window.openGLWidget.width(), self.window.openGLWidget.height())
-        return False
-
-
 class GuiOpenGL(QOpenGLWidget):
-    def __init__(self, widget):
-        self.openGLWidget = widget
-        self.MainModel = TAtomicModel()
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.main_model = TAtomicModel()
 
         self.CheckAtomSelection = False
         self.selected_atom_type = None
@@ -62,22 +32,65 @@ class GuiOpenGL(QOpenGLWidget):
         self.object = None
         self.NLists = 10
         self.history_of_atom_selection = []
-        self.CanSearch = False
-        self.xsOld = 0
-        self.ysOld = 0
+        self.can_atom_search = False
+        self.x_scr_old = 0
+        self.y_scr_old = 0
 
         self.x0 = 0
         self.y0 = 0
         self.z0 = 0
 
-        self.init_params()
+        self.ViewOrtho = True
+        self.ViewAtoms = True
+        self.ViewBox = False
+        self.ViewBonds = True
+        self.is_view_surface = False
+        self.is_view_contour = False
+        self.is_view_contour_fill = False
+        self.is_view_voronoi = False
+        self.is_view_bcp = False
+        self.is_view_bond_path = False
+        self.active = False
+        self.ViewAtomNumbers = False
+        self.Scale = 1
+        self.bondWidth = 20
+        self.x_scene = 0
+        self.y_scene = 0
+        self.camera_position = np.array([0.0, 0.0, -20.0])
+        self.rotX = 0
+        self.rotY = 0
+        self.rotZ = 0
+        self.selected_atom = -1
+        self.selected_cp = -1
+        self.prop = "charge"
+        self.selected_fragment_mode = False
+        self.SelectedFragmentAtomsListView = None
+        self.SelectedFragmentAtomsTransp = 1.0
+        self.color_of_bonds = [0, 0, 0]
+        self.material_diffuse = (1.0, 1.0, 1.0, 1)
+        self.is_view_axes = False
 
-        self.openGLWidget.initializeGL()
-        self.openGLWidget.paintGL = self.paintGL
-        self.openGLWidget.initializeGL = self.initializeGL
-        self.openGLWidget.setMouseTracking(True)
-        self.filter = MouseEventsFilter(self)
-        self.openGLWidget.installEventFilter(self.filter)
+    def wheelEvent(self, event: QEvent):
+        self.scale(event.angleDelta().y())
+
+    def mouseMoveEvent(self, event: QEvent):
+        if event.buttons() == Qt.LeftButton:
+            self.rotat(event.x(), event.y(), self.width(), self.height())
+            self.set_xy(event.x(), event.y())
+
+        elif event.buttons() == Qt.RightButton:
+            if self.isAtomSelected():
+                self.move_atom(event.x(), event.y())
+            else:
+                if not self.CheckAtomSelection.isChecked():
+                    self.move(event.x(), event.y())
+            self.set_xy(event.x(), event.y())
+
+    def mousePressEvent(self, event: QEvent):
+        if event.type() == QEvent.MouseButtonPress:
+            if self.CheckAtomSelection.isChecked() and event.buttons() == Qt.LeftButton:
+                self.can_atom_search = True
+            self.set_xy(event.x(), event.y())
 
     def set_form_elements(self, check_atom_selection=None, selected_atom_info=[], quality=1):
         self.CheckAtomSelection = check_atom_selection
@@ -89,91 +102,59 @@ class GuiOpenGL(QOpenGLWidget):
             self.selected_atom_properties = selected_atom_info[4]
         self.quality = quality
 
-    def init_params(self, the_object=None):
-        if the_object is None:
-            self.ViewOrtho = True
-            self.ViewAtoms = True
-            self.ViewBox = False
-            self.ViewBonds = True
-            self.ViewSurface = False
-            self.ViewContour = False
-            self.ViewContourFill = False
-            self.ViewVoronoi = False
-            self.ViewBCP = False
-            self.ViewBondpath = False
-            self.active = False
-            self.ViewAtomNumbers = False
-            self.Scale = 1
-            self.bondWidth = 20
-            self.xScene = 0
-            self.yScene = 0
-            self.camera_position = np.array([0.0, 0.0, -20.0])
-            self.rotX = 0
-            self.rotY = 0
-            self.rotZ = 0
-            self.selected_atom = -1
-            self.selected_cp = -1
-            self.prop = "charge"
-            self.SelectedFragmentMode = False
-            self.SelectedFragmentAtomsListView = None
-            self.SelectedFragmentAtomsTransp = 1.0
-            self.color_of_bonds = [0, 0, 0]
-        else:
-            self.ViewOrtho = the_object.ViewOrtho
-            self.ViewAtoms = the_object.ViewAtoms
-            self.ViewAtomNumbers = the_object.ViewAtomNumbers
-            self.ViewBox = the_object.ViewBox
-            self.ViewBonds = the_object.ViewBonds
-            self.ViewSurface = the_object.ViewSurface
-            self.ViewContour = the_object.ViewContour
-            self.ViewContourFill = the_object.ViewContourFill
-            self.ViewVoronoi = the_object.ViewVoronoi
-            self.ViewBCP = the_object.ViewBCP
-            self.ViewBondpath = the_object.ViewBondpath
-            self.active = the_object.active
-            self.Scale = the_object.Scale
-            self.bondWidth = the_object.bondWidth
-            self.xsOld = the_object.xsOld
-            self.ysOld = the_object.ysOld
-            self.xScene = the_object.xScene
-            self.yScene = the_object.yScene
-            self.camera_position = the_object.camera_position
-            self.rotX = the_object.rotX
-            self.rotY = the_object.rotY
-            self.rotZ = the_object.rotZ
-            self.selected_atom = the_object.selected_atom
-            self.selected_cp = the_object.selected_cp
-            self.prop = the_object.prop
-            self.SelectedFragmentMode = the_object.SelectedFragmentMode
-            self.SelectedFragmentAtomsListView = the_object.SelectedFragmentAtomsListView
-            self.SelectedFragmentAtomsTransp = the_object.SelectedFragmentAtomsTransp
-            self.MainModel = the_object.MainModel
-            self.color_of_atoms = the_object.color_of_atoms
-            self.color_of_bonds = the_object.color_of_bonds
-            self.color_of_bonds_by_atoms = the_object.color_of_bonds_by_atoms
-            self.color_of_box = the_object.color_of_box
-            self.ViewAxes = the_object.ViewAxes
+    def init_params(self, the_object) -> None:
+        self.ViewOrtho = the_object.ViewOrtho
+        self.ViewAtoms = the_object.ViewAtoms
+        self.ViewAtomNumbers = the_object.ViewAtomNumbers
+        self.ViewBox = the_object.ViewBox
+        self.ViewBonds = the_object.ViewBonds
+        self.is_view_surface = the_object.is_view_surface
+        self.is_view_contour = the_object.is_view_contour
+        self.is_view_contour_fill = the_object.is_view_contour_fill
+        self.is_view_voronoi = the_object.is_view_voronoi
+        self.is_view_bcp = the_object.is_view_bcp
+        self.is_view_bond_path = the_object.is_view_bond_path
+        self.active = the_object.active
+        self.Scale = the_object.Scale
+        self.bondWidth = the_object.bondWidth
+        self.x_scr_old = the_object.x_scr_old
+        self.y_scr_old = the_object.y_scr_old
+        self.x_scene = the_object.x_scene
+        self.y_scene = the_object.y_scene
+        self.camera_position = the_object.camera_position
+        self.rotX = the_object.rotX
+        self.rotY = the_object.rotY
+        self.rotZ = the_object.rotZ
+        self.selected_atom = the_object.selected_atom
+        self.selected_cp = the_object.selected_cp
+        self.prop = the_object.prop
+        self.selected_fragment_mode = the_object.selected_fragment_mode
+        self.SelectedFragmentAtomsListView = the_object.SelectedFragmentAtomsListView
+        self.SelectedFragmentAtomsTransp = the_object.SelectedFragmentAtomsTransp
+        self.main_model = the_object.main_model
+        self.color_of_atoms = the_object.color_of_atoms
+        self.color_of_bonds = the_object.color_of_bonds
+        self.color_of_bonds_by_atoms = the_object.color_of_bonds_by_atoms
+        self.color_of_box = the_object.color_of_box
+        self.is_view_axes = the_object.is_view_axes
 
-    def update(self):
-        self.openGLWidget.update()
-
-    def setSelectedFragmentMode(self, SelectedFragmentAtomsListView, SelectedFragmentAtomsTransp):
-        if SelectedFragmentAtomsListView is None:
-            if self.SelectedFragmentMode:
+    def set_selected_fragment_mode(self, selected_fragment_atoms_list_view, selected_fragment_atoms_transp):
+        if selected_fragment_atoms_list_view is None:
+            if self.selected_fragment_mode:
                 self.SelectedFragmentAtomsListView.clear()
             self.SelectedFragmentAtomsListView = None
-            self.SelectedFragmentMode = False
+            self.selected_fragment_mode = False
         else:
-            self.SelectedFragmentMode = True
-            self.SelectedFragmentAtomsListView = SelectedFragmentAtomsListView
-            self.SelectedFragmentAtomsTransp = SelectedFragmentAtomsTransp
+            self.selected_fragment_mode = True
+            self.SelectedFragmentAtomsListView = selected_fragment_atoms_list_view
+            self.SelectedFragmentAtomsTransp = selected_fragment_atoms_transp
             self.atoms_of_selected_fragment_to_form()
 
     def atoms_of_selected_fragment_to_form(self):
         self.SelectedFragmentAtomsListView.clear()
         self.SelectedFragmentAtomsListView.addItems(['Atoms'])
-        for i in range(0, len(self.MainModel.atoms)):
-            if (self.MainModel.atoms[i]).fragment1:
+        for i in range(0, len(self.main_model.atoms)):
+            if (self.main_model.atoms[i]).fragment1:
                 self.SelectedFragmentAtomsListView.addItems([str(i)])
 
     def color_atoms_with_property(self, prop):
@@ -192,12 +173,12 @@ class GuiOpenGL(QOpenGLWidget):
 
     def selected_atom_changed(self):
         if self.selected_atom >= 0:
-            x = self.MainModel[self.selected_atom].x - self.x0
-            y = self.MainModel[self.selected_atom].y - self.y0
-            z = self.MainModel[self.selected_atom].z - self.z0
-            self.selected_atom_data_to_form(self.MainModel[self.selected_atom].charge, x, y, z)
-            if self.SelectedFragmentMode:
-                self.MainModel[self.selected_atom].fragment1 = not self.MainModel[self.selected_atom].fragment1
+            x = self.main_model[self.selected_atom].x - self.x0
+            y = self.main_model[self.selected_atom].y - self.y0
+            z = self.main_model[self.selected_atom].z - self.z0
+            self.selected_atom_data_to_form(self.main_model[self.selected_atom].charge, x, y, z)
+            if self.selected_fragment_mode:
+                self.main_model[self.selected_atom].fragment1 = not self.main_model[self.selected_atom].fragment1
                 self.atoms_of_selected_fragment_to_form()
         else:
             self.selected_atom_data_to_form(0, 0, 0, 0)
@@ -216,29 +197,33 @@ class GuiOpenGL(QOpenGLWidget):
         text = ""
         if self.selected_atom >= 0:
             text += "Selected atom: " + str(self.selected_atom + 1) + "\n"
-            atom = self.MainModel.atoms[self.selected_atom]
+            atom = self.main_model.atoms[self.selected_atom]
             text += "Element: " + atom.let + "\n"
             for key in atom.properties:
                 text += str(key) + ": " + str(atom.properties[key]) + "\n"
 
             if len(self.history_of_atom_selection) > 1:
                 text += "\n\nHistory of atoms selection: "+str(self.history_of_atom_selection)+"\n"
-                text += "Distance from atom " + str(self.history_of_atom_selection[-1] + 1) + " to atom " + str(self.history_of_atom_selection[-2] + 1) + " : "
-                dist = self.MainModel.atom_atom_distance(self.history_of_atom_selection[-1], self.history_of_atom_selection[-2])
+                text += "Distance from atom " + str(self.history_of_atom_selection[-1] + 1) + " to atom " + \
+                        str(self.history_of_atom_selection[-2] + 1) + " : "
+                dist = self.main_model.atom_atom_distance(self.history_of_atom_selection[-1],
+                                                          self.history_of_atom_selection[-2])
                 text += str(round(dist/10, 6)) + " nm\n"
 
-                if (len(self.history_of_atom_selection) > 2) and (self.history_of_atom_selection[-1] != self.history_of_atom_selection[-2]) and (self.history_of_atom_selection[-3] != self.history_of_atom_selection[-2]):
-                    x1 = self.MainModel.atoms[self.history_of_atom_selection[-1]].x
-                    y1 = self.MainModel.atoms[self.history_of_atom_selection[-1]].y
-                    z1 = self.MainModel.atoms[self.history_of_atom_selection[-1]].z
+                if (len(self.history_of_atom_selection) > 2) and \
+                        (self.history_of_atom_selection[-1] != self.history_of_atom_selection[-2]) \
+                        and (self.history_of_atom_selection[-3] != self.history_of_atom_selection[-2]):
+                    x1 = self.main_model.atoms[self.history_of_atom_selection[-1]].x
+                    y1 = self.main_model.atoms[self.history_of_atom_selection[-1]].y
+                    z1 = self.main_model.atoms[self.history_of_atom_selection[-1]].z
 
-                    x2 = self.MainModel.atoms[self.history_of_atom_selection[-2]].x
-                    y2 = self.MainModel.atoms[self.history_of_atom_selection[-2]].y
-                    z2 = self.MainModel.atoms[self.history_of_atom_selection[-2]].z
+                    x2 = self.main_model.atoms[self.history_of_atom_selection[-2]].x
+                    y2 = self.main_model.atoms[self.history_of_atom_selection[-2]].y
+                    z2 = self.main_model.atoms[self.history_of_atom_selection[-2]].z
 
-                    x3 = self.MainModel.atoms[self.history_of_atom_selection[-3]].x
-                    y3 = self.MainModel.atoms[self.history_of_atom_selection[-3]].y
-                    z3 = self.MainModel.atoms[self.history_of_atom_selection[-3]].z
+                    x3 = self.main_model.atoms[self.history_of_atom_selection[-3]].x
+                    y3 = self.main_model.atoms[self.history_of_atom_selection[-3]].y
+                    z3 = self.main_model.atoms[self.history_of_atom_selection[-3]].z
 
                     vx1 = x1 - x2
                     vy1 = y1 - y2
@@ -265,13 +250,13 @@ class GuiOpenGL(QOpenGLWidget):
 
         if self.selected_cp >= 0:
             text += "\nSelected critical point: " + str(self.selected_cp) + " ("
-            cp = self.MainModel.bcp[self.selected_cp]
-            atoms = self.MainModel.atoms
+            cp = self.main_model.bcp[self.selected_cp]
+            atoms = self.main_model.atoms
 
             bond1 = cp.getProperty("bond1")
             bond2 = cp.getProperty("bond2")
 
-            ind1, ind2 = self.MainModel.atoms_of_bond_path(self.selected_cp)
+            ind1, ind2 = self.main_model.atoms_of_bond_path(self.selected_cp)
             text += atoms[ind1].let + str(ind1) + "-" + atoms[ind2].let + str(ind2) + ")\n"
             text += "Bond critical path: " + str(len(bond1)+len(bond2)) + " points\n"
 
@@ -286,91 +271,100 @@ class GuiOpenGL(QOpenGLWidget):
     def isAtomSelected(self):
         return self.selected_atom >= 0
 
-    def copy_state(self, GUI):
-        self.init_params(GUI)
+    def copy_state(self, ogl_model):
+        self.init_params(ogl_model)
         self.add_atoms()
         self.add_bonds()
         self.add_bcp()
         self.add_bondpath()
         self.add_box()
-        if self.ViewVoronoi:
-            self.color_of_voronoi = GUI.color_of_voronoi
+        if self.is_view_voronoi:
+            self.color_of_voronoi = ogl_model.color_of_voronoi
             self.add_voronoi(self.color_of_voronoi)
-        if self.ViewContour:
-            self.add_contour(GUI.data_contour)
-        if self.ViewContourFill:
-            self.add_colored_plane(GUI.data_contour_fill)
-        if self.ViewSurface:
-            self.add_surface(GUI.data_surface)
-        self.openGLWidget.update()
+        if self.is_view_contour:
+            self.add_contour(ogl_model.data_contour)
+        if self.is_view_contour_fill:
+            self.add_colored_plane(ogl_model.data_contour_fill)
+        if self.is_view_surface:
+            self.add_surface(ogl_model.data_surface)
+        self.update()
         
     def screen2space(self, x, y, width, height):
         radius = min(width, height)*float(self.Scale)
         return (2.*x-width)/radius, -(2.*y-height)/radius
 
-    def set_atomic_structure(self, structure, atomscolors, ViewAtoms, ViewAtomNumbers, ViewBox, boxcolor, ViewBonds, bondscolor, bondWidth, Bonds_by_atoms, ViewAxes, axescolor, contour_width):
+    def set_atomic_structure(self, structure, atoms_colors, is_view_atoms, is_view_atom_numbers, ViewBox, box_color,
+                             ViewBonds, bondscolor, bondWidth, Bonds_by_atoms, is_view_axes, axes_color, contour_width):
         self.clean()
         self.prop = "charge"
-        self.MainModel = deepcopy(structure)
-        cm = self.MainModel.get_center_of_mass()
+        self.main_model = deepcopy(structure)
+        cm = self.main_model.get_center_of_mass()
         self.x0 = -cm[0]
         self.y0 = -cm[1]
         self.z0 = -cm[2]
-        self.MainModel.move(self.x0, self.y0, self.z0)
+        self.main_model.move(self.x0, self.y0, self.z0)
         self.ViewBox = ViewBox
-        self.ViewAtoms = ViewAtoms
-        self.ViewAtomNumbers = ViewAtomNumbers
+        self.ViewAtoms = is_view_atoms
+        self.ViewAtomNumbers = is_view_atom_numbers
         self.ViewBonds = ViewBonds
         self.color_of_bonds_by_atoms = Bonds_by_atoms
         self.bondWidth = bondWidth
-        self.ViewAxes = ViewAxes
-        self.color_of_axes = axescolor
-        self.ViewSurface = False
-        self.ViewContour = False
-        self.ViewContourFill = False
+        self.is_view_axes = is_view_axes
+        self.color_of_axes = axes_color
+        self.is_view_surface = False
+        self.is_view_contour = False
+        self.is_view_contour_fill = False
         self.active = False
-        self.color_of_atoms = atomscolors
+        self.color_of_atoms = atoms_colors
         self.add_atoms()
         self.color_of_bonds = bondscolor
-        self.color_of_box = boxcolor
-        self.MainModel.find_bonds_fast()
+        self.color_of_box = box_color
+        self.main_model.find_bonds_fast()
         self.contour_width = contour_width
         self.add_bonds()
         self.add_box()
         self.add_axes()
         self.add_bcp()
         self.add_bondpath()
-        self.openGLWidget.update()
+        self.auto_zoom()
+        self.update()
+
+    def auto_zoom(self):
+        model_size = max(self.main_model.sizeX(), self.main_model.sizeY()) + 0.2
+        if not self.ViewOrtho:
+            self.Scale = 7.0 / model_size
+        else:
+            self.Scale = 6.0 / model_size
 
     def get_model(self):
-        newModel = deepcopy(self.MainModel)
-        newModel.move(-self.x0, -self.y0, -self.z0)
-        return newModel
+        model = deepcopy(self.main_model)
+        model.move(-self.x0, -self.y0, -self.z0)
+        return model
 
-    def image3D_to_file(self, fname):
-        self.openGLWidget.grabFramebuffer().save(fname)
+    def image3D_to_file(self, f_name):
+        self.grabFramebuffer().save(f_name)
 
-    def volumeric_data_to_file(self, fname, volumeric_data, x1, x2, y1, y2, z1, z2):
-        newModel = self.get_model()
-        if fname.find("XSF") >= 0:
-            fname = fname.split(".")[0]
-            newModel.toXSFfile(fname, volumeric_data, x1, x2, y1, y2, z1, z2)
-        if fname.find("cube") >= 0:
-            fname = fname.split(".")[0]
-            newModel.toCUBEfile(fname, volumeric_data, x1, x2, y1, y2, z1, z2)
+    def volumeric_data_to_file(self, f_name, volumeric_data, x1, x2, y1, y2, z1, z2):
+        model = self.get_model()
+        if f_name.find("XSF") >= 0:
+            f_name = f_name.split(".")[0]
+            model.toXSFfile(f_name, volumeric_data, x1, x2, y1, y2, z1, z2)
+        if f_name.find("cube") >= 0:
+            f_name = f_name.split(".")[0]
+            model.toCUBEfile(f_name, volumeric_data, x1, x2, y1, y2, z1, z2)
 
     def delete_selected_atom(self):
         if self.selected_atom >= 0:
-            self.MainModel.delete_atom(self.selected_atom)
+            self.main_model.delete_atom(self.selected_atom)
             self.selected_atom = -1
             self.history_of_atom_selection = []
-            self.ViewContour = False
-            self.ViewContourFill = False
-            self.ViewSurface = False
-            self.MainModel.find_bonds_fast()
+            self.is_view_contour = False
+            self.is_view_contour_fill = False
+            self.is_view_surface = False
+            self.main_model.find_bonds_fast()
             self.add_atoms()
             self.add_bonds()
-            self.openGLWidget.update()
+            self.update()
 
     def add_new_atom(self):
         charge = self.selected_atom_type.currentIndex()
@@ -379,14 +373,14 @@ class GuiOpenGL(QOpenGLWidget):
             x = self.selected_atom_X.value() + self.x0
             y = self.selected_atom_Y.value() + self.y0
             z = self.selected_atom_Z.value() + self.z0
-            newAtom = Atom([x, y, z, let, charge])
-            self.MainModel.add_atom(newAtom)
-            self.ViewContour = False
-            self.ViewContourFill = False
-            self.ViewSurface = False
+            new_atom = Atom([x, y, z, let, charge])
+            self.main_model.add_atom(new_atom)
+            self.is_view_contour = False
+            self.is_view_contour_fill = False
+            self.is_view_surface = False
             self.add_atoms()
             self.add_bonds()
-            self.openGLWidget.update()
+            self.update()
 
     def modify_selected_atom(self):
         if self.selected_atom >= 0:
@@ -396,14 +390,14 @@ class GuiOpenGL(QOpenGLWidget):
                 x = self.selected_atom_X.value() + self.x0
                 y = self.selected_atom_Y.value() + self.y0
                 z = self.selected_atom_Z.value() + self.z0
-                newAtom = Atom([x, y, z, let, charge])
-                self.MainModel.edit_atom(self.selected_atom, newAtom)
-                self.ViewContour = False
-                self.ViewContourFill = False
-                self.ViewSurface = False
+                new_atom = Atom([x, y, z, let, charge])
+                self.main_model.edit_atom(self.selected_atom, new_atom)
+                self.is_view_contour = False
+                self.is_view_contour_fill = False
+                self.is_view_surface = False
                 self.add_atoms()
                 self.add_bonds()
-                self.openGLWidget.update()
+                self.update()
 
     def set_color_of_atoms(self, colors):
         self.color_of_atoms = colors
@@ -420,98 +414,98 @@ class GuiOpenGL(QOpenGLWidget):
     def set_color_of_box(self, color):
         self.color_of_box = color
         self.add_box()
-        self.openGLWidget.update()
+        self.update()
 
     def set_color_of_axes(self, color):
         self.color_of_axes = color
         self.add_axes()
-        self.openGLWidget.update()
+        self.update()
 
     def set_bond_width(self, width):
         self.bondWidth = width
         self.add_bonds()
-        self.openGLWidget.update()
+        self.update()
 
     def set_bond_color(self, type):
         self.color_of_bonds_by_atoms = type
         self.add_bonds()
-        self.openGLWidget.update()
+        self.update()
 
     def set_contour_width(self, width):
         self.contour_width = width
-        self.openGLWidget.update()
+        self.update()
 
     def set_atoms_visible(self, state):
         self.ViewAtoms= state
-        self.openGLWidget.update()
+        self.update()
 
     def set_atoms_numbred(self, state):
         self.ViewAtomNumbers = state
-        self.openGLWidget.update()
+        self.update()
 
     def set_box_visible(self, state):
         self.ViewBox = state
-        self.openGLWidget.update()
+        self.update()
 
     def set_bonds_visible(self, state):
         self.ViewBonds = state
-        self.openGLWidget.update()
+        self.update()
 
     def set_axes_visible(self, state):
-        self.ViewAxes = state
-        self.openGLWidget.update()
+        self.is_view_axes = state
+        self.update()
     
     def scale(self, wheel):
         if self.active:
             self.Scale += 0.05 * (wheel/120)
-            self.openGLWidget.update()
+            self.update()
             return True
     
     def rotat(self, x, y, width, height):
         if self.active:
             xs, ys = self.screen2space(x, y, width, height)
-            self.rotY += 10 * (xs-self.xsOld)
-            self.rotX -= 10 * (ys-self.ysOld)
+            self.rotY += 10 * (xs - self.x_scr_old)
+            self.rotX -= 10 * (ys - self.y_scr_old)
             return True
     
-    def move(self, x, y, width, height):
+    def pan(self, x: int, y: int) -> None:
+        """Move camera by (x,y)."""
         if self.active:
-            xs, ys = self.screen2space(x, y, width, height)
-            self.camera_position += np.array([xs - self.xsOld, ys - self.ysOld, 0.0])
-            self.xsOld = xs
-            self.ysOld = ys
-            return True
+            xs, ys = self.screen2space(x, y, self.width(), self.height())
+            self.camera_position += np.array([xs - self.x_scr_old, ys - self.y_scr_old, 0.0])
+            self.x_scr_old = xs
+            self.y_scr_old = ys
    
-    def setXY(self, x, y, width, height):
+    def set_xy(self, x, y):
         if self.active:
-            self.xsOld, self.ysOld = self.screen2space(x, y, width, height)
-            self.xScene, self.yScene = x, y
-            self.openGLWidget.update()
+            self.x_scr_old, self.y_scr_old = self.screen2space(x, y, self.width(), self.height())
+            self.x_scene, self.y_scene = x, y
+            self.update()
             return True
 
-    def move_atom(self, x, y, width, height):
+    def move_atom(self, x, y):
         if self.active:
-                dx = x - self.xScene
-                dy = y - self.yScene
-                mult = 0.01*self.Scale
-                vect = mult*np.array([-dx, dy, 0])
-                al = -math.pi * self.rotX / 180
-                bet = -math.pi * self.rotY / 180
-                gam = -math.pi * self.rotZ / 180
-                vect = self.rotate_vector(vect, al, bet, gam)
-                self.xScene, self.yScene = x, y
-                self.MainModel.atoms[self.selected_atom].x -= vect[0]
-                self.MainModel.atoms[self.selected_atom].y -= vect[1]
-                self.MainModel.atoms[self.selected_atom].z -= vect[2]
-                self.selected_atom_changed()
+            dx = x - self.x_scene
+            dy = y - self.y_scene
+            mult = 0.01*self.Scale
+            vect = mult*np.array([-dx, dy, 0])
+            al = -math.pi * self.rotX / 180
+            bet = -math.pi * self.rotY / 180
+            gam = -math.pi * self.rotZ / 180
+            vect = self.rotate_vector(vect, al, bet, gam)
+            self.x_scene, self.y_scene = x, y
+            self.main_model.atoms[self.selected_atom].x -= vect[0]
+            self.main_model.atoms[self.selected_atom].y -= vect[1]
+            self.main_model.atoms[self.selected_atom].z -= vect[2]
+            self.selected_atom_changed()
 
-                self.add_atoms()
-                self.add_bonds()
-                self.ViewVoronoi = False
-                self.ViewSurface = False
-                self.ViewContourFill = False
-                self.ViewContour = False
-                return True
+            self.add_atoms()
+            self.add_bonds()
+            self.is_view_voronoi = False
+            self.is_view_surface = False
+            self.is_view_contour_fill = False
+            self.is_view_contour = False
+            return True
 
     def rotate_vector(self, vect, al, bet, gam):
         cos = math.cos(al)
@@ -544,10 +538,10 @@ class GuiOpenGL(QOpenGLWidget):
         vect = Mx.dot(vect)
         return vect
 
-    def add_bond(self, Atom1Pos, Atom2Pos, Radius=0.1, type='cylinder'):
-        Radius2 = Radius
-        if type == 'conus':
-            Radius2 = 0
+    def add_bond(self, Atom1Pos, Atom2Pos, radius=0.1, shape='cylinder'):
+        radius2 = radius
+        if shape == 'conus':
+            radius2 = 0
         Rel = [Atom2Pos[0]-Atom1Pos[0], Atom2Pos[1]-Atom1Pos[1], Atom2Pos[2]-Atom1Pos[2]]
         BindingLen = math.sqrt(math.pow(Rel[0], 2) + math.pow(Rel[1], 2) + math.pow(Rel[2], 2))  # высота цилиндра
         if BindingLen != 0:
@@ -559,11 +553,11 @@ class GuiOpenGL(QOpenGLWidget):
             gl.glRotated(Yaw, 0, 0, 1)
             gl.glRotated(Fall, 0, 1, 0)
             glu.gluCylinder(glu.gluNewQuadric(),
-                Radius, # /*baseRadius:*/
-                Radius2, # /*topRadius:*/
-                BindingLen, # /*height:*/
-                self.quality*15, # /*slices:*/
-                1) #/*stacks:*/
+                            radius,  # /*baseRadius:*/
+                            radius2,  # /*topRadius:*/
+                            BindingLen,  # /*height:*/
+                            self.quality * 15,  # /*slices:*/
+                            1) #/*stacks:*/
             gl.glPopMatrix()
 
     def clean(self):
@@ -573,7 +567,7 @@ class GuiOpenGL(QOpenGLWidget):
 
     def add_selected_atom(self):
         gl.glNewList(self.object+7, gl.GL_COMPILE)
-        for at in self.MainModel.atoms:
+        for at in self.main_model.atoms:
             if at.isSelected():
                 gl.glPushMatrix()
                 gl.glTranslatef(at.x, at.y, at.z)
@@ -601,39 +595,44 @@ class GuiOpenGL(QOpenGLWidget):
         mean_val = 0
 
         if (len(prop) > 0) and (prop != "charge"):
-            min_val = self.MainModel.atoms[0].properties[prop]
-            max_val = self.MainModel.atoms[0].properties[prop]
-            mean_val = self.MainModel.atoms[0].properties[prop]
-            for at in self.MainModel.atoms:
+            min_val = self.main_model.atoms[0].properties[prop]
+            max_val = self.main_model.atoms[0].properties[prop]
+            mean_val = self.main_model.atoms[0].properties[prop]
+            for at in self.main_model.atoms:
                 val = at.properties[prop]
-                if min_val > val: min_val = val
-                if max_val < val: max_val = val
+                if min_val > val:
+                    min_val = val
+                if max_val < val:
+                    max_val = val
                 mean_val += val
-            mean_val /= self.MainModel.nAtoms()
+            mean_val /= self.main_model.nAtoms()
 
-        for at in self.MainModel.atoms:
+        for at in self.main_model.atoms:
             gl.glPushMatrix()
             gl.glTranslatef(at.x, at.y, at.z)
             self.QuadObjS.append(glu.gluNewQuadric())
             rad = mendeley.Atoms[at.charge].radius/mendeley.Atoms[6].radius
 
+            color = np.array((0.0, 0.0, 0.0, 1.0))
+            rad_scale = 0.3
+
             if not at.isSelected():
                 if (len(prop) > 0) and (prop != "charge"):
                     val = at.properties[prop]
                     if val > mean_val:
-                        gl.glColor3f(0, math.fabs((val-mean_val)/(max_val-mean_val)), 0)
+                        color[1] = math.fabs((val-mean_val)/(max_val-mean_val))
                     else:
-                        gl.glColor3f(0, 0, math.fabs((val-mean_val)/(min_val-mean_val)))
+                        color[2] = math.fabs((val-mean_val)/(min_val-mean_val))
                 else:
                     color = self.color_of_atoms[at.charge]
-                    if self.SelectedFragmentMode and at.fragment1:
-                        gl.glColor4f(color[0], color[1], color[2], self.SelectedFragmentAtomsTransp)
-                    else:
-                        gl.glColor3f(color[0], color[1], color[2])
-                glu.gluSphere(self.QuadObjS[-1], 0.3*rad, self.quality*70, self.quality*70)
+                    if self.selected_fragment_mode and at.fragment1:
+                        color[3] = self.SelectedFragmentAtomsTransp
             else:
-                gl.glColor3f(1, 0, 0)
-                glu.gluSphere(self.QuadObjS[-1], 0.35*rad, self.quality*70, self.quality*70)
+                color[0] = 1
+                rad_scale = 0.35
+
+            gl.glColor4f(*color)
+            glu.gluSphere(self.QuadObjS[-1], rad_scale * rad, self.quality * 70, self.quality * 70)
             gl.glPopMatrix()
         gl.glEndList()
         self.active = True
@@ -641,26 +640,26 @@ class GuiOpenGL(QOpenGLWidget):
     def add_bonds(self):
         gl.glNewList(self.object + 2, gl.GL_COMPILE)
         gl.glColor3f(self.color_of_bonds[0], self.color_of_bonds[1], self.color_of_bonds[2])
-        for bond in self.MainModel.bonds:
-            x1 = self.MainModel.atoms[bond[0]].x
-            y1 = self.MainModel.atoms[bond[0]].y
-            z1 = self.MainModel.atoms[bond[0]].z
-            x2 = self.MainModel.atoms[bond[1]].x
-            y2 = self.MainModel.atoms[bond[1]].y
-            z2 = self.MainModel.atoms[bond[1]].z
+        for bond in self.main_model.bonds:
+            x1 = self.main_model.atoms[bond[0]].x
+            y1 = self.main_model.atoms[bond[0]].y
+            z1 = self.main_model.atoms[bond[0]].z
+            x2 = self.main_model.atoms[bond[1]].x
+            y2 = self.main_model.atoms[bond[1]].y
+            z2 = self.main_model.atoms[bond[1]].z
 
             if not self.color_of_bonds_by_atoms:
-                x3 = (self.MainModel.atoms[bond[1]].x + self.MainModel.atoms[bond[0]].x) / 2
-                y3 = (self.MainModel.atoms[bond[1]].y + self.MainModel.atoms[bond[0]].y) / 2
-                z3 = (self.MainModel.atoms[bond[1]].z + self.MainModel.atoms[bond[0]].z) / 2
-                coords = []
-                coords.append([[x1, y1, z1], [x3, y3, z3], self.color_of_atoms[self.MainModel.atoms[bond[0]].charge]])
-                coords.append([[x3, y3, z3], [x2, y2, z2], self.color_of_atoms[self.MainModel.atoms[bond[1]].charge]])
+                x3 = (self.main_model.atoms[bond[1]].x + self.main_model.atoms[bond[0]].x) / 2
+                y3 = (self.main_model.atoms[bond[1]].y + self.main_model.atoms[bond[0]].y) / 2
+                z3 = (self.main_model.atoms[bond[1]].z + self.main_model.atoms[bond[0]].z) / 2
+                coords = ([[x1, y1, z1], [x3, y3, z3], self.color_of_atoms[self.main_model.atoms[bond[0]].charge]],
+                          [[x3, y3, z3], [x2, y2, z2], self.color_of_atoms[self.main_model.atoms[bond[1]].charge]])
             else:
-                coords = [[[x1, y1, z1], [x2, y2, z2], self.color_of_bonds]]
+                coords = ([[x1, y1, z1], [x2, y2, z2], self.color_of_bonds])
 
             for coord in coords:
-                if self.SelectedFragmentMode and (self.MainModel.atoms[bond[0]].fragment1 or self.MainModel.atoms[bond[1]].fragment1):
+                if self.selected_fragment_mode and \
+                        (self.main_model.atoms[bond[0]].fragment1 or self.main_model.atoms[bond[1]].fragment1):
                     gl.glColor4f(coord[2][0], coord[2][1], coord[2][2], self.SelectedFragmentAtomsTransp)
                 else:
                     gl.glColor3f(coord[2][0], coord[2][1], coord[2][2])
@@ -671,9 +670,9 @@ class GuiOpenGL(QOpenGLWidget):
         gl.glNewList(self.object + 3, gl.GL_COMPILE)
         gl.glColor3f(self.color_of_box[0], self.color_of_box[1], self.color_of_box[2])
 
-        v1 = self.MainModel.LatVect1
-        v2 = self.MainModel.LatVect2
-        v3 = self.MainModel.LatVect3
+        v1 = self.main_model.lat_vector1
+        v2 = self.main_model.lat_vector2
+        v3 = self.main_model.lat_vector3
 
         origin = - (v1 + v2 + v3) / 2
 
@@ -723,30 +722,30 @@ class GuiOpenGL(QOpenGLWidget):
         self.add_bond(p0, p3, width)
         self.add_bond(p3, p3cone, 2 * width, 'conus')
         # lets drow "X"
-        pX = p1cone + np.array([0, 1.5 * sizeCone, 0])
-        pX1 = pX + np.array([-0.5 * letter_width, -0.5 * letter_height, 0])
-        pX2 = pX + np.array([+0.5 * letter_width, +0.5 * letter_height, 0])
-        pX3 = pX + np.array([-0.5 * letter_width, +0.5 * letter_height, 0])
-        pX4 = pX + np.array([+0.5 * letter_width, -0.5 * letter_height, 0])
-        self.add_bond(pX1, pX2, 0.5 * width)
-        self.add_bond(pX3, pX4, 0.5 * width)
+        p_x = p1cone + np.array([0, 1.5 * sizeCone, 0])
+        p_x1 = p_x + np.array([-0.5 * letter_width, -0.5 * letter_height, 0])
+        p_x2 = p_x + np.array([+0.5 * letter_width, +0.5 * letter_height, 0])
+        p_x3 = p_x + np.array([-0.5 * letter_width, +0.5 * letter_height, 0])
+        p_x4 = p_x + np.array([+0.5 * letter_width, -0.5 * letter_height, 0])
+        self.add_bond(p_x1, p_x2, 0.5 * width)
+        self.add_bond(p_x3, p_x4, 0.5 * width)
         # lets drow "Y"
-        pY = p2cone + np.array([0, 1.5 * sizeCone,  0])
-        pY1 = pY
-        pY2 = pY + np.array([0, +0.5 * letter_height, +0.5 * letter_width])
-        pY3 = pY + np.array([0, -0.5 * letter_height, +0.5 * letter_width])
-        pY4 = pY + np.array([0, +0.5 * letter_height, -0.5 * letter_width])
-        self.add_bond(pY1, pY2, 0.5 * width)
-        self.add_bond(pY3, pY4, 0.5 * width)
+        p_y = p2cone + np.array([0, 1.5 * sizeCone,  0])
+        p_y1 = p_y
+        p_y2 = p_y + np.array([0, +0.5 * letter_height, +0.5 * letter_width])
+        p_y3 = p_y + np.array([0, -0.5 * letter_height, +0.5 * letter_width])
+        p_y4 = p_y + np.array([0, +0.5 * letter_height, -0.5 * letter_width])
+        self.add_bond(p_y1, p_y2, 0.5 * width)
+        self.add_bond(p_y3, p_y4, 0.5 * width)
         # lets drow "Z"
-        pZ = p3cone + np.array([1.5 * sizeCone, 0, 0])
-        pZ1 = pZ + np.array([-0.5 * letter_height, 0, -0.5 * letter_width])
-        pZ2 = pZ + np.array([+0.5 * letter_height, 0, +0.5 * letter_width])
-        pZ3 = pZ + np.array([-0.5 * letter_height, 0,  +0.5 * letter_width])
-        pZ4 = pZ + np.array([+0.5 * letter_height, 0,  -0.5 * letter_width])
-        self.add_bond(pZ1, pZ3, 0.5 * width)
-        self.add_bond(pZ1, pZ2, 0.5 * width)
-        self.add_bond(pZ2, pZ4, 0.5 * width)
+        p_z = p3cone + np.array([1.5 * sizeCone, 0, 0])
+        p_z1 = p_z + np.array([-0.5 * letter_height, 0, -0.5 * letter_width])
+        p_z2 = p_z + np.array([+0.5 * letter_height, 0, +0.5 * letter_width])
+        p_z3 = p_z + np.array([-0.5 * letter_height, 0,  +0.5 * letter_width])
+        p_z4 = p_z + np.array([+0.5 * letter_height, 0,  -0.5 * letter_width])
+        self.add_bond(p_z1, p_z3, 0.5 * width)
+        self.add_bond(p_z1, p_z2, 0.5 * width)
+        self.add_bond(p_z2, p_z4, 0.5 * width)
         gl.glEndList()
 
     def add_surface(self, data):
@@ -765,12 +764,12 @@ class GuiOpenGL(QOpenGLWidget):
                     gl.glVertex3f(*verts[point])
                 gl.glEnd()
         gl.glEndList()
-        self.ViewSurface = True
-        self.openGLWidget.update()
+        self.is_view_surface = True
+        self.update()
 
     def add_bcp(self):
         gl.glNewList(self.object + 8, gl.GL_COMPILE)
-        for at in self.MainModel.bcp:
+        for at in self.main_model.bcp:
             gl.glPushMatrix()
             gl.glTranslatef(at.x, at.y, at.z)
             self.QuadObjS.append(glu.gluNewQuadric())
@@ -783,19 +782,19 @@ class GuiOpenGL(QOpenGLWidget):
             gl.glPopMatrix()
 
         gl.glEndList()
-        self.ViewBCP = True
-        self.openGLWidget.update()
+        self.is_view_bcp = True
+        self.update()
 
     def add_bondpath(self):
         gl.glNewList(self.object + 9, gl.GL_COMPILE)
 
-        for cp in self.MainModel.bcp:
+        for cp in self.main_model.bcp:
             self.add_critical_path(cp.getProperty("bond1opt"))
             self.add_critical_path(cp.getProperty("bond2opt"))
 
         gl.glEndList()
-        self.ViewBondpath = True
-        self.openGLWidget.update()
+        self.is_view_bond_path = True
+        self.update()
 
     def add_critical_path(self, bond):
         if not bond:
@@ -829,8 +828,8 @@ class GuiOpenGL(QOpenGLWidget):
                         p2 = contour[i+1]
                         self.add_bond(p1, p2, self.contour_width)
         gl.glEndList()
-        self.ViewContour = True
-        self.openGLWidget.update()
+        self.is_view_contour = True
+        self.update()
 
     def add_colored_plane(self, data):
         self.data_contour_fill = data
@@ -860,14 +859,14 @@ class GuiOpenGL(QOpenGLWidget):
                     gl.glVertex3f(*points[i + 1][j+1][0:3])
             gl.glEnd()
         gl.glEndList()
-        self.ViewContourFill = True
-        self.openGLWidget.update()
+        self.is_view_contour_fill = True
+        self.update()
 
-    def add_voronoi(self, color, maxDist):
+    def add_voronoi(self, color, max_dist=5):
         self.color_of_voronoi = color
         volume = np.inf
         if self.selected_atom >= 0:
-            ListOfPoligons, volume = Calculators.VoronoiAnalisis(self.MainModel, self.selected_atom, maxDist)
+            ListOfPoligons, volume = Calculators.VoronoiAnalisis(self.main_model, self.selected_atom, max_dist)
             gl.glNewList(self.object+1, gl.GL_COMPILE)
             gl.glColor4f(color[0], color[1], color[2], 0.7)
             for poligon in ListOfPoligons:
@@ -876,58 +875,60 @@ class GuiOpenGL(QOpenGLWidget):
                     gl.glVertex3f(point[0], point[1], point[2])
                 gl.glEnd()
             gl.glEndList()
-            self.ViewVoronoi = True
-            self.openGLWidget.update()
+            self.is_view_voronoi = True
+            self.update()
         return self.selected_atom, volume
 
     def paintGL(self):
-        QOpenGLWidget.makeCurrent(self.openGLWidget)
+        self.makeCurrent()
         try:
             self.prepere_scene()
             self.light_prepare()
             if self.active:
                 self.prepare_orientation()
+                #gl.glDisable(gl.GL_COLOR_MATERIAL)
                 if self.ViewAtoms:
                     gl.glCallList(self.object)  # atoms
+                #gl.glEnable(gl.GL_COLOR_MATERIAL)
 
-                if self.ViewBCP:
+                if self.is_view_bcp:
                     gl.glCallList(self.object + 8)  # BCP
 
-                if self.CanSearch:
+                if self.can_atom_search:
                     self.get_atom_on_screen()
 
-                if self.ViewBonds and (len(self.MainModel.bonds) > 0):
+                if self.ViewBonds and (len(self.main_model.bonds) > 0):
                     gl.glCallList(self.object + 2)  # find_bonds_exact
 
-                if self.ViewVoronoi:
+                if self.is_view_voronoi:
                     gl.glCallList(self.object + 1)  # Voronoi
 
                 if self.ViewBox:
                     gl.glCallList(self.object + 3)  # lattice_parameters_abc_angles
 
-                if self.ViewSurface:
+                if self.is_view_surface:
                     gl.glCallList(self.object + 4)  # Surface
 
-                if self.ViewContour:
+                if self.is_view_contour:
                     gl.glCallList(self.object + 5)  # Contour
 
-                if self.ViewContourFill:
+                if self.is_view_contour_fill:
                     gl.glCallList(self.object + 6)  # ContourFill
 
-                if self.ViewAxes:
+                if self.is_view_axes:
                     gl.glCallList(self.object + 7)  # Axes
 
-                if self.ViewBondpath:
+                if self.is_view_bond_path:
                     gl.glCallList(self.object + 9)  # Bondpath
 
                 if self.ViewAtomNumbers:
                     text_to_render = []
-                    for i in range(0, len(self.MainModel.atoms)):
-                        at = self.MainModel.atoms[i]
+                    for i in range(0, len(self.main_model.atoms)):
+                        at = self.main_model.atoms[i]
                         text_to_render.append([at.x, at.y, at.z, at.let+str(i)])
 
-                    for i in range(0, len(self.MainModel.bcp)):
-                        at = self.MainModel.bcp[i]
+                    for i in range(0, len(self.main_model.bcp)):
+                        at = self.main_model.bcp[i]
                         text_to_render.append([at.x, at.y, at.z, at.let + str(i)])
                     self.render_text(text_to_render)
         except Exception as exc:
@@ -935,14 +936,14 @@ class GuiOpenGL(QOpenGLWidget):
             pass
 
     def render_text(self, text_to_render, font=QFont()):
-        height = self.openGLWidget.height()
+        height = self.height()
         fontColor = QColor.fromRgbF(0.0, 0.0, 0.0, 1)
 
         text_to_render.sort(key=lambda i: i[2], reverse=True)
         used_space = []
 
         # Render text
-        painter = QPainter(self.openGLWidget)
+        painter = QPainter(self)
         painter.setPen(fontColor)
         painter.setFont(font)
         for row in text_to_render:
@@ -967,17 +968,36 @@ class GuiOpenGL(QOpenGLWidget):
         material_diffuse = [1.0, 1.0, 1.0, 1.0]
         gl.glMaterialfv(gl.GL_FRONT_AND_BACK, gl.GL_DIFFUSE, material_diffuse)
         gl.glEnable(gl.GL_LIGHTING)
-        ambient = [0.5, 0.5, 0.5, 1]
-
-        gl.glLightModelfv(gl.GL_LIGHT_MODEL_AMBIENT, ambient)  # Определяем текущую модель освещения
-        gl.glLightModelf(gl.GL_LIGHT_MODEL_TWO_SIDE, gl.GL_TRUE) # двухсторонний расчет освещения
 
         gl.glEnable(gl.GL_LIGHT0)
         gl.glEnable(gl.GL_DEPTH_TEST)
         gl.glEnable(gl.GL_COLOR_MATERIAL)
 
-        light0_position = [0.0, 0.0, 100.0, 1]
-        gl.glLightfv(gl.GL_LIGHT0, gl.GL_POSITION, light0_position)  # Определяем положение источника света
+        #light0_position = [0.0, 0.0, 100.0, 1]
+        #gl.glLightfv(gl.GL_LIGHT0, gl.GL_POSITION, light0_position)  # Определяем положение источника света
+
+        #gl.glDisable(gl.GL_COLOR_MATERIAL)
+
+        # Determine the current lighting model
+        gl.glLightModelf(gl.GL_LIGHT_MODEL_TWO_SIDE, gl.GL_TRUE)  # two-side lighting calculation
+
+        # lighting
+        light0_position = np.array((*(self.Scale*np.array((0.0, 0.0, 100.0))), 1))
+        # set up light colors (ambient, diffuse, specular)
+        light_color_ambient = (0.2, 0.2, 0.2, 1.0)  # ambient light
+        light_color_diffuse = (0.7, 0.7, 0.7, 1.0)  # diffuse light
+        light_color_specular = (1, 1, 1, 1)  # specular light
+        material_specular = (0.2, 0.2, 0.2, 1)
+        material_shininess = self.Scale * 4
+
+        gl.glEnable(gl.GL_LIGHT0)
+        gl.glLightfv(gl.GL_LIGHT0, gl.GL_POSITION, light0_position)
+        gl.glLightfv(gl.GL_LIGHT0, gl.GL_AMBIENT, light_color_ambient)
+        gl.glLightfv(gl.GL_LIGHT0, gl.GL_DIFFUSE, light_color_diffuse)
+        gl.glLightfv(gl.GL_LIGHT0, gl.GL_SPECULAR, light_color_specular)
+
+        gl.glMaterialfv(gl.GL_FRONT, gl.GL_SPECULAR, material_specular)
+        gl.glMaterialf(gl.GL_FRONT, gl.GL_SHININESS, material_shininess)
 
     def prepare_orientation(self):
         gl.glTranslated(*self.camera_position)
@@ -994,7 +1014,7 @@ class GuiOpenGL(QOpenGLWidget):
         x, y, width, height = gl.glGetDoublev(gl.GL_VIEWPORT)
         if not self.ViewOrtho:
             glu.gluPerspective(
-                45,  # field of view in degrees
+                35,  # field of view in degrees
                 width / float(height or 1),  # aspect ratio
                 .25,  # near clipping plane
                 200)  # far clipping plane
@@ -1003,51 +1023,51 @@ class GuiOpenGL(QOpenGLWidget):
             w, h = width / radius, height / radius
 
             gl.glOrtho(-2 * w,  # GLdouble left
-                       2 * w,  # GLdouble right
+                       2 * w,   # GLdouble right
                        -2 * h,  # GLdouble bottom
-                       2 * h,  # GLdouble top
-                       -0.25,  # GLdouble near
-                       200.0)  # GLdouble far
+                       2 * h,   # GLdouble top
+                       -0.25,   # GLdouble near
+                       200.0)   # GLdouble far
         gl.glMatrixMode(gl.GL_MODELVIEW)
         gl.glLoadIdentity()
 
     def get_atom_on_screen(self):
-        point = self.get_point_in_3d(self.xScene, self.yScene)
+        point = self.get_point_in_3d(self.x_scene, self.y_scene)
 
-        oldSelected = self.selected_atom
+        old_selected = self.selected_atom
         need_for_update = False
 
-        ind, minr = self.nearest_point(self.MainModel.atoms, point)
-        cp_ind, cp_minr = self.nearest_point(self.MainModel.bcp, point)
+        ind, minr = self.nearest_point(self.main_model.atoms, point)
+        cp_ind, cp_minr = self.nearest_point(self.main_model.bcp, point)
 
         if cp_minr < 1.4:
             if self.selected_cp == cp_ind:
-                self.MainModel.bcp[self.selected_cp].setSelected(False)
+                self.main_model.bcp[self.selected_cp].setSelected(False)
                 self.selected_cp = -1
             else:
-                self.MainModel.bcp[self.selected_cp].setSelected(False)
+                self.main_model.bcp[self.selected_cp].setSelected(False)
                 self.selected_cp = cp_ind
-                self.MainModel.bcp[self.selected_cp].setSelected(True)
+                self.main_model.bcp[self.selected_cp].setSelected(True)
             need_for_update = True
             self.add_bcp()
 
         if minr < 1.4:
             if self.selected_atom >= 0:
-                self.ViewVoronoi = False
+                self.is_view_voronoi = False
             if self.selected_atom != ind:
                 if self.selected_atom >= 0:
-                    self.MainModel.atoms[self.selected_atom].setSelected(False)
+                    self.main_model.atoms[self.selected_atom].setSelected(False)
                 self.selected_atom = ind
-                self.MainModel.atoms[self.selected_atom].setSelected(True)
+                self.main_model.atoms[self.selected_atom].setSelected(True)
             else:
                 if self.selected_atom >= 0:
-                    self.MainModel.atoms[self.selected_atom].setSelected(False)
+                    self.main_model.atoms[self.selected_atom].setSelected(False)
                 self.selected_atom = -1
             self.add_atoms()
             self.add_bonds()
 
-        self.CanSearch = False
-        if oldSelected != self.selected_atom:
+        self.can_atom_search = False
+        if old_selected != self.selected_atom:
             if self.selected_atom == -1:
                 self.history_of_atom_selection = []
             else:
@@ -1056,7 +1076,7 @@ class GuiOpenGL(QOpenGLWidget):
 
         if need_for_update:
             self.selected_atom_changed()
-            self.openGLWidget.update()
+            self.update()
 
     def nearest_point(self, ats, point):
         minr1 = 10000
@@ -1078,11 +1098,11 @@ class GuiOpenGL(QOpenGLWidget):
         winY = int(float(view[3]) - float(y))
         z = gl.glReadPixels(x, winY, 1, 1, gl.GL_DEPTH_COMPONENT, gl.GL_FLOAT)
         point = glu.gluUnProject(x, y, z, model, proj, view)
-        #al = math.pi * self.rotX / 180
-        #bet = 0  # math.pi * self.rotY / 180
-        #gam = math.pi * self.rotZ / 180
-        #point = self.rotate_un_vector(np.array(point), al, bet, gam)
-        #point = self.rotate_vector(np.array(point), al, bet, gam)
+        al = math.pi * self.rotX / 180
+        bet = 0  # math.pi * self.rotY / 180
+        gam = math.pi * self.rotZ / 180
+        point = self.rotate_un_vector(np.array(point), al, bet, gam)
+        point = self.rotate_vector(np.array(point), al, bet, gam)
         return point
 
     def get_screen_coords(self, x, y, z):
@@ -1093,7 +1113,7 @@ class GuiOpenGL(QOpenGLWidget):
         return winx, winy, winz
 
     def initializeGL(self):
-        QOpenGLWidget.makeCurrent(self.openGLWidget)
+        self.makeCurrent()
         gl.glEnable(gl.GL_BLEND)
         gl.glBlendFunc(gl.GL_SRC_ALPHA, gl.GL_ONE_MINUS_SRC_ALPHA)
         gl.glEnable(gl.GL_DEPTH_TEST)

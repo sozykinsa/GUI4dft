@@ -296,8 +296,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>371</width>
-                 <height>624</height>
+                 <width>380</width>
+                 <height>603</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -311,7 +311,7 @@
                   </property>
                   <widget class="QWidget" name="tab_36">
                    <attribute name="title">
-                    <string>SWCNT</string>
+                    <string>SWNT</string>
                    </attribute>
                    <layout class="QVBoxLayout" name="verticalLayout_94">
                     <item>
@@ -353,18 +353,6 @@
                           <enum>QFrame::Raised</enum>
                          </property>
                          <layout class="QVBoxLayout" name="verticalLayout_19">
-                          <property name="leftMargin">
-                           <number>0</number>
-                          </property>
-                          <property name="topMargin">
-                           <number>0</number>
-                          </property>
-                          <property name="rightMargin">
-                           <number>0</number>
-                          </property>
-                          <property name="bottomMargin">
-                           <number>0</number>
-                          </property>
                           <item>
                            <widget class="QRadioButton" name="FormActionsPreRadioSWNT">
                             <property name="text">
@@ -386,6 +374,16 @@
                            <widget class="QRadioButton" name="FormActionsPreRadioSWNTcap_2">
                             <property name="text">
                              <string>SWCNT with 2 caps</string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QRadioButton" name="createSWGNTradio">
+                            <property name="text">
+                             <string>SWGNT</string>
+                            </property>
+                            <property name="checked">
+                             <bool>false</bool>
                             </property>
                            </widget>
                           </item>
@@ -626,6 +624,12 @@
                        <string>Chirality</string>
                       </property>
                       <layout class="QHBoxLayout" name="horizontalLayout_30">
+                       <property name="leftMargin">
+                        <number>0</number>
+                       </property>
+                       <property name="rightMargin">
+                        <number>0</number>
+                       </property>
                        <item>
                         <widget class="QLabel" name="label_9">
                          <property name="text">
@@ -758,7 +762,7 @@
                          </property>
                          <layout class="QHBoxLayout" name="horizontalLayout_101">
                           <item>
-                           <widget class="QRadioButton" name="radioButton_2">
+                           <widget class="QRadioButton" name="FormActionsPreRadioSWNTusecell">
                             <property name="text">
                              <string>cells</string>
                             </property>
@@ -860,11 +864,6 @@
                      </spacer>
                     </item>
                    </layout>
-                  </widget>
-                  <widget class="QWidget" name="tab_37">
-                   <attribute name="title">
-                    <string>SWGNT</string>
-                   </attribute>
                   </widget>
                   <widget class="QWidget" name="tab_38">
                    <attribute name="title">
@@ -1074,8 +1073,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>371</width>
-                 <height>624</height>
+                 <width>337</width>
+                 <height>551</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -3103,209 +3102,330 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>262</width>
-                 <height>233</height>
+                 <width>293</width>
+                 <height>425</height>
                 </rect>
                </property>
                <attribute name="label">
                 <string>Rotate model</string>
                </attribute>
-               <layout class="QVBoxLayout" name="verticalLayout_38">
+               <layout class="QVBoxLayout" name="verticalLayout_82">
                 <item>
-                 <widget class="QFrame" name="frame_6">
-                  <property name="frameShape">
-                   <enum>QFrame::NoFrame</enum>
+                 <widget class="QGroupBox" name="groupBox_44">
+                  <property name="title">
+                   <string>Rotate</string>
                   </property>
-                  <property name="frameShadow">
-                   <enum>QFrame::Raised</enum>
-                  </property>
-                  <layout class="QHBoxLayout" name="horizontalLayout_73">
-                   <property name="leftMargin">
-                    <number>0</number>
-                   </property>
+                  <layout class="QVBoxLayout" name="verticalLayout_24">
                    <item>
-                    <widget class="QLabel" name="label_51">
-                     <property name="text">
-                      <string>Rotate</string>
+                    <widget class="QFrame" name="frame_6">
+                     <property name="frameShape">
+                      <enum>QFrame::NoFrame</enum>
                      </property>
+                     <property name="frameShadow">
+                      <enum>QFrame::Raised</enum>
+                     </property>
+                     <layout class="QHBoxLayout" name="horizontalLayout_73">
+                      <property name="leftMargin">
+                       <number>0</number>
+                      </property>
+                      <item>
+                       <widget class="QLabel" name="label_51">
+                        <property name="text">
+                         <string>Rotate</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QDoubleSpinBox" name="FormModifyRotationAngle">
+                        <property name="decimals">
+                         <number>1</number>
+                        </property>
+                        <property name="minimum">
+                         <double>-360.000000000000000</double>
+                        </property>
+                        <property name="maximum">
+                         <double>360.000000000000000</double>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QLabel" name="label_53">
+                        <property name="text">
+                         <string>degrees</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <spacer name="horizontalSpacer_41">
+                        <property name="orientation">
+                         <enum>Qt::Horizontal</enum>
+                        </property>
+                        <property name="sizeHint" stdset="0">
+                         <size>
+                          <width>40</width>
+                          <height>20</height>
+                         </size>
+                        </property>
+                       </spacer>
+                      </item>
+                     </layout>
                     </widget>
                    </item>
                    <item>
-                    <widget class="QDoubleSpinBox" name="FormModifyRotationAngle">
-                     <property name="decimals">
-                      <number>1</number>
+                    <widget class="QFrame" name="frame_56">
+                     <property name="frameShape">
+                      <enum>QFrame::NoFrame</enum>
                      </property>
-                     <property name="minimum">
-                      <double>-360.000000000000000</double>
+                     <property name="frameShadow">
+                      <enum>QFrame::Raised</enum>
                      </property>
-                     <property name="maximum">
-                      <double>360.000000000000000</double>
-                     </property>
+                     <layout class="QHBoxLayout" name="horizontalLayout_49">
+                      <property name="leftMargin">
+                       <number>50</number>
+                      </property>
+                      <property name="topMargin">
+                       <number>0</number>
+                      </property>
+                      <property name="rightMargin">
+                       <number>0</number>
+                      </property>
+                      <property name="bottomMargin">
+                       <number>0</number>
+                      </property>
+                      <item>
+                       <widget class="QLabel" name="label_54">
+                        <property name="text">
+                         <string>around axes</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QRadioButton" name="FormModifyRotationX">
+                        <property name="text">
+                         <string>x</string>
+                        </property>
+                        <property name="checked">
+                         <bool>true</bool>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QRadioButton" name="FormModifyRotationY">
+                        <property name="text">
+                         <string>y</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QRadioButton" name="FormModifyRotationZ">
+                        <property name="text">
+                         <string>z</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <spacer name="horizontalSpacer_111">
+                        <property name="orientation">
+                         <enum>Qt::Horizontal</enum>
+                        </property>
+                        <property name="sizeHint" stdset="0">
+                         <size>
+                          <width>40</width>
+                          <height>20</height>
+                         </size>
+                        </property>
+                       </spacer>
+                      </item>
+                     </layout>
                     </widget>
                    </item>
                    <item>
-                    <widget class="QLabel" name="label_53">
-                     <property name="text">
-                      <string>degrees</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <spacer name="horizontalSpacer_41">
-                     <property name="orientation">
-                      <enum>Qt::Horizontal</enum>
-                     </property>
-                     <property name="sizeHint" stdset="0">
+                    <widget class="QFrame" name="frame_57">
+                     <property name="minimumSize">
                       <size>
-                       <width>40</width>
-                       <height>20</height>
+                       <width>0</width>
+                       <height>0</height>
                       </size>
                      </property>
-                    </spacer>
+                     <property name="frameShape">
+                      <enum>QFrame::NoFrame</enum>
+                     </property>
+                     <property name="frameShadow">
+                      <enum>QFrame::Raised</enum>
+                     </property>
+                     <layout class="QVBoxLayout" name="verticalLayout_39">
+                      <property name="leftMargin">
+                       <number>50</number>
+                      </property>
+                      <item>
+                       <widget class="QRadioButton" name="FormModifyRotationOrigin">
+                        <property name="text">
+                         <string>Around the origin</string>
+                        </property>
+                        <property name="checked">
+                         <bool>true</bool>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QRadioButton" name="FormModifyRotationCenter">
+                        <property name="text">
+                         <string>Around the center of mass</string>
+                        </property>
+                       </widget>
+                      </item>
+                     </layout>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QFrame" name="frame_55">
+                     <property name="minimumSize">
+                      <size>
+                       <width>0</width>
+                       <height>50</height>
+                      </size>
+                     </property>
+                     <property name="frameShape">
+                      <enum>QFrame::NoFrame</enum>
+                     </property>
+                     <property name="frameShadow">
+                      <enum>QFrame::Raised</enum>
+                     </property>
+                     <layout class="QHBoxLayout" name="horizontalLayout_47">
+                      <item>
+                       <spacer name="horizontalSpacer_25">
+                        <property name="orientation">
+                         <enum>Qt::Horizontal</enum>
+                        </property>
+                        <property name="sizeHint" stdset="0">
+                         <size>
+                          <width>40</width>
+                          <height>20</height>
+                         </size>
+                        </property>
+                       </spacer>
+                      </item>
+                      <item>
+                       <widget class="QPushButton" name="FormModifyRotation">
+                        <property name="text">
+                         <string>Rotate</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <spacer name="horizontalSpacer_24">
+                        <property name="orientation">
+                         <enum>Qt::Horizontal</enum>
+                        </property>
+                        <property name="sizeHint" stdset="0">
+                         <size>
+                          <width>40</width>
+                          <height>20</height>
+                         </size>
+                        </property>
+                       </spacer>
+                      </item>
+                     </layout>
+                    </widget>
                    </item>
                   </layout>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QFrame" name="frame_56">
-                  <property name="frameShape">
-                   <enum>QFrame::NoFrame</enum>
+                 <widget class="QGroupBox" name="groupBox_45">
+                  <property name="title">
+                   <string> Twist (z-axis)</string>
                   </property>
-                  <property name="frameShadow">
-                   <enum>QFrame::Raised</enum>
-                  </property>
-                  <layout class="QHBoxLayout" name="horizontalLayout_49">
-                   <property name="leftMargin">
-                    <number>50</number>
-                   </property>
-                   <property name="topMargin">
-                    <number>0</number>
-                   </property>
-                   <property name="rightMargin">
-                    <number>0</number>
-                   </property>
-                   <property name="bottomMargin">
-                    <number>0</number>
-                   </property>
+                  <layout class="QVBoxLayout" name="verticalLayout_38">
                    <item>
-                    <widget class="QLabel" name="label_54">
-                     <property name="text">
-                      <string>around axes</string>
+                    <widget class="QFrame" name="frame_141">
+                     <property name="frameShape">
+                      <enum>QFrame::StyledPanel</enum>
                      </property>
+                     <property name="frameShadow">
+                      <enum>QFrame::Raised</enum>
+                     </property>
+                     <layout class="QHBoxLayout" name="horizontalLayout_153">
+                      <item>
+                       <widget class="QLabel" name="label_104">
+                        <property name="text">
+                         <string>Twist angle in degrees</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QDoubleSpinBox" name="ModifyTwistAngle">
+                        <property name="decimals">
+                         <number>1</number>
+                        </property>
+                        <property name="minimum">
+                         <double>-360.000000000000000</double>
+                        </property>
+                        <property name="maximum">
+                         <double>360.000000000000000</double>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <spacer name="horizontalSpacer_110">
+                        <property name="orientation">
+                         <enum>Qt::Horizontal</enum>
+                        </property>
+                        <property name="sizeHint" stdset="0">
+                         <size>
+                          <width>40</width>
+                          <height>20</height>
+                         </size>
+                        </property>
+                       </spacer>
+                      </item>
+                     </layout>
                     </widget>
                    </item>
                    <item>
-                    <widget class="QRadioButton" name="FormModifyRotationX">
-                     <property name="text">
-                      <string>x</string>
+                    <widget class="QFrame" name="frame_137">
+                     <property name="frameShape">
+                      <enum>QFrame::StyledPanel</enum>
                      </property>
-                     <property name="checked">
-                      <bool>true</bool>
+                     <property name="frameShadow">
+                      <enum>QFrame::Raised</enum>
                      </property>
+                     <layout class="QHBoxLayout" name="horizontalLayout_152">
+                      <item>
+                       <spacer name="horizontalSpacer_108">
+                        <property name="orientation">
+                         <enum>Qt::Horizontal</enum>
+                        </property>
+                        <property name="sizeHint" stdset="0">
+                         <size>
+                          <width>94</width>
+                          <height>20</height>
+                         </size>
+                        </property>
+                       </spacer>
+                      </item>
+                      <item>
+                       <widget class="QPushButton" name="FormModifyTwist">
+                        <property name="text">
+                         <string>Twist</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <spacer name="horizontalSpacer_109">
+                        <property name="orientation">
+                         <enum>Qt::Horizontal</enum>
+                        </property>
+                        <property name="sizeHint" stdset="0">
+                         <size>
+                          <width>94</width>
+                          <height>20</height>
+                         </size>
+                        </property>
+                       </spacer>
+                      </item>
+                     </layout>
                     </widget>
-                   </item>
-                   <item>
-                    <widget class="QRadioButton" name="FormModifyRotationY">
-                     <property name="text">
-                      <string>y</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QRadioButton" name="FormModifyRotationZ">
-                     <property name="text">
-                      <string>z</string>
-                     </property>
-                    </widget>
-                   </item>
-                  </layout>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QFrame" name="frame_57">
-                  <property name="minimumSize">
-                   <size>
-                    <width>0</width>
-                    <height>0</height>
-                   </size>
-                  </property>
-                  <property name="frameShape">
-                   <enum>QFrame::NoFrame</enum>
-                  </property>
-                  <property name="frameShadow">
-                   <enum>QFrame::Raised</enum>
-                  </property>
-                  <layout class="QVBoxLayout" name="verticalLayout_39">
-                   <property name="leftMargin">
-                    <number>50</number>
-                   </property>
-                   <item>
-                    <widget class="QRadioButton" name="FormModifyRotationOrigin">
-                     <property name="text">
-                      <string>Around the origin</string>
-                     </property>
-                     <property name="checked">
-                      <bool>true</bool>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QRadioButton" name="FormModifyRotationCenter">
-                     <property name="text">
-                      <string>Around the center of mass</string>
-                     </property>
-                    </widget>
-                   </item>
-                  </layout>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QFrame" name="frame_55">
-                  <property name="minimumSize">
-                   <size>
-                    <width>0</width>
-                    <height>50</height>
-                   </size>
-                  </property>
-                  <property name="frameShape">
-                   <enum>QFrame::NoFrame</enum>
-                  </property>
-                  <property name="frameShadow">
-                   <enum>QFrame::Raised</enum>
-                  </property>
-                  <layout class="QHBoxLayout" name="horizontalLayout_47">
-                   <item>
-                    <spacer name="horizontalSpacer_25">
-                     <property name="orientation">
-                      <enum>Qt::Horizontal</enum>
-                     </property>
-                     <property name="sizeHint" stdset="0">
-                      <size>
-                       <width>40</width>
-                       <height>20</height>
-                      </size>
-                     </property>
-                    </spacer>
-                   </item>
-                   <item>
-                    <widget class="QPushButton" name="FormModifyRotation">
-                     <property name="text">
-                      <string>Rotate</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <spacer name="horizontalSpacer_24">
-                     <property name="orientation">
-                      <enum>Qt::Horizontal</enum>
-                     </property>
-                     <property name="sizeHint" stdset="0">
-                      <size>
-                       <width>40</width>
-                       <height>20</height>
-                      </size>
-                     </property>
-                    </spacer>
                    </item>
                   </layout>
                  </widget>
@@ -7355,8 +7475,8 @@ p, li { white-space: pre-wrap; }
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>384</width>
-             <height>455</height>
+             <width>399</width>
+             <height>675</height>
             </rect>
            </property>
            <attribute name="label">
@@ -7609,8 +7729,8 @@ p, li { white-space: pre-wrap; }
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>218</width>
-             <height>557</height>
+             <width>399</width>
+             <height>675</height>
             </rect>
            </property>
            <attribute name="label">
@@ -7757,10 +7877,13 @@ p, li { white-space: pre-wrap; }
                <item>
                 <widget class="QFrame" name="frame_130">
                  <property name="frameShape">
-                  <enum>QFrame::StyledPanel</enum>
+                  <enum>QFrame::NoFrame</enum>
                  </property>
                  <property name="frameShadow">
                   <enum>QFrame::Raised</enum>
+                 </property>
+                 <property name="lineWidth">
+                  <number>0</number>
                  </property>
                  <layout class="QHBoxLayout" name="horizontalLayout_124">
                   <item>
@@ -7803,55 +7926,46 @@ p, li { white-space: pre-wrap; }
                 </widget>
                </item>
                <item>
-                <widget class="QFrame" name="frame_131">
+                <widget class="QFrame" name="frame_129">
                  <property name="frameShape">
-                  <enum>QFrame::StyledPanel</enum>
+                  <enum>QFrame::NoFrame</enum>
                  </property>
                  <property name="frameShadow">
                   <enum>QFrame::Raised</enum>
                  </property>
-                 <layout class="QHBoxLayout" name="horizontalLayout_134">
+                 <property name="lineWidth">
+                  <number>0</number>
+                 </property>
+                 <layout class="QHBoxLayout" name="horizontalLayout_133">
                   <item>
-                   <widget class="QFrame" name="frame_129">
-                    <property name="frameShape">
-                     <enum>QFrame::StyledPanel</enum>
+                   <widget class="QRadioButton" name="form_raman_radio">
+                    <property name="text">
+                     <string>Raman</string>
                     </property>
-                    <property name="frameShadow">
-                     <enum>QFrame::Raised</enum>
+                    <property name="checked">
+                     <bool>true</bool>
                     </property>
-                    <layout class="QHBoxLayout" name="horizontalLayout_133">
-                     <item>
-                      <widget class="QRadioButton" name="form_raman_radio">
-                       <property name="text">
-                        <string>Raman</string>
-                       </property>
-                       <property name="checked">
-                        <bool>true</bool>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QRadioButton" name="radioButton_7">
-                       <property name="text">
-                        <string>IR</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <spacer name="horizontalSpacer_96">
-                       <property name="orientation">
-                        <enum>Qt::Horizontal</enum>
-                       </property>
-                       <property name="sizeHint" stdset="0">
-                        <size>
-                         <width>40</width>
-                         <height>20</height>
-                        </size>
-                       </property>
-                      </spacer>
-                     </item>
-                    </layout>
                    </widget>
+                  </item>
+                  <item>
+                   <widget class="QRadioButton" name="radioButton_7">
+                    <property name="text">
+                     <string>IR</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <spacer name="horizontalSpacer_96">
+                    <property name="orientation">
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>40</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                   </spacer>
                   </item>
                  </layout>
                 </widget>
@@ -7859,10 +7973,13 @@ p, li { white-space: pre-wrap; }
                <item>
                 <widget class="QFrame" name="frame_132">
                  <property name="frameShape">
-                  <enum>QFrame::StyledPanel</enum>
+                  <enum>QFrame::NoFrame</enum>
                  </property>
                  <property name="frameShadow">
                   <enum>QFrame::Raised</enum>
+                 </property>
+                 <property name="lineWidth">
+                  <number>0</number>
                  </property>
                  <layout class="QHBoxLayout" name="horizontalLayout_136">
                   <item>
@@ -7901,7 +8018,7 @@ p, li { white-space: pre-wrap; }
                <item>
                 <widget class="QFrame" name="frame_133">
                  <property name="frameShape">
-                  <enum>QFrame::StyledPanel</enum>
+                  <enum>QFrame::NoFrame</enum>
                  </property>
                  <property name="frameShadow">
                   <enum>QFrame::Raised</enum>
@@ -7953,7 +8070,7 @@ p, li { white-space: pre-wrap; }
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>371</width>
+             <width>378</width>
              <height>716</height>
             </rect>
            </property>
@@ -8901,7 +9018,7 @@ p, li { white-space: pre-wrap; }
                   </size>
                  </property>
                  <property name="frameShape">
-                  <enum>QFrame::StyledPanel</enum>
+                  <enum>QFrame::NoFrame</enum>
                  </property>
                  <property name="frameShadow">
                   <enum>QFrame::Raised</enum>
@@ -8943,7 +9060,7 @@ p, li { white-space: pre-wrap; }
                <item>
                 <widget class="QFrame" name="frame_106">
                  <property name="frameShape">
-                  <enum>QFrame::StyledPanel</enum>
+                  <enum>QFrame::NoFrame</enum>
                  </property>
                  <property name="frameShadow">
                   <enum>QFrame::Raised</enum>
@@ -10328,7 +10445,7 @@ p, li { white-space: pre-wrap; }
          <number>0</number>
         </property>
         <item>
-         <widget class="QOpenGLWidget" name="openGLWidget"/>
+         <widget class="GuiOpenGL" name="openGLWidget"/>
         </item>
        </layout>
       </widget>
@@ -10509,6 +10626,11 @@ p, li { white-space: pre-wrap; }
    <extends>QWidget</extends>
    <header>pyqtgraphwidgetimage.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>GuiOpenGL</class>
+   <extends>QOpenGLWidget</extends>
+   <header>guiopengl.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

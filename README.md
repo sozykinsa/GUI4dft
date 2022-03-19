@@ -31,5 +31,8 @@ v1.3 - This is the next release in 1.x branch. This version will use pyqtgraph i
 
 The master branch contains more or less stable 1.x version functions.
 
+## Code testing
+Automatic code testing (pytest, except OpenGL code) is performed on GitHub (Ubuntu, Windows and Mac). Manual and pytest (with OpenGL code) testing is performed in Ubuntu and Windows.
+
 ## Authors and acknowledgment
 If the program was helpful in your research, please cite the article https://doi.org/10.1016/j.cpc.2021.107843

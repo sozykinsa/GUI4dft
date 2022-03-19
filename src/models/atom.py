@@ -4,13 +4,15 @@ from utils import helpers
 
 
 class Atom(object):
-    def __init__(self, atData):
+    """The atom class."""
+
+    def __init__(self, at_data):
         """Constructor"""
-        self.x = atData[0]
-        self.y = atData[1]
-        self.z = atData[2]
-        self.let = atData[3]
-        self.charge = int(atData[4])
+        self.x = at_data[0]
+        self.y = at_data[1]
+        self.z = at_data[2]
+        self.let = at_data[3]
+        self.charge = int(at_data[4])
         self.selected = False
         self.fragment1 = False
         self.properties = {}

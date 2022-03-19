@@ -1,5 +1,94 @@
 
-def test_gui4dft_run(gui4dft_application):
+def test_gui4dft_run(gui4dft_application, h2o_model):
     window = gui4dft_application
-
     assert window.models == []
+    window.models.append(h2o_model)
+    window.plot_model(-1)
+    assert len(window.ui.openGLWidget.main_model.atoms) == 3
+
+
+def test_create_swnt(gui4dft_application):
+    window = gui4dft_application
+    window.create_swnt()
+    assert len(window.models[-1].atoms) == 112
+
+    window.ui.FormActionsPreRadioSWNTcap.setChecked(True)
+    window.create_swnt()
+    assert len(window.models[-1].atoms) == 132
+
+    window.ui.FormActionsPreRadioSWNTcap_2.setChecked(True)
+    window.ui.FormActionsPreRadioSWNTusecell.setChecked(True)
+    window.create_swnt()
+    assert len(window.models[-1].atoms) == 168
+
+    window.ui.createSWGNTradio.setChecked(True)
+    window.create_swnt()
+    assert len(window.models[-1].atoms) == 49
+
+
+def test_create_graphene(gui4dft_application):
+    window = gui4dft_application
+    window.create_graphene()
+    assert len(window.models[-1].atoms) == 112
+
+
+def test_plot_voronoi(gui4dft_application):
+    window = gui4dft_application
+    window.create_swnt()
+    window.ui.openGLWidget.selected_atom = 2
+    window.plot_voronoi()
+    assert window.ui.FormActionsPostLabelVoronoiAtom.text() == "Atom: 2"
+
+
+def test_menu_open(gui4dft_application, tests_path):
+    f_name = str(tests_path / 'ref_data' / 'swcnt(8,0)' / "siesta.out")
+    window = gui4dft_application
+    window.menu_open(f_name)
+    assert len(window.models) == 1
+
+
+def test_plot_dos(gui4dft_application, tests_path):
+    f_name = str(tests_path / 'ref_data' / 'swcnt(8,0)' / "siesta.out")
+    window = gui4dft_application
+    window.menu_open(f_name)
+    window.plot_dos()
+    window.plot_pdos()
+    window.parse_bands()
+    window.plot_bands()
+    assert len(window.models) == 1
+
+
+def test_cell_param(gui4dft_application, tests_path):
+    f_name1 = str(tests_path / 'ref_data' / 'cell_param' / '2-85' / "siesta.out")
+    gui4dft_application.fill_cell_info(f_name1)
+    f_name2 = str(tests_path / 'ref_data' / 'cell_param' / '2-86' / "siesta.out")
+    gui4dft_application.fill_cell_info(f_name2)
+    f_name3 = str(tests_path / 'ref_data' / 'cell_param' / '2-87' / "siesta.out")
+    gui4dft_application.fill_cell_info(f_name3)
+    f_name4 = str(tests_path / 'ref_data' / 'cell_param' / '2-88' / "siesta.out")
+    gui4dft_application.fill_cell_info(f_name4)
+    f_name5 = str(tests_path / 'ref_data' / 'cell_param' / '2-89' / "siesta.out")
+    gui4dft_application.fill_cell_info(f_name5)
+
+    gui4dft_application.ui.FormActionsPostComboCellParam.setCurrentIndex(1)
+    gui4dft_application.plot_volume_param_energy()
+    method = gui4dft_application.ui.FormActionsPostComboCellParam.currentText()
+    if method == "Murnaghan":
+        assert gui4dft_application.ui.FormActionsPostLabelCellParamOptimExpr4.text() == "V0=11.9"
+
+    gui4dft_application.ui.FormActionsPostComboCellParam.setCurrentIndex(0)
+    gui4dft_application.plot_volume_param_energy()
+    method = gui4dft_application.ui.FormActionsPostComboCellParam.currentText()
+    if method == "BirchMurnaghan":
+        assert gui4dft_application.ui.FormActionsPostLabelCellParamOptimExpr4.text() == "V0=11.9"
+
+    gui4dft_application.ui.FormActionsPostComboCellParam.setCurrentIndex(2)
+    gui4dft_application.plot_volume_param_energy()
+    method = gui4dft_application.ui.FormActionsPostComboCellParam.currentText()
+    if method == "Parabola":
+        assert gui4dft_application.ui.FormActionsPostLabelCellParamOptimExpr3.text() == "x0=11.89"
+
+
+def test_simple_calls(gui4dft_application):
+    gui4dft_application.save_image_to_file("1.png")
+    gui4dft_application.activate_fragment_selection_mode()

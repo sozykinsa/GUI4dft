@@ -16,11 +16,6 @@ from utils.fdfdata import TFDFFile
 from models.atom import Atom
 
 
-##################################################################
-################### The AtomicModel class ########################
-##################################################################
-
-
 class TAtomicModel(object):
     def __init__(self, newatoms: list = []):
         self.atoms = []
@@ -32,9 +27,9 @@ class TAtomicModel(object):
         self.ccp = []
 
         self.name = ""
-        self.LatVect1 = np.array([100, 0, 0])
-        self.LatVect2 = np.array([0, 100, 0])
-        self.LatVect3 = np.array([0, 0, 100])
+        self.lat_vector1 = np.array([100, 0, 0])
+        self.lat_vector2 = np.array([0, 100, 0])
+        self.lat_vector3 = np.array([0, 0, 100])
 
         for at in newatoms:
             if isinstance(at, Atom):
@@ -42,6 +37,8 @@ class TAtomicModel(object):
             else:
                 atom = Atom(at)
             self.add_atom(atom)
+
+        self.selected_atom = -1
 
     def get_positions(self):
         pos = np.zeros((len(self.atoms), 3))
@@ -63,26 +60,40 @@ class TAtomicModel(object):
 
     def get_cell(self):
         cell = np.zeros((3, 3))
-        cell[0, :] = self.LatVect1
-        cell[1, :] = self.LatVect2
-        cell[2, :] = self.LatVect3
+        cell[0, :] = self.lat_vector1
+        cell[1, :] = self.lat_vector2
+        cell[2, :] = self.lat_vector3
+        return cell
+
+    def twist_z(self, alpha):
+        cm = self.centr_mass()
+        self.move(*(-cm))
+        z0 = self.minZ()
+        z1 = np.linalg.norm(self.lat_vector3)
+
+        for i in range(0, len(self.atoms)):
+            alpha1 = (self.atoms[i].z - z0) / z1 * alpha
+            xnn = float(self.atoms[i].x) * math.cos(alpha1) - float(self.atoms[i].y) * math.sin(alpha1)
+            ynn = float(self.atoms[i].x) * math.sin(alpha1) + float(self.atoms[i].y) * math.cos(alpha1)
+            self.atoms[i].x = xnn
+            self.atoms[i].y = ynn
 
     @staticmethod
     def atoms_from_ani(filename):
         """import from ANI file"""
-        periodTable = TPeriodTable()
+        periodic_table = TPeriodTable()
         molecules = []
         if os.path.exists(filename):
             ani_file = open(filename)
-            NumberOfAtoms = int(ani_file.readline())
-            while NumberOfAtoms > 0:
-                newModel = TAtomicModel.atoms_from_xyz_structure(NumberOfAtoms, ani_file, periodTable)
-                molecules.append(newModel)
+            number_of_atoms = int(ani_file.readline())
+            while number_of_atoms > 0:
+                model = TAtomicModel.atoms_from_xyz_structure(number_of_atoms, ani_file, periodic_table)
+                molecules.append(model)
                 st = ani_file.readline()
                 if st != '':
-                    NumberOfAtoms = int(st)
+                    number_of_atoms = int(st)
                 else:
-                    NumberOfAtoms = 0
+                    number_of_atoms = 0
         return molecules
 
     @staticmethod
@@ -99,15 +110,15 @@ class TAtomicModel(object):
 
     @staticmethod
     def atoms_from_fdf_prepare(filename):
-        NumberOfAtoms = TSIESTA.number_of_atoms(filename)
-        AtomicCoordinatesFormat = TSIESTA.atomic_coordinates_format(filename)
+        number_of_atoms = TSIESTA.number_of_atoms(filename)
+        atomic_coordinates_format = TSIESTA.atomic_coordinates_format(filename)
         lat = ""
         units = helpers.from_file_property(filename, 'ZM.UnitsLength', 1, 'string')
-        if AtomicCoordinatesFormat == "ScaledCartesian":
+        if atomic_coordinates_format == "ScaledCartesian":
             lat = TSIESTA.lattice_constant(filename)
             units = "ang"
         if not units:
-            if AtomicCoordinatesFormat.lower().find("bohr") >= 0:
+            if atomic_coordinates_format.lower().find("bohr") >= 0:
                 units = "bohr"
             else:
                 units = "ang"
@@ -115,61 +126,61 @@ class TAtomicModel(object):
         if not lat_vect_1[0]:
             lat_vect_1, lat_vect_2, lat_vect_3 = TSIESTA.lattice_parameters_abc_angles(filename)
         chem_spec_info = {}
-        ChemicalSpeciesLabel = TSIESTA.get_block_from_siesta_fdf(filename, "ChemicalSpeciesLabel")
-        for j in range(0, len(ChemicalSpeciesLabel)):
-            chem_spec_info[(ChemicalSpeciesLabel[j].split())[0]] = (ChemicalSpeciesLabel[j].split())[1:3]
-        return AtomicCoordinatesFormat, NumberOfAtoms, chem_spec_info, lat, lat_vect_1, lat_vect_2, lat_vect_3, units
+        chemical_species_label = TSIESTA.get_block_from_siesta_fdf(filename, "ChemicalSpeciesLabel")
+        for j in range(0, len(chemical_species_label)):
+            chem_spec_info[(chemical_species_label[j].split())[0]] = (chemical_species_label[j].split())[1:3]
+        return atomic_coordinates_format, number_of_atoms, chem_spec_info, lat, lat_vect_1, lat_vect_2, lat_vect_3, units
 
     @staticmethod
-    def atoms_from_fdf_text(AtomicCoordinatesFormat, NumberOfAtoms, chem_spec_info, lat, lat_vect_1, lat_vect_2,
+    def atoms_from_fdf_text(atomic_coordinates_format, number_of_atoms, chem_spec_info, lat, lat_vect_1, lat_vect_2,
                             lat_vect_3, lines, units):
-        AllAtoms = TAtomicModel()
-        AtList = []
-        AtList1 = []
+        all_atoms = TAtomicModel()
+        at_list = []
+        at_list1 = []
         i = 0
-        isBlockAtomicCoordinates = False
-        isBlockZMatrix = False
+        is_block_atomic_coordinates = False
+        is_block_z_matrix = False
         while i < len(lines):
             if lines[i].find("%block Zmatrix") >= 0:
-                isBlockZMatrix = True
+                is_block_z_matrix = True
                 i += 1
-                AtList = []
+                at_list = []
                 if lines[i].find("cartesian") >= 0:
-                    for j in range(0, NumberOfAtoms):
+                    for j in range(0, number_of_atoms):
                         i += 1
-                        Atom_full = lines[i].split()
-                        AtList.append([float(Atom_full[1]), float(Atom_full[2]), float(Atom_full[3]),
-                                       (chem_spec_info[str(Atom_full[0])])[1], (chem_spec_info[str(Atom_full[0])])[0]])
+                        atom_full = lines[i].split()
+                        at_list.append([float(atom_full[1]), float(atom_full[2]), float(atom_full[3]),
+                                       (chem_spec_info[str(atom_full[0])])[1], (chem_spec_info[str(atom_full[0])])[0]])
             if lines[i].find("%block AtomicCoordinatesAndAtomicSpecies") >= 0:
-                isBlockAtomicCoordinates = True
+                is_block_atomic_coordinates = True
                 mult = 1
-                if AtomicCoordinatesFormat == "NotScaledCartesianBohr":
+                if atomic_coordinates_format == "NotScaledCartesianBohr":
                     mult = 0.52917720859
-                for j in range(0, NumberOfAtoms):
+                for j in range(0, number_of_atoms):
                     i += 1
-                    Atom_full = lines[i].split()
-                    AtList1.append([mult * float(Atom_full[0]), mult * float(Atom_full[1]), mult * float(Atom_full[2]),
-                                    (chem_spec_info[str(Atom_full[3])])[1], (chem_spec_info[str(Atom_full[3])])[0]])
+                    atom_full = lines[i].split()
+                    at_list1.append([mult * float(atom_full[0]), mult * float(atom_full[1]), mult * float(atom_full[2]),
+                                    (chem_spec_info[str(atom_full[3])])[1], (chem_spec_info[str(atom_full[3])])[0]])
             i += 1
-        if isBlockZMatrix:
-            AllAtoms = TAtomicModel(AtList)
+        if is_block_z_matrix:
+            all_atoms = TAtomicModel(at_list)
         else:
-            if isBlockAtomicCoordinates:
-                AllAtoms = TAtomicModel(AtList1)
-        if lat_vect_1[0] == False:
-            AllAtoms.set_lat_vectors_default()
+            if is_block_atomic_coordinates:
+                all_atoms = TAtomicModel(at_list1)
+        if not lat_vect_1[0]:
+            all_atoms.set_lat_vectors_default()
         else:
-            AllAtoms.set_lat_vectors(lat_vect_1, lat_vect_2, lat_vect_3)
-        if isBlockZMatrix:
+            all_atoms.set_lat_vectors(lat_vect_1, lat_vect_2, lat_vect_3)
+        if is_block_z_matrix:
             if units.lower() == "bohr":
-                AllAtoms.convert_from_scaled_to_cart(0.52917720859)
+                all_atoms.convert_from_scaled_to_cart(0.52917720859)
         else:
-            if isBlockAtomicCoordinates:
-                if AtomicCoordinatesFormat == "ScaledByLatticeVectors":
-                    AllAtoms.convert_from_direct_to_cart()
-                if AtomicCoordinatesFormat == "ScaledCartesian":
-                    AllAtoms.convert_from_scaled_to_cart(lat)
-        return AllAtoms
+            if is_block_atomic_coordinates:
+                if atomic_coordinates_format == "ScaledByLatticeVectors":
+                    all_atoms.convert_from_direct_to_cart()
+                if atomic_coordinates_format == "ScaledCartesian":
+                    all_atoms.convert_from_scaled_to_cart(lat)
+        return all_atoms
 
     @staticmethod
     def atoms_from_output_cg(filename):
@@ -206,7 +217,6 @@ class TAtomicModel(object):
                     lat_vect_2 = helpers.list_str_to_float(lat_vect_2)
                     lat_vect_3 = siesta_file.readline().split()
                     lat_vect_3 = helpers.list_str_to_float(lat_vect_3)
-                    isFectF = 1
 
                     if len(atoms) > 0:
                         AllAtoms = TAtomicModel(atoms)
@@ -221,12 +231,12 @@ class TAtomicModel(object):
                     need_to_convert1 = 1
 
                 isAngfound = str1.find("zmatrix: Z-matrix coordinates: (Ang ; rad )") >= 0
-                isBohfound = str1.find("zmatrix: Z-matrix coordinates: (Bohr; rad )") >= 0
+                is_bohr_found = str1.find("zmatrix: Z-matrix coordinates: (Bohr; rad )") >= 0
                 mult = 1.0
-                if isBohfound:
+                if is_bohr_found:
                     mult = 0.52917720859
 
-                if (str1 != '') and (isAngfound or isBohfound or isFractionalfound) and (isSpesF == 1):
+                if (str1 != '') and (isAngfound or is_bohr_found or isFractionalfound) and (isSpesF == 1):
                     if not isFractionalfound:
                         for j in range(0, 2):
                             str1 = siesta_file.readline()
@@ -245,17 +255,6 @@ class TAtomicModel(object):
                 str1 = siesta_file.readline()
             siesta_file.close()
         return molecules
-
-    def export_to_file(self, fname):
-        if fname.find("POSCAR") >= 0:
-            fname = fname.split(".")[0]
-            self.toVASPposcar(fname)
-        if fname.endswith(".inp"):
-            self.toFireflyINP(fname)
-        if fname.endswith(".fdf"):
-            self.toSIESTAfdf(fname)
-        if fname.endswith(".xyz"):
-            self.toSIESTAxyz(fname)
 
     @staticmethod
     def atoms_from_output_md(filename):
@@ -286,8 +285,6 @@ class TAtomicModel(object):
                         S = str.split(str1, ' ')
                         speciesLabel[int(S[0])] = S[1]
                     isSpesFinde = 1
-
-                atoms = []
 
                 if (str1 != '') and (str1.find("Begin CG move") >= 0 or str1.find("Begin MD step") >= 0 or str1.find(
                         "Begin CG opt. move") >= 0):
@@ -332,7 +329,6 @@ class TAtomicModel(object):
     @staticmethod
     def atoms_from_md_car(filename):
         """import from MD_CAR output """
-        periodTable = TPeriodTable()
         molecules = []
         if os.path.exists(filename):
             struct_file = open(filename)
@@ -373,21 +369,20 @@ class TAtomicModel(object):
     @staticmethod
     def atoms_from_output_sp(filename):
         """Return the initial AtList from single point output file"""
-        AtomicCoordinatesFormat, NumberOfAtoms, chem_spec_info, lat, lat_vect_1, lat_vect_2, lat_vect_3, units = TAtomicModel.atoms_from_fdf_prepare(
-            filename)
+        coordinates_format, number_of_atoms, chem_spec_info, lat, lat_vect_1, lat_vect_2, lat_vect_3, units = \
+            TAtomicModel.atoms_from_fdf_prepare(filename)
 
         lines = TFDFFile.fdf_data_dump(filename)
 
-        AllAtoms = TAtomicModel.atoms_from_fdf_text(AtomicCoordinatesFormat, NumberOfAtoms, chem_spec_info, lat,
+        AllAtoms = TAtomicModel.atoms_from_fdf_text(coordinates_format, number_of_atoms, chem_spec_info, lat,
                                                     lat_vect_1, lat_vect_2, lat_vect_3, lines, units)
 
-        molecules = [AllAtoms]
-        return molecules
+        return [AllAtoms]
 
     @staticmethod
     def atoms_from_output_optim(filename):
         """Return the relaxed AtList from output file."""
-        NumberOfAtoms = TSIESTA.number_of_atoms(filename)
+        number_of_atoms = TSIESTA.number_of_atoms(filename)
         Species = TSIESTA.get_species(filename)
         AtList = []
         f1 = False
@@ -425,23 +420,23 @@ class TAtomicModel(object):
                 if line.find("(Bohr)") > -1:
                     mult = 0.52917720859
             else:
-                if (len(AtList) < NumberOfAtoms) and f1:
+                if (len(AtList) < number_of_atoms) and f1:
                     line1 = line.split()
                     line2 = [float(line1[0]) * mult, float(line1[1]) * mult, float(line1[2]) * mult, line1[5],
                              Species[int(line1[3]) - 1][1]]
                     AtList.append(line2)
-                if len(AtList) == NumberOfAtoms:
+                if len(AtList) == number_of_atoms:
                     AllAtoms = TAtomicModel(AtList)
                     AllAtoms.set_lat_vectors(lat_vect_1, lat_vect_2, lat_vect_3)
                     return [AllAtoms]
             if line.find("outcoor: Relaxed atomic coordinates (fractional)") > -1:
                 f3 = True
             else:
-                if (len(AtList) < NumberOfAtoms) and f3:
+                if (len(AtList) < number_of_atoms) and f3:
                     line1 = line.split()
                     line2 = [float(line1[0]), float(line1[1]), float(line1[2]), line1[5], Species[int(line1[3]) - 1][1]]
                     AtList.append(line2)
-                if len(AtList) == NumberOfAtoms:
+                if len(AtList) == number_of_atoms:
                     AllAtoms = TAtomicModel(AtList)
                     AllAtoms.set_lat_vectors(lat_vect_1, lat_vect_2, lat_vect_3)
                     AllAtoms.convert_from_direct_to_cart()
@@ -480,7 +475,7 @@ class TAtomicModel(object):
 
     @staticmethod
     def atoms_from_xyz(filename, xyzcritic2):
-        """import from xyz file"""
+        """Import from *.xyz file."""
         periodTable = TPeriodTable()
         molecules = []
         if os.path.exists(filename):
@@ -551,62 +546,62 @@ class TAtomicModel(object):
         return molecules
 
     @staticmethod
-    def atoms_from_xyz_structure(NumberOfAtoms, ani_file, periodTable, indexes=[0, 1, 2, 3]):
+    def atoms_from_xyz_structure(number_of_atoms, ani_file, period_table, indexes=[0, 1, 2, 3]):
         if indexes[0] == 0:
-            str1 = helpers.spacedel(ani_file.readline())
+            ani_file.readline()
         atoms = []
-        for i1 in range(0, NumberOfAtoms):
+        for i1 in range(0, number_of_atoms):
             str1 = helpers.spacedel(ani_file.readline())
-            S = str1.split(' ')
-            d1 = float(S[indexes[1]])
-            d2 = float(S[indexes[2]])
-            d3 = float(S[indexes[3]])
-            C = S[indexes[0]]
-            Charge = periodTable.get_charge_by_letter(C)
-            A = [d1, d2, d3, C, Charge]
-            atoms.append(A)
-        newModel = TAtomicModel(atoms)
-        newModel.set_lat_vectors_default()
-        return newModel
+            s = str1.split(' ')
+            d1 = float(s[indexes[1]])
+            d2 = float(s[indexes[2]])
+            d3 = float(s[indexes[3]])
+            c = s[indexes[0]]
+            charge = period_table.get_charge_by_letter(c)
+            a = [d1, d2, d3, c, charge]
+            atoms.append(a)
+        new_model = TAtomicModel(atoms)
+        new_model.set_lat_vectors_default()
+        return new_model
 
     def get_LatVect1_norm(self):
-        return norm(self.LatVect1)
+        return norm(self.lat_vector1)
 
     def get_LatVect2_norm(self):
-        return norm(self.LatVect2)
+        return norm(self.lat_vector2)
 
     def get_LatVect3_norm(self):
-        return norm(self.LatVect3)
+        return norm(self.lat_vector3)
 
     def get_angle_alpha(self):
         a = self.get_LatVect2_norm()
         b = self.get_LatVect3_norm()
-        ab = self.LatVect2[0] * self.LatVect3[0] + self.LatVect2[1] * self.LatVect3[1] + self.LatVect2[2] * \
-             self.LatVect3[2]
+        ab = self.lat_vector2[0] * self.lat_vector3[0] + self.lat_vector2[1] * self.lat_vector3[1] + self.lat_vector2[2] * \
+             self.lat_vector3[2]
         angle = math.acos(ab / (a * b))
         return 180 * angle / math.pi
 
     def get_angle_beta(self):
         a = self.get_LatVect1_norm()
         b = self.get_LatVect3_norm()
-        ab = self.LatVect1[0] * self.LatVect3[0] + self.LatVect1[1] * self.LatVect3[1] + self.LatVect1[2] * \
-             self.LatVect3[2]
+        ab = self.lat_vector1[0] * self.lat_vector3[0] + self.lat_vector1[1] * self.lat_vector3[1] + self.lat_vector1[2] * \
+             self.lat_vector3[2]
         angle = math.acos(ab / (a * b))
         return 180 * angle / math.pi
 
     def get_angle_gamma(self):
         a = self.get_LatVect2_norm()
         b = self.get_LatVect1_norm()
-        ab = self.LatVect2[0] * self.LatVect1[0] + self.LatVect2[1] * self.LatVect1[1] + self.LatVect2[2] * \
-             self.LatVect1[2]
+        ab = self.lat_vector2[0] * self.lat_vector1[0] + self.lat_vector2[1] * self.lat_vector1[1] + self.lat_vector2[2] * \
+             self.lat_vector1[2]
         angle = math.acos(ab / (a * b))
         return 180 * angle / math.pi
 
     def set_lat_vectors(self, v1, v2, v3):
         if (len(v1) == 3) and (len(v2) == 3) and (len(v3) == 3):
-            self.LatVect1 = np.array(v1)
-            self.LatVect2 = np.array(v2)
-            self.LatVect3 = np.array(v3)
+            self.lat_vector1 = np.array(v1)
+            self.lat_vector2 = np.array(v2)
+            self.lat_vector3 = np.array(v3)
         else:
             print("Wrong vectors")
 
@@ -620,9 +615,9 @@ class TAtomicModel(object):
         sz = self.sizeZ()
         if sz < 0.3:
             sz = 5
-        self.LatVect1 = np.array([1.4 * sx, 0, 0])
-        self.LatVect2 = np.array([0, 1.4 * sy, 0])
-        self.LatVect3 = np.array([0, 0, 1.4 * sz])
+        self.lat_vector1 = np.array([1.4 * sx, 0, 0])
+        self.lat_vector2 = np.array([0, 1.4 * sy, 0])
+        self.lat_vector3 = np.array([0, 0, 1.4 * sz])
 
     def delete_atom(self, ind):
         if self.nAtoms() == 1:
@@ -634,23 +629,23 @@ class TAtomicModel(object):
 
     def add_atom(self, atom, min_dist=0):
         """ Adds atom to the molecule is minimal distance to other atoms more then minDist """
-        Dist = 10000
+        dist = 10000
         if min_dist > 0:
             model = TAtomicModel(self.atoms)
-            model.set_lat_vectors(self.LatVect1, self.LatVect2, self.LatVect3)
+            model.set_lat_vectors(self.lat_vector1, self.lat_vector2, self.lat_vector3)
             model.add_atom(atom)
             for ind in range(0, len(self.atoms)):
                 r = model.atom_atom_distance(ind, len(model.atoms) - 1)
-                if r < Dist:
-                    Dist = r
+                if r < dist:
+                    dist = r
 
-        if Dist > min_dist:
-            newAt = deepcopy(atom)
-            self.atoms.append(newAt)
+        if dist > min_dist:
+            new_at = deepcopy(atom)
+            self.atoms.append(new_at)
 
     def add_critical_point_bond(self, atom):
-        newAt = deepcopy(atom)
-        self.bcp.append(newAt)
+        new_at = deepcopy(atom)
+        self.bcp.append(new_at)
 
     def add_bond_path_point(self, points):
         for cp in self.bcp:
@@ -811,7 +806,7 @@ class TAtomicModel(object):
 
         return np.array(res)
 
-    def rotateX(self, alpha):
+    def rotate_x(self, alpha):
         """The method rotates the AtList on alpha Angle."""
         alpha *= math.pi / 180
         # ox
@@ -821,7 +816,7 @@ class TAtomicModel(object):
             self.atoms[i].y = xnn
             self.atoms[i].z = ynn
 
-    def rotateY(self, alpha):
+    def rotate_y(self, alpha):
         """The method rotates the AtList on alpha Angle."""
         alpha *= math.pi / 180
         # oy
@@ -831,7 +826,7 @@ class TAtomicModel(object):
             self.atoms[i].x = xnn
             self.atoms[i].z = ynn
 
-    def rotateZ(self, alpha):
+    def rotate_z(self, alpha):
         """The method rotates the AtList on alpha Angle."""
         alpha *= math.pi / 180
         # oz
@@ -842,12 +837,12 @@ class TAtomicModel(object):
             self.atoms[i].y = ynn
 
     def rotate(self, alpha, betta, gamma) -> None:
-        self.rotateX(alpha)
-        self.rotateY(betta)
-        self.rotateZ(gamma)
+        self.rotate_x(alpha)
+        self.rotate_y(betta)
+        self.rotate_z(gamma)
 
     def ProjectionToCylinder(self, atomslist, radius):
-        """This method returns projections on cylinder with radius for atom at"""
+        """This method returns projections on cylinder with radius for atom at."""
         row = []
         for at in range(0, len(atomslist)):
             x = float(self.atoms[atomslist[at]].x)
@@ -866,15 +861,17 @@ class TAtomicModel(object):
                 Indexes.append(j)
         return Indexes
 
-    def indexes_of_atoms_in_ball(self, ats, atom, R):
-        """ Indexes of atoms in the ball of radius R with center on atom 'atom'
-        ats - list of indexes
-        atom- index of atom in the center of ball
+    def indexes_of_atoms_in_ball(self, ats, atom, r):
+        """Indexes of atoms in the ball of radius R with center on atom 'atom'.
+        Args:
+            ats: list of indexes;
+            atom: index of atom in the center of ball;
+            r: sphere radius.
         """
         newatoms = [atom]
         for at in ats:
             if at != atom:
-                if self.atom_atom_distance(at, atom) < R:
+                if self.atom_atom_distance(at, atom) < r:
                     newatoms.append(at)
         return newatoms
 
@@ -886,15 +883,15 @@ class TAtomicModel(object):
 
     def convert_from_direct_to_cart(self):
         for atom in self.atoms:
-            x = atom.x * self.LatVect1[0] + atom.y * self.LatVect2[0] + atom.z * self.LatVect3[0]
-            y = atom.x * self.LatVect1[1] + atom.y * self.LatVect2[1] + atom.z * self.LatVect3[1]
-            z = atom.x * self.LatVect1[2] + atom.y * self.LatVect2[2] + atom.z * self.LatVect3[2]
+            x = atom.x * self.lat_vector1[0] + atom.y * self.lat_vector2[0] + atom.z * self.lat_vector3[0]
+            y = atom.x * self.lat_vector1[1] + atom.y * self.lat_vector2[1] + atom.z * self.lat_vector3[1]
+            z = atom.x * self.lat_vector1[2] + atom.y * self.lat_vector2[2] + atom.z * self.lat_vector3[2]
             atom.x = x
             atom.y = y
             atom.z = z
 
     def convert_from_cart_to_direct(self):
-        SysCoord = np.array([self.LatVect1, self.LatVect2, self.LatVect3])
+        SysCoord = np.array([self.lat_vector1, self.lat_vector2, self.lat_vector3])
         obr = np.linalg.inv(SysCoord).transpose()
 
         for atom in self.atoms:
@@ -905,7 +902,7 @@ class TAtomicModel(object):
             atom.z = res[2]
 
     def minX(self):
-        """ минимальная координата по оси X """
+        """Minimum X-coordinate."""
         minx = self.atoms[0].x
         for atom in self.atoms:
             if float(atom.x) < float(minx):
@@ -913,7 +910,7 @@ class TAtomicModel(object):
         return float(minx)
 
     def maxX(self):
-        """ максимальная координата по оси X """
+        """Maximum X-coordinate."""
         maxx = self.atoms[0].x
         for atom in self.atoms:
             if atom.x > maxx:
@@ -921,11 +918,11 @@ class TAtomicModel(object):
         return maxx
 
     def sizeX(self):
-        """ длина молекулы по оси X """
+        """The length of the molecule along the X axis."""
         return self.maxX() - self.minX()
 
     def minY(self):
-        """ минимальная координата по оси Y """
+        """Minimum Y-coordinate."""
         miny = self.atoms[0].y
 
         for atom in self.atoms:
@@ -934,7 +931,7 @@ class TAtomicModel(object):
         return float(miny)
 
     def maxY(self):
-        """ максимальная координата по оси Y """
+        """Maximum Y-coordinate."""
         maxy = self.atoms[0].y
 
         for atom in self.atoms:
@@ -943,11 +940,11 @@ class TAtomicModel(object):
         return float(maxy)
 
     def sizeY(self):
-        """ длина молекулы по оси Y """
+        """The length of the molecule along the Y axis."""
         return self.maxY() - self.minY()
 
     def minZ(self):
-        """ минимальная координата по оси Z """
+        """Minimum Z-coordinate."""
         minz = self.atoms[0].z
 
         for atom in self.atoms:
@@ -956,7 +953,7 @@ class TAtomicModel(object):
         return float(minz)
 
     def maxZ(self):
-        """ максимальная координата по оси Z """
+        """Maximum Z-coordinate."""
         maxz = self.atoms[0].z
 
         for atom in self.atoms:
@@ -965,7 +962,7 @@ class TAtomicModel(object):
         return float(maxz)
 
     def sizeZ(self):
-        """ длина молекулы по оси Z """
+        """The length of the molecule along the Z axis."""
         return self.maxZ() - self.minZ()
 
     def sort_atoms_by_type(self):
@@ -977,7 +974,7 @@ class TAtomicModel(object):
                     self.atoms[j + 1] = atom
 
     def AngleToCenterOfAtoms(self, atomslist):
-        """The method AngleToCenterOfAtoms returns the Angle To Center Of atoms_from_fdf list atomslist in the molecule"""
+        """The method returns the Angle To Center Of atoms_from_fdf list atomslist in the molecule"""
         angle = 0
 
         for at in range(0, len(atomslist)):
@@ -1002,27 +999,27 @@ class TAtomicModel(object):
             for j in values:
                 for k in values:
                     if abs(i) + abs(j) + abs(k) != 0:
-                        ro1 = norm(delta_pos + i * self.LatVect1 + j * self.LatVect2 + k * self.LatVect3)
+                        ro1 = norm(delta_pos + i * self.lat_vector1 + j * self.lat_vector2 + k * self.lat_vector3)
                         if ro1 < ro:
                             ro = ro1
         return ro
 
     def move_atoms_to_cell(self):
-        a = np.array([self.LatVect1, self.LatVect2, self.LatVect3])
+        a = np.array([self.lat_vector1, self.lat_vector2, self.lat_vector3])
         ainv = inv(a)
 
         for at in self.atoms:
             pos = np.array([at.x, at.y, at.z])
             b = pos.transpose()
             total = ainv.dot(b)
-            pos -= math.trunc(total[0]) * self.LatVect1 + math.trunc(total[1]) * self.LatVect2 + math.trunc(
-                total[2]) * self.LatVect3
+            pos -= math.trunc(total[0]) * self.lat_vector1 + math.trunc(total[1]) * self.lat_vector2 + math.trunc(
+                total[2]) * self.lat_vector3
             at.x = pos[0]
             at.y = pos[1]
             at.z = pos[2]
 
-    def Neighbors(self, atom, col, charge):
-        """ Look for col neighbors of atom "atom" with a charge "charge" """
+    def neighbors(self, atom, col, charge):
+        """Look for number of neighbors of atom "atom" with a charge "charge"."""
         neighbor = []
         for at in range(0, len(self.atoms)):
             if (at != atom) and (int(self.atoms[at].charge) == int(charge)):
@@ -1037,14 +1034,13 @@ class TAtomicModel(object):
                     neighbor[i] = copy.deepcopy(neighbor[i - 1])
                     neighbor[i - 1] = copy.deepcopy(at)
                     fl = 1
-        neighbo = []
-        neighbo.append(neighbor[0][0])
+        neighbo = [neighbor[0][0]]
         for i in range(1, col):
             neighbo.append(neighbor[i][0])
         return neighbo
 
     def find_bonds_exact(self):
-        """The method returns list of bonds of the molecule"""
+        """The method returns list of bonds of the molecule."""
         if self.bonds_per != []:
             return self.bonds_per
         PeriodTable = TPeriodTable()
@@ -1069,11 +1065,12 @@ class TAtomicModel(object):
                 r_tab = Mendeley.Bonds[self.atoms[i].charge][self.atoms[j].charge]
                 if (r > 1e-4) and (r < 1.2 * r_tab):
                     self.bonds.append([i, j])
+        return self.bonds
 
     def Delta(self, newMolecula):
         """ maximum distance from atoms in self to the atoms in the newMolecula"""
         DeltaMolecula1 = 0
-        r1 = norm(self.LatVect1) + norm(self.LatVect2) + norm(self.LatVect3)
+        r1 = norm(self.lat_vector1) + norm(self.lat_vector2) + norm(self.lat_vector3)
         for at2 in newMolecula.atoms:
             model = TAtomicModel(self.atoms)
             model.add_atom(at2)
@@ -1085,22 +1082,22 @@ class TAtomicModel(object):
                 DeltaMolecula1 = r1
         return DeltaMolecula1
 
-    def DeltaMin(self, newMolecula):
-        """ minimum distance from atoms in self to the atoms in the newMolecula"""
-        DeltaMolecula1 = 100000
-        r1 = norm(self.LatVect1) + norm(self.LatVect2) + norm(self.LatVect3)
-        for at2 in newMolecula.atoms:
-            model = TAtomicModel(self.atoms)
-            model.add_atom(at2)
-            for ind in range(0, len(self.atoms)):
-                r = model.atom_atom_distance(ind, len(model.atoms) - 1)
-                if r < r1:
-                    r1 = r
-            if r1 < DeltaMolecula1:
-                DeltaMolecula1 = r1
-        return DeltaMolecula1
+    #def delta_min(self, newMolecula):
+    #    """Minimum distance from atoms in self to the atoms in the newMolecula"""
+    #    delta_molecula1 = 100000
+    #    r1 = norm(self.LatVect1) + norm(self.LatVect2) + norm(self.LatVect3)
+    #    for at2 in newMolecula.atoms:
+    #        model = TAtomicModel(self.atoms)
+    #        model.add_atom(at2)
+    #        for ind in range(0, len(self.atoms)):
+    #            r = model.atom_atom_distance(ind, len(model.atoms) - 1)
+    #            if r < r1:
+    #                r1 = r
+    #        if r1 < delta_molecula1:
+    #            delta_molecula1 = r1
+    #    return delta_molecula1
 
-    def GoToPositiveCoordinates(self):
+    def go_to_positive_coordinates(self):
         xm = self.minX()
         ym = self.minY()
         zm = self.minZ()
@@ -1113,70 +1110,56 @@ class TAtomicModel(object):
             self.atoms[i].z = self.minus0(self.atoms[i].z)
 
     def minus0(self, fl):
-        res = fl
-
-        # if math.fabs(fl) < 1e-8:
-        #    print("!")
-        #    res = 0
-        # if str(fl) == "-0.0":
-        #    res = 0
-        #    print("!!")
-        if fl < 0:
-            res = 0
-
-        return res
+        return 0 if fl < 0 else fl
 
     def grow(self):
-        """ модель транслируется в трех измерениях и становится в 27 раз больше """
-        newAtList = deepcopy(self.atoms)
+        """The model is translated in three dimensions and becomes 27 times larger."""
+        new_at_list = deepcopy(self.atoms)
         for i in [-1, 0, 1]:
             for j in [-1, 0, 1]:
                 for k in [-1, 0, 1]:
                     if abs(i) + abs(j) + abs(k) != 0:
-                        vect = i * self.LatVect1 + j * self.LatVect2 + k * self.LatVect3
-                        copyOfModel = TAtomicModel(self.atoms)
-                        copyOfModel.move(vect[0], vect[1], vect[2])
-                        for atom in copyOfModel.atoms:
-                            newAtList.append(atom)
-        newModel = TAtomicModel(newAtList)
-        newModel.set_lat_vectors(3 * self.LatVect1, 3 * self.LatVect2, 3 * self.LatVect3)
-        return newModel
+                        vect = i * self.lat_vector1 + j * self.lat_vector2 + k * self.lat_vector3
+                        copy_of_model = TAtomicModel(self.atoms)
+                        copy_of_model.move(vect[0], vect[1], vect[2])
+                        for atom in copy_of_model.atoms:
+                            new_at_list.append(atom)
+        new_model = TAtomicModel(new_at_list)
+        new_model.set_lat_vectors(3 * self.lat_vector1, 3 * self.lat_vector2, 3 * self.lat_vector3)
+        return new_model
 
     def grow_x(self):
         """Translate model in X direction."""
-        newAtList = deepcopy(self.atoms)
-        vect = self.LatVect1
-        copyOfModel = TAtomicModel(self.atoms)
-        copyOfModel.move(vect[0], vect[1], vect[2])
-        for atom in copyOfModel.atoms:
-            newAtList.append(atom)
-        newModel = TAtomicModel(newAtList)
-        newModel.set_lat_vectors(2 * self.LatVect1, self.LatVect2, self.LatVect3)
-        return newModel
+        new_at_list = deepcopy(self.atoms)
+        copy_of_model = TAtomicModel(self.atoms)
+        copy_of_model.move(*self.lat_vector1)
+        for atom in copy_of_model.atoms:
+            new_at_list.append(atom)
+        new_model = TAtomicModel(new_at_list)
+        new_model.set_lat_vectors(2 * self.lat_vector1, self.lat_vector2, self.lat_vector3)
+        return new_model
 
     def grow_y(self):
         """Translate model in Y direction."""
-        newAtList = deepcopy(self.atoms)
-        vect = self.LatVect2
-        copyOfModel = TAtomicModel(self.atoms)
-        copyOfModel.move(vect[0], vect[1], vect[2])
-        for atom in copyOfModel.atoms:
-            newAtList.append(atom)
-        newModel = TAtomicModel(newAtList)
-        newModel.set_lat_vectors(self.LatVect1, 2 * self.LatVect2, self.LatVect3)
-        return newModel
+        new_at_list = deepcopy(self.atoms)
+        copy_of_model = TAtomicModel(self.atoms)
+        copy_of_model.move(*self.lat_vector2)
+        for atom in copy_of_model.atoms:
+            new_at_list.append(atom)
+        new_model = TAtomicModel(new_at_list)
+        new_model.set_lat_vectors(self.lat_vector1, 2 * self.lat_vector2, self.lat_vector3)
+        return new_model
 
     def grow_z(self):
         """Translate model in Z direction."""
-        newAtList = deepcopy(self.atoms)
-        vect = self.LatVect3
-        copyOfModel = TAtomicModel(self.atoms)
-        copyOfModel.move(vect[0], vect[1], vect[2])
-        for atom in copyOfModel.atoms:
-            newAtList.append(atom)
-        newModel = TAtomicModel(newAtList)
-        newModel.set_lat_vectors(self.LatVect1, self.LatVect2, 2 * self.LatVect3)
-        return newModel
+        new_at_list = deepcopy(self.atoms)
+        copy_of_model = TAtomicModel(self.atoms)
+        copy_of_model.move(*self.lat_vector3)
+        for atom in copy_of_model.atoms:
+            new_at_list.append(atom)
+        new_model = TAtomicModel(new_at_list)
+        new_model.set_lat_vectors(self.lat_vector1, self.lat_vector2, 2 * self.lat_vector3)
+        return new_model
 
     def move(self, l_x, l_y, l_z):
         """Move model by the vector."""
@@ -1197,14 +1180,15 @@ class TAtomicModel(object):
             self.move_bond_path(l_x, l_y, l_z, point.getProperty("bond2opt"))
         return self.atoms
 
-    def move_bond_path(self, Lx, Ly, Lz, bond):
+    @staticmethod
+    def move_bond_path(lx, ly, lz, bond):
         if bond:
             for bp in bond:
-                bp.x += Lx
-                bp.y += Ly
-                bp.z += Lz
+                bp.x += lx
+                bp.y += ly
+                bp.z += lz
 
-    def typesOfAtoms(self):
+    def types_of_atoms(self):
         elements = np.zeros(200)
         for atom in self.atoms:
             elements[atom.charge] += 1
@@ -1217,7 +1201,7 @@ class TAtomicModel(object):
     def formula(self):
         mendeley = TPeriodTable()
         text = ""
-        charges = self.typesOfAtoms()
+        charges = self.types_of_atoms()
         for charge in charges:
             ind = self.indexes_of_atoms_with_charge(charge[0])
             let = mendeley.get_let(self.atoms[ind[0]].charge)
@@ -1225,39 +1209,40 @@ class TAtomicModel(object):
         return text
 
     def toSIESTAfdf(self, filename):
-        """ созадет входной файл для пакета SIESTA """
+        """Create an input file for the SIESTA."""
         f = open(filename, 'w')
         text = self.toSIESTAfdfdata("Fractional", "Ang", "LatticeVectors")
         print(text, file=f)
         f.close()
 
     def toSIESTAxyz(self, filename):
-        """ созадет xyz файл, совместимый с XMol """
+        """Create an xyz file in XMol format."""
         f = open(filename, 'w')
         text = self.toSIESTAxyzdata()
         print(text, file=f)
         f.close()
 
     def toSIESTAfdfdata(self, coord_style, units_type, latt_style='LatticeParameters'):
-        """ returns data for SIESTA fdf file """
+        """Returns data for SIESTA fdf file."""
         data = ""
-        PerTab = TPeriodTable()
+        periodic_table = TPeriodTable()
         data += 'NumberOfAtoms ' + str(len(self.atoms)) + "\n"
-        types = self.typesOfAtoms()
+        types = self.types_of_atoms()
         data += 'NumberOfSpecies ' + str(len(types)) + "\n"
         data += '%block ChemicalSpeciesLabel\n'
         for i in range(0, len(types)):
-            data += ' ' + str(i + 1) + '  ' + str(types[i][0]) + '  ' + str(PerTab.get_let(int(types[i][0]))) + "\n"
+            data += ' ' + str(i + 1) + '  ' + str(types[i][0]) + '  ' +\
+                    str(periodic_table.get_let(int(types[i][0]))) + "\n"
         data += '%endblock ChemicalSpeciesLabel\n'
 
         mult = 1
-        LatticeConstant = 'LatticeConstant       1.0 Ang\n'
+        lattice_constant = 'LatticeConstant       1.0 Ang\n'
 
         if (coord_style != "Zmatrix Cartesian") and (units_type == "Bohr"):
             mult = 1.0 / 0.52917720859
-            LatticeConstant = 'LatticeConstant       1.0 Bohr\n'
+            lattice_constant = 'LatticeConstant       1.0 Bohr\n'
 
-        data += LatticeConstant
+        data += lattice_constant
 
         if latt_style == 'LatticeParameters':
             data += '%block LatticeParameters\n'
@@ -1268,16 +1253,17 @@ class TAtomicModel(object):
         # or
         if latt_style == 'LatticeVectors':
             data += '%block LatticeVectors\n'
-            data += '  ' + str(self.LatVect1[0] * mult) + '  ' + str(self.LatVect1[1] * mult) + '  ' + str(
-                self.LatVect1[2] * mult) + '\n'
-            data += '  ' + str(self.LatVect2[0] * mult) + '  ' + str(self.LatVect2[1] * mult) + '  ' + str(
-                self.LatVect2[2] * mult) + '\n'
-            data += '  ' + str(self.LatVect3[0] * mult) + '  ' + str(self.LatVect3[1] * mult) + '  ' + str(
-                self.LatVect3[2] * mult) + '\n'
+            data += '  ' + str(self.lat_vector1[0] * mult) + '  ' + str(self.lat_vector1[1] * mult) + '  ' + str(
+                self.lat_vector1[2] * mult) + '\n'
+            data += '  ' + str(self.lat_vector2[0] * mult) + '  ' + str(self.lat_vector2[1] * mult) + '  ' + str(
+                self.lat_vector2[2] * mult) + '\n'
+            data += '  ' + str(self.lat_vector3[0] * mult) + '  ' + str(self.lat_vector3[1] * mult) + '  ' + str(
+                self.lat_vector3[2] * mult) + '\n'
             data += '%endblock LatticeVectors\n'
 
         if coord_style == "Zmatrix Cartesian":
             data += 'AtomicCoordinatesFormat NotScaledCartesianAng\n'
+            data += "ZM.UnitsLength Ang\n"
             data += '%block Zmatrix\n'
             data += 'cartesian\n'
             data += self.coords_for_export(coord_style)
@@ -1285,7 +1271,7 @@ class TAtomicModel(object):
 
         if coord_style == "Fractional":
             self.sort_atoms_by_type()
-            self.GoToPositiveCoordinates()
+            self.go_to_positive_coordinates()
             self.convert_from_cart_to_direct()
             data += 'AtomicCoordinatesFormat Fractional\n'
             data += '%block AtomicCoordinatesAndAtomicSpecies\n'
@@ -1315,24 +1301,24 @@ class TAtomicModel(object):
         multy = mult * volumeric_data.Ny
         multz = mult * volumeric_data.Nz
 
-        print("self.LatVect1 ", self.LatVect1)
-        print("self.LatVect2 ", self.LatVect2)
-        print("self.LatVect3 ", self.LatVect3)
+        print("self.LatVect1 ", self.lat_vector1)
+        print("self.LatVect2 ", self.lat_vector2)
+        print("self.LatVect3 ", self.lat_vector3)
         print("volumeric_data.origin_to_export ", volumeric_data.origin_to_export)
-        print("add ", x1 * self.LatVect1 / multx + y1 * self.LatVect2 / multy + z1 * self.LatVect3 / multz)
+        print("add ", x1 * self.lat_vector1 / multx + y1 * self.lat_vector2 / multy + z1 * self.lat_vector3 / multz)
 
-        origin = volumeric_data.origin_to_export + x1 * self.LatVect1 / multx + y1 * self.LatVect2 / multy + z1 * self.LatVect3 / multz
+        origin = volumeric_data.origin_to_export + x1 * self.lat_vector1 / multx + y1 * self.lat_vector2 / multy + z1 * self.lat_vector3 / multz
 
         text += str(self.nAtoms()) + "     " + str(origin[0]) + "    " + str(origin[1]) + "    " + str(origin[2]) + "\n"
         text += " " + str(n_x) + " "
-        text += " " + str(self.LatVect1[0] / multx) + "   " + str(self.LatVect1[1] / multx) + "   " + str(
-            self.LatVect1[2] / multx) + "\n"
+        text += " " + str(self.lat_vector1[0] / multx) + "   " + str(self.lat_vector1[1] / multx) + "   " + str(
+            self.lat_vector1[2] / multx) + "\n"
         text += " " + str(n_y) + " "
-        text += " " + str(self.LatVect2[0] / multy) + "   " + str(self.LatVect2[1] / multy) + "   " + str(
-            self.LatVect2[2] / multy) + "\n"
+        text += " " + str(self.lat_vector2[0] / multy) + "   " + str(self.lat_vector2[1] / multy) + "   " + str(
+            self.lat_vector2[2] / multy) + "\n"
         text += " " + str(n_z) + " "
-        text += " " + str(self.LatVect3[0] / multz) + "   " + str(self.LatVect3[1] / multz) + "   " + str(
-            self.LatVect3[2] / multz) + "\n"
+        text += " " + str(self.lat_vector3[0] / multz) + "   " + str(self.lat_vector3[1] / multz) + "   " + str(
+            self.lat_vector3[2] / multz) + "\n"
 
         for atom in self.atoms:
             text += " " + str(atom.charge) + "     0.000000     " + str(atom.x / mult) + "    " + str(
@@ -1343,9 +1329,6 @@ class TAtomicModel(object):
         new_data = volumeric_data.data3D[x1:x2, y1:y2, z1:z2]
         new_n = new_data.size
         data3D = np.reshape(new_data, new_n, orderData)
-
-        # n = int(volumeric_data.Nx) * int(volumeric_data.Ny) * int(volumeric_data.Nz)
-        # data3D = np.reshape(volumeric_data.data3D, int(n), orderData)
 
         for i in range(0, data3D.size):
             text += str(data3D[i]) + "   "
@@ -1367,9 +1350,9 @@ class TAtomicModel(object):
         origin = volumeric_data.origin_to_export
         text += " " + str(origin[0]) + " " + str(origin[1]) + " " + str(origin[2]) + "\n"
 
-        vector1 = self.LatVect1 * (x2 - x1) / volumeric_data.Nx
-        vector2 = self.LatVect2 * (y2 - y1) / volumeric_data.Ny
-        vector3 = self.LatVect3 * (z2 - z1) / volumeric_data.Nz
+        vector1 = self.lat_vector1 * (x2 - x1) / volumeric_data.Nx
+        vector2 = self.lat_vector2 * (y2 - y1) / volumeric_data.Ny
+        vector3 = self.lat_vector3 * (z2 - z1) / volumeric_data.Nz
 
         text += " " + str(vector1[0]) + "   " + str(vector1[1]) + "   " + str(vector1[2]) + "\n"
         text += " " + str(vector2[0]) + "   " + str(vector2[1]) + "   " + str(vector2[2]) + "\n"
@@ -1380,9 +1363,6 @@ class TAtomicModel(object):
         new_data = volumeric_data.data3D[x1:x2, y1:y2, z1:z2]
         new_n = new_data.size
         data3D = np.reshape(new_data, new_n, orderData)
-
-        # n = int(volumeric_data.Nx) * int(volumeric_data.Ny) * int(volumeric_data.Nz)
-        # data3D = np.reshape(volumeric_data.data3D, int(n), orderData)
 
         for i in range(0, data3D.size):
             text += str(data3D[i]) + "   "
@@ -1396,7 +1376,7 @@ class TAtomicModel(object):
 
     def coords_for_export(self, coord_style, units="Ang"):
         data = ""
-        types = self.typesOfAtoms()
+        types = self.types_of_atoms()
         if coord_style == "Cartesian":
             for i in range(0, len(self.atoms)):
                 str1 = ' '
@@ -1446,20 +1426,10 @@ class TAtomicModel(object):
         return str2
 
     def toSIESTAxyzdata(self):
-        """ returns data for *.xyz file """
+        """Returns data for *.xyz file."""
         data = "  "
         nAtoms = self.nAtoms()
         data += str(nAtoms) + "\n"
         for i in range(0, nAtoms):
             data += "\n" + self.atoms[i].let + '       ' + self.xyz_string(i)
         return data
-
-    def toFireflyINP(self, filename):
-        """ create file in Firefly *.inp format """
-        f = open(filename, 'w')
-        data = ""
-        data += "!model \n $DATA\njob\nCn 1\n\n"
-        data += self.coords_for_export("FireflyINP")
-
-        print(data, file=f)
-        f.close()
