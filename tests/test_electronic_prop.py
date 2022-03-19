@@ -45,7 +45,7 @@ def test_bands(tests_path):
     kmin, kmax = 0.0, 0.39
     is_check_bands_spin = True
     bands, emaxf, eminf, homo, kmesh, lumo, xticklabels, xticks = read_siesta_bands(f_name, is_check_bands_spin,
-        kmax, kmin)
+                                                                                    kmax, kmin)
     assert len(kmesh) == 100
 
     gap, gap_ind = gaps(bands, emaxf, eminf, homo, lumo)

@@ -115,71 +115,7 @@ class TSIESTA:
                 charges.append([])
 
             if method == "Mulliken":
-                pseudo_charges = TSIESTA.pseudo_charge_of_species(filename)
-                number_of_species = len(pseudo_charges)
-                species = TSIESTA.get_species(filename)
-
-                is_spin_polarized = int(helpers.from_file_property(filename, 'redata: Number of spin components', 1,
-                                                                   'string').split("=")[1])
-
-                md_siesta_file = open(filename)
-                str1 = md_siesta_file.readline()
-
-                if is_spin_polarized == 2:
-                    number_of_species *= 2
-                    number_of_atoms *= 2
-
-                charges_for_all_steps = []
-                while str1 != '':
-                    if str1 != '' and (str1.find("mulliken: Atomic and Orbital Populations:") >= 0):
-                        nsp = 0
-
-                        charges_m = []
-                        for i in range(0, len(charges)):
-                            charges_m.append(["", 0])
-
-                        while nsp < number_of_species:
-                            atoms = 0
-                            atom_sort = -1
-                            while str1.find("mulliken:") >= 0 or len(str1) < 2 or str1.find("Species:") >= 0:
-                                if str1.find("Species:") >= 0:
-                                    str1 = helpers.spacedel(str1)
-                                    nsp += 1
-                                    for i in range(0, len(species)):
-                                        if str1.split(' ')[1] == species[i][2]:
-                                            atom_sort = i
-                                str1 = md_siesta_file.readline()
-                            neutral = pseudo_charges[atom_sort]
-                            if is_spin_polarized == 2:
-                                neutral /= 2.0
-
-                            skip = 0
-                            str1 = helpers.spacedel(md_siesta_file.readline())
-                            while not helpers.is_integer(str1.split()[0]):
-                                str1 = helpers.spacedel(md_siesta_file.readline())
-                                if len(str1) == 0:
-                                    str1 = helpers.spacedel(md_siesta_file.readline())
-                                skip += 1
-
-                            while str1 != '\n':
-                                if str1 != '\n':
-                                    atoms += 1
-                                    str1 = helpers.spacedel(str1)
-                                    at = int(str1.split(' ')[0])
-                                    chr = float(str1.split(' ')[1])
-                                    charges_m[at - 1][0] = species[atom_sort][1]
-                                    charges_m[at - 1][1] += neutral - chr
-                                for i in range(0, skip):
-                                    str1 = md_siesta_file.readline()
-
-                        charges_for_all_steps.append(charges_m)
-                    str1 = md_siesta_file.readline()
-                md_siesta_file.close()
-
-                if len(charges_for_all_steps) > 0:
-                    charges = charges_for_all_steps[-1]
-                    for i in range(0, len(charges)):
-                        charges[i][1] = round(charges[i][1], 3)
+                charges = TSIESTA.get_charge_mulliken(charges, filename, number_of_atoms)
                 return charges
 
             searchSTR1 = ""
@@ -206,6 +142,70 @@ class TSIESTA:
                         charges[i] = [atom_sort, charge]
                 str1 = md_siesta_file.readline()
             md_siesta_file.close()
+        return charges
+
+    @staticmethod
+    def get_charge_mulliken(charges, filename, number_of_atoms):
+        pseudo_charges = TSIESTA.pseudo_charge_of_species(filename)
+        number_of_species = len(pseudo_charges)
+        species = TSIESTA.get_species(filename)
+        is_spin_polarized = int(helpers.from_file_property(filename, 'redata: Number of spin components', 1,
+                                                           'string').split("=")[1])
+        md_siesta_file = open(filename)
+        str1 = md_siesta_file.readline()
+        if is_spin_polarized == 2:
+            number_of_species *= 2
+            number_of_atoms *= 2
+        charges_for_all_steps = []
+        while str1 != '':
+            if str1 != '' and (str1.find("mulliken: Atomic and Orbital Populations:") >= 0):
+                nsp = 0
+
+                charges_m = []
+                for i in range(0, len(charges)):
+                    charges_m.append(["", 0])
+
+                while nsp < number_of_species:
+                    atoms = 0
+                    atom_sort = -1
+                    while str1.find("mulliken:") >= 0 or len(str1) < 2 or str1.find("Species:") >= 0:
+                        if str1.find("Species:") >= 0:
+                            str1 = helpers.spacedel(str1)
+                            nsp += 1
+                            for i in range(0, len(species)):
+                                if str1.split(' ')[1] == species[i][2]:
+                                    atom_sort = i
+                        str1 = md_siesta_file.readline()
+                    neutral = pseudo_charges[atom_sort]
+                    if is_spin_polarized == 2:
+                        neutral /= 2.0
+
+                    skip = 0
+                    str1 = helpers.spacedel(md_siesta_file.readline())
+                    while not helpers.is_integer(str1.split()[0]):
+                        str1 = helpers.spacedel(md_siesta_file.readline())
+                        if len(str1) == 0:
+                            str1 = helpers.spacedel(md_siesta_file.readline())
+                        skip += 1
+
+                    while str1 != '\n':
+                        if str1 != '\n':
+                            atoms += 1
+                            str1 = helpers.spacedel(str1)
+                            at = int(str1.split(' ')[0])
+                            chr = float(str1.split(' ')[1])
+                            charges_m[at - 1][0] = species[atom_sort][1]
+                            charges_m[at - 1][1] += neutral - chr
+                        for i in range(0, skip):
+                            str1 = md_siesta_file.readline()
+
+                charges_for_all_steps.append(charges_m)
+            str1 = md_siesta_file.readline()
+        md_siesta_file.close()
+        if len(charges_for_all_steps) > 0:
+            charges = charges_for_all_steps[-1]
+            for i in range(0, len(charges)):
+                charges[i][1] = round(charges[i][1], 3)
         return charges
 
     @staticmethod

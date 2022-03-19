@@ -12,7 +12,7 @@ from PySide2.QtCore import QCoreApplication, Qt
 from PySide2.QtGui import QIcon
 from PySide2.QtWidgets import QApplication
 
-from qtbased.mainwindow import mainWindow
+from qtbased.mainform import MainForm
 
 sys.path.append('.')
 
@@ -28,7 +28,7 @@ QCoreApplication.setApplicationName(APPLICATION_NAME)
 
 QCoreApplication.setAttribute(Qt.AA_ShareOpenGLContexts)
 app = QApplication(sys.argv)
-window = mainWindow()
+window = MainForm()
 window.setup_ui()
 if is_with_figure:
     window.setWindowIcon(QIcon(str(Path(__file__).parent / 'images' / 'ico.png')))

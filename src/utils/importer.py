@@ -52,7 +52,7 @@ class Importer(object):
         return "unknown"
 
     @staticmethod
-    def Import(filename, fl='all', prop=False, xyzcritic2=False):
+    def import_from_file(filename, fl='all', prop=False, xyzcritic2=False):
         """import file"""
         models = []
         fdf = TFDFFile()
@@ -65,31 +65,7 @@ class Importer(object):
                 fdf.from_fdf_file(filename)
 
             if file_format == "SIESTAout":
-                type_of_run = (TSIESTA.type_of_run(filename).split())[0].lower()
-                models = []
-                if type_of_run != "sp":
-                    if fl != 'opt':
-                        models = TAtomicModel.atoms_from_output_cg(filename)
-                        if len(models) == 0:
-                            models = TAtomicModel.atoms_from_output_md(filename)
-                    modelsopt = TAtomicModel.atoms_from_output_optim(filename)
-                else:
-                    modelsopt = TAtomicModel.atoms_from_output_sp(filename)
-                if len(modelsopt) == 1:
-                    models.append(modelsopt[0])
-                if prop and (len(models) > 0):
-                    try:
-                        charge_mulliken = TSIESTA.get_charges_mulliken_for_atoms(filename)
-                        if len(charge_mulliken[0]) > 0:
-                            models[-1].add_atoms_property("charge Mulliken", charge_mulliken)
-                        charge_voronoi = TSIESTA.get_charges_voronoi_for_atoms(filename)
-                        if len(charge_voronoi[0]) > 0:
-                            models[-1].add_atoms_property("charge Voronoi", charge_voronoi)
-                        charge_hirshfeld = TSIESTA.get_charges_hirshfeld_for_atoms(filename)
-                        if len(charge_hirshfeld[0]) > 0:
-                            models[-1].add_atoms_property("charge Hirshfeld", charge_hirshfeld)
-                    except Exception:
-                        print("Properties failed")
+                models = Importer.get_output_data(filename, fl, models, prop)
                 fdf.from_out_file(filename)
 
             if file_format == "SIESTAANI":
@@ -116,6 +92,35 @@ class Importer(object):
             if file_format == "VASPposcar":
                 models = atoms_from_POSCAR(filename)
         return models, fdf
+
+    @staticmethod
+    def get_output_data(filename, fl, models, prop):
+        type_of_run = (TSIESTA.type_of_run(filename).split())[0].lower()
+        models = []
+        if type_of_run != "sp":
+            if fl != 'opt':
+                models = TAtomicModel.atoms_from_output_cg(filename)
+                if len(models) == 0:
+                    models = TAtomicModel.atoms_from_output_md(filename)
+            modelsopt = TAtomicModel.atoms_from_output_optim(filename)
+        else:
+            modelsopt = TAtomicModel.atoms_from_output_sp(filename)
+        if len(modelsopt) == 1:
+            models.append(modelsopt[0])
+        if prop and (len(models) > 0):
+            try:
+                charge_mulliken = TSIESTA.get_charges_mulliken_for_atoms(filename)
+                if len(charge_mulliken[0]) > 0:
+                    models[-1].add_atoms_property("charge Mulliken", charge_mulliken)
+                charge_voronoi = TSIESTA.get_charges_voronoi_for_atoms(filename)
+                if len(charge_voronoi[0]) > 0:
+                    models[-1].add_atoms_property("charge Voronoi", charge_voronoi)
+                charge_hirshfeld = TSIESTA.get_charges_hirshfeld_for_atoms(filename)
+                if len(charge_hirshfeld[0]) > 0:
+                    models[-1].add_atoms_property("charge Hirshfeld", charge_hirshfeld)
+            except Exception:
+                print("Properties failed")
+        return models
 
     @staticmethod
     def check_dos_file(filename):

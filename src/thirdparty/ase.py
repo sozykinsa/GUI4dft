@@ -86,7 +86,8 @@ def ase_raman_and_ir_script_create(model2, FDFData):
     text += "'DM.UseSaveDM': True,})\n"
 
     text += "name = '" + formula + "'\n"
-    text += "pynao_args = dict(label='siesta', jcutoff=7, iter_broadening=0.15, xc_code='LDA,PZ', tol_loc=1e-6, tol_biloc=1e-7)\n"
+    text += "pynao_args = dict(label='siesta', jcutoff=7, iter_broadening=0.15, "
+    text += "xc_code='LDA,PZ', tol_loc=1e-6, tol_biloc=1e-7)\n"
     text += "rm = StaticRamanCalculator(model, RamanCalculatorInterface, name=name, delta=0.011, exkwargs=pynao_args)\n"
     text += "# save dipole moments from DFT calculation in order to get\n"
     text += "# infrared intensities as well\n"

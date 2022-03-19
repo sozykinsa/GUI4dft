@@ -1,6 +1,6 @@
 from qtbased.guiopengl import GuiOpenGL
 
-from qtbased.mainwindow import mainWindow
+from qtbased.mainform import MainForm
 from PySide2.QtCore import QCoreApplication, Qt
 
 import pytest
@@ -66,7 +66,7 @@ def get_application(qapp):
         QCoreApplication.setApplicationName(APPLICATION_NAME)
 
         QCoreApplication.setAttribute(Qt.AA_ShareOpenGLContexts)
-        window = mainWindow()
+        window = MainForm()
         window.setup_ui()
         window.show()
         window.start_program()

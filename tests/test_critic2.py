@@ -4,21 +4,21 @@ from utils.importer import Importer
 
 def test_open_xyz_critic_file(tests_path):
     f_name = str(tests_path / 'ref_data' / 'h2o-ang-charges' / 'critic2' / "cp-file.xyz")
-    model, fdf = Importer.Import(f_name, fl='all', prop=False, xyzcritic2=False)
+    model, fdf = Importer.import_from_file(f_name, fl='all', prop=False, xyzcritic2=False)
     assert len(model[0].atoms) == 301
-    model, fdf = Importer.Import(f_name, fl='all', prop=False, xyzcritic2=True)
+    model, fdf = Importer.import_from_file(f_name, fl='all', prop=False, xyzcritic2=True)
     assert len(model[0].atoms) == 3
 
 
 def test_create_critic2_xyz_file(tests_path):
     f_name = str(tests_path / 'ref_data' / 'h2o-ang-charges' / 'critic2' / "cp-file.xyz")
-    model, fdf = Importer.Import(f_name, fl='all', prop=False, xyzcritic2=True)
+    model, fdf = Importer.import_from_file(f_name, fl='all', prop=False, xyzcritic2=True)
     assert len(model[0].bcp) == 5
 
 
 def test_atoms_of_bond_path(tests_path):
     f_name = str(tests_path / 'ref_data' / 'h2o-ang-charges' / 'critic2' / "cp-file.xyz")
-    model, fdf = Importer.Import(f_name, fl='all', prop=False, xyzcritic2=True)
+    model, fdf = Importer.import_from_file(f_name, fl='all', prop=False, xyzcritic2=True)
     atom1, atom2 = model[0].atoms_of_bond_path(1)
     assert atom1 == 2
     assert atom2 == 2

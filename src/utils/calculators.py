@@ -50,7 +50,7 @@ class Calculators:
             j = 0
 
             while (j < 1000) and (len(Molecula.atoms) < nAtoms):
-                x = random.uniform(-radTube, radTube) 
+                x = random.uniform(-radTube, radTube)
                 a = math.sqrt(radTube*radTube - x*x)
                 y = random.uniform(-a, a)
                 z = random.uniform(0, length)

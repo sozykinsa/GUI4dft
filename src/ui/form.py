@@ -188,7 +188,7 @@ class Ui_MainWindow(object):
         self.toolBox.addItem(self.page_17, u"Graphene")
         self.page_4 = QWidget()
         self.page_4.setObjectName(u"page_4")
-        self.page_4.setGeometry(QRect(0, 0, 380, 603))
+        self.page_4.setGeometry(QRect(0, 0, 380, 582))
         self.verticalLayout_95 = QVBoxLayout(self.page_4)
         self.verticalLayout_95.setObjectName(u"verticalLayout_95")
         self.tabWidget_11 = QTabWidget(self.page_4)
@@ -1983,11 +1983,11 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_94.addItem(self.horizontalSpacer_70)
 
-        self.FormActionsButtonParseBANDS = QPushButton(self.frame_54)
-        self.FormActionsButtonParseBANDS.setObjectName(u"FormActionsButtonParseBANDS")
-        self.FormActionsButtonParseBANDS.setEnabled(False)
+        self.parse_bands = QPushButton(self.frame_54)
+        self.parse_bands.setObjectName(u"parse_bands")
+        self.parse_bands.setEnabled(False)
 
-        self.horizontalLayout_94.addWidget(self.FormActionsButtonParseBANDS)
+        self.horizontalLayout_94.addWidget(self.parse_bands)
 
         self.horizontalSpacer_69 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
@@ -2003,15 +2003,15 @@ class Ui_MainWindow(object):
         self.horizontalLayout_19 = QHBoxLayout(self.groupBox_15)
         self.horizontalLayout_19.setObjectName(u"horizontalLayout_19")
         self.horizontalLayout_19.setContentsMargins(0, 2, -1, 5)
-        self.FormActionsSpinBANDSxmin = QDoubleSpinBox(self.groupBox_15)
-        self.FormActionsSpinBANDSxmin.setObjectName(u"FormActionsSpinBANDSxmin")
+        self.spin_bands_xmin = QDoubleSpinBox(self.groupBox_15)
+        self.spin_bands_xmin.setObjectName(u"spin_bands_xmin")
 
-        self.horizontalLayout_19.addWidget(self.FormActionsSpinBANDSxmin)
+        self.horizontalLayout_19.addWidget(self.spin_bands_xmin)
 
-        self.FormActionsSpinBANDSxmax = QDoubleSpinBox(self.groupBox_15)
-        self.FormActionsSpinBANDSxmax.setObjectName(u"FormActionsSpinBANDSxmax")
+        self.spin_bands_xmax = QDoubleSpinBox(self.groupBox_15)
+        self.spin_bands_xmax.setObjectName(u"spin_bands_xmax")
 
-        self.horizontalLayout_19.addWidget(self.FormActionsSpinBANDSxmax)
+        self.horizontalLayout_19.addWidget(self.spin_bands_xmax)
 
 
         self.verticalLayout_7.addWidget(self.groupBox_15)
@@ -2023,15 +2023,15 @@ class Ui_MainWindow(object):
         self.horizontalLayout_22 = QHBoxLayout(self.groupBox_16)
         self.horizontalLayout_22.setObjectName(u"horizontalLayout_22")
         self.horizontalLayout_22.setContentsMargins(0, 2, -1, 5)
-        self.FormActionsSpinBANDSemin = QDoubleSpinBox(self.groupBox_16)
-        self.FormActionsSpinBANDSemin.setObjectName(u"FormActionsSpinBANDSemin")
+        self.spin_bands_emin = QDoubleSpinBox(self.groupBox_16)
+        self.spin_bands_emin.setObjectName(u"spin_bands_emin")
 
-        self.horizontalLayout_22.addWidget(self.FormActionsSpinBANDSemin)
+        self.horizontalLayout_22.addWidget(self.spin_bands_emin)
 
-        self.FormActionsSpinBANDSemax = QDoubleSpinBox(self.groupBox_16)
-        self.FormActionsSpinBANDSemax.setObjectName(u"FormActionsSpinBANDSemax")
+        self.spin_bands_emax = QDoubleSpinBox(self.groupBox_16)
+        self.spin_bands_emax.setObjectName(u"spin_bands_emax")
 
-        self.horizontalLayout_22.addWidget(self.FormActionsSpinBANDSemax)
+        self.horizontalLayout_22.addWidget(self.spin_bands_emax)
 
 
         self.verticalLayout_7.addWidget(self.groupBox_16)
@@ -2073,11 +2073,11 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_24.addItem(self.horizontalSpacer_44)
 
-        self.FormActionsButtonPlotBANDS = QPushButton(self.frame_35)
-        self.FormActionsButtonPlotBANDS.setObjectName(u"FormActionsButtonPlotBANDS")
-        self.FormActionsButtonPlotBANDS.setEnabled(False)
+        self.plot_bands = QPushButton(self.frame_35)
+        self.plot_bands.setObjectName(u"plot_bands")
+        self.plot_bands.setEnabled(False)
 
-        self.horizontalLayout_24.addWidget(self.FormActionsButtonPlotBANDS)
+        self.horizontalLayout_24.addWidget(self.plot_bands)
 
         self.horizontalSpacer_46 = QSpacerItem(128, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
@@ -3998,7 +3998,7 @@ class Ui_MainWindow(object):
         self.toolBox_4.addItem(self.page_9, u"Import")
         self.page_10 = QWidget()
         self.page_10.setObjectName(u"page_10")
-        self.page_10.setGeometry(QRect(0, 0, 399, 675))
+        self.page_10.setGeometry(QRect(0, 0, 399, 644))
         self.verticalLayout_75 = QVBoxLayout(self.page_10)
         self.verticalLayout_75.setObjectName(u"verticalLayout_75")
         self.groupBox_11 = QGroupBox(self.page_10)
@@ -4025,7 +4025,16 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_75.addWidget(self.groupBox_24)
 
-        self.groupBox_29 = QGroupBox(self.page_10)
+        self.verticalSpacer_26 = QSpacerItem(20, 529, QSizePolicy.Minimum, QSizePolicy.Expanding)
+
+        self.verticalLayout_75.addItem(self.verticalSpacer_26)
+
+        self.toolBox_4.addItem(self.page_10, u"Export")
+        self.page_14 = QWidget()
+        self.page_14.setObjectName(u"page_14")
+        self.verticalLayout_97 = QVBoxLayout(self.page_14)
+        self.verticalLayout_97.setObjectName(u"verticalLayout_97")
+        self.groupBox_29 = QGroupBox(self.page_14)
         self.groupBox_29.setObjectName(u"groupBox_29")
         self.groupBox_29.setMinimumSize(QSize(0, 300))
         self.label_81 = QLabel(self.groupBox_29)
@@ -4104,16 +4113,16 @@ class Ui_MainWindow(object):
         self.FormIEd12Generate.setObjectName(u"FormIEd12Generate")
         self.FormIEd12Generate.setGeometry(QRect(140, 250, 93, 28))
 
-        self.verticalLayout_75.addWidget(self.groupBox_29)
+        self.verticalLayout_97.addWidget(self.groupBox_29)
 
-        self.verticalSpacer_26 = QSpacerItem(20, 529, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.verticalSpacer_20 = QSpacerItem(20, 312, QSizePolicy.Minimum, QSizePolicy.Expanding)
 
-        self.verticalLayout_75.addItem(self.verticalSpacer_26)
+        self.verticalLayout_97.addItem(self.verticalSpacer_20)
 
-        self.toolBox_4.addItem(self.page_10, u"Export")
+        self.toolBox_4.addItem(self.page_14, u"Crystal")
         self.page_3 = QWidget()
         self.page_3.setObjectName(u"page_3")
-        self.page_3.setGeometry(QRect(0, 0, 399, 675))
+        self.page_3.setGeometry(QRect(0, 0, 216, 525))
         self.verticalLayout_69 = QVBoxLayout(self.page_3)
         self.verticalLayout_69.setObjectName(u"verticalLayout_69")
         self.frame_127 = QFrame(self.page_3)
@@ -4298,7 +4307,7 @@ class Ui_MainWindow(object):
         self.toolBox_4.addItem(self.page_3, u"Raman and IR (ASE)")
         self.page_23 = QWidget()
         self.page_23.setObjectName(u"page_23")
-        self.page_23.setGeometry(QRect(0, 0, 378, 716))
+        self.page_23.setGeometry(QRect(0, 0, 371, 716))
         self.verticalLayout_83 = QVBoxLayout(self.page_23)
         self.verticalLayout_83.setObjectName(u"verticalLayout_83")
         self.FormButtonAddCroData = QPushButton(self.page_23)
@@ -5629,7 +5638,7 @@ class Ui_MainWindow(object):
         self.tabWidget_4.setCurrentIndex(0)
         self.tabWidget_2.setCurrentIndex(0)
         self.tabWidget_6.setCurrentIndex(0)
-        self.toolBox_4.setCurrentIndex(0)
+        self.toolBox_4.setCurrentIndex(2)
         self.tabWidget_7.setCurrentIndex(2)
         self.tabWidget_8.setCurrentIndex(0)
         self.tabWidget_10.setCurrentIndex(1)
@@ -5777,14 +5786,14 @@ class Ui_MainWindow(object):
         self.FormActionsPreButFDFToFile.setText(QCoreApplication.translate("MainWindow", u"Save", None))
         self.tabWidget_3.setTabText(self.tabWidget_3.indexOf(self.tab_24), QCoreApplication.translate("MainWindow", u"*.fdf file generator", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.FormTabActions), QCoreApplication.translate("MainWindow", u"Preprocessing", None))
-        self.FormActionsButtonParseBANDS.setText(QCoreApplication.translate("MainWindow", u"parse BANDS", None))
+        self.parse_bands.setText(QCoreApplication.translate("MainWindow", u"parse BANDS", None))
         self.groupBox_15.setTitle(QCoreApplication.translate("MainWindow", u"k-range", None))
         self.groupBox_16.setTitle(QCoreApplication.translate("MainWindow", u"Energy range", None))
         self.FormActionsCheckBANDSfermyShow.setText(QCoreApplication.translate("MainWindow", u"Show Fermi level", None))
         self.FormActionsGrBoxBANDSspin.setTitle(QCoreApplication.translate("MainWindow", u"Spin", None))
         self.FormActionsCheckBANDSspinUp.setText(QCoreApplication.translate("MainWindow", u"Up", None))
         self.FormActionsCheckBANDSspinDown.setText(QCoreApplication.translate("MainWindow", u"Down", None))
-        self.FormActionsButtonPlotBANDS.setText(QCoreApplication.translate("MainWindow", u"plot BANDS", None))
+        self.plot_bands.setText(QCoreApplication.translate("MainWindow", u"plot BANDS", None))
         self.FormActionsLabelBANDSgap.setText("")
         self.tabWidget_5.setTabText(self.tabWidget_5.indexOf(self.tab_18), QCoreApplication.translate("MainWindow", u"Band structure", None))
         self.FormActionsCheckBANDSfermyShow_3.setText(QCoreApplication.translate("MainWindow", u"Show Fermi level", None))
@@ -5954,6 +5963,7 @@ class Ui_MainWindow(object):
         self.label_36.setText(QCoreApplication.translate("MainWindow", u"Just specify the extension of the exported file to \".POSCAR\"", None))
         self.groupBox_24.setTitle(QCoreApplication.translate("MainWindow", u"to FireFly inp file", None))
         self.label_35.setText(QCoreApplication.translate("MainWindow", u"Just specify the extension of the exported file to \".inp\"", None))
+        self.toolBox_4.setItemText(self.toolBox_4.indexOf(self.page_10), QCoreApplication.translate("MainWindow", u"Export", None))
         self.groupBox_29.setTitle(QCoreApplication.translate("MainWindow", u"to CRYSTAL *.d12 file", None))
         self.label_81.setText(QCoreApplication.translate("MainWindow", u"coming soon (1D only in test)", None))
         self.groupBox_32.setTitle(QCoreApplication.translate("MainWindow", u"Translational symmetry", None))
@@ -5967,7 +5977,7 @@ class Ui_MainWindow(object):
         self.tabWidget_7.setTabText(self.tabWidget_7.indexOf(self.tab_27), QCoreApplication.translate("MainWindow", u"1D", None))
         self.tabWidget_7.setTabText(self.tabWidget_7.indexOf(self.tab_28), QCoreApplication.translate("MainWindow", u"0D", None))
         self.FormIEd12Generate.setText(QCoreApplication.translate("MainWindow", u"Save", None))
-        self.toolBox_4.setItemText(self.toolBox_4.indexOf(self.page_10), QCoreApplication.translate("MainWindow", u"Export", None))
+        self.toolBox_4.setItemText(self.toolBox_4.indexOf(self.page_14), QCoreApplication.translate("MainWindow", u"Crystal", None))
         self.FormASERamanAndIRscriptCreate.setText(QCoreApplication.translate("MainWindow", u"Create ASE script", None))
         self.FormASERamanAndIRscriptParse.setText(QCoreApplication.translate("MainWindow", u"Parse results", None))
         self.tabWidget_8.setTabText(self.tabWidget_8.indexOf(self.tab_30), QCoreApplication.translate("MainWindow", u"Raman", None))
