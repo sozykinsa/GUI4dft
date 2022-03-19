@@ -11,7 +11,6 @@ from pathlib import Path
 from copy import deepcopy
 from operator import itemgetter
 import matplotlib.pyplot as plt
-#from pyqt_graph_widget.pygrwidget import PyqtGraphWidget
 #import pyqtgraph as pg  # pip install pyqtgraph
 import numpy as np
 from utils import helpers
@@ -64,8 +63,8 @@ class mainWindow(QMainWindow):
                               self.ui.AtomPropertiesText]
         self.ui.openGLWidget.set_form_elements(self.ui.FormSettingsViewCheckAtomSelection, selected_atom_info, 1)
         self.FDFData = TFDFFile()
-        self.VolumericData = VolumericData()
-        self.VolumericData2 = VolumericData()  # only for volumeric data difference
+        self.volumeric_data = VolumericData()
+        self.volumeric_data2 = VolumericData()  # only for volumeric data difference
         self.PDOSdata = []
         self.filename = ""
         self.colors_cash = {}
@@ -281,8 +280,8 @@ class mainWindow(QMainWindow):
 
         ColorType = QStandardItemModel()
         color_types = ['flag', 'prism', 'ocean', 'gist_earth', 'terrain', 'gist_stern',
-                      'gnuplot', 'gnuplot2', 'CMRmap', 'cubehelix', 'brg',
-                      'gist_rainbow', 'rainbow', 'jet', 'nipy_spectral', 'gist_ncar']
+                       'gnuplot', 'gnuplot2', 'CMRmap', 'cubehelix', 'brg',
+                       'gist_rainbow', 'rainbow', 'jet', 'nipy_spectral', 'gist_ncar']
 
         for t in color_types:
             ColorType.appendRow(QStandardItem(t))
@@ -352,7 +351,8 @@ class mainWindow(QMainWindow):
         self.ui.toolBar.addSeparator()
 
         if is_with_figure and os.path.exists(Path(__file__).parent / "images" / 'Save3D.png'):
-            save_image_to_file_action = QAction(QIcon(str(Path(__file__).parent / "images" / 'Save3D.png')), 'SaveFigure3D', self)
+            file_path = str(Path(__file__).parent / "images" / 'Save3D.png')
+            save_image_to_file_action = QAction(QIcon(file_path), 'SaveFigure3D', self)
         else:
             save_image_to_file_action = QAction('SaveFigure3D', self)
         save_image_to_file_action.triggered.connect(self.save_image_to_file)
@@ -406,14 +406,14 @@ class mainWindow(QMainWindow):
 
     def activate_fragment_selection_mode(self):
         if self.ui.ActivateFragmentSelectionModeCheckBox.isChecked():
-            self.ui.openGLWidget.setSelectedFragmentMode(self.ui.AtomsInSelectedFragment,
-                                                  self.ui.ActivateFragmentSelectionTransp.value())
+            self.ui.openGLWidget.set_selected_fragment_mode(self.ui.AtomsInSelectedFragment,
+                                                            self.ui.ActivateFragmentSelectionTransp.value())
             self.ui.changeFragment1StatusByX.setEnabled(True)
             self.ui.changeFragment1StatusByY.setEnabled(True)
             self.ui.changeFragment1StatusByZ.setEnabled(True)
             self.ui.fragment1Clear.setEnabled(True)
         else:
-            self.ui.openGLWidget.setSelectedFragmentMode(None, self.ui.ActivateFragmentSelectionTransp.value())
+            self.ui.openGLWidget.set_selected_fragment_mode(None, self.ui.ActivateFragmentSelectionTransp.value())
             self.ui.changeFragment1StatusByX.setEnabled(False)
             self.ui.changeFragment1StatusByY.setEnabled(False)
             self.ui.changeFragment1StatusByZ.setEnabled(False)
@@ -445,8 +445,8 @@ class mainWindow(QMainWindow):
                 for i in range(2, len(rows)):
                     row = rows[i].split()
                     if len(row) > 1:
-                        Energy = row[1]
-                        Volume = row[0]
+                        energy = row[1]
+                        volume = row[0]
                         a = 0
                         if len(row) > 2:
                             a = row[2]
@@ -456,7 +456,7 @@ class mainWindow(QMainWindow):
                         c = 0
                         if len(row) > 4:
                             c = row[4]
-                        self.fill_cell_info_row(Energy, Volume, a, b, c)
+                        self.fill_cell_info_row(energy, volume, a, b, c)
                 f.close()
         except Exception as e:
             self.show_error(e)
@@ -470,7 +470,8 @@ class mainWindow(QMainWindow):
             al = math.radians(box_deg[0])
             be = math.radians(box_deg[1])
             ga = math.radians(box_deg[2])
-            lat_vect_1, lat_vect_2, lat_vect_3 = TSIESTA.lat_vectors_from_params(box_ang[0], box_ang[1], box_ang[2], al, be, ga)
+            lat_vect_1, lat_vect_2, lat_vect_3 = TSIESTA.lat_vectors_from_params(box_ang[0], box_ang[1], box_ang[2],
+                                                                                 al, be, ga)
 
             model = self.models[-1]
             model.set_lat_vectors(lat_vect_1, lat_vect_2, lat_vect_3)
@@ -511,7 +512,7 @@ class mainWindow(QMainWindow):
         color_scale = self.ui.FormSettingsColorsScaleType.currentText()
         i = self.ui.IsosurfaceColorsTable.rowCount() + 1
         value = self.ui.FormActionsPostLabelSurfaceValue.text()
-        self.ui.IsosurfaceColorsTable.setRowCount(i)  # и одну строку в таблице
+        self.ui.IsosurfaceColorsTable.setRowCount(i)
         color_cell = QTableWidgetItem(value)
         color_cell.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
         self.ui.IsosurfaceColorsTable.setItem(i - 1, 0, color_cell)
@@ -523,7 +524,7 @@ class mainWindow(QMainWindow):
         transp_cell.setLocale(QLocale(QLocale.English))
         transp_cell.setMaximumWidth(145)
         self.ui.IsosurfaceColorsTable.setCellWidget(i - 1, 1, transp_cell)
-        minv, maxv = self.VolumericData.min, self.VolumericData.max
+        minv, maxv = self.volumeric_data.min, self.volumeric_data.max
         color = self.get_color(cmap, minv, maxv, float(value), color_scale)
         self.ui.IsosurfaceColorsTable.item(i - 1, 0).setBackground(
             QColor.fromRgbF(color[0], color[1], color[2], color[3]))
@@ -865,7 +866,7 @@ class mainWindow(QMainWindow):
             self.show_error(e)
 
     def export_volumeric_data_to_file(self, fname, x1, x2, y1, y2, z1, z2):
-        self.ui.openGLWidget.volumeric_data_to_file(fname, self.VolumericData, x1, x2, y1, y2, z1, z2)
+        self.ui.openGLWidget.volumeric_data_to_file(fname, self.volumeric_data, x1, x2, y1, y2, z1, z2)
         self.work_dir = os.path.dirname(fname)
         self.save_active_folder()
 
@@ -1463,12 +1464,12 @@ class mainWindow(QMainWindow):
             minv = float(self.ui.FormSettingsColorsFixedMin.text())
             maxv = float(self.ui.FormSettingsColorsFixedMax.text())
         else:
-            minv, maxv = self.VolumericData.min, self.VolumericData.max
+            minv, maxv = self.volumeric_data.min, self.volumeric_data.max
         if self.ui.FormActionsPostCheckSurface.isChecked():
             data = []
             for i in range(0, self.ui.IsosurfaceColorsTable.rowCount()):
                 value = float(self.ui.IsosurfaceColorsTable.item(i, 0).text())
-                verts, faces, normals = self.VolumericData.isosurface(value)
+                verts, faces, normals = self.volumeric_data.isosurface(value)
                 transp = float(self.ui.IsosurfaceColorsTable.cellWidget(i, 1).text())
                 if self.is_scaled_colors_for_surface:
                     color = self.get_color(cmap, minv, maxv, value, color_scale)
@@ -1482,7 +1483,7 @@ class mainWindow(QMainWindow):
             self.ui.openGLWidget.update()
 
     def plot_contous_isovalues(self, n_contours, scale="Log"):
-        minv, maxv = self.VolumericData.min, self.VolumericData.max
+        minv, maxv = self.volumeric_data.min, self.volumeric_data.max
         isovalues = []
         if minv == maxv:
             return isovalues
@@ -1501,7 +1502,7 @@ class mainWindow(QMainWindow):
 
     def plot_contour(self):
         self.ui.Form3Dand2DTabs.setCurrentIndex(0)
-        if self.VolumericData.Nx is None:
+        if self.volumeric_data.Nx is None:
             return
         self.ui.openGLWidget.is_view_contour = False
         self.ui.openGLWidget.is_view_contour_fill = False
@@ -1511,7 +1512,7 @@ class mainWindow(QMainWindow):
             minv = float(self.ui.FormSettingsColorsFixedMin.text())
             maxv = float(self.ui.FormSettingsColorsFixedMax.text())
         else:
-            minv, maxv = self.VolumericData.min, self.VolumericData.max
+            minv, maxv = self.volumeric_data.min, self.volumeric_data.max
         params = []
         params_colored_plane = []
 
@@ -1552,11 +1553,11 @@ class mainWindow(QMainWindow):
                     colors[i] = color
 
             if self.ui.FormActionsPostRadioContour.isChecked() or self.ui.FormActionsPostRadioColorPlaneContours.isChecked():
-                conts = self.VolumericData.contours(isovalues, plane, myslice)
+                conts = self.volumeric_data.contours(isovalues, plane, myslice)
                 params.append([isovalues, conts, colors])
 
             if self.ui.FormActionsPostRadioColorPlane.isChecked() or self.ui.FormActionsPostRadioColorPlaneContours.isChecked():
-                points = self.VolumericData.plane(plane, myslice)
+                points = self.volumeric_data.plane(plane, myslice)
                 colors = self.get_color_of_plane(minv, maxv, points, cmap, color_scale)
                 normal = [0, 0, 1]
                 if plane == "xz":
@@ -2312,13 +2313,13 @@ class mainWindow(QMainWindow):
 
     def parse_volumeric_data(self):
         if len(self.ui.FormActionsPostList3DData.selectedItems()) > 0:
-            Selected = self.ui.FormActionsPostList3DData.selectedItems()[0].text()
-            if Selected.endswith(".XSF"):
-                self.VolumericData = XSF()
-            if Selected.endswith(".cube"):
-                self.VolumericData = GaussianCube()
-            if self.VolumericData.parse(Selected):
-                self.fill_volumeric_data(self.VolumericData)
+            selected = self.ui.FormActionsPostList3DData.selectedItems()[0].text()
+            if selected.endswith(".XSF"):
+                self.volumeric_data = XSF()
+            if selected.endswith(".cube"):
+                self.volumeric_data = GaussianCube()
+            if self.volumeric_data.parse(selected):
+                self.fill_volumeric_data(self.volumeric_data)
 
             self.ui.FormActionsPostButSurfaceLoadData.setEnabled(True)
             self.clearQTreeWidget(self.ui.FormActionsPostTreeSurface2)
@@ -2335,11 +2336,11 @@ class mainWindow(QMainWindow):
             if len(fname) > 0:
                 fname = fname[0]
                 if fname.endswith(".XSF"):
-                    self.VolumericData2 = XSF()
+                    self.volumeric_data2 = XSF()
                 if fname.endswith(".cube"):
-                    self.VolumericData2 = GaussianCube()
-                if self.VolumericData2.parse(fname):
-                    self.fill_volumeric_data(self.VolumericData2, self.ui.FormActionsPostTreeSurface2)
+                    self.volumeric_data2 = GaussianCube()
+                if self.volumeric_data2.parse(fname):
+                    self.fill_volumeric_data(self.volumeric_data2, self.ui.FormActionsPostTreeSurface2)
 
                 self.ui.FormActionsPostButSurfaceLoadData2.setEnabled(True)
                 self.ui.FormActionsPosEdit3DData2.setText(fname)
@@ -2367,7 +2368,8 @@ class mainWindow(QMainWindow):
         self.ui.FormActionsPostLabelContourYZposition.setText(
             "Slice " + str(value) + " among " + str(self.ui.FormActionsPostSliderContourYZ.maximum()))
 
-    def change_color_of_cell_prompt(self, table):
+    @staticmethod
+    def change_color_of_cell_prompt(table):
         i = table.selectedIndexes()[0].row()
         color = QColorDialog.getColor(initial=table.item(i, 0).background().color())
         if not color.isValid():
@@ -2414,9 +2416,6 @@ class mainWindow(QMainWindow):
                 fl = False
         if fl:
             QListWidgetItem(new_cp, self.ui.FormCPlist)
-            model = self.models[self.active_model]
-            ind = int(new_cp)
-            bcp_seleсted = model.bcp[ind]
 
     def delete_cp_from_list(self):
         itemrow = self.ui.FormCPlist.currentRow()
@@ -2563,7 +2562,7 @@ class mainWindow(QMainWindow):
 
         self.models.append(model)
         self.plot_model(-1)
-        self.ui.openGLWidget.MainForm.add_atoms()
+        self.ui.openGLWidget.add_atoms()
         self.fill_gui("Bi element NT-model")
 
     def swnt_type1_selected(self):
@@ -2598,8 +2597,8 @@ class mainWindow(QMainWindow):
         if selected_items:
             if not (selected_items[0].parent() is None):
                 child_node = selected_items[0].text(0)
-                self.get_atomic_model_and_fdf(self.VolumericData.filename)
-                self.VolumericData.load_data(child_node)
+                self.get_atomic_model_and_fdf(self.volumeric_data.filename)
+                self.volumeric_data.load_data(child_node)
 
                 self.plot_last_model()
 
@@ -2608,34 +2607,34 @@ class mainWindow(QMainWindow):
                 self.ui.FormActionsPostButContour.setEnabled(True)
                 self.ui.FormActionsPostButSurfaceParse2.setEnabled(True)
 
-                self.ui.FormActionsPostSliderContourXY.setMaximum(self.VolumericData.Nz)
-                self.ui.FormActionsPostSliderContourXZ.setMaximum(self.VolumericData.Ny)
-                self.ui.FormActionsPostSliderContourYZ.setMaximum(self.VolumericData.Nx)
+                self.ui.FormActionsPostSliderContourXY.setMaximum(self.volumeric_data.Nz)
+                self.ui.FormActionsPostSliderContourXZ.setMaximum(self.volumeric_data.Ny)
+                self.ui.FormActionsPostSliderContourYZ.setMaximum(self.volumeric_data.Nx)
 
-                self.ui.FormVolDataExportX1.setMaximum(self.VolumericData.Nx)
-                self.ui.FormVolDataExportX2.setMaximum(self.VolumericData.Nx)
-                self.ui.FormVolDataExportX2.setValue(self.VolumericData.Nx)
-                self.ui.FormVolDataExportY1.setMaximum(self.VolumericData.Ny)
-                self.ui.FormVolDataExportY2.setMaximum(self.VolumericData.Ny)
-                self.ui.FormVolDataExportY2.setValue(self.VolumericData.Ny)
-                self.ui.FormVolDataExportZ1.setMaximum(self.VolumericData.Nz)
-                self.ui.FormVolDataExportZ2.setMaximum(self.VolumericData.Nz)
-                self.ui.FormVolDataExportZ2.setValue(self.VolumericData.Nz)
+                self.ui.FormVolDataExportX1.setMaximum(self.volumeric_data.Nx)
+                self.ui.FormVolDataExportX2.setMaximum(self.volumeric_data.Nx)
+                self.ui.FormVolDataExportX2.setValue(self.volumeric_data.Nx)
+                self.ui.FormVolDataExportY1.setMaximum(self.volumeric_data.Ny)
+                self.ui.FormVolDataExportY2.setMaximum(self.volumeric_data.Ny)
+                self.ui.FormVolDataExportY2.setValue(self.volumeric_data.Ny)
+                self.ui.FormVolDataExportZ1.setMaximum(self.volumeric_data.Nz)
+                self.ui.FormVolDataExportZ2.setMaximum(self.volumeric_data.Nz)
+                self.ui.FormVolDataExportZ2.setValue(self.volumeric_data.Nz)
 
     def volumeric_data_load2(self):   # pragma: no cover
         selected_items = self.ui.FormActionsPostTreeSurface2.selectedItems()
         if selected_items:
             if selected_items[0].parent() is not None:
                 child_node = selected_items[0].text(0)
-                self.VolumericData2.load_data(child_node)
+                self.volumeric_data2.load_data(child_node)
 
-                self.ui.FormActionsPostLabelSurfaceNx.setText("Nx: " + str(self.VolumericData2.Nx))
-                self.ui.FormActionsPostLabelSurfaceNy.setText("Ny: " + str(self.VolumericData2.Ny))
-                self.ui.FormActionsPostLabelSurfaceNz.setText("Nz: " + str(self.VolumericData2.Nz))
+                self.ui.FormActionsPostLabelSurfaceNx.setText("Nx: " + str(self.volumeric_data2.Nx))
+                self.ui.FormActionsPostLabelSurfaceNy.setText("Ny: " + str(self.volumeric_data2.Ny))
+                self.ui.FormActionsPostLabelSurfaceNz.setText("Nz: " + str(self.volumeric_data2.Nz))
 
-                if (self.VolumericData2.Nx == self.VolumericData.Nx) and (
-                        self.VolumericData2.Ny == self.VolumericData.Ny) and (
-                        self.VolumericData2.Nz == self.VolumericData.Nz):
+                if (self.volumeric_data2.Nx == self.volumeric_data.Nx) and (
+                        self.volumeric_data2.Ny == self.volumeric_data.Ny) and (
+                        self.volumeric_data2.Nz == self.volumeric_data.Nz):
                     self.ui.VolumrricDataGridCalculate.setEnabled(True)
                     self.ui.CalculateTheVolumericDataDifference.setEnabled(True)
                     self.ui.CalculateTheVolumericDataSum.setEnabled(True)
@@ -2650,18 +2649,18 @@ class mainWindow(QMainWindow):
         self.ui.CalculateTheVolumericDataDifference.setEnabled(False)
         self.ui.CalculateTheVolumericDataSum.setEnabled(False)
         self.ui.FormActionsPostButSurfaceLoadData2.setEnabled(False)
-        self.VolumericData.difference(self.VolumericData2)
+        self.volumeric_data.difference(self.volumeric_data2)
         self.volumeric_data_max_min_to_form()
 
     def volumeric_data_sum(self):  # pragma: no cover
         self.ui.CalculateTheVolumericDataDifference.setEnabled(False)
         self.ui.CalculateTheVolumericDataSum.setEnabled(False)
         self.ui.FormActionsPostButSurfaceLoadData2.setEnabled(False)
-        self.VolumericData.difference(self.VolumericData2, mult=-1)
+        self.volumeric_data.difference(self.volumeric_data2, mult=-1)
         self.volumeric_data_max_min_to_form()
 
     def volumeric_data_max_min_to_form(self):  # pragma: no cover
-        minv, maxv = self.VolumericData.min, self.VolumericData.max
+        minv, maxv = self.volumeric_data.min, self.volumeric_data.max
         self.ui.FormActionsPostLabelSurfaceMax.setText("Max: " + str(round(maxv, 5)))
         self.ui.FormActionsPostLabelSurfaceMin.setText("Min: " + str(round(minv, 5)))
         self.ui.FormActionsPostLabelSurfaceValue.setRange(minv, maxv)

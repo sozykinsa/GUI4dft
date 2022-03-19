@@ -58,5 +58,37 @@ def test_plot_dos(gui4dft_application, tests_path):
     assert len(window.models) == 1
 
 
-def test_save_image_to_file(gui4dft_application):
+def test_cell_param(gui4dft_application, tests_path):
+    f_name1 = str(tests_path / 'ref_data' / 'cell_param' / '2-85' / "siesta.out")
+    gui4dft_application.fill_cell_info(f_name1)
+    f_name2 = str(tests_path / 'ref_data' / 'cell_param' / '2-86' / "siesta.out")
+    gui4dft_application.fill_cell_info(f_name2)
+    f_name3 = str(tests_path / 'ref_data' / 'cell_param' / '2-87' / "siesta.out")
+    gui4dft_application.fill_cell_info(f_name3)
+    f_name4 = str(tests_path / 'ref_data' / 'cell_param' / '2-88' / "siesta.out")
+    gui4dft_application.fill_cell_info(f_name4)
+    f_name5 = str(tests_path / 'ref_data' / 'cell_param' / '2-89' / "siesta.out")
+    gui4dft_application.fill_cell_info(f_name5)
+
+    gui4dft_application.ui.FormActionsPostComboCellParam.setCurrentIndex(1)
+    gui4dft_application.plot_volume_param_energy()
+    method = gui4dft_application.ui.FormActionsPostComboCellParam.currentText()
+    if method == "Murnaghan":
+        assert gui4dft_application.ui.FormActionsPostLabelCellParamOptimExpr4.text() == "V0=11.9"
+
+    gui4dft_application.ui.FormActionsPostComboCellParam.setCurrentIndex(0)
+    gui4dft_application.plot_volume_param_energy()
+    method = gui4dft_application.ui.FormActionsPostComboCellParam.currentText()
+    if method == "BirchMurnaghan":
+        assert gui4dft_application.ui.FormActionsPostLabelCellParamOptimExpr4.text() == "V0=11.9"
+
+    gui4dft_application.ui.FormActionsPostComboCellParam.setCurrentIndex(2)
+    gui4dft_application.plot_volume_param_energy()
+    method = gui4dft_application.ui.FormActionsPostComboCellParam.currentText()
+    if method == "Parabola":
+        assert gui4dft_application.ui.FormActionsPostLabelCellParamOptimExpr3.text() == "x0=11.89"
+
+
+def test_simple_calls(gui4dft_application):
     gui4dft_application.save_image_to_file("1.png")
+    gui4dft_application.activate_fragment_selection_mode()
