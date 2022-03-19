@@ -4,7 +4,7 @@ try:
     if os.environ["XDG_SESSION_TYPE"] == "wayland":
         os.environ["QT_QPA_PLATFORM"] = "wayland"
 except Exception as e:
-    """  """
+    print(str(e))
 import sys
 from pathlib import Path
 

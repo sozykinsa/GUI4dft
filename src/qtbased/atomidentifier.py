@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from utils.periodic_table import TPeriodTable
-from PySide2.QtWidgets import QDialog, QTableWidgetItem, QComboBox, QMainWindow
+from PySide2.QtWidgets import QDialog, QTableWidgetItem, QComboBox
 from PySide2.QtCore import Qt
 from PySide2.QtGui import QStandardItemModel
 from PySide2.QtGui import QStandardItem
@@ -9,7 +9,7 @@ from ui.atomsidentify import Ui_Dialog as Ui_Dialog_Atoms
 
 
 class AtomsIdentifier(QDialog):
-    def __init__(self, problemAtoms):
+    def __init__(self, problem_atoms):
         super(AtomsIdentifier, self).__init__()
         self.ui = Ui_Dialog_Atoms()
         self.ui.setupUi(self)
@@ -29,10 +29,10 @@ class AtomsIdentifier(QDialog):
         for i in range(1, len(atoms_list)):
             model.appendRow(QStandardItem(atoms_list[i]))
 
-        problemAtoms = list(problemAtoms)
-        problemAtoms.sort()
+        problem_atoms = list(problem_atoms)
+        problem_atoms.sort()
 
-        for problem in problemAtoms:
+        for problem in problem_atoms:
             self.ui.TheTable.setRowCount(self.ui.TheTable.rowCount()+1)  # и одну строку в таблице
             data_cell = QTableWidgetItem(str(problem-199))
             data_cell.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)

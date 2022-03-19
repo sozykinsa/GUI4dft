@@ -71,11 +71,14 @@ class VolumericData:
                 contour = []
                 for j in range(0, len(cont[i])):
                     if type_of_plane == "xy":
-                        contour.append([origin[0] + cont[i][j][0] * spacing[0], origin[1] + cont[i][j][1] * spacing[1], origin[2] + _slice * spacing[2]])
+                        contour.append([origin[0] + cont[i][j][0] * spacing[0], origin[1] + cont[i][j][1] * spacing[1],
+                                        origin[2] + _slice * spacing[2]])
                     if type_of_plane == "xz":
-                        contour.append([origin[0] + cont[i][j][0] * spacing[0], origin[1] + _slice * spacing[1], origin[2] + cont[i][j][1] * spacing[2]])
+                        contour.append([origin[0] + cont[i][j][0] * spacing[0], origin[1] + _slice * spacing[1],
+                                        origin[2] + cont[i][j][1] * spacing[2]])
                     if type_of_plane == "yz":
-                        contour.append([origin[0] + _slice * spacing[0], origin[1] + cont[i][j][0] * spacing[1], origin[2] + cont[i][j][1] * spacing[2]])
+                        contour.append([origin[0] + _slice * spacing[0], origin[1] + cont[i][j][0] * spacing[1],
+                                        origin[2] + cont[i][j][1] * spacing[2]])
                 contours.append(contour)
             conts.append(contours)
         return conts

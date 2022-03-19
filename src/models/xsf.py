@@ -8,8 +8,6 @@ from models.volumericdata import VolumericData
 from utils.periodic_table import TPeriodTable
 from utils import helpers
 import numpy as np
-import math
-import skimage
 
 
 class XSF(VolumericData):
@@ -43,8 +41,8 @@ class XSF(VolumericData):
                     while row.find("DATA_from:") > -1:
                         row = helpers.spacedel(f.readline())
                         while row.find("BEGIN_DATAGRID") > -1:
-                            row = f.readline()
-                            origin = f.readline()
+                            f.readline()
+                            f.readline()
                             vec1 = f.readline().split()
                             vec1 = helpers.list_str_to_float(vec1)
                             vec2 = f.readline().split()

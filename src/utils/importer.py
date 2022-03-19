@@ -57,14 +57,14 @@ class Importer(object):
         models = []
         fdf = TFDFFile()
         if os.path.exists(filename):
-            fileFormat = Importer.check_format(filename)
-            print("File " + str(filename) + " : " + str(fileFormat))
+            file_format = Importer.check_format(filename)
+            print("File " + str(filename) + " : " + str(file_format))
 
-            if fileFormat == "SIESTAfdf":
+            if file_format == "SIESTAfdf":
                 models = TAtomicModel.atoms_from_fdf(filename)
                 fdf.from_fdf_file(filename)
 
-            if fileFormat == "SIESTAout":
+            if file_format == "SIESTAout":
                 type_of_run = (TSIESTA.type_of_run(filename).split())[0].lower()
                 models = []
                 if type_of_run != "sp":
@@ -92,28 +92,28 @@ class Importer(object):
                         print("Properties failed")
                 fdf.from_out_file(filename)
 
-            if fileFormat == "SIESTAANI":
+            if file_format == "SIESTAANI":
                 models = TAtomicModel.atoms_from_ani(filename)
 
-            if fileFormat == "SIESTASTRUCT_OUT":
+            if file_format == "SIESTASTRUCT_OUT":
                 models = TAtomicModel.atoms_from_struct_out(filename)
 
-            if fileFormat == "SIESTAMD_CAR":
+            if file_format == "SIESTAMD_CAR":
                 models = TAtomicModel.atoms_from_md_car(filename)
 
-            if fileFormat == "SIESTAXSF":
+            if file_format == "SIESTAXSF":
                 models = XSF.get_atoms(filename)
 
-            if fileFormat == "GAUSSIAN_cube":
+            if file_format == "GAUSSIAN_cube":
                 models = GaussianCube.get_atoms(filename)
 
-            if fileFormat == "SiestaXYZ":
+            if file_format == "SiestaXYZ":
                 models = TAtomicModel.atoms_from_xyz(filename, xyzcritic2)
 
-            if fileFormat == "XMolXYZ":
+            if file_format == "XMolXYZ":
                 models = TAtomicModel.atoms_from_XMOLxyz(filename)
 
-            if fileFormat == "VASPposcar":
+            if file_format == "VASPposcar":
                 models = atoms_from_POSCAR(filename)
         return models, fdf
 

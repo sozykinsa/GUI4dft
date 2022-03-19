@@ -37,22 +37,18 @@ def gaps(bands, emaxf, eminf, homo, lumo) -> Tuple[float, float]:
     return gap, gap_ind
 
 
-##################################################################
-##################### The Calculators class ######################
-##################################################################
-    
 class Calculators:
     @staticmethod
     def FillTube(radTube, length, nAtoms, radAtom, delta, nPrompts, let, charge):
-        """ Получение списка конфигураций из nAtoms радиусом radAtom в цилиндре радиусом radTube
-        длиной length. Максимум смещения атомов в каждой из моделей не меньше delta """
+        """Getting a list of configurations from nAtoms with a radius of radAtom in a cylinder with a radius of radTube
+         length. The maximum displacement of atoms in each of the models is not less than delta."""
         Models = []
         random.seed(a=None, version=2)
-        
+
         for i in range(0, nPrompts):
             Molecula = TAtomicModel()
             j = 0
-            
+
             while (j < 1000) and (len(Molecula.atoms) < nAtoms):
                 x = random.uniform(-radTube, radTube) 
                 a = math.sqrt(radTube*radTube - x*x)
@@ -81,7 +77,7 @@ class Calculators:
     @staticmethod
     def fParabola(x, b0, b1, b2):
         return b0 + b1 * x + b2 * x**2
-    
+
     @staticmethod
     def approx_parabola(DATA):
         xdata, ydata = helpers.list_n2_split(DATA)
@@ -143,7 +139,7 @@ class Calculators:
         v, e = helpers.list_n2_split(data)
         vfit = np.linspace(min(v), max(v), 100)
 
-        ### fit a parabola to the data
+        # fit a parabola to the data
         # y = ax^2 + bx + c
         a, b, c = polyfit(v, e, 2)
 
@@ -200,4 +196,3 @@ class Calculators:
                     list_of_poligons.append(poligon)
 
         return list_of_poligons, vol
-

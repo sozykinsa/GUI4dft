@@ -21,7 +21,7 @@ class SWNT(Graphene):
 
         """ output """
         r = length / (2 * math.pi)
-        
+
         for i_par in range(0, np1):
             phi_par = px[i_par] / r
             qx = r * math.sin(phi_par)

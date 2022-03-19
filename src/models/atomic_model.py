@@ -99,8 +99,8 @@ class TAtomicModel(object):
     @staticmethod
     def atoms_from_fdf(filename):
         """Return a AtList from fdf file"""
-        AtomicCoordinatesFormat, NumberOfAtoms, chem_spec_info, lat, lat_vect_1, lat_vect_2, lat_vect_3, units = TAtomicModel.atoms_from_fdf_prepare(
-            filename)
+        AtomicCoordinatesFormat, NumberOfAtoms, chem_spec_info, lat, lat_vect_1, lat_vect_2, lat_vect_3, units = \
+            TAtomicModel.atoms_from_fdf_prepare(filename)
         f = open(filename)
         lines = f.readlines()
         f.close()
@@ -129,7 +129,8 @@ class TAtomicModel(object):
         chemical_species_label = TSIESTA.get_block_from_siesta_fdf(filename, "ChemicalSpeciesLabel")
         for j in range(0, len(chemical_species_label)):
             chem_spec_info[(chemical_species_label[j].split())[0]] = (chemical_species_label[j].split())[1:3]
-        return atomic_coordinates_format, number_of_atoms, chem_spec_info, lat, lat_vect_1, lat_vect_2, lat_vect_3, units
+        return atomic_coordinates_format, number_of_atoms, chem_spec_info, lat, lat_vect_1, lat_vect_2, lat_vect_3, \
+            units
 
     @staticmethod
     def atoms_from_fdf_text(atomic_coordinates_format, number_of_atoms, chem_spec_info, lat, lat_vect_1, lat_vect_2,
@@ -576,24 +577,24 @@ class TAtomicModel(object):
     def get_angle_alpha(self):
         a = self.get_LatVect2_norm()
         b = self.get_LatVect3_norm()
-        ab = self.lat_vector2[0] * self.lat_vector3[0] + self.lat_vector2[1] * self.lat_vector3[1] + self.lat_vector2[2] * \
-             self.lat_vector3[2]
+        ab = self.lat_vector2[0] * self.lat_vector3[0] + self.lat_vector2[1] * self.lat_vector3[1] + \
+            self.lat_vector2[2] * self.lat_vector3[2]
         angle = math.acos(ab / (a * b))
         return 180 * angle / math.pi
 
     def get_angle_beta(self):
         a = self.get_LatVect1_norm()
         b = self.get_LatVect3_norm()
-        ab = self.lat_vector1[0] * self.lat_vector3[0] + self.lat_vector1[1] * self.lat_vector3[1] + self.lat_vector1[2] * \
-             self.lat_vector3[2]
+        ab = self.lat_vector1[0] * self.lat_vector3[0] + self.lat_vector1[1] * self.lat_vector3[1] + \
+            self.lat_vector1[2] * self.lat_vector3[2]
         angle = math.acos(ab / (a * b))
         return 180 * angle / math.pi
 
     def get_angle_gamma(self):
         a = self.get_LatVect2_norm()
         b = self.get_LatVect1_norm()
-        ab = self.lat_vector2[0] * self.lat_vector1[0] + self.lat_vector2[1] * self.lat_vector1[1] + self.lat_vector2[2] * \
-             self.lat_vector1[2]
+        ab = self.lat_vector2[0] * self.lat_vector1[0] + self.lat_vector2[1] * self.lat_vector1[1] + \
+            self.lat_vector2[2] * self.lat_vector1[2]
         angle = math.acos(ab / (a * b))
         return 180 * angle / math.pi
 
@@ -654,7 +655,7 @@ class TAtomicModel(object):
             dz = math.pow(cp.z - points[0].z, 2)
             d = math.sqrt(dx + dy + dz)
             if d < 1e-4:
-                if cp.getProperty("bond1") == None:
+                if cp.getProperty("bond1") is None:
                     cp.setProperty("bond1", deepcopy(points))
                 else:
                     cp.setProperty("bond2", deepcopy(points))
@@ -729,11 +730,11 @@ class TAtomicModel(object):
             return
         i = 2
         while (i < len(bond)) and (len(bond) > 1):
-            l = (bond[i].x - bond[i - 1].x) * (bond[i - 2].y - bond[i - 1].y) * (bond[i - 2].z - bond[i - 1].z)
+            m = (bond[i].x - bond[i - 1].x) * (bond[i - 2].y - bond[i - 1].y) * (bond[i - 2].z - bond[i - 1].z)
             j = (bond[i].y - bond[i - 1].y) * (bond[i - 2].x - bond[i - 1].x) * (bond[i - 2].z - bond[i - 1].z)
             k = (bond[i].z - bond[i - 1].z) * (bond[i - 2].x - bond[i - 1].x) * (bond[i - 2].y - bond[i - 1].y)
             i += 1
-            if (math.fabs(l - j) < 1e-6) and (math.fabs(l - k) < 1e-6):
+            if (math.fabs(m - j) < 1e-6) and (math.fabs(m - k) < 1e-6):
                 bond.pop(i - 2)
                 i -= 1
         cp.setProperty(b + "opt", bond)
@@ -1082,21 +1083,6 @@ class TAtomicModel(object):
                 DeltaMolecula1 = r1
         return DeltaMolecula1
 
-    #def delta_min(self, newMolecula):
-    #    """Minimum distance from atoms in self to the atoms in the newMolecula"""
-    #    delta_molecula1 = 100000
-    #    r1 = norm(self.LatVect1) + norm(self.LatVect2) + norm(self.LatVect3)
-    #    for at2 in newMolecula.atoms:
-    #        model = TAtomicModel(self.atoms)
-    #        model.add_atom(at2)
-    #        for ind in range(0, len(self.atoms)):
-    #            r = model.atom_atom_distance(ind, len(model.atoms) - 1)
-    #            if r < r1:
-    #                r1 = r
-    #        if r1 < delta_molecula1:
-    #            delta_molecula1 = r1
-    #    return delta_molecula1
-
     def go_to_positive_coordinates(self):
         xm = self.minX()
         ym = self.minY()
@@ -1307,7 +1293,8 @@ class TAtomicModel(object):
         print("volumeric_data.origin_to_export ", volumeric_data.origin_to_export)
         print("add ", x1 * self.lat_vector1 / multx + y1 * self.lat_vector2 / multy + z1 * self.lat_vector3 / multz)
 
-        origin = volumeric_data.origin_to_export + x1 * self.lat_vector1 / multx + y1 * self.lat_vector2 / multy + z1 * self.lat_vector3 / multz
+        origin = volumeric_data.origin_to_export + x1 * self.lat_vector1 / multx + y1 * self.lat_vector2 / multy + \
+            z1 * self.lat_vector3 / multz
 
         text += str(self.nAtoms()) + "     " + str(origin[0]) + "    " + str(origin[1]) + "    " + str(origin[2]) + "\n"
         text += " " + str(n_x) + " "

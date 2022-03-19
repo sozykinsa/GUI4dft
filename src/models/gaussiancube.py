@@ -6,10 +6,8 @@ from models.atomic_model import TAtomicModel
 from models.volumericdatablock import VolumericDataBlock
 from models.volumericdata import VolumericData
 from utils.periodic_table import TPeriodTable
-from utils import helpers
 import numpy as np
 import math
-import skimage
 
 
 class GaussianCube(VolumericData):
@@ -23,19 +21,19 @@ class GaussianCube(VolumericData):
         Molecules = []
         if os.path.exists(filename):
             f = open(filename)
-            row = f.readline()
-            row = f.readline()
+            f.readline()
+            f.readline()
             row = f.readline().split()
-            nAtoms = int(row[0])
-            origin = (float(row[1]), float(row[2]), float(row[3]))
+            n_atoms = int(row[0])
+            # origin = (float(row[1]), float(row[2]), float(row[3]))
 
-            Nx, vec1, mult = GaussianCube.local_get_N_vect(f.readline().split())
-            Ny, vec2, mult = GaussianCube.local_get_N_vect(f.readline().split())
-            Nz, vec3, mult = GaussianCube.local_get_N_vect(f.readline().split())
+            nx, vec1, mult = GaussianCube.local_get_N_vect(f.readline().split())
+            ny, vec2, mult = GaussianCube.local_get_N_vect(f.readline().split())
+            nz, vec3, mult = GaussianCube.local_get_N_vect(f.readline().split())
 
             atoms = []
 
-            for i in range(0, nAtoms):
+            for i in range(0, n_atoms):
                 row = f.readline().split()
                 charge = int(row[0])
                 atoms.append([float(row[2]), float(row[3]), float(row[4]), periodTable.get_let(charge), charge])

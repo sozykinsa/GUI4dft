@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
-import math
 import os
 import re
-from operator import itemgetter
 import numpy as np
 
 
@@ -112,7 +110,6 @@ def write_text_to_file(fname, text):  # pragma: no cover
 def property_from_sub_file(filename, k, prop, count, typen):
     property = None
     is_found = False
-    #k = 1
     if os.path.exists(filename):
         MyFile = open(filename)
         str1 = MyFile.readline()
@@ -145,16 +142,6 @@ def property_from_sub_file(filename, k, prop, count, typen):
             str1 = MyFile.readline()
         MyFile.close()
     return is_found, k, property
-
-
-#def RoundToPlane(atom, R):
-#    """ RoundToPlane  """
-#    z = atom.z
-#    fi = math.asin(atom.x/R)
-#    if atom.y <= -1e-3:
-#        fi = 3.14 - fi
-#    x = -R * fi
-#    return [x, z]
 
 
 def utf8_letter(let):

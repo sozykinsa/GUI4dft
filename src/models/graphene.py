@@ -88,5 +88,3 @@ class Graphene(TAtomicModel):
                 j += 1
         np1 = j
         return np1, pi, px, py, vlen
-
-

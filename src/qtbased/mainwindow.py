@@ -4,14 +4,14 @@ try:
     if os.environ["XDG_SESSION_TYPE"] == "wayland":
         os.environ["QT_QPA_PLATFORM"] = "wayland"
 except Exception as e:
-    """  """
+    print(str(e))
 import math
 import sys
 from pathlib import Path
 from copy import deepcopy
 from operator import itemgetter
 import matplotlib.pyplot as plt
-#import pyqtgraph as pg  # pip install pyqtgraph
+# import pyqtgraph as pg  # pip install pyqtgraph
 import numpy as np
 from utils import helpers
 from models.atomic_model import TAtomicModel
@@ -333,7 +333,7 @@ class mainWindow(QMainWindow):
         self.ui.FormActionsPosTableBonds.horizontalHeader().setStyleSheet(self.table_header_stylesheet)
         self.ui.FormActionsPosTableBonds.verticalHeader().setStyleSheet(self.table_header_stylesheet)
 
-        if is_with_figure and os.path.exists(Path(__file__).parent / "images" /'Open.png'):
+        if is_with_figure and os.path.exists(Path(__file__).parent / "images" / 'Open.png'):
             open_action = QAction(QIcon(str(Path(__file__).parent / "images" / 'Open.png')), 'Open', self)
         else:
             open_action = QAction('Open', self)
@@ -389,7 +389,7 @@ class mainWindow(QMainWindow):
         self.ui.toolBar.addAction(open_action)
         self.ui.toolBar.addSeparator()
 
-        if is_with_figure and os.path.exists(Path(__file__).parent / "images" /'UndoZ.png'):
+        if is_with_figure and os.path.exists(Path(__file__).parent / "images" / 'UndoZ.png'):
             open_action = QAction(QIcon(str(Path(__file__).parent / "images" / 'UndoZ.png')), 'RotateZ-', self)
         else:
             open_action = QAction('RotateZ-', self)
@@ -1243,8 +1243,8 @@ class mainWindow(QMainWindow):
     def menu_export(self):
         if self.ui.openGLWidget.main_model.nAtoms() > 0:
             try:
-                long_name = QFileDialog.getSaveFileName(self, 'Save File', self.work_dir,
-                    "FDF files (*.fdf);;XYZ files (*.xyz);;FireFly input files (*.inp);;VASP POSCAR file (POSCAR)")
+                format = "FDF files (*.fdf);;XYZ files (*.xyz);;FireFly input files (*.inp);;VASP POSCAR file (POSCAR)"
+                long_name = QFileDialog.getSaveFileName(self, 'Save File', self.work_dir, format)
                 fname = long_name[0]
                 self.export_to_file(self.models[self.active_model], fname)
                 self.work_dir = os.path.dirname(fname)
@@ -1344,20 +1344,13 @@ class mainWindow(QMainWindow):
         if len(text) > 1:
             text = text[1].split()[0]
 
-            model = self.models[-1]
-
-            ind1, ind2 = model.atoms_of_bond_path(int(text))
-            atom1 = model.atoms[ind1].let + str(ind1)
-            atom2 = model.atoms[ind2].let + str(ind2)
-            title = text + ":" + atom1 + "-" + atom2
-
             self.ui.FormSelectedCP.setText(text)
             f = self.models[-1].bcp[int(text)].getProperty("field")
             self.ui.FormSelectedCP_f.setText(f)
             g = self.models[-1].bcp[int(text)].getProperty("grad")
             self.ui.FormSelectedCP_g.setText(g)
-            l = self.models[-1].bcp[int(text)].getProperty("lap")
-            self.ui.FormSelectedCP_lap.setText(l)
+            lap = self.models[-1].bcp[int(text)].getProperty("lap")
+            self.ui.FormSelectedCP_lap.setText(lap)
 
     def model_to_screen(self, value):
         self.ui.Form3Dand2DTabs.setCurrentIndex(0)
@@ -1447,9 +1440,10 @@ class mainWindow(QMainWindow):
         boxcolor = self.get_color_from_setting(self.state_Color_Of_Box)
         atomscolor = self.colors_of_atoms()
         contour_width = (self.ui.FormSettingsViewSpinContourWidth.value()) / 1000.0
-        self.ui.openGLWidget.set_atomic_structure(self.models[self.active_model], atomscolor, view_atoms, view_atom_numbers,
-                                           view_box, boxcolor, view_bonds, bondscolor, bond_width,
-                                           color_of_bonds_by_atoms, view_axes, axescolor, contour_width)
+        self.ui.openGLWidget.set_atomic_structure(self.models[self.active_model], atomscolor, view_atoms,
+                                                  view_atom_numbers, view_box, boxcolor, view_bonds, bondscolor,
+                                                  bond_width, color_of_bonds_by_atoms,
+                                                  view_axes, axescolor, contour_width)
         self.prepare_form_actions_combo_pdos_species()
         self.prepare_form_actions_combo_pdos_indexes()
 
@@ -1507,6 +1501,9 @@ class mainWindow(QMainWindow):
         self.ui.openGLWidget.is_view_contour = False
         self.ui.openGLWidget.is_view_contour_fill = False
         cmap = plt.get_cmap(self.ui.FormSettingsColorsScale.currentText())
+        print("plot_contour function")
+        print(self.ui.FormSettingsColorsScale.currentText())
+        print(cmap)
         color_scale = self.ui.FormSettingsColorsScaleType.currentText()
         if self.ui.FormSettingsColorsFixed.isChecked():
             minv = float(self.ui.FormSettingsColorsFixedMin.text())
@@ -1552,11 +1549,13 @@ class mainWindow(QMainWindow):
                 for i in range(0, len(colors)):
                     colors[i] = color
 
-            if self.ui.FormActionsPostRadioContour.isChecked() or self.ui.FormActionsPostRadioColorPlaneContours.isChecked():
+            if self.ui.FormActionsPostRadioContour.isChecked() or \
+                    self.ui.FormActionsPostRadioColorPlaneContours.isChecked():
                 conts = self.volumeric_data.contours(isovalues, plane, myslice)
                 params.append([isovalues, conts, colors])
 
-            if self.ui.FormActionsPostRadioColorPlane.isChecked() or self.ui.FormActionsPostRadioColorPlaneContours.isChecked():
+            if self.ui.FormActionsPostRadioColorPlane.isChecked() or \
+                    self.ui.FormActionsPostRadioColorPlaneContours.isChecked():
                 points = self.volumeric_data.plane(plane, myslice)
                 colors = self.get_color_of_plane(minv, maxv, points, cmap, color_scale)
                 normal = [0, 0, 1]
@@ -1566,10 +1565,12 @@ class mainWindow(QMainWindow):
                     normal = [1, 0, 0]
                 params_colored_plane.append([points, colors, normal])
 
-        if self.ui.FormActionsPostRadioContour.isChecked() or self.ui.FormActionsPostRadioColorPlaneContours.isChecked():
+        if self.ui.FormActionsPostRadioContour.isChecked() or \
+                self.ui.FormActionsPostRadioColorPlaneContours.isChecked():
             self.ui.openGLWidget.add_contour(params)
 
-        if self.ui.FormActionsPostRadioColorPlane.isChecked() or self.ui.FormActionsPostRadioColorPlaneContours.isChecked():
+        if self.ui.FormActionsPostRadioColorPlane.isChecked() or \
+                self.ui.FormActionsPostRadioColorPlaneContours.isChecked():
             self.ui.openGLWidget.add_colored_plane(params_colored_plane)
 
     def prepare_form_actions_combo_pdos_indexes(self):
@@ -1994,8 +1995,8 @@ class mainWindow(QMainWindow):
             return
         try:
             if name == "":
-                name = QFileDialog.getSaveFileName(self, 'Save File', self.work_dir,
-                                           "PNG files (*.png);;JPG files (*.jpg);;BMP files (*.bmp)")
+                format = "PNG files (*.png);;JPG files (*.jpg);;BMP files (*.bmp)"
+                name = QFileDialog.getSaveFileName(self, 'Save File', self.work_dir, format)
             fname = name[0]
             ext = ""
             if name[1] == "PNG files (*.png)":
@@ -2042,76 +2043,78 @@ class mainWindow(QMainWindow):
         self.ui.openGLWidget.rotZ -= self.rotation_step
         self.ui.openGLWidget.update()
 
-    def save_active_folder(self): # pragma: no cover
+    def save_active_folder(self):  # pragma: no cover
         self.save_property(SETTINGS_Folder, self.work_dir)
 
-    def save_state_open_only_optimal(self): # pragma: no cover
+    def save_state_open_only_optimal(self):  # pragma: no cover
         self.save_property(SETTINGS_FormSettingsOpeningCheckOnlyOptimal,
                            self.ui.FormSettingsOpeningCheckOnlyOptimal.isChecked())
 
-    def save_state_parse_atomic_properties(self): # pragma: no cover
+    def save_state_parse_atomic_properties(self):  # pragma: no cover
         self.save_property(SETTINGS_FormSettingsParseAtomicProperties,
                            self.ui.FormSettingsParseAtomicProperties.isChecked())
 
-    def save_state_view_show_axes(self): # pragma: no cover
+    def save_state_view_show_axes(self):  # pragma: no cover
         self.save_property(SETTINGS_FormSettingsViewCheckShowAxes,
                            self.ui.FormSettingsViewCheckShowAxes.isChecked())
         self.ui.openGLWidget.set_axes_visible(self.ui.FormSettingsViewCheckShowAxes.isChecked())
 
-    def save_state_view_atom_selection(self): # pragma: no cover
+    def save_state_view_atom_selection(self):  # pragma: no cover
         self.save_property(SETTINGS_FormSettingsViewCheckAtomSelection,
                            self.ui.FormSettingsViewCheckAtomSelection.isChecked())
 
-    def save_state_view_bond_color(self): # pragma: no cover
+    def save_state_view_bond_color(self):  # pragma: no cover
         self.save_property(SETTINGS_FormSettingsViewRadioColorBondsManual,
                            self.ui.FormSettingsViewRadioColorBondsManual.isChecked())
         self.ui.openGLWidget.set_bond_color(self.ui.FormSettingsViewRadioColorBondsManual.isChecked())
 
-    def save_state_xyz_as_critic2(self): # pragma: no cover
-        self.save_property(SETTINGS_FormSettingsViewCheckXYZasCritic2, self.ui.FormSettingsViewCheckXYZasCritic2.isChecked())
+    def save_state_xyz_as_critic2(self):  # pragma: no cover
+        self.save_property(SETTINGS_FormSettingsViewCheckXYZasCritic2,
+                           self.ui.FormSettingsViewCheckXYZasCritic2.isChecked())
 
-    def save_state_view_show_atoms(self): # pragma: no cover
+    def save_state_view_show_atoms(self):  # pragma: no cover
         self.save_property(SETTINGS_FormSettingsViewCheckShowAtoms, self.ui.FormSettingsViewCheckShowAtoms.isChecked())
         self.ui.openGLWidget.set_atoms_visible(self.ui.FormSettingsViewCheckShowAtoms.isChecked())
 
-    def save_state_view_show_atom_number(self): # pragma: no cover
-        self.save_property(SETTINGS_FormSettingsViewCheckShowAtomNumber, self.ui.FormSettingsViewCheckShowAtomNumber.isChecked())
+    def save_state_view_show_atom_number(self):  # pragma: no cover
+        self.save_property(SETTINGS_FormSettingsViewCheckShowAtomNumber,
+                           self.ui.FormSettingsViewCheckShowAtomNumber.isChecked())
         self.ui.openGLWidget.set_atoms_numbred(self.ui.FormSettingsViewCheckShowAtomNumber.isChecked())
 
-    def save_state_action_on_start(self): # pragma: no cover
+    def save_state_action_on_start(self):  # pragma: no cover
         self.save_property(SETTINGS_FormSettingsActionOnStart, self.action_on_start)
 
-    def save_state_view_show_box(self): # pragma: no cover
+    def save_state_view_show_box(self):  # pragma: no cover
         self.save_property(SETTINGS_FormSettingsViewCheckShowBox, self.ui.FormSettingsViewCheckShowBox.isChecked())
         self.ui.openGLWidget.set_box_visible(self.ui.FormSettingsViewCheckShowBox.isChecked())
 
-    def save_state_view_show_bonds(self): # pragma: no cover
+    def save_state_view_show_bonds(self):  # pragma: no cover
         self.save_property(SETTINGS_FormSettingsViewCheckShowBonds, self.ui.FormSettingsViewCheckShowBonds.isChecked())
         self.ui.openGLWidget.set_bonds_visible(self.ui.FormSettingsViewCheckShowBonds.isChecked())
 
-    def save_state_colors_fixed(self): # pragma: no cover
+    def save_state_colors_fixed(self):  # pragma: no cover
         self.save_property(SETTINGS_FormSettingsColorsFixed, self.ui.FormSettingsColorsFixed.isChecked())
 
-    def save_state_view_spin_contour_width(self): # pragma: no cover
+    def save_state_view_spin_contour_width(self):  # pragma: no cover
         self.save_property(SETTINGS_FormSettingsViewSpinContourWidth, self.ui.FormSettingsViewSpinContourWidth.text())
         self.ui.openGLWidget.set_contour_width(self.ui.FormSettingsViewSpinContourWidth.value() / 1000)
         self.plot_contour()
 
-    def save_state_colors_fixed_min(self): # pragma: no cover
+    def save_state_colors_fixed_min(self):  # pragma: no cover
         self.save_property(SETTINGS_FormSettingsColorsFixedMin, self.ui.FormSettingsColorsFixedMin.text())
 
-    def save_state_view_spin_bond_width(self): # pragma: no cover
+    def save_state_view_spin_bond_width(self):  # pragma: no cover
         self.save_property(SETTINGS_FormSettingsViewSpinBondWidth, self.ui.FormSettingsViewSpinBondWidth.text())
         self.ui.openGLWidget.set_bond_width(self.ui.FormSettingsViewSpinBondWidth.value() * 0.005)
 
-    def save_state_colors_fixed_max(self): # pragma: no cover
+    def save_state_colors_fixed_max(self):  # pragma: no cover
         self.save_property(SETTINGS_FormSettingsColorsFixedMax, self.ui.FormSettingsColorsFixedMax.text())
 
-    def save_state_colors_scale(self): # pragma: no cover
+    def save_state_colors_scale(self):  # pragma: no cover
         self.save_property(SETTINGS_FormSettingsColorsScale, self.ui.FormSettingsColorsScale.currentText())
         self.colors_cash = {}
 
-    def save_state_colors_scale_type(self): # pragma: no cover
+    def save_state_colors_scale_type(self):  # pragma: no cover
         self.save_property(SETTINGS_FormSettingsColorsScaleType, self.ui.FormSettingsColorsScaleType.currentText())
         self.colors_cash = {}
 
@@ -2194,7 +2197,8 @@ class mainWindow(QMainWindow):
             if os.path.exists(fname):
                 self.filename = fname
                 self.work_dir = os.path.dirname(fname)
-                raman_text, units_i, raman_inten, raman_en_ev, raman_en_cm, ir_inten, ir_en_ev, ir_en_cm = ase.ase_raman_and_ir_parse(fname)
+                raman_text, units_i, raman_inten, raman_en_ev, raman_en_cm, ir_inten, ir_en_ev, ir_en_cm = \
+                    ase.ase_raman_and_ir_parse(fname)
 
                 for i in range(0, len(raman_inten)):
                     raman_text += "{0:10.1f} {1:10.1f} {2:10.2f}\n".format(raman_en_ev[i], raman_en_cm[i], raman_inten[i])
@@ -2241,7 +2245,7 @@ class mainWindow(QMainWindow):
 
         for i in range(0, len(x)):
             for j in range(0, n):
-                y_fig[j] += y[i] * math.exp(-math.pow(x[i] - x_fig[j], 2) / ( 2 * sigma) )
+                y_fig[j] += y[i] * math.exp(-math.pow(x[i] - x_fig[j], 2) / (2 * sigma))
 
         title = "Spectrum"
         self.ui.PyqtGraphWidget.clear()

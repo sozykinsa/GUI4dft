@@ -1,5 +1,4 @@
 from utils.importer import Importer
-from utils.fdfdata import TFDFFile
 
 
 def test_fdf_parser(tests_path):

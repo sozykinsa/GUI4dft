@@ -32,4 +32,3 @@ def test_check_cro_file(tests_path):
     f_name = str(tests_path / 'ref_data' / 'h2o-ang-charges' / 'critic2' / "siesta-1-cp.cro")
     box_bohr, box_ang, box_deg, cps = check_cro_file(f_name)
     assert len(box_bohr) == 3
-

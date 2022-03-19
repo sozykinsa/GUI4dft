@@ -10,10 +10,6 @@ import xml.etree.ElementTree as ET
 from utils.periodic_table import TPeriodTable
 
 
-##################################################################
-#########################  The SIESTA class ######################
-##################################################################
-
 class TSIESTA:
 
     @staticmethod

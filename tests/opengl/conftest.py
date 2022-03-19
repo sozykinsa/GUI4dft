@@ -31,7 +31,7 @@ def get_guiopengl_model_widget(qapp, h2o_model):
         ViewAtoms = True
         ViewAtomNumbers = True
         ViewBox = True
-        boxcolor  = (0.0, 0.0, 0.0)
+        boxcolor = (0.0, 0.0, 0.0)
         ViewBonds = True
         bondscolor = (0.9, 0.0, 0.9)
         bondWidth = 2
