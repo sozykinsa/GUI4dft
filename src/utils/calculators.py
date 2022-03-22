@@ -39,40 +39,40 @@ def gaps(bands, emaxf, eminf, homo, lumo) -> Tuple[float, float]:
 
 class Calculators:
     @staticmethod
-    def FillTube(radTube, length, nAtoms, radAtom, delta, nPrompts, let, charge):
+    def fill_tube(rad_tube, length, n_atoms, rad_atom, delta, n_prompts, let, charge):
         """Getting a list of configurations from nAtoms with a radius of radAtom in a cylinder with a radius of radTube
          length. The maximum displacement of atoms in each of the models is not less than delta."""
-        Models = []
+        models = []
         random.seed(a=None, version=2)
 
-        for i in range(0, nPrompts):
-            Molecula = TAtomicModel()
+        for i in range(0, n_prompts):
+            molecule = TAtomicModel()
             j = 0
 
-            while (j < 1000) and (len(Molecula.atoms) < nAtoms):
-                x = random.uniform(-radTube, radTube)
-                a = math.sqrt(radTube*radTube - x*x)
+            while (j < 1000) and (len(molecule.atoms) < n_atoms):
+                x = random.uniform(-rad_tube, rad_tube)
+                a = math.sqrt(rad_tube * rad_tube - x * x)
                 y = random.uniform(-a, a)
                 z = random.uniform(0, length)
-                Molecula.add_atom(Atom([x, y, z, let, charge]), 2 * radAtom)
+                molecule.add_atom(Atom([x, y, z, let, charge]), 2 * rad_atom)
                 j += 1
 
-            if len(Molecula.atoms) < nAtoms:
-                radAtom *= 0.95
-                print("Radius of atom was dicreased. New value: "+str(radAtom))
+            if len(molecule.atoms) < n_atoms:
+                rad_atom *= 0.95
+                print("Radius of atom was dicreased. New value: " + str(rad_atom))
 
-            if len(Molecula.atoms) == nAtoms:
-                myDelta = 4*radTube+length
-                for newMolecula in Models:
-                    myDelta2 = Molecula.Delta(newMolecula)
+            if len(molecule.atoms) == n_atoms:
+                myDelta = 4 * rad_tube + length
+                for newMolecula in models:
+                    myDelta2 = molecule.Delta(newMolecula)
                     if myDelta2 < myDelta:
                         myDelta = myDelta2
                 if myDelta > delta:
-                    Models.append(Molecula)
-                    print("Iter " + str(i) + "/" + str(nPrompts) + "| we found "+str(len(Models))+" structures")
-                if len(Models) == 0:
-                    Models.append(Molecula)
-        return Models
+                    models.append(molecule)
+                    print("Iter " + str(i) + "/" + str(n_prompts) + "| we found " + str(len(models)) + " structures")
+                if len(models) == 0:
+                    models.append(molecule)
+        return models
 
     @staticmethod
     def fParabola(x, b0, b1, b2):

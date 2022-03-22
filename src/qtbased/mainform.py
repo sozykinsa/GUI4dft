@@ -2311,7 +2311,7 @@ class MainForm(QMainWindow):
         n_prompts = int(self.ui.FormActionsPreNPromptsFillSpace.value())
         rad_tube = float(self.ui.FormActionsPreRadiusFillSpace.value())
         length = float(self.ui.FormActionsPreZSizeFillSpace.value())
-        models = Calculator.FillTube(rad_tube, length, n_atoms, 0.01 * rad_atom, delta, n_prompts, let, charge)
+        models = Calculator.fill_tube(rad_tube, length, n_atoms, 0.01 * rad_atom, delta, n_prompts, let, charge)
 
         filename = "."
         try:

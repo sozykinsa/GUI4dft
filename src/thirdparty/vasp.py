@@ -55,13 +55,13 @@ def atoms_from_POSCAR(filename):
 
 def fermi_energy_from_doscar(filename):
     if os.path.exists(filename):
-        MyFile = open(filename)
-        str1 = MyFile.readline()
+        my_file = open(filename)
+        str1 = my_file.readline()
         for i in range(5):
-            str1 = MyFile.readline()
-        MyFile.close()
-        eFermy = float(str1.split()[3])
-        return eFermy
+            str1 = my_file.readline()
+        my_file.close()
+        e_fermy = float(str1.split()[3])
+        return e_fermy
 
 
 def vasp_dos(filename):
@@ -73,7 +73,7 @@ def vasp_dos(filename):
     my_file.close()
     nlines = int(str1.split()[2])
     if os.path.exists(filename):
-        spin_up, spin_down, energy = dos_from_file(filename, 3, nlines)
+        spin_up, spin_down, energy = dos_from_file(filename, 2, nlines)
         return np.array(spin_up), np.array(spin_down), np.array(energy)
 
 
