@@ -55,26 +55,26 @@ def atoms_from_POSCAR(filename):
 
 def fermi_energy_from_doscar(filename):
     if os.path.exists(filename):
-        MyFile = open(filename)
-        str1 = MyFile.readline()
+        my_file = open(filename)
+        str1 = my_file.readline()
         for i in range(5):
-            str1 = MyFile.readline()
-        MyFile.close()
-        eFermy = float(str1.split()[3])
-        return eFermy
+            str1 = my_file.readline()
+        my_file.close()
+        e_fermy = float(str1.split()[3])
+        return e_fermy
 
 
 def vasp_dos(filename):
     """DOS"""
-    MyFile = open(filename)
-    str1 = MyFile.readline()
+    my_file = open(filename)
+    str1 = my_file.readline()
     for i in range(5):
-        str1 = MyFile.readline()
-    MyFile.close()
+        str1 = my_file.readline()
+    my_file.close()
     nlines = int(str1.split()[2])
     if os.path.exists(filename):
-        spinUp, spinDown, energy = dos_from_file(filename, 3, nlines)
-        return np.array(spinUp), np.array(spinDown), np.array(energy)
+        spin_up, spin_down, energy = dos_from_file(filename, 2, nlines)
+        return np.array(spin_up), np.array(spin_down), np.array(energy)
 
 
 def model_to_vasp_poscar(model, filename):
@@ -85,15 +85,18 @@ def model_to_vasp_poscar(model, filename):
     data += "model \n"
     data += ' 1.0 \n'
 
-    data += '  ' + str(model.lat_vector1[0]) + '  ' + str(model.lat_vector1[1]) + '  ' + str(model.lat_vector1[2]) + '\n'
-    data += '  ' + str(model.lat_vector2[0]) + '  ' + str(model.lat_vector2[1]) + '  ' + str(model.lat_vector2[2]) + '\n'
-    data += '  ' + str(model.lat_vector3[0]) + '  ' + str(model.lat_vector3[1]) + '  ' + str(model.lat_vector3[2]) + '\n'
+    data += '  ' + str(model.lat_vector1[0]) + '  ' + str(model.lat_vector1[1]) + '  ' + \
+        str(model.lat_vector1[2]) + '\n'
+    data += '  ' + str(model.lat_vector2[0]) + '  ' + str(model.lat_vector2[1]) + '  ' + \
+        str(model.lat_vector2[2]) + '\n'
+    data += '  ' + str(model.lat_vector3[0]) + '  ' + str(model.lat_vector3[1]) + '  ' + \
+        str(model.lat_vector3[2]) + '\n'
 
-    PerTab = TPeriodTable()
+    per_tab = TPeriodTable()
 
     types = model.types_of_atoms()
     for i in range(0, len(types)):
-        data += ' ' + str(PerTab.get_let(int(types[i][0])))
+        data += ' ' + str(per_tab.get_let(int(types[i][0])))
     data += "\n"
 
     for i in range(0, len(types)):

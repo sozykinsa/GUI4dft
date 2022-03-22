@@ -2,7 +2,7 @@
 # ------------------------------------------------------
 # ------------------ PyqtGraphWidget -------------------
 # ------------------------------------------------------
-#https://www.pythonguis.com/tutorials/pyside-plotting-pyqtgraph/
+# https://www.pythonguis.com/tutorials/pyside-plotting-pyqtgraph/
 
 from PySide2.QtWidgets import QWidget, QVBoxLayout
 import pyqtgraph as pg  # pip install pyqtgraph

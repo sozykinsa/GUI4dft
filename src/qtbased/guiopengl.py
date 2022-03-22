@@ -288,7 +288,7 @@ class GuiOpenGL(QOpenGLWidget):
         if self.is_view_surface:
             self.add_surface(ogl_model.data_surface)
         self.update()
-        
+
     def screen2space(self, x, y, width, height):
         radius = min(width, height)*float(self.Scale)
         return (2.*x-width)/radius, -(2.*y-height)/radius
@@ -331,10 +331,12 @@ class GuiOpenGL(QOpenGLWidget):
 
     def auto_zoom(self):
         model_size = max(self.main_model.sizeX(), self.main_model.sizeY()) + 0.2
+        aspect = min(self.width() / self.height(), 1)
+
         if not self.ViewOrtho:
-            self.Scale = 7.0 / model_size
+            self.Scale = aspect * 7.0 / model_size
         else:
-            self.Scale = 6.0 / model_size
+            self.Scale = aspect * 6.0 / model_size
 
     def get_model(self):
         model = deepcopy(self.main_model)
@@ -436,7 +438,7 @@ class GuiOpenGL(QOpenGLWidget):
         self.update()
 
     def set_atoms_visible(self, state):
-        self.ViewAtoms= state
+        self.ViewAtoms = state
         self.update()
 
     def set_atoms_numbred(self, state):
@@ -454,20 +456,20 @@ class GuiOpenGL(QOpenGLWidget):
     def set_axes_visible(self, state):
         self.is_view_axes = state
         self.update()
-    
+
     def scale(self, wheel):
         if self.active:
             self.Scale += 0.05 * (wheel/120)
             self.update()
             return True
-    
+
     def rotat(self, x, y, width, height):
         if self.active:
             xs, ys = self.screen2space(x, y, width, height)
             self.rotY += 10 * (xs - self.x_scr_old)
             self.rotX -= 10 * (ys - self.y_scr_old)
             return True
-    
+
     def pan(self, x: int, y: int) -> None:
         """Move camera by (x,y)."""
         if self.active:
@@ -475,7 +477,7 @@ class GuiOpenGL(QOpenGLWidget):
             self.camera_position += np.array([xs - self.x_scr_old, ys - self.y_scr_old, 0.0])
             self.x_scr_old = xs
             self.y_scr_old = ys
-   
+
     def set_xy(self, x, y):
         if self.active:
             self.x_scr_old, self.y_scr_old = self.screen2space(x, y, self.width(), self.height())
@@ -542,12 +544,12 @@ class GuiOpenGL(QOpenGLWidget):
         radius2 = radius
         if shape == 'conus':
             radius2 = 0
-        Rel = [Atom2Pos[0]-Atom1Pos[0], Atom2Pos[1]-Atom1Pos[1], Atom2Pos[2]-Atom1Pos[2]]
-        BindingLen = math.sqrt(math.pow(Rel[0], 2) + math.pow(Rel[1], 2) + math.pow(Rel[2], 2))  # высота цилиндра
-        if BindingLen != 0:
-            Fall = 180.0/math.pi*math.acos(Rel[2] / BindingLen)
-            Yaw = 180.0/math.pi*math.atan2(Rel[1], Rel[0])
-       
+        rel = [Atom2Pos[0]-Atom1Pos[0], Atom2Pos[1]-Atom1Pos[1], Atom2Pos[2]-Atom1Pos[2]]
+        binding_len = math.sqrt(math.pow(rel[0], 2) + math.pow(rel[1], 2) + math.pow(rel[2], 2))  # высота цилиндра
+        if binding_len != 0:
+            Fall = 180.0/math.pi*math.acos(rel[2] / binding_len)
+            Yaw = 180.0/math.pi*math.atan2(rel[1], rel[0])
+
             gl.glPushMatrix()
             gl.glTranslated(Atom1Pos[0], Atom1Pos[1], Atom1Pos[2])
             gl.glRotated(Yaw, 0, 0, 1)
@@ -555,9 +557,9 @@ class GuiOpenGL(QOpenGLWidget):
             glu.gluCylinder(glu.gluNewQuadric(),
                             radius,  # /*baseRadius:*/
                             radius2,  # /*topRadius:*/
-                            BindingLen,  # /*height:*/
+                            binding_len,  # /*height:*/
                             self.quality * 15,  # /*slices:*/
-                            1) #/*stacks:*/
+                            1)  # /*stacks:*/
             gl.glPopMatrix()
 
     def clean(self):
@@ -584,7 +586,7 @@ class GuiOpenGL(QOpenGLWidget):
         self.add_box()
         self.add_axes()
         self.update()
-        
+
     def add_atoms(self):
         prop = self.prop
         mendeley = TPeriodTable()
@@ -886,10 +888,8 @@ class GuiOpenGL(QOpenGLWidget):
             self.light_prepare()
             if self.active:
                 self.prepare_orientation()
-                #gl.glDisable(gl.GL_COLOR_MATERIAL)
                 if self.ViewAtoms:
                     gl.glCallList(self.object)  # atoms
-                #gl.glEnable(gl.GL_COLOR_MATERIAL)
 
                 if self.is_view_bcp:
                     gl.glCallList(self.object + 8)  # BCP
@@ -973,10 +973,10 @@ class GuiOpenGL(QOpenGLWidget):
         gl.glEnable(gl.GL_DEPTH_TEST)
         gl.glEnable(gl.GL_COLOR_MATERIAL)
 
-        #light0_position = [0.0, 0.0, 100.0, 1]
-        #gl.glLightfv(gl.GL_LIGHT0, gl.GL_POSITION, light0_position)  # Определяем положение источника света
+        # light0_position = [0.0, 0.0, 100.0, 1]
+        # gl.glLightfv(gl.GL_LIGHT0, gl.GL_POSITION, light0_position)  # Определяем положение источника света
 
-        #gl.glDisable(gl.GL_COLOR_MATERIAL)
+        # gl.glDisable(gl.GL_COLOR_MATERIAL)
 
         # Determine the current lighting model
         gl.glLightModelf(gl.GL_LIGHT_MODEL_TWO_SIDE, gl.GL_TRUE)  # two-side lighting calculation

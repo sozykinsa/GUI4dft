@@ -70,20 +70,20 @@ class CapedSWNT(TAtomicModel):
 
     def cap4swnt_norm(self):
         if (self.n == self.availableind[0]) and (self.m == self.availableind[1]):
-                cap1 = TAtomicModel()
-                for j in range(0, self.cap_atoms.nAtoms()):
-                    cap1.add_atom(self.cap_atoms[j])
-                cap1.move(- 1.0 * self.availableind[4] / 2.0, - 1.0 * self.availableind[5] / 2.0, 0)
+            cap1 = TAtomicModel()
+            for j in range(0, self.cap_atoms.nAtoms()):
+                cap1.add_atom(self.cap_atoms[j])
+            cap1.move(- 1.0 * self.availableind[4] / 2.0, - 1.0 * self.availableind[5] / 2.0, 0)
 
-                for j in range(0, cap1.nAtoms()):
-                    xnn = cap1[j].x * math.cos(self.availableind[6] * math.pi / 180.0) - \
-                          cap1[j].y * math.sin(self.availableind[6] *math.pi / 180.0)
-                    ynn = cap1[j].x * math.sin(self.availableind[6] * math.pi / 180.0) + \
-                          cap1[j].y * math.cos(self.availableind[6] *math.pi / 180.0)
+            for j in range(0, cap1.nAtoms()):
+                xnn = cap1[j].x * math.cos(self.availableind[6] * math.pi / 180.0) - \
+                    cap1[j].y * math.sin(self.availableind[6] * math.pi / 180.0)
+                ynn = cap1[j].x * math.sin(self.availableind[6] * math.pi / 180.0) + \
+                    cap1[j].y * math.cos(self.availableind[6] * math.pi / 180.0)
 
-                    cap1[j].x = xnn
-                    cap1[j].y = ynn
-                return cap1
+                cap1[j].x = xnn
+                cap1[j].y = ynn
+            return cap1
 
     def invert(self):
         return self.availableind[7]
@@ -110,7 +110,6 @@ class CapedSWNT(TAtomicModel):
             # end calculation of atoms
 
             rotdeg = math.pi / self.n
-            count = 0
             z_coord = 0
             ring_nanotube = 0
 
@@ -127,12 +126,13 @@ class CapedSWNT(TAtomicModel):
                     rotdeg += math.pi / self.n
                     bound = 1.421 * math.cos(math.pi / 3)
                 z_coord += bound
-                ring_nanotube +=1
+                ring_nanotube += 1
 
         if (self.n == self.m) and (self.n > 0):
             # armchare nanotube
             pinan = math.pi / self.n
-            rad_nanotube = math.sqrt((5 + 2 * math.sqrt(2 * (1 + math.cos(pinan)))) / (8 * (1 - math.cos(pinan)))) * bound
+            rad_nanotube = math.sqrt((5 + 2 * math.sqrt(2 * (1 + math.cos(pinan)))) / (8 * (1 - math.cos(pinan)))) * \
+                bound
             alfa = math.acos(1 - bound * bound / (8 * rad_nanotube * rad_nanotube))
             betta = math.acos(1 - bound * bound / (2 * rad_nanotube * rad_nanotube))
 
@@ -151,7 +151,6 @@ class CapedSWNT(TAtomicModel):
                 z_coord = 0
                 ring_nanotube = 0
                 deltag = betta + alfa
-                count = 0
 
                 while z_coord < self.length:
                     deltag = betta+alfa - deltag

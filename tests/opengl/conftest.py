@@ -1,6 +1,6 @@
 from qtbased.guiopengl import GuiOpenGL
 
-from qtbased.mainwindow import mainWindow
+from qtbased.mainform import MainForm
 from PySide2.QtCore import QCoreApplication, Qt
 
 import pytest
@@ -31,7 +31,7 @@ def get_guiopengl_model_widget(qapp, h2o_model):
         ViewAtoms = True
         ViewAtomNumbers = True
         ViewBox = True
-        boxcolor  = (0.0, 0.0, 0.0)
+        boxcolor = (0.0, 0.0, 0.0)
         ViewBonds = True
         bondscolor = (0.9, 0.0, 0.9)
         bondWidth = 2
@@ -66,7 +66,7 @@ def get_application(qapp):
         QCoreApplication.setApplicationName(APPLICATION_NAME)
 
         QCoreApplication.setAttribute(Qt.AA_ShareOpenGLContexts)
-        window = mainWindow()
+        window = MainForm()
         window.setup_ui()
         window.show()
         window.start_program()

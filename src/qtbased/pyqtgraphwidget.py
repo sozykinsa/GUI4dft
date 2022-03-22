@@ -2,7 +2,7 @@
 # ------------------------------------------------------
 # ------------------ PyqtGraphWidget -------------------
 # ------------------------------------------------------
-#https://www.pythonguis.com/tutorials/pyside-plotting-pyqtgraph/
+# https://www.pythonguis.com/tutorials/pyside-plotting-pyqtgraph/
 
 from PySide2.QtWidgets import QWidget, QVBoxLayout
 from PySide2.QtGui import QFont
@@ -14,7 +14,7 @@ from typing import List
 class PyqtGraphWidget(QWidget):
 
     COLORS = [(0, 0, 0), (255, 0, 0), (0, 255, 0), (0, 0, 255)]
-    
+
     def __init__(self, parent=None):
         QWidget.__init__(self, parent)
         self.graphWidget = pg.PlotWidget()
@@ -120,10 +120,10 @@ class PyqtGraphWidget(QWidget):
     def set_xticks(self, ticks) -> None:  # pragma: no cover
         self.graphWidget.getAxis("bottom").setTicks(ticks)
 
-    def add_histogram(self, vals, num_bins, facecolor, x_title, y_title) -> None:  # pragma: no cover
+    def add_histogram(self, values, num_bins, face_color, x_title, y_title) -> None:  # pragma: no cover
         self.apply_styles()
-        y, x = np.histogram(vals, bins=num_bins)
-        curve = pg.PlotCurveItem(x, y, stepMode=True, fillLevel=0, brush=facecolor)
+        y, x = np.histogram(values, bins=num_bins)
+        curve = pg.PlotCurveItem(x, y, stepMode=True, fillLevel=0, brush=face_color)
         self.graphWidget.addItem(curve)
         self.x_title = x_title
         self.y_title = y_title

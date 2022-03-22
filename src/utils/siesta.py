@@ -10,10 +10,6 @@ import xml.etree.ElementTree as ET
 from utils.periodic_table import TPeriodTable
 
 
-##################################################################
-#########################  The SIESTA class ######################
-##################################################################
-
 class TSIESTA:
 
     @staticmethod
@@ -31,13 +27,13 @@ class TSIESTA:
     @staticmethod
     def lattice_parameters_abc_angles(filename):
         """Returns data from LatticeParameters block of file."""
-        LatticeParameters = TSIESTA.get_block_from_siesta_fdf(filename, 'LatticeParameters')
-        LatConstant = float(TSIESTA.lattice_constant(filename))
-        if len(LatticeParameters) > 0:
-            data = helpers.spacedel(LatticeParameters[0]).split()
-            a = LatConstant * float(data[0])
-            b = LatConstant * float(data[1])
-            c = LatConstant * float(data[2])
+        lattice_parameters = TSIESTA.get_block_from_siesta_fdf(filename, 'LatticeParameters')
+        lat_constant = float(TSIESTA.lattice_constant(filename))
+        if len(lattice_parameters) > 0:
+            data = helpers.spacedel(lattice_parameters[0]).split()
+            a = lat_constant * float(data[0])
+            b = lat_constant * float(data[1])
+            c = lat_constant * float(data[2])
             alpha = math.radians(float(data[3]))
             beta = math.radians(float(data[4]))
             gamma = math.radians(float(data[5]))
@@ -70,16 +66,16 @@ class TSIESTA:
 
     @staticmethod
     def lattice_vectors(filename):
-        LatConstant = float(TSIESTA.lattice_constant(filename))
-        LatticeVectors = TSIESTA.get_block_from_siesta_fdf(filename, 'LatticeVectors')
-        if len(LatticeVectors) > 0:
-            lat_vect_1 = helpers.spacedel(LatticeVectors[0]).split()
+        lat_constant = float(TSIESTA.lattice_constant(filename))
+        lattice_vectors = TSIESTA.get_block_from_siesta_fdf(filename, 'LatticeVectors')
+        if len(lattice_vectors) > 0:
+            lat_vect_1 = helpers.spacedel(lattice_vectors[0]).split()
             lat_vect_1 = np.array(helpers.list_str_to_float(lat_vect_1))
-            lat_vect_2 = helpers.spacedel(LatticeVectors[1]).split()
+            lat_vect_2 = helpers.spacedel(lattice_vectors[1]).split()
             lat_vect_2 = np.array(helpers.list_str_to_float(lat_vect_2))
-            lat_vect_3 = helpers.spacedel(LatticeVectors[2]).split()
+            lat_vect_3 = helpers.spacedel(lattice_vectors[2]).split()
             lat_vect_3 = np.array(helpers.list_str_to_float(lat_vect_3))
-            return LatConstant * lat_vect_1, LatConstant * lat_vect_2, LatConstant * lat_vect_3
+            return lat_constant * lat_vect_1, lat_constant * lat_vect_2, lat_constant * lat_vect_3
         return [False, False, False], [False, False, False], [False, False, False]
 
     @staticmethod
@@ -119,89 +115,25 @@ class TSIESTA:
                 charges.append([])
 
             if method == "Mulliken":
-                pseudo_charges = TSIESTA.pseudo_charge_of_species(filename)
-                number_of_species = len(pseudo_charges)
-                species = TSIESTA.get_species(filename)
-
-                is_spin_polarized = int(helpers.from_file_property(filename, 'redata: Number of spin components', 1,
-                                                                   'string').split("=")[1])
-
-                md_siesta_file = open(filename)
-                str1 = md_siesta_file.readline()
-
-                if is_spin_polarized == 2:
-                    number_of_species *= 2
-                    number_of_atoms *= 2
-
-                charges_for_all_steps = []
-                while str1 != '':
-                    if str1 != '' and (str1.find("mulliken: Atomic and Orbital Populations:") >= 0):
-                        nsp = 0
-
-                        charges_m = []
-                        for i in range(0, len(charges)):
-                            charges_m.append(["", 0])
-
-                        while nsp < number_of_species:
-                            atoms = 0
-                            atom_sort = -1
-                            while str1.find("mulliken:") >= 0 or len(str1) < 2 or str1.find("Species:") >= 0:
-                                if str1.find("Species:") >= 0:
-                                    str1 = helpers.spacedel(str1)
-                                    nsp += 1
-                                    for i in range(0, len(species)):
-                                        if str1.split(' ')[1] == species[i][2]:
-                                            atom_sort = i
-                                str1 = md_siesta_file.readline()
-                            neutral = pseudo_charges[atom_sort]
-                            if is_spin_polarized == 2:
-                                neutral /= 2.0
-
-                            skip = 0
-                            str1 = helpers.spacedel(md_siesta_file.readline())
-                            while not helpers.is_integer(str1.split()[0]):
-                                str1 = helpers.spacedel(md_siesta_file.readline())
-                                if len(str1) == 0:
-                                    str1 = helpers.spacedel(md_siesta_file.readline())
-                                skip += 1
-
-                            while str1 != '\n':
-                                if str1 != '\n':
-                                    atoms += 1
-                                    str1 = helpers.spacedel(str1)
-                                    at = int(str1.split(' ')[0])
-                                    chr = float(str1.split(' ')[1])
-                                    charges_m[at - 1][0] = species[atom_sort][1]
-                                    charges_m[at - 1][1] += neutral - chr
-                                for i in range(0, skip):
-                                    str1 = md_siesta_file.readline()
-
-                        charges_for_all_steps.append(charges_m)
-                    str1 = md_siesta_file.readline()
-                md_siesta_file.close()
-
-                if len(charges_for_all_steps) > 0:
-                    charges = charges_for_all_steps[-1]
-                    for i in range(0, len(charges)):
-                        charges[i][1] = round(charges[i][1], 3)
+                charges = TSIESTA.get_charge_mulliken(charges, filename, number_of_atoms)
                 return charges
 
-            searchSTR1 = ""
-            searchSTR2 = ""
+            search_str1 = ""
+            search_str2 = ""
             if method == "Hirshfeld":
-                searchSTR1 = "Hirshfeld Net Atomic Populations:"
-                searchSTR2 = "Hirshfeld Atomic Populations:"
+                search_str1 = "Hirshfeld Net Atomic Populations:"
+                search_str2 = "Hirshfeld Atomic Populations:"
 
             if method == "Voronoi":
-                searchSTR1 = "Voronoi Net Atomic Populations:"
-                searchSTR2 = "Voronoi Atomic Populations:"
+                search_str1 = "Voronoi Net Atomic Populations:"
+                search_str2 = "Voronoi Atomic Populations:"
 
             md_siesta_file = open(filename)
             str1 = md_siesta_file.readline()
             mendeley = TPeriodTable()
 
             while str1 != '':
-                if str1 != '' and ((str1.find(searchSTR1) >= 0) or (str1.find(searchSTR2) >= 0)):
+                if str1 != '' and ((str1.find(search_str1) >= 0) or (str1.find(search_str2) >= 0)):
                     str1 = md_siesta_file.readline()
                     for i in range(0, number_of_atoms):
                         data = (helpers.spacedel(md_siesta_file.readline())).split(' ')
@@ -210,6 +142,70 @@ class TSIESTA:
                         charges[i] = [atom_sort, charge]
                 str1 = md_siesta_file.readline()
             md_siesta_file.close()
+        return charges
+
+    @staticmethod
+    def get_charge_mulliken(charges, filename, number_of_atoms):
+        pseudo_charges = TSIESTA.pseudo_charge_of_species(filename)
+        number_of_species = len(pseudo_charges)
+        species = TSIESTA.get_species(filename)
+        is_spin_polarized = int(helpers.from_file_property(filename, 'redata: Number of spin components', 1,
+                                                           'string').split("=")[1])
+        md_siesta_file = open(filename)
+        str1 = md_siesta_file.readline()
+        if is_spin_polarized == 2:
+            number_of_species *= 2
+            number_of_atoms *= 2
+        charges_for_all_steps = []
+        while str1 != '':
+            if str1 != '' and (str1.find("mulliken: Atomic and Orbital Populations:") >= 0):
+                nsp = 0
+
+                charges_m = []
+                for i in range(0, len(charges)):
+                    charges_m.append(["", 0])
+
+                while nsp < number_of_species:
+                    atoms = 0
+                    atom_sort = -1
+                    while str1.find("mulliken:") >= 0 or len(str1) < 2 or str1.find("Species:") >= 0:
+                        if str1.find("Species:") >= 0:
+                            str1 = helpers.spacedel(str1)
+                            nsp += 1
+                            for i in range(0, len(species)):
+                                if str1.split(' ')[1] == species[i][2]:
+                                    atom_sort = i
+                        str1 = md_siesta_file.readline()
+                    neutral = pseudo_charges[atom_sort]
+                    if is_spin_polarized == 2:
+                        neutral /= 2.0
+
+                    skip = 0
+                    str1 = helpers.spacedel(md_siesta_file.readline())
+                    while not helpers.is_integer(str1.split()[0]):
+                        str1 = helpers.spacedel(md_siesta_file.readline())
+                        if len(str1) == 0:
+                            str1 = helpers.spacedel(md_siesta_file.readline())
+                        skip += 1
+
+                    while str1 != '\n':
+                        if str1 != '\n':
+                            atoms += 1
+                            str1 = helpers.spacedel(str1)
+                            at = int(str1.split(' ')[0])
+                            chr = float(str1.split(' ')[1])
+                            charges_m[at - 1][0] = species[atom_sort][1]
+                            charges_m[at - 1][1] += neutral - chr
+                        for i in range(0, skip):
+                            str1 = md_siesta_file.readline()
+
+                charges_for_all_steps.append(charges_m)
+            str1 = md_siesta_file.readline()
+        md_siesta_file.close()
+        if len(charges_for_all_steps) > 0:
+            charges = charges_for_all_steps[-1]
+            for i in range(0, len(charges)):
+                charges[i][1] = round(charges[i][1], 3)
         return charges
 
     @staticmethod
@@ -332,21 +328,21 @@ class TSIESTA:
         """Returns the LIST of Speciecies from SIESTA output or fdf file."""
         species = []
         if os.path.exists(filename):
-            NumberOfSpecies = TSIESTA.number_of_species(filename)
-            MdSiestaFile = open(filename)
-            str1 = MdSiestaFile.readline()
+            number_of_species = TSIESTA.number_of_species(filename)
+            md_siesta_file = open(filename)
+            str1 = md_siesta_file.readline()
             while str1 != '':
                 if str1 != '' and (str1.find("block ChemicalSpeciesLabel") >= 0):
-                    str1 = MdSiestaFile.readline()
-                    for i in range(0, NumberOfSpecies):
+                    str1 = md_siesta_file.readline()
+                    for i in range(0, number_of_species):
                         row = helpers.spacedel(str1).split(' ')[:3]
                         row[0] = int(row[0])
                         row[1] = int(row[1])
                         species.append(row)
-                        str1 = MdSiestaFile.readline()
+                        str1 = md_siesta_file.readline()
                     species.sort(key=lambda line: line[0])
                     return species
-                str1 = MdSiestaFile.readline()
+                str1 = md_siesta_file.readline()
         species.sort(key=lambda line: line[0])
         return species
 

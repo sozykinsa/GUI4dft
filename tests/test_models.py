@@ -42,4 +42,3 @@ def test_caped_swnt():
 
     model = CapedSWNT(19, 0, 0, 1, 2, 2, 0, 2, 0)
     assert len(model.atoms) == 345
-

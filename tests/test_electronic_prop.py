@@ -1,5 +1,5 @@
 from utils.electronic_prop_reader import read_siesta_bands, dos_from_file, dos_siesta_vert
-from thirdparty.vasp import fermi_energy_from_doscar, vasp_dos, model_to_vasp_poscar
+from thirdparty.vasp import vasp_dos
 from utils.siesta import TSIESTA
 
 from utils.calculators import gaps
@@ -45,7 +45,7 @@ def test_bands(tests_path):
     kmin, kmax = 0.0, 0.39
     is_check_bands_spin = True
     bands, emaxf, eminf, homo, kmesh, lumo, xticklabels, xticks = read_siesta_bands(f_name, is_check_bands_spin,
-                                                                                        kmax, kmin)
+                                                                                    kmax, kmin)
     assert len(kmesh) == 100
 
     gap, gap_ind = gaps(bands, emaxf, eminf, homo, lumo)

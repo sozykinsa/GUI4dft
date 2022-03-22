@@ -4,14 +4,14 @@ try:
     if os.environ["XDG_SESSION_TYPE"] == "wayland":
         os.environ["QT_QPA_PLATFORM"] = "wayland"
 except Exception as e:
-    """  """
+    print(str(e))
 import math
 import sys
 from pathlib import Path
 from copy import deepcopy
 from operator import itemgetter
 import matplotlib.pyplot as plt
-#import pyqtgraph as pg  # pip install pyqtgraph
+# import pyqtgraph as pg  # pip install pyqtgraph
 import numpy as np
 from utils import helpers
 from models.atomic_model import TAtomicModel
@@ -50,10 +50,10 @@ sys.path.append('.')
 is_with_figure = True
 
 
-class mainWindow(QMainWindow):
+class MainForm(QMainWindow):
 
     def __init__(self, *args):
-        super(mainWindow, self).__init__(*args)
+        super().__init__(*args)
         self.ui = Ui_form()
         self.ui.setupUi(self)
 
@@ -62,7 +62,7 @@ class mainWindow(QMainWindow):
                               self.ui.FormActionsPreSpinAtomsCoordY, self.ui.FormActionsPreSpinAtomsCoordZ,
                               self.ui.AtomPropertiesText]
         self.ui.openGLWidget.set_form_elements(self.ui.FormSettingsViewCheckAtomSelection, selected_atom_info, 1)
-        self.FDFData = TFDFFile()
+        self.fdf_data = TFDFFile()
         self.volumeric_data = VolumericData()
         self.volumeric_data2 = VolumericData()  # only for volumeric data difference
         self.PDOSdata = []
@@ -136,8 +136,8 @@ class mainWindow(QMainWindow):
         self.ui.FormActionsPostButSurfaceAdd.clicked.connect(self.add_isosurface_color_to_table)
         self.ui.FormActionsPostButSurfaceDelete.clicked.connect(self.delete_isosurface_color_from_table)
         self.ui.FormActionsButtonPlotPDOS.clicked.connect(self.plot_pdos)
-        self.ui.FormActionsButtonPlotBANDS.clicked.connect(self.plot_bands)
-        self.ui.FormActionsButtonParseBANDS.clicked.connect(self.parse_bands)
+        self.ui.plot_bands.clicked.connect(self.plot_bands)
+        self.ui.parse_bands.clicked.connect(self.parse_bands)
         self.ui.FormActionsButtonPlotPDOSselected.clicked.connect(self.plot_selected_pdos)
         self.ui.FormModifyCellButton.clicked.connect(self.edit_cell)
         self.ui.FormActionsPostButGetBonds.clicked.connect(self.get_bonds)
@@ -333,7 +333,7 @@ class mainWindow(QMainWindow):
         self.ui.FormActionsPosTableBonds.horizontalHeader().setStyleSheet(self.table_header_stylesheet)
         self.ui.FormActionsPosTableBonds.verticalHeader().setStyleSheet(self.table_header_stylesheet)
 
-        if is_with_figure and os.path.exists(Path(__file__).parent / "images" /'Open.png'):
+        if is_with_figure and os.path.exists(Path(__file__).parent / "images" / 'Open.png'):
             open_action = QAction(QIcon(str(Path(__file__).parent / "images" / 'Open.png')), 'Open', self)
         else:
             open_action = QAction('Open', self)
@@ -389,7 +389,7 @@ class mainWindow(QMainWindow):
         self.ui.toolBar.addAction(open_action)
         self.ui.toolBar.addSeparator()
 
-        if is_with_figure and os.path.exists(Path(__file__).parent / "images" /'UndoZ.png'):
+        if is_with_figure and os.path.exists(Path(__file__).parent / "images" / 'UndoZ.png'):
             open_action = QAction(QIcon(str(Path(__file__).parent / "images" / 'UndoZ.png')), 'RotateZ-', self)
         else:
             open_action = QAction('RotateZ-', self)
@@ -491,7 +491,8 @@ class mainWindow(QMainWindow):
         except Exception as e:
             self.show_error(e)
 
-    def show_error(self, e):
+    @staticmethod
+    def show_error(e):
         msg = QMessageBox()
         msg.setIcon(QMessageBox.Critical)
         msg.setText("Error")
@@ -543,17 +544,17 @@ class mainWindow(QMainWindow):
             self.ui.part2_file.setText(fname)
 
     def create_model_from_parts(self) -> None:
-        fname1 = self.ui.part1_file.text()
-        fname2 = self.ui.part2_file.text()
+        file_name1 = self.ui.part1_file.text()
+        file_name2 = self.ui.part2_file.text()
         if self.ui.FormSettingsOpeningCheckOnlyOptimal.isChecked():
-            models1, fdf_data1 = Importer.Import(fname1, 'opt', False, False)
+            models1, fdf_data1 = Importer.import_from_file(file_name1, 'opt', False, False)
         else:
-            models1, fdf_data1 = Importer.Import(fname1, 'all', False, False)
+            models1, fdf_data1 = Importer.import_from_file(file_name1, 'all', False, False)
 
         if self.ui.FormSettingsOpeningCheckOnlyOptimal.isChecked():
-            models2, fdf_data2 = Importer.Import(fname2, 'opt', False, False)
+            models2, fdf_data2 = Importer.import_from_file(file_name2, 'opt', False, False)
         else:
-            models2, fdf_data2 = Importer.Import(fname2, 'all', False, False)
+            models2, fdf_data2 = Importer.import_from_file(file_name2, 'all', False, False)
 
         combo_model = TAtomicModel()
         if len(models1) > 0:
@@ -658,7 +659,7 @@ class mainWindow(QMainWindow):
         bands_file = Importer.check_bands_file(f_name)
         if bands_file:
             self.ui.FormActionsLineBANDSfile.setText(bands_file)
-            self.ui.FormActionsButtonParseBANDS.setEnabled(True)
+            self.ui.parse_bands.setEnabled(True)
 
     def check_dos(self, f_name: str) -> None:   # pragma: no cover
         dos_file, e_fermy = Importer.check_dos_file(f_name)
@@ -672,23 +673,23 @@ class mainWindow(QMainWindow):
             self.ui.FormActionsTabeDOSProperty.setItem(i - 1, 1, QTableWidgetItem(str(e_fermy)))
             self.ui.FormActionsTabeDOSProperty.update()
 
-    def check_volumeric_data(self, fname):
+    def check_volumeric_data(self, file_name):
         files = []
-        if fname.endswith(".XSF"):
-            files.append(fname)
-        if fname.endswith(".cube"):
-            files.append(fname)
+        if file_name.endswith(".XSF"):
+            files.append(file_name)
+        if file_name.endswith(".cube"):
+            files.append(file_name)
 
-        if fname.endswith(".out") or fname.endswith(".OUT"):
-            label = TSIESTA.system_label(fname)
-            dir = os.path.dirname(fname)
-            dirs, content = helpers.getsubs(dir)
+        if file_name.endswith(".out") or file_name.endswith(".OUT"):
+            label = TSIESTA.system_label(file_name)
+            directory = os.path.dirname(file_name)
+            dirs, content = helpers.getsubs(directory)
             for posFile in content:
                 file_candidat = Path(posFile).name
                 if file_candidat.startswith(label) and file_candidat.endswith(".cube"):
-                    files.append(dir + "/" + file_candidat)
+                    files.append(directory + "/" + file_candidat)
 
-            files.append(dir + "/" + label + ".XSF")
+            files.append(directory + "/" + label + ".XSF")
         self.ui.FormActionsPostList3DData.clear()
         for file in files:
             if os.path.exists(file):
@@ -729,7 +730,8 @@ class mainWindow(QMainWindow):
         self.ui.openGLWidget.atoms_of_selected_fragment_to_form()
         self.ui.openGLWidget.update_view()
 
-    def clearQTreeWidget(self, tree):
+    @staticmethod
+    def clear_qtree_widget(tree):
         iterator = QTreeWidgetItemIterator(tree, QTreeWidgetItemIterator.All)
         while iterator.value():
             iterator.value().takeChildren()
@@ -739,11 +741,11 @@ class mainWindow(QMainWindow):
             tree.takeTopLevelItem(i)
             i -= 1
 
-    def color_to_ui(self, ColorUi, state_Color):
-        r = state_Color.split()[0]
-        g = state_Color.split()[1]
-        b = state_Color.split()[2]
-        ColorUi.setStyleSheet("background-color:rgb(" + r + "," + g + "," + b + ")")
+    def color_to_ui(self, color_ui, state_color):
+        r = state_color.split()[0]
+        g = state_color.split()[1]
+        b = state_color.split()[2]
+        color_ui.setStyleSheet("background-color:rgb(" + r + "," + g + "," + b + ")")
 
     def create_model_with_electrodes(self):
         try:
@@ -751,9 +753,9 @@ class mainWindow(QMainWindow):
             scat_file = self.ui.FormActionsPreScatRegion.text()
             righ_file = self.ui.FormActionsPreRightElectrode.text()
 
-            model_left, fdf_left = Importer.Import(left_file)
-            model_scat, fdf_scat = Importer.Import(scat_file)
-            model_righ, fdf_righ = Importer.Import(righ_file)
+            model_left, fdf_left = Importer.import_from_file(left_file)
+            model_scat, fdf_scat = Importer.import_from_file(scat_file)
+            model_righ, fdf_righ = Importer.import_from_file(righ_file)
 
             model_left = model_left[0]
             model_scat = model_scat[0]
@@ -950,11 +952,11 @@ class mainWindow(QMainWindow):
     def fill_volumeric_data(self, data, tree=" "):
         if tree == " ":
             tree = self.ui.FormActionsPostTreeSurface
-        type = data.type
+        data_type = data.type
         data = data.blocks
-        self.clearQTreeWidget(tree)
+        self.clear_qtree_widget(tree)
 
-        if type == "TXSF":
+        if data_type == "TXSF":
             for dat in data:
                 text = (dat[0].title.split('_')[3]).split(':')[0]
                 parent = QTreeWidgetItem(tree)
@@ -963,7 +965,7 @@ class mainWindow(QMainWindow):
                     child = QTreeWidgetItem(parent)
                     child.setText(0, "{}".format(text + ':' + da.title.split(':')[1]))
 
-        if type == "TGaussianCube":
+        if data_type == "TGaussianCube":
             for dat in data:
                 text = dat[0].title.split(".cube")[0]
                 parent = QTreeWidgetItem(tree)
@@ -1009,7 +1011,7 @@ class mainWindow(QMainWindow):
         volume = TSIESTA.volume(fname)
         energy = TSIESTA.energy_tot(fname)
 
-        models, FDFData = Importer.Import(fname)
+        models, fdf_data = Importer.import_from_file(fname)
         model = models[-1]
         a = model.get_LatVect1_norm()
         b = model.get_LatVect2_norm()
@@ -1087,7 +1089,7 @@ class mainWindow(QMainWindow):
                 value = float(points[i][j][3])
                 prev = self.colors_cash.get(value)
                 if prev is None:
-                    color = mainWindow.get_color(cmap, minv, maxv, value, color_scale)
+                    color = MainForm.get_color(cmap, minv, maxv, value, color_scale)
                     self.colors_cash[value] = [color[0], color[1], color[2]]
                     row.append([color[0], color[1], color[2]])
                 else:
@@ -1243,8 +1245,8 @@ class mainWindow(QMainWindow):
     def menu_export(self):
         if self.ui.openGLWidget.main_model.nAtoms() > 0:
             try:
-                long_name = QFileDialog.getSaveFileName(self, 'Save File', self.work_dir,
-                    "FDF files (*.fdf);;XYZ files (*.xyz);;FireFly input files (*.inp);;VASP POSCAR file (POSCAR)")
+                format = "FDF files (*.fdf);;XYZ files (*.xyz);;FireFly input files (*.inp);;VASP POSCAR file (POSCAR)"
+                long_name = QFileDialog.getSaveFileName(self, 'Save File', self.work_dir, format)
                 fname = long_name[0]
                 self.export_to_file(self.models[self.active_model], fname)
                 self.work_dir = os.path.dirname(fname)
@@ -1252,7 +1254,8 @@ class mainWindow(QMainWindow):
             except Exception as e:
                 self.show_error(e)
 
-    def export_to_file(self, model, fname):
+    @staticmethod
+    def export_to_file(model, fname):
         if fname.find("POSCAR") >= 0:
             fname = fname.split(".")[0]
             model.toVASPposcar(fname)
@@ -1303,9 +1306,9 @@ class mainWindow(QMainWindow):
         parse_properies = self.ui.FormSettingsParseAtomicProperties.isChecked()
         xyzcritic2 = self.ui.FormSettingsViewCheckXYZasCritic2.isChecked()
         if self.ui.FormSettingsOpeningCheckOnlyOptimal.isChecked():
-            self.models, self.FDFData = Importer.Import(fname, 'opt', parse_properies, xyzcritic2)
+            self.models, self.fdf_data = Importer.import_from_file(fname, 'opt', parse_properies, xyzcritic2)
         else:
-            self.models, self.FDFData = Importer.Import(fname, 'all', parse_properies, xyzcritic2)
+            self.models, self.fdf_data = Importer.import_from_file(fname, 'all', parse_properies, xyzcritic2)
 
     def plot_last_model(self):
         if len(self.models) > 0:
@@ -1344,20 +1347,13 @@ class mainWindow(QMainWindow):
         if len(text) > 1:
             text = text[1].split()[0]
 
-            model = self.models[-1]
-
-            ind1, ind2 = model.atoms_of_bond_path(int(text))
-            atom1 = model.atoms[ind1].let + str(ind1)
-            atom2 = model.atoms[ind2].let + str(ind2)
-            title = text + ":" + atom1 + "-" + atom2
-
             self.ui.FormSelectedCP.setText(text)
             f = self.models[-1].bcp[int(text)].getProperty("field")
             self.ui.FormSelectedCP_f.setText(f)
             g = self.models[-1].bcp[int(text)].getProperty("grad")
             self.ui.FormSelectedCP_g.setText(g)
-            l = self.models[-1].bcp[int(text)].getProperty("lap")
-            self.ui.FormSelectedCP_lap.setText(l)
+            lap = self.models[-1].bcp[int(text)].getProperty("lap")
+            self.ui.FormSelectedCP_lap.setText(lap)
 
     def model_to_screen(self, value):
         self.ui.Form3Dand2DTabs.setCurrentIndex(0)
@@ -1447,9 +1443,10 @@ class mainWindow(QMainWindow):
         boxcolor = self.get_color_from_setting(self.state_Color_Of_Box)
         atomscolor = self.colors_of_atoms()
         contour_width = (self.ui.FormSettingsViewSpinContourWidth.value()) / 1000.0
-        self.ui.openGLWidget.set_atomic_structure(self.models[self.active_model], atomscolor, view_atoms, view_atom_numbers,
-                                           view_box, boxcolor, view_bonds, bondscolor, bond_width,
-                                           color_of_bonds_by_atoms, view_axes, axescolor, contour_width)
+        self.ui.openGLWidget.set_atomic_structure(self.models[self.active_model], atomscolor, view_atoms,
+                                                  view_atom_numbers, view_box, boxcolor, view_bonds, bondscolor,
+                                                  bond_width, color_of_bonds_by_atoms,
+                                                  view_axes, axescolor, contour_width)
         self.prepare_form_actions_combo_pdos_species()
         self.prepare_form_actions_combo_pdos_indexes()
 
@@ -1482,18 +1479,18 @@ class mainWindow(QMainWindow):
         else:
             self.ui.openGLWidget.update()
 
-    def plot_contous_isovalues(self, n_contours, scale="Log"):
-        minv, maxv = self.volumeric_data.min, self.volumeric_data.max
+    def plot_contours_isovalues(self, n_contours, scale="Log"):
+        min_v, max_v = self.volumeric_data.min, self.volumeric_data.max
         isovalues = []
-        if minv == maxv:
+        if min_v == max_v:
             return isovalues
         if scale == "Linear":
-            isovalues = np.linspace(minv, maxv, n_contours + 2)
+            isovalues = np.linspace(min_v, max_v, n_contours + 2)
         if scale == "Log":
             zero = 1e-8
-            if minv < zero:
-                minv = zero
-            isovalueslog = np.linspace(math.log10(minv), math.log10(maxv), n_contours + 2)
+            if min_v < zero:
+                min_v = zero
+            isovalueslog = np.linspace(math.log10(min_v), math.log10(max_v), n_contours + 2)
             isovalues = []
             for i in range(1, len(isovalueslog) - 1):
                 item = isovalueslog[i]
@@ -1528,49 +1525,51 @@ class mainWindow(QMainWindow):
             planes.append("yz")
 
         for plane in planes:
-            n_contours = 0
-            myslice = 0
-            if plane == "xy":
-                n_contours = int(self.ui.FormActionsPostLabelSurfaceNcontoursXY.text())
-                myslice = int(self.ui.FormActionsPostSliderContourXY.value())
-            if plane == "xz":
-                n_contours = int(self.ui.FormActionsPostLabelSurfaceNcontoursXZ.text())
-                myslice = int(self.ui.FormActionsPostSliderContourXZ.value())
-            if plane == "yz":
-                n_contours = int(self.ui.FormActionsPostLabelSurfaceNcontoursYZ.text())
-                myslice = int(self.ui.FormActionsPostSliderContourYZ.value())
+            self.make_plane(cmap, color_scale, maxv, minv, params, params_colored_plane, plane)
 
-            isovalues = self.plot_contous_isovalues(n_contours, color_scale)
-
-            if self.ui.FormActionsPostRadioColorPlaneContours.isChecked():
-                colors = self.get_colors_list(minv, maxv, isovalues, cmap, 'black')
-            else:
-                colors = self.get_colors_list(minv, maxv, isovalues, cmap, color_scale)
-
-            if self.ui.FormSettingsContourColorFixed.isChecked():
-                color = self.get_color_from_setting(self.state_Color_Of_Contour)
-                for i in range(0, len(colors)):
-                    colors[i] = color
-
-            if self.ui.FormActionsPostRadioContour.isChecked() or self.ui.FormActionsPostRadioColorPlaneContours.isChecked():
-                conts = self.volumeric_data.contours(isovalues, plane, myslice)
-                params.append([isovalues, conts, colors])
-
-            if self.ui.FormActionsPostRadioColorPlane.isChecked() or self.ui.FormActionsPostRadioColorPlaneContours.isChecked():
-                points = self.volumeric_data.plane(plane, myslice)
-                colors = self.get_color_of_plane(minv, maxv, points, cmap, color_scale)
-                normal = [0, 0, 1]
-                if plane == "xz":
-                    normal = [0, -1, 0]
-                if plane == "yz":
-                    normal = [1, 0, 0]
-                params_colored_plane.append([points, colors, normal])
-
-        if self.ui.FormActionsPostRadioContour.isChecked() or self.ui.FormActionsPostRadioColorPlaneContours.isChecked():
+        if self.ui.FormActionsPostRadioContour.isChecked() or \
+                self.ui.FormActionsPostRadioColorPlaneContours.isChecked():
             self.ui.openGLWidget.add_contour(params)
 
-        if self.ui.FormActionsPostRadioColorPlane.isChecked() or self.ui.FormActionsPostRadioColorPlaneContours.isChecked():
+        if self.ui.FormActionsPostRadioColorPlane.isChecked() or \
+                self.ui.FormActionsPostRadioColorPlaneContours.isChecked():
             self.ui.openGLWidget.add_colored_plane(params_colored_plane)
+
+    def make_plane(self, cmap, color_scale, maxv, minv, params, params_colored_plane, plane):
+        n_contours = 0
+        myslice = 0
+        if plane == "xy":
+            n_contours = int(self.ui.FormActionsPostLabelSurfaceNcontoursXY.text())
+            myslice = int(self.ui.FormActionsPostSliderContourXY.value())
+        if plane == "xz":
+            n_contours = int(self.ui.FormActionsPostLabelSurfaceNcontoursXZ.text())
+            myslice = int(self.ui.FormActionsPostSliderContourXZ.value())
+        if plane == "yz":
+            n_contours = int(self.ui.FormActionsPostLabelSurfaceNcontoursYZ.text())
+            myslice = int(self.ui.FormActionsPostSliderContourYZ.value())
+        isovalues = self.plot_contours_isovalues(n_contours, color_scale)
+        if self.ui.FormActionsPostRadioColorPlaneContours.isChecked():
+            colors = self.get_colors_list(minv, maxv, isovalues, cmap, 'black')
+        else:
+            colors = self.get_colors_list(minv, maxv, isovalues, cmap, color_scale)
+        if self.ui.FormSettingsContourColorFixed.isChecked():
+            color = self.get_color_from_setting(self.state_Color_Of_Contour)
+            for i in range(0, len(colors)):
+                colors[i] = color
+        if self.ui.FormActionsPostRadioContour.isChecked() or \
+                self.ui.FormActionsPostRadioColorPlaneContours.isChecked():
+            conts = self.volumeric_data.contours(isovalues, plane, myslice)
+            params.append([isovalues, conts, colors])
+        if self.ui.FormActionsPostRadioColorPlane.isChecked() or \
+                self.ui.FormActionsPostRadioColorPlaneContours.isChecked():
+            points = self.volumeric_data.plane(plane, myslice)
+            colors = self.get_color_of_plane(minv, maxv, points, cmap, color_scale)
+            normal = [0, 0, 1]
+            if plane == "xz":
+                normal = [0, -1, 0]
+            if plane == "yz":
+                normal = [1, 0, 0]
+            params_colored_plane.append([points, colors, normal])
 
     def prepare_form_actions_combo_pdos_indexes(self):
         model = QStandardItemModel()
@@ -1585,7 +1584,7 @@ class mainWindow(QMainWindow):
         model.appendRow(QStandardItem("Selected in list below"))
         self.ui.FormActionsComboPDOSspecies.setModel(model)
 
-    def pdos_filter(self):
+    def get_filter_atom(self):
         atom_index = []
         if self.ui.FormActionsComboPDOSIndexes.currentText() == 'All':
             atom_index = range(1, self.ui.openGLWidget.main_model.nAtoms() + 1)
@@ -1594,6 +1593,9 @@ class mainWindow(QMainWindow):
         if self.ui.FormActionsComboPDOSIndexes.currentText() == 'Selected in list below':
             atom_index = (self.ui.FormActionsPDOSIndexes.toPlainText()).split()
             atom_index = helpers.list_str_to_int(atom_index)
+        return atom_index
+
+    def get_filter_species(self):
         species = []
         if self.ui.FormActionsComboPDOSspecies.currentText() == 'All':
             mendeley = TPeriodTable()
@@ -1603,40 +1605,23 @@ class mainWindow(QMainWindow):
                 species.append(str(atoms_list[types_of_atoms[i][0]]))
         if self.ui.FormActionsComboPDOSspecies.currentText() == 'Selected in list below':
             species = (self.ui.FormActionsPDOSSpecieces.text()).split()
-        number_n = []
-        if self.ui.FormActionsComboPDOSn1.isChecked():
-            number_n.append(1)
-        if self.ui.FormActionsComboPDOSn2.isChecked():
-            number_n.append(2)
-        if self.ui.FormActionsComboPDOSn3.isChecked():
-            number_n.append(3)
-        if self.ui.FormActionsComboPDOSn4.isChecked():
-            number_n.append(4)
-        if self.ui.FormActionsComboPDOSn5.isChecked():
-            number_n.append(5)
-        if self.ui.FormActionsComboPDOSn6.isChecked():
-            number_n.append(6)
-        if self.ui.FormActionsComboPDOSn7.isChecked():
-            number_n.append(7)
-        if self.ui.FormActionsComboPDOSn8.isChecked():
-            number_n.append(8)
-        number_l = []
-        if self.ui.FormActionsComboPDOSL0.isChecked():
-            number_l.append(0)
-        if self.ui.FormActionsComboPDOSL1.isChecked():
-            number_l.append(1)
-        if self.ui.FormActionsComboPDOSL2.isChecked():
-            number_l.append(2)
-        if self.ui.FormActionsComboPDOSL3.isChecked():
-            number_l.append(3)
-        if self.ui.FormActionsComboPDOSL4.isChecked():
-            number_l.append(4)
-        if self.ui.FormActionsComboPDOSL5.isChecked():
-            number_l.append(5)
-        if self.ui.FormActionsComboPDOSL6.isChecked():
-            number_l.append(6)
-        if self.ui.FormActionsComboPDOSL7.isChecked():
-            number_l.append(7)
+        return species
+
+    def get_filter_z(self):
+        number_z = []
+        if self.ui.FormActionsComboPDOSz1.isChecked():
+            number_z.append(1)
+        if self.ui.FormActionsComboPDOSz2.isChecked():
+            number_z.append(2)
+        if self.ui.FormActionsComboPDOSz3.isChecked():
+            number_z.append(3)
+        if self.ui.FormActionsComboPDOSz4.isChecked():
+            number_z.append(4)
+        if self.ui.FormActionsComboPDOSz5.isChecked():
+            number_z.append(5)
+        return number_z
+
+    def get_filter_m(self):
         number_m = []
         if self.ui.FormActionsComboPDOSMm7.isChecked():
             number_m.append(-7)
@@ -1668,18 +1653,47 @@ class mainWindow(QMainWindow):
             number_m.append(6)
         if self.ui.FormActionsComboPDOSMp7.isChecked():
             number_m.append(7)
-        number_z = []
-        if self.ui.FormActionsComboPDOSz1.isChecked():
-            number_z.append(1)
-        if self.ui.FormActionsComboPDOSz2.isChecked():
-            number_z.append(2)
-        if self.ui.FormActionsComboPDOSz3.isChecked():
-            number_z.append(3)
-        if self.ui.FormActionsComboPDOSz4.isChecked():
-            number_z.append(4)
-        if self.ui.FormActionsComboPDOSz5.isChecked():
-            number_z.append(5)
-        return atom_index, number_l, number_m, number_n, number_z, species
+        return number_m
+
+    def get_filter_l(self):
+        number_l = []
+        if self.ui.FormActionsComboPDOSL0.isChecked():
+            number_l.append(0)
+        if self.ui.FormActionsComboPDOSL1.isChecked():
+            number_l.append(1)
+        if self.ui.FormActionsComboPDOSL2.isChecked():
+            number_l.append(2)
+        if self.ui.FormActionsComboPDOSL3.isChecked():
+            number_l.append(3)
+        if self.ui.FormActionsComboPDOSL4.isChecked():
+            number_l.append(4)
+        if self.ui.FormActionsComboPDOSL5.isChecked():
+            number_l.append(5)
+        if self.ui.FormActionsComboPDOSL6.isChecked():
+            number_l.append(6)
+        if self.ui.FormActionsComboPDOSL7.isChecked():
+            number_l.append(7)
+        return number_l
+
+    def get_filter_n(self):
+        number_n = []
+        if self.ui.FormActionsComboPDOSn1.isChecked():
+            number_n.append(1)
+        if self.ui.FormActionsComboPDOSn2.isChecked():
+            number_n.append(2)
+        if self.ui.FormActionsComboPDOSn3.isChecked():
+            number_n.append(3)
+        if self.ui.FormActionsComboPDOSn4.isChecked():
+            number_n.append(4)
+        if self.ui.FormActionsComboPDOSn5.isChecked():
+            number_n.append(5)
+        if self.ui.FormActionsComboPDOSn6.isChecked():
+            number_n.append(6)
+        if self.ui.FormActionsComboPDOSn7.isChecked():
+            number_n.append(7)
+        if self.ui.FormActionsComboPDOSn8.isChecked():
+            number_n.append(8)
+        return number_n
 
     def plot_bonds_histogram(self):
         self.ui.PyqtGraphWidget.set_xticks(None)
@@ -1704,7 +1718,12 @@ class mainWindow(QMainWindow):
         file = self.ui.FormActionsLinePDOSfile.text()
         self.ui.Form3Dand2DTabs.setCurrentIndex(1)
         if os.path.exists(file):
-            atom_index, number_l, number_m, number_n, number_z, species = self.pdos_filter()
+            atom_index = self.get_filter_atom()
+            species = self.get_filter_species()
+            number_n = self.get_filter_n()
+            number_l = self.get_filter_l()
+            number_m = self.get_filter_m()
+            number_z = self.get_filter_z()
             pdos, energy = TSIESTA.calc_pdos(file, atom_index, species, number_l, number_m, number_n, number_z)
             e_fermi = TSIESTA.FermiEnergy(self.filename)
             energy -= e_fermi
@@ -1793,10 +1812,10 @@ class mainWindow(QMainWindow):
             str1 = f.readline().split()
             str1 = helpers.list_str_to_float(str1)
             kmin, kmax = float(str1[0]), float(str1[1])
-            self.ui.FormActionsSpinBANDSxmin.setRange(kmin, kmax)
-            self.ui.FormActionsSpinBANDSxmin.setValue(kmin)
-            self.ui.FormActionsSpinBANDSxmax.setRange(kmin, kmax)
-            self.ui.FormActionsSpinBANDSxmax.setValue(kmax)
+            self.ui.spin_bands_xmin.setRange(kmin, kmax)
+            self.ui.spin_bands_xmin.setValue(kmin)
+            self.ui.spin_bands_xmax.setRange(kmin, kmax)
+            self.ui.spin_bands_xmax.setValue(kmax)
 
             str1 = f.readline().split()
             str1 = helpers.list_str_to_float(str1)
@@ -1813,17 +1832,17 @@ class mainWindow(QMainWindow):
 
             e_min_form = -2 if emin < -2 else emin
             e_max_form = 2 if emax > 2 else emax
-            self.ui.FormActionsSpinBANDSemin.setRange(emin, emax)
-            self.ui.FormActionsSpinBANDSemin.setValue(e_min_form)
-            self.ui.FormActionsSpinBANDSemax.setRange(emin, emax)
-            self.ui.FormActionsSpinBANDSemax.setValue(e_max_form)
-            self.ui.FormActionsButtonPlotBANDS.setEnabled(True)
+            self.ui.spin_bands_emin.setRange(emin, emax)
+            self.ui.spin_bands_emin.setValue(e_min_form)
+            self.ui.spin_bands_emax.setRange(emin, emax)
+            self.ui.spin_bands_emax.setValue(e_max_form)
+            self.ui.plot_bands.setEnabled(True)
 
     def plot_bands(self):
         file = self.ui.FormActionsLineBANDSfile.text()
         self.ui.Form3Dand2DTabs.setCurrentIndex(1)
-        kmin, kmax = self.ui.FormActionsSpinBANDSxmin.value(), self.ui.FormActionsSpinBANDSxmax.value()
-        emin, emax = self.ui.FormActionsSpinBANDSemin.value(), self.ui.FormActionsSpinBANDSemax.value()
+        kmin, kmax = self.ui.spin_bands_xmin.value(), self.ui.spin_bands_xmax.value()
+        emin, emax = self.ui.spin_bands_emin.value(), self.ui.spin_bands_emax.value()
         is_check_bands_spin = self.ui.FormActionsCheckBANDSspinUp.isChecked()
         if os.path.exists(file):
             bands, emaxf, eminf, homo, kmesh, lumo, xticklabels, xticks = read_siesta_bands(file, is_check_bands_spin,
@@ -1994,8 +2013,8 @@ class mainWindow(QMainWindow):
             return
         try:
             if name == "":
-                name = QFileDialog.getSaveFileName(self, 'Save File', self.work_dir,
-                                           "PNG files (*.png);;JPG files (*.jpg);;BMP files (*.bmp)")
+                format_str = "PNG files (*.png);;JPG files (*.jpg);;BMP files (*.bmp)"
+                name = QFileDialog.getSaveFileName(self, 'Save File', self.work_dir, format_str)
             fname = name[0]
             ext = ""
             if name[1] == "PNG files (*.png)":
@@ -2042,76 +2061,78 @@ class mainWindow(QMainWindow):
         self.ui.openGLWidget.rotZ -= self.rotation_step
         self.ui.openGLWidget.update()
 
-    def save_active_folder(self): # pragma: no cover
+    def save_active_folder(self):  # pragma: no cover
         self.save_property(SETTINGS_Folder, self.work_dir)
 
-    def save_state_open_only_optimal(self): # pragma: no cover
+    def save_state_open_only_optimal(self):  # pragma: no cover
         self.save_property(SETTINGS_FormSettingsOpeningCheckOnlyOptimal,
                            self.ui.FormSettingsOpeningCheckOnlyOptimal.isChecked())
 
-    def save_state_parse_atomic_properties(self): # pragma: no cover
+    def save_state_parse_atomic_properties(self):  # pragma: no cover
         self.save_property(SETTINGS_FormSettingsParseAtomicProperties,
                            self.ui.FormSettingsParseAtomicProperties.isChecked())
 
-    def save_state_view_show_axes(self): # pragma: no cover
+    def save_state_view_show_axes(self):  # pragma: no cover
         self.save_property(SETTINGS_FormSettingsViewCheckShowAxes,
                            self.ui.FormSettingsViewCheckShowAxes.isChecked())
         self.ui.openGLWidget.set_axes_visible(self.ui.FormSettingsViewCheckShowAxes.isChecked())
 
-    def save_state_view_atom_selection(self): # pragma: no cover
+    def save_state_view_atom_selection(self):  # pragma: no cover
         self.save_property(SETTINGS_FormSettingsViewCheckAtomSelection,
                            self.ui.FormSettingsViewCheckAtomSelection.isChecked())
 
-    def save_state_view_bond_color(self): # pragma: no cover
+    def save_state_view_bond_color(self):  # pragma: no cover
         self.save_property(SETTINGS_FormSettingsViewRadioColorBondsManual,
                            self.ui.FormSettingsViewRadioColorBondsManual.isChecked())
         self.ui.openGLWidget.set_bond_color(self.ui.FormSettingsViewRadioColorBondsManual.isChecked())
 
-    def save_state_xyz_as_critic2(self): # pragma: no cover
-        self.save_property(SETTINGS_FormSettingsViewCheckXYZasCritic2, self.ui.FormSettingsViewCheckXYZasCritic2.isChecked())
+    def save_state_xyz_as_critic2(self):  # pragma: no cover
+        self.save_property(SETTINGS_FormSettingsViewCheckXYZasCritic2,
+                           self.ui.FormSettingsViewCheckXYZasCritic2.isChecked())
 
-    def save_state_view_show_atoms(self): # pragma: no cover
+    def save_state_view_show_atoms(self):  # pragma: no cover
         self.save_property(SETTINGS_FormSettingsViewCheckShowAtoms, self.ui.FormSettingsViewCheckShowAtoms.isChecked())
         self.ui.openGLWidget.set_atoms_visible(self.ui.FormSettingsViewCheckShowAtoms.isChecked())
 
-    def save_state_view_show_atom_number(self): # pragma: no cover
-        self.save_property(SETTINGS_FormSettingsViewCheckShowAtomNumber, self.ui.FormSettingsViewCheckShowAtomNumber.isChecked())
+    def save_state_view_show_atom_number(self):  # pragma: no cover
+        self.save_property(SETTINGS_FormSettingsViewCheckShowAtomNumber,
+                           self.ui.FormSettingsViewCheckShowAtomNumber.isChecked())
         self.ui.openGLWidget.set_atoms_numbred(self.ui.FormSettingsViewCheckShowAtomNumber.isChecked())
 
-    def save_state_action_on_start(self): # pragma: no cover
+    def save_state_action_on_start(self):  # pragma: no cover
         self.save_property(SETTINGS_FormSettingsActionOnStart, self.action_on_start)
 
-    def save_state_view_show_box(self): # pragma: no cover
+    def save_state_view_show_box(self):  # pragma: no cover
         self.save_property(SETTINGS_FormSettingsViewCheckShowBox, self.ui.FormSettingsViewCheckShowBox.isChecked())
         self.ui.openGLWidget.set_box_visible(self.ui.FormSettingsViewCheckShowBox.isChecked())
 
-    def save_state_view_show_bonds(self): # pragma: no cover
+    def save_state_view_show_bonds(self):  # pragma: no cover
         self.save_property(SETTINGS_FormSettingsViewCheckShowBonds, self.ui.FormSettingsViewCheckShowBonds.isChecked())
         self.ui.openGLWidget.set_bonds_visible(self.ui.FormSettingsViewCheckShowBonds.isChecked())
 
-    def save_state_colors_fixed(self): # pragma: no cover
+    def save_state_colors_fixed(self):  # pragma: no cover
         self.save_property(SETTINGS_FormSettingsColorsFixed, self.ui.FormSettingsColorsFixed.isChecked())
 
-    def save_state_view_spin_contour_width(self): # pragma: no cover
+    def save_state_view_spin_contour_width(self):  # pragma: no cover
         self.save_property(SETTINGS_FormSettingsViewSpinContourWidth, self.ui.FormSettingsViewSpinContourWidth.text())
         self.ui.openGLWidget.set_contour_width(self.ui.FormSettingsViewSpinContourWidth.value() / 1000)
         self.plot_contour()
 
-    def save_state_colors_fixed_min(self): # pragma: no cover
+    def save_state_colors_fixed_min(self):  # pragma: no cover
         self.save_property(SETTINGS_FormSettingsColorsFixedMin, self.ui.FormSettingsColorsFixedMin.text())
 
-    def save_state_view_spin_bond_width(self): # pragma: no cover
+    def save_state_view_spin_bond_width(self):  # pragma: no cover
         self.save_property(SETTINGS_FormSettingsViewSpinBondWidth, self.ui.FormSettingsViewSpinBondWidth.text())
         self.ui.openGLWidget.set_bond_width(self.ui.FormSettingsViewSpinBondWidth.value() * 0.005)
 
-    def save_state_colors_fixed_max(self): # pragma: no cover
+    def save_state_colors_fixed_max(self):  # pragma: no cover
         self.save_property(SETTINGS_FormSettingsColorsFixedMax, self.ui.FormSettingsColorsFixedMax.text())
 
-    def save_state_colors_scale(self): # pragma: no cover
+    def save_state_colors_scale(self):  # pragma: no cover
         self.save_property(SETTINGS_FormSettingsColorsScale, self.ui.FormSettingsColorsScale.currentText())
         self.colors_cash = {}
 
-    def save_state_colors_scale_type(self): # pragma: no cover
+    def save_state_colors_scale_type(self):  # pragma: no cover
         self.save_property(SETTINGS_FormSettingsColorsScaleType, self.ui.FormSettingsColorsScaleType.currentText())
         self.colors_cash = {}
 
@@ -2156,7 +2177,7 @@ class mainWindow(QMainWindow):
     def fdf_data_to_form(self):
         try:
             model = self.ui.openGLWidget.get_model()
-            text = self.FDFData.get_all_data(model, self.CoordType, self.units_type, self.LatticeType)
+            text = self.fdf_data.get_all_data(model, self.CoordType, self.units_type, self.LatticeType)
             print(self.CoordType, self.units_type, self.LatticeType)
             self.ui.FormActionsPreTextFDF.setText(text)
         except Exception:
@@ -2178,7 +2199,7 @@ class mainWindow(QMainWindow):
             return
         try:
             model2 = deepcopy(self.models[self.active_model])
-            text = ase.ase_raman_and_ir_script_create(model2, self.FDFData)
+            text = ase.ase_raman_and_ir_script_create(model2, self.fdf_data)
 
             if len(text) > 0:
                 name = QFileDialog.getSaveFileName(self, 'Save File', self.work_dir, "Python file (*.py)")[0]
@@ -2194,10 +2215,12 @@ class mainWindow(QMainWindow):
             if os.path.exists(fname):
                 self.filename = fname
                 self.work_dir = os.path.dirname(fname)
-                raman_text, units_i, raman_inten, raman_en_ev, raman_en_cm, ir_inten, ir_en_ev, ir_en_cm = ase.ase_raman_and_ir_parse(fname)
+                raman_text, units_i, raman_inten, raman_en_ev, raman_en_cm, ir_inten, ir_en_ev, ir_en_cm = \
+                    ase.ase_raman_and_ir_parse(fname)
 
                 for i in range(0, len(raman_inten)):
-                    raman_text += "{0:10.1f} {1:10.1f} {2:10.2f}\n".format(raman_en_ev[i], raman_en_cm[i], raman_inten[i])
+                    raman_text += "{0:10.1f} {1:10.1f} {2:10.2f}\n".format(raman_en_ev[i], raman_en_cm[i],
+                                                                           raman_inten[i])
                 self.ui.FormRamanSpectraText.setPlainText(raman_text)
 
                 ir_text = "meV cm^-1 Intensity " + units_i + "\n"
@@ -2241,7 +2264,7 @@ class mainWindow(QMainWindow):
 
         for i in range(0, len(x)):
             for j in range(0, n):
-                y_fig[j] += y[i] * math.exp(-math.pow(x[i] - x_fig[j], 2) / ( 2 * sigma) )
+                y_fig[j] += y[i] * math.exp(-math.pow(x[i] - x_fig[j], 2) / (2 * sigma))
 
         title = "Spectrum"
         self.ui.PyqtGraphWidget.clear()
@@ -2280,32 +2303,32 @@ class mainWindow(QMainWindow):
         if len(self.models) == 0:
             return
         mendeley = TPeriodTable()
-        nAtoms = int(self.ui.FormActionsPreNAtomsFillSpace.value())
+        n_atoms = int(self.ui.FormActionsPreNAtomsFillSpace.value())
         charge = int(self.ui.FormActionsPreAtomChargeFillSpace.value())
-        radAtom = mendeley.get_rad(charge)
+        rad_atom = mendeley.get_rad(charge)
         let = mendeley.get_let(charge)
         delta = float(self.ui.FormActionsPreDeltaFillSpace.value())
         n_prompts = int(self.ui.FormActionsPreNPromptsFillSpace.value())
-        radTube = float(self.ui.FormActionsPreRadiusFillSpace.value())
+        rad_tube = float(self.ui.FormActionsPreRadiusFillSpace.value())
         length = float(self.ui.FormActionsPreZSizeFillSpace.value())
-        models = Calculator.FillTube(radTube, length, nAtoms, 0.01 * radAtom, delta, n_prompts, let, charge)
+        models = Calculator.fill_tube(rad_tube, length, n_atoms, 0.01 * rad_atom, delta, n_prompts, let, charge)
 
         filename = "."
         try:
             if self.ui.FormActionsPreSaveToFileFillSpace.isChecked():
                 filename = QFileDialog.getSaveFileName(self, 'Save File')[0]
                 filename = filename.split(".fdf")[0]
-        except Exception as e:
-            self.show_error(e)
+        except Exception as exc:
+            self.show_error(exc)
 
         myiter = 0
         for model in models:
-            secondModel = deepcopy(self.ui.openGLWidget.get_model())
+            second_model = deepcopy(self.ui.openGLWidget.get_model())
             for at in model:
-                secondModel.add_atom(at)
-            self.models.append(secondModel)
+                second_model.add_atom(at)
+            self.models.append(second_model)
             if self.ui.FormActionsPreSaveToFileFillSpace.isChecked():
-                text = self.FDFData.get_all_data(secondModel.atoms)
+                text = self.fdf_data.get_all_data(second_model.atoms, self.CoordType, self.units_type, self.LatticeType)
                 with open(filename + str(myiter) + '.fdf', 'w') as f:
                     f.write(text)
             myiter += 1
@@ -2322,7 +2345,7 @@ class mainWindow(QMainWindow):
                 self.fill_volumeric_data(self.volumeric_data)
 
             self.ui.FormActionsPostButSurfaceLoadData.setEnabled(True)
-            self.clearQTreeWidget(self.ui.FormActionsPostTreeSurface2)
+            self.clear_qtree_widget(self.ui.FormActionsPostTreeSurface2)
             self.ui.FormActionsPosEdit3DData2.setText("")
             self.clear_form_isosurface_data2_n()
             self.ui.CalculateTheVolumericDataDifference.setEnabled(False)
@@ -2428,12 +2451,12 @@ class mainWindow(QMainWindow):
         if len(fname) > 0:
             model = self.models[self.active_model]
             bcp = deepcopy(model.bcp)
-            bcp_seleсted = []
+            bcp_selected = []
             for i in range(0, self.ui.FormCPlist.count()):
                 ind = int(self.ui.FormCPlist.item(i).text())
-                bcp_seleсted.append(model.bcp[ind])
+                bcp_selected.append(model.bcp[ind])
             is_with_selected = self.ui.radio_with_cp.isChecked()
-            text = critic2.create_critic2_xyz_file(bcp, bcp_seleсted, is_with_selected, model)
+            text = critic2.create_critic2_xyz_file(bcp, bcp_selected, is_with_selected, model)
             helpers.write_text_to_file(fname, text)
 
     def create_cri_file(self):
