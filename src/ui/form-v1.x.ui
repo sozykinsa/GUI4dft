@@ -297,7 +297,7 @@
                  <x>0</x>
                  <y>0</y>
                  <width>380</width>
-                 <height>582</height>
+                 <height>603</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -641,7 +641,7 @@
                         </widget>
                        </item>
                        <item>
-                        <widget class="QSpinBox" name="FormActionsPreLineSWNTn">
+                        <widget class="QSpinBox" name="spin_swnt_index_n">
                          <property name="value">
                           <number>7</number>
                          </property>
@@ -664,7 +664,7 @@
                         </widget>
                        </item>
                        <item>
-                        <widget class="QSpinBox" name="FormActionsPreLineSWNTm">
+                        <widget class="QSpinBox" name="spin_swnt_index_m">
                          <property name="value">
                           <number>7</number>
                          </property>
@@ -704,16 +704,16 @@
                       <property name="title">
                        <string>Size</string>
                       </property>
-                      <layout class="QVBoxLayout" name="verticalLayout_65">
+                      <layout class="QHBoxLayout" name="horizontalLayout_134">
                        <item>
-                        <widget class="QFrame" name="frame_12">
+                        <widget class="QFrame" name="frame_97">
                          <property name="frameShape">
                           <enum>QFrame::NoFrame</enum>
                          </property>
                          <property name="frameShadow">
                           <enum>QFrame::Raised</enum>
                          </property>
-                         <layout class="QHBoxLayout" name="horizontalLayout_100">
+                         <layout class="QVBoxLayout" name="verticalLayout_65">
                           <item>
                            <widget class="QRadioButton" name="FormActionsPreRadioSWNTuselen">
                             <property name="text">
@@ -725,7 +725,26 @@
                            </widget>
                           </item>
                           <item>
-                           <widget class="QDoubleSpinBox" name="FormActionsPreLineSWNTlen">
+                           <widget class="QRadioButton" name="FormActionsPreRadioSWNTusecell">
+                            <property name="text">
+                             <string>cells</string>
+                            </property>
+                           </widget>
+                          </item>
+                         </layout>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QFrame" name="frame_12">
+                         <property name="frameShape">
+                          <enum>QFrame::NoFrame</enum>
+                         </property>
+                         <property name="frameShadow">
+                          <enum>QFrame::Raised</enum>
+                         </property>
+                         <layout class="QVBoxLayout" name="verticalLayout_98">
+                          <item>
+                           <widget class="QDoubleSpinBox" name="spin_swnt_len">
                             <property name="minimumSize">
                              <size>
                               <width>0</width>
@@ -749,27 +768,8 @@
                             </property>
                            </widget>
                           </item>
-                         </layout>
-                        </widget>
-                       </item>
-                       <item>
-                        <widget class="QFrame" name="frame_97">
-                         <property name="frameShape">
-                          <enum>QFrame::NoFrame</enum>
-                         </property>
-                         <property name="frameShadow">
-                          <enum>QFrame::Raised</enum>
-                         </property>
-                         <layout class="QHBoxLayout" name="horizontalLayout_101">
                           <item>
-                           <widget class="QRadioButton" name="FormActionsPreRadioSWNTusecell">
-                            <property name="text">
-                             <string>cells</string>
-                            </property>
-                           </widget>
-                          </item>
-                          <item>
-                           <widget class="QSpinBox" name="FormActionsPreLineSWNTcells">
+                           <widget class="QSpinBox" name="spin_swnt_cells">
                             <property name="minimumSize">
                              <size>
                               <width>0</width>
@@ -828,7 +828,7 @@
                         </spacer>
                        </item>
                        <item>
-                        <widget class="QPushButton" name="FormActionsPreButSWNTGenerate">
+                        <widget class="QPushButton" name="but_create_nanotube">
                          <property name="text">
                           <string>Create</string>
                          </property>
@@ -7444,8 +7444,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>399</width>
-             <height>675</height>
+             <width>109</width>
+             <height>109</height>
             </rect>
            </property>
            <attribute name="label">
@@ -7475,8 +7475,8 @@ p, li { white-space: pre-wrap; }
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>399</width>
-             <height>644</height>
+             <width>384</width>
+             <height>148</height>
             </rect>
            </property>
            <attribute name="label">
@@ -7531,6 +7531,14 @@ p, li { white-space: pre-wrap; }
            </layout>
           </widget>
           <widget class="QWidget" name="page_14">
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>0</y>
+             <width>399</width>
+             <height>644</height>
+            </rect>
+           </property>
            <attribute name="label">
             <string>Crystal</string>
            </attribute>

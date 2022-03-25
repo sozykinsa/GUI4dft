@@ -115,7 +115,7 @@ class MainForm(QMainWindow):
         self.ui.FormActionsPreButFDFGenerate.clicked.connect(self.fdf_data_to_form)
         self.ui.FormActionsPreButFDFToFile.clicked.connect(self.fdf_data_from_form_to_file)
         self.ui.FormActionsPreButFillSpace.clicked.connect(self.fill_space)
-        self.ui.FormActionsPreButSWNTGenerate.clicked.connect(self.create_swnt)
+        self.ui.but_create_nanotube.clicked.connect(self.create_swnt)
         self.ui.FormActionsPreButBiElementGenerate.clicked.connect(self.create_bi_el_nt)
         self.ui.FormActionsPreButGrapheneGenerate.clicked.connect(self.create_graphene)
         self.ui.FormActionsPostButSurface.clicked.connect(self.plot_surface)
@@ -422,7 +422,8 @@ class MainForm(QMainWindow):
     def add_cell_param(self):
         """ add cell params"""
         try:
-            fname = QFileDialog.getOpenFileName(self, 'Open file', self.work_dir)[0]
+            fname = QFileDialog.getOpenFileName(self, 'Open file', self.work_dir,
+                                                options=QFileDialog.DontUseNativeDialog)[0]
             if Importer.check_format(fname) == "SIESTAout":
                 self.fill_cell_info(fname)
         except Exception as e:
@@ -435,7 +436,8 @@ class MainForm(QMainWindow):
     def add_data_cell_param(self):
         """ add cell params from file"""
         try:
-            fname = QFileDialog.getOpenFileName(self, 'Open file', self.work_dir)[0]
+            fname = QFileDialog.getOpenFileName(self, 'Open file', self.work_dir,
+                                                options=QFileDialog.DontUseNativeDialog)[0]
             self.work_dir = os.path.dirname(fname)
 
             if os.path.exists(fname):
@@ -463,7 +465,8 @@ class MainForm(QMainWindow):
 
     def add_critic2_cro_file(self):
         try:
-            fname = QFileDialog.getOpenFileName(self, 'Open file', self.work_dir)[0]
+            fname = QFileDialog.getOpenFileName(self, 'Open file', self.work_dir,
+                                                options=QFileDialog.DontUseNativeDialog)[0]
             self.work_dir = os.path.dirname(fname)
 
             box_bohr, box_ang, box_deg, cps = check_cro_file(fname)
@@ -502,7 +505,8 @@ class MainForm(QMainWindow):
 
     def add_dos_file(self):
         try:
-            fname = QFileDialog.getOpenFileName(self, 'Open file', self.work_dir)[0]
+            fname = QFileDialog.getOpenFileName(self, 'Open file', self.work_dir,
+                                                options=QFileDialog.DontUseNativeDialog)[0]
             self.work_dir = os.path.dirname(fname)
             self.check_dos(fname)
         except Exception as e:
@@ -534,12 +538,14 @@ class MainForm(QMainWindow):
         self.ui.FormActionsPostButSurfaceDelete.setEnabled(True)
 
     def set_part1_file(self) -> None:
-        fname = QFileDialog.getOpenFileName(self, 'Open file', self.work_dir)[0]
+        fname = QFileDialog.getOpenFileName(self, 'Open file', self.work_dir,
+                                            options=QFileDialog.DontUseNativeDialog)[0]
         if os.path.exists(fname):
             self.ui.part1_file.setText(fname)
 
     def set_part2_file(self) -> None:
-        fname = QFileDialog.getOpenFileName(self, 'Open file', self.work_dir)[0]
+        fname = QFileDialog.getOpenFileName(self, 'Open file', self.work_dir,
+                                            options=QFileDialog.DontUseNativeDialog)[0]
         if os.path.exists(fname):
             self.ui.part2_file.setText(fname)
 
@@ -1112,7 +1118,8 @@ class MainForm(QMainWindow):
         return QColor.fromRgb(0, 0, 0, 1).getRgbF()
 
     def get_fdf_file_name(self):
-        fname = QFileDialog.getOpenFileName(self, 'Open file', self.work_dir, "FDF files (*.fdf)")[0]
+        fname = QFileDialog.getOpenFileName(self, 'Open file', self.work_dir, "FDF files (*.fdf)",
+                                            options=QFileDialog.DontUseNativeDialog)[0]
         if not fname.endswith(".fdf"):
             fname += ".fdf"
         return fname
@@ -1242,7 +1249,7 @@ class MainForm(QMainWindow):
 
         self.action_on_start = str(settings.value(SETTINGS_FormSettingsActionOnStart, 'Nothing'))
 
-    def menu_export(self):
+    def menu_export(self):  # pragma: no cover
         if self.ui.openGLWidget.main_model.nAtoms() > 0:
             try:
                 format = "FDF files (*.fdf);;XYZ files (*.xyz);;FireFly input files (*.inp);;VASP POSCAR file (POSCAR)"
@@ -1255,7 +1262,7 @@ class MainForm(QMainWindow):
                 self.show_error(e)
 
     @staticmethod
-    def export_to_file(model, fname):
+    def export_to_file(model, fname):  # pragma: no cover
         if fname.find("POSCAR") >= 0:
             fname = fname.split(".")[0]
             model.toVASPposcar(fname)
@@ -1266,19 +1273,20 @@ class MainForm(QMainWindow):
         if fname.endswith(".xyz"):
             model.toSIESTAxyz(fname)
 
-    def menu_open(self, fname=False):
-        if len(self.models) > 0:
+    def menu_open(self, file_name=False):
+        if len(self.models) > 0:   # pragma: no cover
             self.action_on_start = 'Open'
             self.save_state_action_on_start()
             os.execl(sys.executable, sys.executable, *sys.argv)
         self.ui.Form3Dand2DTabs.setCurrentIndex(0)
-        if not fname:
-            fname = QFileDialog.getOpenFileName(self, 'Open file', self.work_dir)[0]
-        if os.path.exists(fname):
-            self.filename = fname
-            self.work_dir = os.path.dirname(fname)
+        if not file_name:
+            file_name = QFileDialog.getOpenFileName(self, 'Open file', self.work_dir,
+                                                    options=QFileDialog.DontUseNativeDialog)[0]
+        if os.path.exists(file_name):
+            self.filename = file_name
+            self.work_dir = os.path.dirname(file_name)
             try:
-                self.get_atomic_model_and_fdf(fname)
+                self.get_atomic_model_and_fdf(file_name)
             except Exception as e:
                 self.show_error(e)
 
@@ -1317,25 +1325,25 @@ class MainForm(QMainWindow):
                 self.fill_gui()
                 self.save_active_folder()
 
-    def menu_ortho(self):
+    def menu_ortho(self):  # pragma: no cover
         self.ui.openGLWidget.ViewOrtho = True
         self.ui.openGLWidget.update()
 
-    def menu_perspective(self):
+    def menu_perspective(self):  # pragma: no cover
         self.ui.openGLWidget.ViewOrtho = False
         self.ui.openGLWidget.update()
 
-    def menu_show_box(self):
+    def menu_show_box(self):  # pragma: no cover
         self.ui.FormSettingsViewCheckShowBox.isChecked(True)
         self.ui.openGLWidget.ViewBox = True
         self.ui.openGLWidget.update()
 
-    def menu_hide_box(self):
+    def menu_hide_box(self):  # pragma: no cover
         self.ui.FormSettingsViewCheckShowBox.isChecked(False)
         self.ui.openGLWidget.ViewBox = False
         self.ui.openGLWidget.update()
 
-    def menu_about(self):
+    def menu_about(self):  # pragma: no cover
         about_win = QDialog(self)
         about_win.ui = Ui_about()
         about_win.ui.setupUi(about_win)
@@ -2034,8 +2042,8 @@ class MainForm(QMainWindow):
                 new_window.destroy()
                 self.work_dir = os.path.dirname(fname)
                 self.save_active_folder()
-        except Exception as e:
-            self.show_error(e)
+        except Exception as excep:
+            self.show_error(excep)
 
     def rotate_model_xp(self):
         self.ui.openGLWidget.rotX += self.rotation_step
@@ -2136,22 +2144,22 @@ class MainForm(QMainWindow):
         self.save_property(SETTINGS_FormSettingsColorsScaleType, self.ui.FormSettingsColorsScaleType.currentText())
         self.colors_cash = {}
 
-    def save_state_preferred_coordinates(self):
+    def save_state_preferred_coordinates(self):  # pragma: no cover
         self.save_property(SETTINGS_FormSettingsPreferredCoordinates,
                            self.ui.FormSettingsPreferredCoordinates.currentText())
         self.CoordType = self.ui.FormSettingsPreferredCoordinates.currentText()
 
-    def save_state_preferred_units(self):
+    def save_state_preferred_units(self):  # pragma: no cover
         self.save_property(SETTINGS_FormSettingsPreferredUnits,
                            self.ui.FormSettingsPreferredUnits.currentText())
         self.units_type = self.ui.FormSettingsPreferredUnits.currentText()
 
-    def save_state_preferred_lattice(self):
+    def save_state_preferred_lattice(self):  # pragma: no cover
         self.save_property(SETTINGS_FormSettingsPreferredLattice, self.ui.FormSettingsPreferredLattice.currentText())
         self.LatticeType = self.ui.FormSettingsPreferredLattice.currentText()
 
     @staticmethod
-    def save_property(var_property, value):
+    def save_property(var_property, value):  # pragma: no cover
         settings = QSettings()
         settings.setValue(var_property, value)
         settings.sync()
@@ -2183,7 +2191,7 @@ class MainForm(QMainWindow):
         except Exception:
             print("There are no atoms in the model")
 
-    def fdf_data_from_form_to_file(self):
+    def fdf_data_from_form_to_file(self):  # pragma: no cover
         try:
             text = self.ui.FormActionsPreTextFDF.toPlainText()
             if len(text) > 0:
@@ -2194,7 +2202,7 @@ class MainForm(QMainWindow):
         except Exception as e:
             self.show_error(e)
 
-    def ase_raman_and_ir_script_create(self):
+    def ase_raman_and_ir_script_create(self):  # pragma: no cover
         if len(self.models) == 0:
             return
         try:
@@ -2211,7 +2219,8 @@ class MainForm(QMainWindow):
 
     def ase_raman_and_ir_parse(self):
         try:
-            fname = QFileDialog.getOpenFileName(self, 'Open file', self.work_dir)[0]
+            fname = QFileDialog.getOpenFileName(self, 'Open file', self.work_dir,
+                                                options=QFileDialog.DontUseNativeDialog)[0]
             if os.path.exists(fname):
                 self.filename = fname
                 self.work_dir = os.path.dirname(fname)
@@ -2271,7 +2280,7 @@ class MainForm(QMainWindow):
         self.ui.Form3Dand2DTabs.setCurrentIndex(1)
         self.ui.PyqtGraphWidget.plot([x_fig], [y_fig], [None], title, x_title, y_title, True)
 
-    def d12_to_file(self):
+    def d12_to_file(self):  # pragma: no cover
         if len(self.models) == 0:
             return
         try:
@@ -2337,25 +2346,28 @@ class MainForm(QMainWindow):
     def parse_volumeric_data(self):
         if len(self.ui.FormActionsPostList3DData.selectedItems()) > 0:
             selected = self.ui.FormActionsPostList3DData.selectedItems()[0].text()
-            if selected.endswith(".XSF"):
-                self.volumeric_data = XSF()
-            if selected.endswith(".cube"):
-                self.volumeric_data = GaussianCube()
-            if self.volumeric_data.parse(selected):
-                self.fill_volumeric_data(self.volumeric_data)
+            self.parse_volumeric_data_selected(selected)
 
-            self.ui.FormActionsPostButSurfaceLoadData.setEnabled(True)
-            self.clear_qtree_widget(self.ui.FormActionsPostTreeSurface2)
-            self.ui.FormActionsPosEdit3DData2.setText("")
-            self.clear_form_isosurface_data2_n()
-            self.ui.CalculateTheVolumericDataDifference.setEnabled(False)
-            self.ui.CalculateTheVolumericDataSum.setEnabled(False)
-            self.ui.VolumrricDataGrid2.setTitle("Grid")
-            self.ui.FormActionsPostButSurfaceLoadData2.setEnabled(False)
+    def parse_volumeric_data_selected(self, selected):
+        if selected.endswith(".XSF"):
+            self.volumeric_data = XSF()
+        if selected.endswith(".cube"):
+            self.volumeric_data = GaussianCube()
+        if self.volumeric_data.parse(selected):
+            self.fill_volumeric_data(self.volumeric_data)
+        self.ui.FormActionsPostButSurfaceLoadData.setEnabled(True)
+        self.clear_qtree_widget(self.ui.FormActionsPostTreeSurface2)
+        self.ui.FormActionsPosEdit3DData2.setText("")
+        self.clear_form_isosurface_data2_n()
+        self.ui.CalculateTheVolumericDataDifference.setEnabled(False)
+        self.ui.CalculateTheVolumericDataSum.setEnabled(False)
+        self.ui.VolumrricDataGrid2.setTitle("Grid")
+        self.ui.FormActionsPostButSurfaceLoadData2.setEnabled(False)
 
     def parse_volumeric_data2(self):
         try:
-            fname = QFileDialog.getOpenFileName(self, 'Open file', self.work_dir)
+            fname = QFileDialog.getOpenFileName(self, 'Open file', self.work_dir,
+                                                options=QFileDialog.DontUseNativeDialog)
             if len(fname) > 0:
                 fname = fname[0]
                 if fname.endswith(".XSF"):
@@ -2400,12 +2412,12 @@ class MainForm(QMainWindow):
         at_color = [color.getRgbF()[0], color.getRgbF()[1], color.getRgbF()[2]]
         table.item(i, 0).setBackground(QColor.fromRgbF(at_color[0], at_color[1], at_color[2], 1))
 
-    def select_isosurface_color(self):
+    def select_isosurface_color(self):  # pragma: no cover
         table = self.ui.IsosurfaceColorsTable
         self.change_color_of_cell_prompt(table)
         self.is_scaled_colors_for_surface = False
 
-    def select_atom_color(self):
+    def select_atom_color(self):  # pragma: no cover
         table = self.ui.ColorsOfAtomsTable
         self.change_color_of_cell_prompt(table)
 
@@ -2423,7 +2435,7 @@ class MainForm(QMainWindow):
         if self.ui.openGLWidget.main_model.nAtoms() > 0:
             self.ui.openGLWidget.set_color_of_atoms(atomscolor)
 
-    def select_box_color(self):
+    def select_box_color(self):  # pragma: no cover
         boxcolor = self.change_color(self.ui.ColorBox, SETTINGS_Color_Of_Box)
         self.ui.openGLWidget.set_color_of_box(boxcolor)
 
@@ -2444,7 +2456,7 @@ class MainForm(QMainWindow):
         itemrow = self.ui.FormCPlist.currentRow()
         self.ui.FormCPlist.takeItem(itemrow)
 
-    def create_critic2_xyz_file(self):
+    def create_critic2_xyz_file(self):  # pragma: no cover
         """ add code here"""
         name = QFileDialog.getSaveFileName(self, 'Save File', self.work_dir)
         fname = name[0]
@@ -2459,7 +2471,7 @@ class MainForm(QMainWindow):
             text = critic2.create_critic2_xyz_file(bcp, bcp_selected, is_with_selected, model)
             helpers.write_text_to_file(fname, text)
 
-    def create_cri_file(self):
+    def create_cri_file(self):  # pragma: no cover
         name = QFileDialog.getSaveFileName(self, 'Save File', self.work_dir)
         extra_points = self.ui.FormExtraPoints.value() + 1
         is_form_bp = self.ui.formCriticBPradio.isChecked()
@@ -2503,19 +2515,19 @@ class MainForm(QMainWindow):
             helpers.write_text_to_file(fname_dir + "/POINTS.txt", te)
             helpers.write_text_to_file(fname_dir + "/POINTSatoms.txt", text)
 
-    def select_voronoi_color(self):
+    def select_voronoi_color(self):  # pragma: no cover
         voronoicolor = self.change_color(self.ui.ColorVoronoi, SETTINGS_Color_Of_Voronoi)
         self.ui.openGLWidget.set_color_of_voronoi(voronoicolor)
 
-    def select_bond_color(self):
+    def select_bond_color(self):  # pragma: no cover
         bondscolor = self.change_color(self.ui.ColorBond, SETTINGS_Color_Of_Bonds)
         self.ui.openGLWidget.set_color_of_bonds(bondscolor)
 
-    def select_axes_color(self):
+    def select_axes_color(self):  # pragma: no cover
         axescolor = self.change_color(self.ui.ColorAxes, SETTINGS_Color_Of_Axes)
         self.ui.openGLWidget.set_color_of_axes(axescolor)
 
-    def select_contour_color(self):
+    def select_contour_color(self):  # pragma: no cover
         self.change_color(self.ui.ColorContour, SETTINGS_Color_Of_Contour)
         self.plot_contour()
 
@@ -2533,8 +2545,8 @@ class MainForm(QMainWindow):
 
     def create_swnt(self):
         tube_type = 0
-        n = self.ui.FormActionsPreLineSWNTn.value()
-        m = self.ui.FormActionsPreLineSWNTm.value()
+        n = self.ui.spin_swnt_index_n.value()
+        m = self.ui.spin_swnt_index_m.value()
         if self.ui.FormActionsPreRadioSWNTcap.isChecked() or self.ui.FormActionsPreRadioSWNTcap_2.isChecked():
             nm = self.ui.FormActionsPreComboSWNTind.currentText().split(",")
             n = int(nm[0].split("(")[1])
@@ -2546,11 +2558,11 @@ class MainForm(QMainWindow):
         if self.ui.createSWGNTradio.isChecked():
             tube_type = 3
         if self.ui.FormActionsPreRadioSWNTuselen.isChecked():
-            leng = float(self.ui.FormActionsPreLineSWNTlen.text())
+            leng = float(self.ui.spin_swnt_len.text())
             cells = 1
         else:
             leng = 0
-            cells = float(self.ui.FormActionsPreLineSWNTcells.text())
+            cells = int(self.ui.spin_swnt_cells.text())
 
         model = None
         if tube_type == 0:
@@ -2589,15 +2601,15 @@ class MainForm(QMainWindow):
         self.fill_gui("Bi element NT-model")
 
     def swnt_type1_selected(self):
-        self.ui.FormActionsPreLineSWNTn.setEnabled(True)
-        self.ui.FormActionsPreLineSWNTm.setEnabled(True)
+        self.ui.spin_swnt_index_n.setEnabled(True)
+        self.ui.spin_swnt_index_m.setEnabled(True)
         self.ui.FormActionsPreComboSWNTind.setEnabled(False)
         self.ui.FormCreateGroupFirstCap.setEnabled(False)
         self.ui.FormCreateGroupSecondCap.setEnabled(False)
 
     def swnt_type2_selected(self):
-        self.ui.FormActionsPreLineSWNTn.setEnabled(False)
-        self.ui.FormActionsPreLineSWNTm.setEnabled(False)
+        self.ui.spin_swnt_index_n.setEnabled(False)
+        self.ui.spin_swnt_index_m.setEnabled(False)
         self.ui.FormActionsPreComboSWNTind.setEnabled(True)
         self.ui.FormCreateGroupFirstCap.setEnabled(True)
         if self.ui.FormActionsPreRadioSWNTcap_2.isChecked():
@@ -2617,6 +2629,9 @@ class MainForm(QMainWindow):
 
     def volumeric_data_load(self):   # pragma: no cover
         selected_items = self.ui.FormActionsPostTreeSurface.selectedItems()
+        self.volumeric_data_load_selected(selected_items)
+
+    def volumeric_data_load_selected(self, selected_items):
         if selected_items:
             if not (selected_items[0].parent() is None):
                 child_node = selected_items[0].text(0)

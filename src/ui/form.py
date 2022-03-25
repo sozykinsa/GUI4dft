@@ -188,7 +188,7 @@ class Ui_MainWindow(object):
         self.toolBox.addItem(self.page_17, u"Graphene")
         self.page_4 = QWidget()
         self.page_4.setObjectName(u"page_4")
-        self.page_4.setGeometry(QRect(0, 0, 380, 582))
+        self.page_4.setGeometry(QRect(0, 0, 380, 603))
         self.verticalLayout_95 = QVBoxLayout(self.page_4)
         self.verticalLayout_95.setObjectName(u"verticalLayout_95")
         self.tabWidget_11 = QTabWidget(self.page_4)
@@ -366,11 +366,11 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_30.addWidget(self.label_9)
 
-        self.FormActionsPreLineSWNTn = QSpinBox(self.groupBox_8)
-        self.FormActionsPreLineSWNTn.setObjectName(u"FormActionsPreLineSWNTn")
-        self.FormActionsPreLineSWNTn.setValue(7)
+        self.spin_swnt_index_n = QSpinBox(self.groupBox_8)
+        self.spin_swnt_index_n.setObjectName(u"spin_swnt_index_n")
+        self.spin_swnt_index_n.setValue(7)
 
-        self.horizontalLayout_30.addWidget(self.FormActionsPreLineSWNTn)
+        self.horizontalLayout_30.addWidget(self.spin_swnt_index_n)
 
         self.label_23 = QLabel(self.groupBox_8)
         self.label_23.setObjectName(u"label_23")
@@ -379,11 +379,11 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_30.addWidget(self.label_23)
 
-        self.FormActionsPreLineSWNTm = QSpinBox(self.groupBox_8)
-        self.FormActionsPreLineSWNTm.setObjectName(u"FormActionsPreLineSWNTm")
-        self.FormActionsPreLineSWNTm.setValue(7)
+        self.spin_swnt_index_m = QSpinBox(self.groupBox_8)
+        self.spin_swnt_index_m.setObjectName(u"spin_swnt_index_m")
+        self.spin_swnt_index_m.setValue(7)
 
-        self.horizontalLayout_30.addWidget(self.FormActionsPreLineSWNTm)
+        self.horizontalLayout_30.addWidget(self.spin_swnt_index_m)
 
         self.label_44 = QLabel(self.groupBox_8)
         self.label_44.setObjectName(u"label_44")
@@ -403,54 +403,54 @@ class Ui_MainWindow(object):
         self.groupBox_2.setObjectName(u"groupBox_2")
         self.groupBox_2.setMinimumSize(QSize(0, 0))
         self.groupBox_2.setMaximumSize(QSize(16777215, 16777215))
-        self.verticalLayout_65 = QVBoxLayout(self.groupBox_2)
-        self.verticalLayout_65.setObjectName(u"verticalLayout_65")
-        self.frame_12 = QFrame(self.groupBox_2)
-        self.frame_12.setObjectName(u"frame_12")
-        self.frame_12.setFrameShape(QFrame.NoFrame)
-        self.frame_12.setFrameShadow(QFrame.Raised)
-        self.horizontalLayout_100 = QHBoxLayout(self.frame_12)
-        self.horizontalLayout_100.setObjectName(u"horizontalLayout_100")
-        self.FormActionsPreRadioSWNTuselen = QRadioButton(self.frame_12)
-        self.FormActionsPreRadioSWNTuselen.setObjectName(u"FormActionsPreRadioSWNTuselen")
-        self.FormActionsPreRadioSWNTuselen.setChecked(True)
-
-        self.horizontalLayout_100.addWidget(self.FormActionsPreRadioSWNTuselen)
-
-        self.FormActionsPreLineSWNTlen = QDoubleSpinBox(self.frame_12)
-        self.FormActionsPreLineSWNTlen.setObjectName(u"FormActionsPreLineSWNTlen")
-        self.FormActionsPreLineSWNTlen.setMinimumSize(QSize(0, 24))
-        self.FormActionsPreLineSWNTlen.setMaximumSize(QSize(16777215, 24))
-        self.FormActionsPreLineSWNTlen.setLocale(QLocale(QLocale.English, QLocale.UnitedStates))
-        self.FormActionsPreLineSWNTlen.setSingleStep(0.500000000000000)
-        self.FormActionsPreLineSWNTlen.setValue(9.800000000000001)
-
-        self.horizontalLayout_100.addWidget(self.FormActionsPreLineSWNTlen)
-
-
-        self.verticalLayout_65.addWidget(self.frame_12)
-
+        self.horizontalLayout_134 = QHBoxLayout(self.groupBox_2)
+        self.horizontalLayout_134.setObjectName(u"horizontalLayout_134")
         self.frame_97 = QFrame(self.groupBox_2)
         self.frame_97.setObjectName(u"frame_97")
         self.frame_97.setFrameShape(QFrame.NoFrame)
         self.frame_97.setFrameShadow(QFrame.Raised)
-        self.horizontalLayout_101 = QHBoxLayout(self.frame_97)
-        self.horizontalLayout_101.setObjectName(u"horizontalLayout_101")
+        self.verticalLayout_65 = QVBoxLayout(self.frame_97)
+        self.verticalLayout_65.setObjectName(u"verticalLayout_65")
+        self.FormActionsPreRadioSWNTuselen = QRadioButton(self.frame_97)
+        self.FormActionsPreRadioSWNTuselen.setObjectName(u"FormActionsPreRadioSWNTuselen")
+        self.FormActionsPreRadioSWNTuselen.setChecked(True)
+
+        self.verticalLayout_65.addWidget(self.FormActionsPreRadioSWNTuselen)
+
         self.FormActionsPreRadioSWNTusecell = QRadioButton(self.frame_97)
         self.FormActionsPreRadioSWNTusecell.setObjectName(u"FormActionsPreRadioSWNTusecell")
 
-        self.horizontalLayout_101.addWidget(self.FormActionsPreRadioSWNTusecell)
-
-        self.FormActionsPreLineSWNTcells = QSpinBox(self.frame_97)
-        self.FormActionsPreLineSWNTcells.setObjectName(u"FormActionsPreLineSWNTcells")
-        self.FormActionsPreLineSWNTcells.setMinimumSize(QSize(0, 24))
-        self.FormActionsPreLineSWNTcells.setMaximumSize(QSize(16777215, 24))
-        self.FormActionsPreLineSWNTcells.setValue(1)
-
-        self.horizontalLayout_101.addWidget(self.FormActionsPreLineSWNTcells)
+        self.verticalLayout_65.addWidget(self.FormActionsPreRadioSWNTusecell)
 
 
-        self.verticalLayout_65.addWidget(self.frame_97)
+        self.horizontalLayout_134.addWidget(self.frame_97)
+
+        self.frame_12 = QFrame(self.groupBox_2)
+        self.frame_12.setObjectName(u"frame_12")
+        self.frame_12.setFrameShape(QFrame.NoFrame)
+        self.frame_12.setFrameShadow(QFrame.Raised)
+        self.verticalLayout_98 = QVBoxLayout(self.frame_12)
+        self.verticalLayout_98.setObjectName(u"verticalLayout_98")
+        self.spin_swnt_len = QDoubleSpinBox(self.frame_12)
+        self.spin_swnt_len.setObjectName(u"spin_swnt_len")
+        self.spin_swnt_len.setMinimumSize(QSize(0, 24))
+        self.spin_swnt_len.setMaximumSize(QSize(16777215, 24))
+        self.spin_swnt_len.setLocale(QLocale(QLocale.English, QLocale.UnitedStates))
+        self.spin_swnt_len.setSingleStep(0.500000000000000)
+        self.spin_swnt_len.setValue(9.800000000000001)
+
+        self.verticalLayout_98.addWidget(self.spin_swnt_len)
+
+        self.spin_swnt_cells = QSpinBox(self.frame_12)
+        self.spin_swnt_cells.setObjectName(u"spin_swnt_cells")
+        self.spin_swnt_cells.setMinimumSize(QSize(0, 24))
+        self.spin_swnt_cells.setMaximumSize(QSize(16777215, 24))
+        self.spin_swnt_cells.setValue(1)
+
+        self.verticalLayout_98.addWidget(self.spin_swnt_cells)
+
+
+        self.horizontalLayout_134.addWidget(self.frame_12)
 
 
         self.verticalLayout_94.addWidget(self.groupBox_2)
@@ -467,10 +467,10 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_13.addItem(self.horizontalSpacer_15)
 
-        self.FormActionsPreButSWNTGenerate = QPushButton(self.frame_23)
-        self.FormActionsPreButSWNTGenerate.setObjectName(u"FormActionsPreButSWNTGenerate")
+        self.but_create_nanotube = QPushButton(self.frame_23)
+        self.but_create_nanotube.setObjectName(u"but_create_nanotube")
 
-        self.horizontalLayout_13.addWidget(self.FormActionsPreButSWNTGenerate)
+        self.horizontalLayout_13.addWidget(self.but_create_nanotube)
 
         self.horizontalSpacer_16 = QSpacerItem(115, 17, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
@@ -3986,7 +3986,7 @@ class Ui_MainWindow(object):
         self.toolBox_4.setObjectName(u"toolBox_4")
         self.page_9 = QWidget()
         self.page_9.setObjectName(u"page_9")
-        self.page_9.setGeometry(QRect(0, 0, 399, 675))
+        self.page_9.setGeometry(QRect(0, 0, 109, 109))
         self.verticalLayout_72 = QVBoxLayout(self.page_9)
         self.verticalLayout_72.setObjectName(u"verticalLayout_72")
         self.textBrowser = QTextBrowser(self.page_9)
@@ -3998,7 +3998,7 @@ class Ui_MainWindow(object):
         self.toolBox_4.addItem(self.page_9, u"Import")
         self.page_10 = QWidget()
         self.page_10.setObjectName(u"page_10")
-        self.page_10.setGeometry(QRect(0, 0, 399, 644))
+        self.page_10.setGeometry(QRect(0, 0, 384, 148))
         self.verticalLayout_75 = QVBoxLayout(self.page_10)
         self.verticalLayout_75.setObjectName(u"verticalLayout_75")
         self.groupBox_11 = QGroupBox(self.page_10)
@@ -4032,6 +4032,7 @@ class Ui_MainWindow(object):
         self.toolBox_4.addItem(self.page_10, u"Export")
         self.page_14 = QWidget()
         self.page_14.setObjectName(u"page_14")
+        self.page_14.setGeometry(QRect(0, 0, 399, 644))
         self.verticalLayout_97 = QVBoxLayout(self.page_14)
         self.verticalLayout_97.setObjectName(u"verticalLayout_97")
         self.groupBox_29 = QGroupBox(self.page_14)
@@ -5684,7 +5685,7 @@ class Ui_MainWindow(object):
         self.groupBox_2.setTitle(QCoreApplication.translate("MainWindow", u"Size", None))
         self.FormActionsPreRadioSWNTuselen.setText(QCoreApplication.translate("MainWindow", u"lenght (A)", None))
         self.FormActionsPreRadioSWNTusecell.setText(QCoreApplication.translate("MainWindow", u"cells", None))
-        self.FormActionsPreButSWNTGenerate.setText(QCoreApplication.translate("MainWindow", u"Create", None))
+        self.but_create_nanotube.setText(QCoreApplication.translate("MainWindow", u"Create", None))
         self.tabWidget_11.setTabText(self.tabWidget_11.indexOf(self.tab_36), QCoreApplication.translate("MainWindow", u"SWNT", None))
         self.label_88.setText(QCoreApplication.translate("MainWindow", u"Nanotube type", None))
         self.groupBox_31.setTitle(QCoreApplication.translate("MainWindow", u"Chirality", None))
