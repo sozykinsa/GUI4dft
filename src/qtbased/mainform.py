@@ -538,14 +538,12 @@ class MainForm(QMainWindow):
         self.ui.FormActionsPostButSurfaceDelete.setEnabled(True)
 
     def set_part1_file(self) -> None:
-        fname = QFileDialog.getOpenFileName(self, 'Open file', self.work_dir,
-                                            options=QFileDialog.DontUseNativeDialog)[0]
+        fname = self.get_file_name_from_save_dialog("All files (*.*)")
         if os.path.exists(fname):
             self.ui.part1_file.setText(fname)
 
     def set_part2_file(self) -> None:
-        fname = QFileDialog.getOpenFileName(self, 'Open file', self.work_dir,
-                                            options=QFileDialog.DontUseNativeDialog)[0]
+        fname = self.get_file_name_from_save_dialog("All files (*.*)")
         if os.path.exists(fname):
             self.ui.part2_file.setText(fname)
 
@@ -847,9 +845,17 @@ class MainForm(QMainWindow):
         self.models.append(self.ui.openGLWidget.main_model)
         self.model_to_screen(-1)
 
+    def get_file_name_from_save_dialog(self, file_mask):  # pragma: no cover
+        return QFileDialog.getSaveFileName(self, 'Save File', self.work_dir, file_mask,
+                                           options=QFileDialog.DontUseNativeDialog)[0]
+
+    def get_file_name_from_open_dialog(self, file_mask):  # pragma: no cover
+        return QFileDialog.getOpenFileName(self, 'Open file', self.work_dir, file_mask,
+                                           options=QFileDialog.DontUseNativeDialog)[0]
+
     def export_volumeric_data_to_xsf(self):
         try:
-            fname = QFileDialog.getSaveFileName(self, 'Save File', self.work_dir, "XSF files (*.XSF)")[0]
+            fname = self.get_file_name_from_save_dialog("XSF files (*.XSF)")
             x1 = self.ui.FormVolDataExportX1.value()
             x2 = self.ui.FormVolDataExportX2.value()
             y1 = self.ui.FormVolDataExportY1.value()
@@ -862,7 +868,8 @@ class MainForm(QMainWindow):
 
     def export_volumeric_data_to_cube(self):
         try:
-            fname = QFileDialog.getSaveFileName(self, 'Save File', self.work_dir, "cube files (*.cube)")[0]
+            fname = QFileDialog.getSaveFileName(self, 'Save File', self.work_dir, "cube files (*.cube)",
+                                                options=QFileDialog.DontUseNativeDialog)[0]
             x1 = self.ui.FormVolDataExportX1.value()
             x2 = self.ui.FormVolDataExportX2.value()
             y1 = self.ui.FormVolDataExportY1.value()
@@ -1117,9 +1124,8 @@ class MainForm(QMainWindow):
             return cmap((math.log10(value) - math.log10(minv)) / (math.log10(maxv) - math.log10(minv)))
         return QColor.fromRgb(0, 0, 0, 1).getRgbF()
 
-    def get_fdf_file_name(self):
-        fname = QFileDialog.getOpenFileName(self, 'Open file', self.work_dir, "FDF files (*.fdf)",
-                                            options=QFileDialog.DontUseNativeDialog)[0]
+    def get_fdf_file_name(self):  # pragma: no cover
+        fname = self.get_file_name_from_open_dialog("FDF files (*.fdf)")
         if not fname.endswith(".fdf"):
             fname += ".fdf"
         return fname
@@ -1253,8 +1259,7 @@ class MainForm(QMainWindow):
         if self.ui.openGLWidget.main_model.nAtoms() > 0:
             try:
                 format = "FDF files (*.fdf);;XYZ files (*.xyz);;FireFly input files (*.inp);;VASP POSCAR file (POSCAR)"
-                long_name = QFileDialog.getSaveFileName(self, 'Save File', self.work_dir, format)
-                fname = long_name[0]
+                fname = self.get_file_name_from_save_dialog(format)
                 self.export_to_file(self.models[self.active_model], fname)
                 self.work_dir = os.path.dirname(fname)
                 self.save_active_folder()
@@ -1280,8 +1285,7 @@ class MainForm(QMainWindow):
             os.execl(sys.executable, sys.executable, *sys.argv)
         self.ui.Form3Dand2DTabs.setCurrentIndex(0)
         if not file_name:
-            file_name = QFileDialog.getOpenFileName(self, 'Open file', self.work_dir,
-                                                    options=QFileDialog.DontUseNativeDialog)[0]
+            file_name = self.get_file_name_from_open_dialog("All files (*.*)")
         if os.path.exists(file_name):
             self.filename = file_name
             self.work_dir = os.path.dirname(file_name)
@@ -2022,7 +2026,8 @@ class MainForm(QMainWindow):
         try:
             if name == "":
                 format_str = "PNG files (*.png);;JPG files (*.jpg);;BMP files (*.bmp)"
-                name = QFileDialog.getSaveFileName(self, 'Save File', self.work_dir, format_str)
+                name = QFileDialog.getSaveFileName(self, 'Save File', self.work_dir, format_str,
+                                                   options=QFileDialog.DontUseNativeDialog)
             fname = name[0]
             ext = ""
             if name[1] == "PNG files (*.png)":
@@ -2195,7 +2200,8 @@ class MainForm(QMainWindow):
         try:
             text = self.ui.FormActionsPreTextFDF.toPlainText()
             if len(text) > 0:
-                name = QFileDialog.getSaveFileName(self, 'Save File', self.work_dir, "FDF files (*.fdf)")[0]
+                name = QFileDialog.getSaveFileName(self, 'Save File', self.work_dir, "FDF files (*.fdf)",
+                                                   options=QFileDialog.DontUseNativeDialog)[0]
                 if len(name) > 0:
                     with open(name, 'w') as f:
                         f.write(text)
@@ -2210,7 +2216,8 @@ class MainForm(QMainWindow):
             text = ase.ase_raman_and_ir_script_create(model2, self.fdf_data)
 
             if len(text) > 0:
-                name = QFileDialog.getSaveFileName(self, 'Save File', self.work_dir, "Python file (*.py)")[0]
+                name = QFileDialog.getSaveFileName(self, 'Save File', self.work_dir, "Python file (*.py)",
+                                                   options=QFileDialog.DontUseNativeDialog)[0]
                 if len(name) > 0:
                     with open(name, 'w') as f:
                         f.write(text)
@@ -2301,7 +2308,8 @@ class MainForm(QMainWindow):
                     z = str(model1.atoms[i].y)
                     text += "2" + str(ch) + "   " + x + "   " + y + "   " + z + "\n"
             if len(text) > 0:
-                name = QFileDialog.getSaveFileName(self, 'Save File', self.work_dir, "Crystal d12 (*.d12)")[0]
+                name = QFileDialog.getSaveFileName(self, 'Save File', self.work_dir, "Crystal d12 (*.d12)",
+                                                   options=QFileDialog.DontUseNativeDialog)[0]
                 if len(name) > 0:
                     with open(name, 'w') as f:
                         f.write(text)
@@ -2325,7 +2333,7 @@ class MainForm(QMainWindow):
         filename = "."
         try:
             if self.ui.FormActionsPreSaveToFileFillSpace.isChecked():
-                filename = QFileDialog.getSaveFileName(self, 'Save File')[0]
+                filename = QFileDialog.getSaveFileName(self, 'Save File', options=QFileDialog.DontUseNativeDialog)[0]
                 filename = filename.split(".fdf")[0]
         except Exception as exc:
             self.show_error(exc)
@@ -2458,7 +2466,7 @@ class MainForm(QMainWindow):
 
     def create_critic2_xyz_file(self):  # pragma: no cover
         """ add code here"""
-        name = QFileDialog.getSaveFileName(self, 'Save File', self.work_dir)
+        name = QFileDialog.getSaveFileName(self, 'Save File', self.work_dir, options=QFileDialog.DontUseNativeDialog)
         fname = name[0]
         if len(fname) > 0:
             model = self.models[self.active_model]
@@ -2472,7 +2480,7 @@ class MainForm(QMainWindow):
             helpers.write_text_to_file(fname, text)
 
     def create_cri_file(self):  # pragma: no cover
-        name = QFileDialog.getSaveFileName(self, 'Save File', self.work_dir)
+        name = QFileDialog.getSaveFileName(self, 'Save File', self.work_dir, options=QFileDialog.DontUseNativeDialog)
         extra_points = self.ui.FormExtraPoints.value() + 1
         is_form_bp = self.ui.formCriticBPradio.isChecked()
 
