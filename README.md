@@ -9,7 +9,7 @@ GUI4DFT program is written in Python 3 (version >= 3.4). It has some dependences
 
 pip3 install pyside2 numpy scipy pyopengl pyqtgraph matplotlib scikit-image
 
-These commands are suitable for Windows 10, Ubuntu 20, Mas OS Majave. For other distributions and operating systems, the command and set of required packages may differ.
+These commands are suitable for Ubuntu 20, Windows 10, Mas OS Majave. For other distributions and operating systems, the command and set of required packages may differ.
 
 You have to set the variable QT_API:
 

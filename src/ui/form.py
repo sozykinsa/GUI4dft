@@ -188,7 +188,7 @@ class Ui_MainWindow(object):
         self.toolBox.addItem(self.page_17, u"Graphene")
         self.page_4 = QWidget()
         self.page_4.setObjectName(u"page_4")
-        self.page_4.setGeometry(QRect(0, 0, 380, 603))
+        self.page_4.setGeometry(QRect(0, 0, 380, 560))
         self.verticalLayout_95 = QVBoxLayout(self.page_4)
         self.verticalLayout_95.setObjectName(u"verticalLayout_95")
         self.tabWidget_11 = QTabWidget(self.page_4)
@@ -3986,7 +3986,7 @@ class Ui_MainWindow(object):
         self.toolBox_4.setObjectName(u"toolBox_4")
         self.page_9 = QWidget()
         self.page_9.setObjectName(u"page_9")
-        self.page_9.setGeometry(QRect(0, 0, 109, 109))
+        self.page_9.setGeometry(QRect(0, 0, 399, 644))
         self.verticalLayout_72 = QVBoxLayout(self.page_9)
         self.verticalLayout_72.setObjectName(u"verticalLayout_72")
         self.textBrowser = QTextBrowser(self.page_9)
@@ -4779,6 +4779,39 @@ class Ui_MainWindow(object):
 
 
         self.verticalLayout_31.addWidget(self.frame_70)
+
+        self.frame_131 = QFrame(self.tab_32)
+        self.frame_131.setObjectName(u"frame_131")
+        self.frame_131.setMinimumSize(QSize(0, 0))
+        self.frame_131.setFrameShape(QFrame.StyledPanel)
+        self.frame_131.setFrameShadow(QFrame.Raised)
+        self.horizontalLayout_100 = QHBoxLayout(self.frame_131)
+        self.horizontalLayout_100.setObjectName(u"horizontalLayout_100")
+        self.horizontalLayout_100.setContentsMargins(0, 0, 0, 0)
+        self.label_105 = QLabel(self.frame_131)
+        self.label_105.setObjectName(u"label_105")
+
+        self.horizontalLayout_100.addWidget(self.label_105)
+
+        self.horizontalSpacer_113 = QSpacerItem(61, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_100.addItem(self.horizontalSpacer_113)
+
+        self.spin_perspective_angle = QSpinBox(self.frame_131)
+        self.spin_perspective_angle.setObjectName(u"spin_perspective_angle")
+        self.spin_perspective_angle.setMinimumSize(QSize(120, 24))
+        self.spin_perspective_angle.setMaximumSize(QSize(120, 24))
+        self.spin_perspective_angle.setMaximum(90)
+        self.spin_perspective_angle.setValue(45)
+
+        self.horizontalLayout_100.addWidget(self.spin_perspective_angle)
+
+        self.horizontalSpacer_112 = QSpacerItem(61, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_100.addItem(self.horizontalSpacer_112)
+
+
+        self.verticalLayout_31.addWidget(self.frame_131)
 
         self.groupBox = QGroupBox(self.tab_32)
         self.groupBox.setObjectName(u"groupBox")
@@ -5639,7 +5672,7 @@ class Ui_MainWindow(object):
         self.tabWidget_4.setCurrentIndex(0)
         self.tabWidget_2.setCurrentIndex(0)
         self.tabWidget_6.setCurrentIndex(0)
-        self.toolBox_4.setCurrentIndex(2)
+        self.toolBox_4.setCurrentIndex(0)
         self.tabWidget_7.setCurrentIndex(2)
         self.tabWidget_8.setCurrentIndex(0)
         self.tabWidget_10.setCurrentIndex(1)
@@ -6034,6 +6067,7 @@ class Ui_MainWindow(object):
         self.FormSettingsViewCheckShowBox.setText(QCoreApplication.translate("MainWindow", u"Show box", None))
         self.FormSettingsViewCheckShowAxes.setText(QCoreApplication.translate("MainWindow", u"Show axes", None))
         self.label_43.setText(QCoreApplication.translate("MainWindow", u"Contours width", None))
+        self.label_105.setText(QCoreApplication.translate("MainWindow", u"Perspective angle", None))
         self.groupBox.setTitle(QCoreApplication.translate("MainWindow", u"Bonds", None))
         self.FormSettingsViewCheckShowBonds.setText(QCoreApplication.translate("MainWindow", u"Show bonds", None))
         self.label_22.setText(QCoreApplication.translate("MainWindow", u"Bonds width", None))

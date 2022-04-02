@@ -11,7 +11,6 @@ from pathlib import Path
 from copy import deepcopy
 from operator import itemgetter
 import matplotlib.pyplot as plt
-# import pyqtgraph as pg  # pip install pyqtgraph
 import numpy as np
 from utils import helpers
 from models.atomic_model import TAtomicModel
@@ -75,6 +74,7 @@ class MainForm(QMainWindow):
         self.shortcut = QShortcut(QKeySequence("Ctrl+D"), self)
         self.shortcut.activated.connect(self.atom_delete)
         self.active_model = -1
+        self.perspective_angle = 45
 
     def start_program(self):  # pragma: no cover
         if self.action_on_start == 'Open':
@@ -1255,6 +1255,18 @@ class MainForm(QMainWindow):
 
         self.action_on_start = str(settings.value(SETTINGS_FormSettingsActionOnStart, 'Nothing'))
 
+        self.perspective_angle = int(settings.value(SETTINGS_perspective_angle, 45))
+        self.ui.spin_perspective_angle.setValue(self.perspective_angle)
+        self.ui.openGLWidget.set_perspective_angle(self.perspective_angle)
+        self.ui.spin_perspective_angle.valueChanged.connect(self.perspective_angle_change)
+
+    def perspective_angle_change(self):
+        self.perspective_angle = self.ui.spin_perspective_angle.value()
+        self.save_property(SETTINGS_perspective_angle, str(self.perspective_angle))
+        self.ui.spin_perspective_angle.valueChanged.connect(self.perspective_angle_change)
+        self.ui.openGLWidget.set_perspective_angle(self.perspective_angle)
+        self.ui.openGLWidget.update()
+
     def menu_export(self):  # pragma: no cover
         if self.ui.openGLWidget.main_model.nAtoms() > 0:
             try:
@@ -2024,7 +2036,7 @@ class MainForm(QMainWindow):
         if len(self.models) == 0:
             return
         try:
-            if name == "":
+            if not name:
                 format_str = "PNG files (*.png);;JPG files (*.jpg);;BMP files (*.bmp)"
                 name = QFileDialog.getSaveFileName(self, 'Save File', self.work_dir, format_str,
                                                    options=QFileDialog.DontUseNativeDialog)
@@ -2041,9 +2053,9 @@ class MainForm(QMainWindow):
 
             if fname:
                 new_window = Image3Dexporter(5 * self.ui.openGLWidget.width(), 5 * self.ui.openGLWidget.height(), 5)
-                new_window.MainForm.copy_state(self.ui.openGLWidget)
+                new_window.ui.openGLWidget.copy_state(self.ui.openGLWidget)
 
-                new_window.MainForm.image3D_to_file(fname)
+                new_window.ui.openGLWidget.image3D_to_file(fname)
                 new_window.destroy()
                 self.work_dir = os.path.dirname(fname)
                 self.save_active_folder()
@@ -2743,3 +2755,4 @@ SETTINGS_Color_Of_Box = 'colors/box'
 SETTINGS_Color_Of_Voronoi = 'colors/voronoi'
 SETTINGS_Color_Of_Axes = 'colors/axes'
 SETTINGS_Color_Of_Contour = 'colors/contour'
+SETTINGS_perspective_angle = 'perspectiveangle'
