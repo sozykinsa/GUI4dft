@@ -386,6 +386,7 @@ class GuiOpenGL(QOpenGLWidget):
             self.is_view_contour_fill = False
             self.is_view_surface = False
             self.add_atoms()
+            self.main_model.find_bonds_fast()
             self.add_bonds()
             self.update()
 
@@ -403,6 +404,7 @@ class GuiOpenGL(QOpenGLWidget):
                 self.is_view_contour_fill = False
                 self.is_view_surface = False
                 self.add_atoms()
+                self.main_model.find_bonds_fast()
                 self.add_bonds()
                 self.update()
 
@@ -507,6 +509,7 @@ class GuiOpenGL(QOpenGLWidget):
             self.selected_atom_changed()
 
             self.add_atoms()
+            self.main_model.find_bonds_fast()
             self.add_bonds()
             self.is_view_voronoi = False
             self.is_view_surface = False

@@ -1966,6 +1966,7 @@ class MainForm(QMainWindow):
         self.ui.PyqtGraphWidget.set_xticks(None)
         self.ui.Form3Dand2DTabs.setCurrentIndex(1)
         items = []
+        prec = 3
         method = self.ui.FormActionsPostComboCellParam.currentText()
         xi = self.ui.FormActionsPostComboCellParamX.currentIndex()
         LabelX = self.ui.FormActionsPostComboCellParamX.currentText()
@@ -1989,31 +1990,31 @@ class MainForm(QMainWindow):
             if (method == "Murnaghan") and (len(items) > 4):
                 aprox, xs2, ys2 = Calculator.approx_murnaghan(items)
                 image_path = str(Path(__file__).parent / 'images' / 'murnaghan.png')  # path to your image file
-                self.ui.FormActionsPostLabelCellParamOptimExpr.setText("E(V0)=" + str(round(float(aprox[0]), 2)))
-                self.ui.FormActionsPostLabelCellParamOptimExpr2.setText("B0=" + str(round(float(aprox[1]), 2)))
-                self.ui.FormActionsPostLabelCellParamOptimExpr3.setText("B0'=" + str(round(float(aprox[2]), 2)))
-                self.ui.FormActionsPostLabelCellParamOptimExpr4.setText("V0=" + str(round(float(aprox[3]), 2)))
+                self.ui.FormActionsPostLabelCellParamOptimExpr.setText("E(V0)=" + str(round(float(aprox[0]), prec)))
+                self.ui.FormActionsPostLabelCellParamOptimExpr2.setText("B0=" + str(round(float(aprox[1]), prec)))
+                self.ui.FormActionsPostLabelCellParamOptimExpr3.setText("B0'=" + str(round(float(aprox[2]), prec)))
+                self.ui.FormActionsPostLabelCellParamOptimExpr4.setText("V0=" + str(round(float(aprox[3]), prec)))
                 self.plot_cell_approx(image_path)
                 self.plot_curv_and_points(LabelX, xs, ys, xs2, ys2)
 
             if (method == "BirchMurnaghan") and (len(items) > 4):
                 aprox, xs2, ys2 = Calculator.approx_birch_murnaghan(items)
                 image_path = str(Path(__file__).parent / 'images' / 'murnaghanbirch.png')  # path to your image file
-                self.ui.FormActionsPostLabelCellParamOptimExpr.setText("E(V0)=" + str(round(float(aprox[0]), 2)))
-                self.ui.FormActionsPostLabelCellParamOptimExpr2.setText("B0=" + str(round(float(aprox[1]), 2)))
-                self.ui.FormActionsPostLabelCellParamOptimExpr3.setText("B0'=" + str(round(float(aprox[2]), 2)))
-                self.ui.FormActionsPostLabelCellParamOptimExpr4.setText("V0=" + str(round(float(aprox[3]), 2)))
+                self.ui.FormActionsPostLabelCellParamOptimExpr.setText("E(V0)=" + str(round(float(aprox[0]), prec)))
+                self.ui.FormActionsPostLabelCellParamOptimExpr2.setText("B0=" + str(round(float(aprox[1]), prec)))
+                self.ui.FormActionsPostLabelCellParamOptimExpr3.setText("B0'=" + str(round(float(aprox[2]), prec)))
+                self.ui.FormActionsPostLabelCellParamOptimExpr4.setText("V0=" + str(round(float(aprox[3]), prec)))
                 self.plot_cell_approx(image_path)
                 self.plot_curv_and_points(LabelX, xs, ys, xs2, ys2)
 
             if (method == "Parabola") and (len(items) > 2):
                 aprox, xs2, ys2 = Calculator.approx_parabola(items)
                 image_path = str(Path(__file__).parent / 'images' / 'parabola.png')  # path to your image file
-                self.ui.FormActionsPostLabelCellParamOptimExpr.setText("a=" + str(round(float(aprox[2]), 2)))
-                self.ui.FormActionsPostLabelCellParamOptimExpr2.setText("b=" + str(round(float(aprox[1]), 2)))
+                self.ui.FormActionsPostLabelCellParamOptimExpr.setText("a=" + str(round(float(aprox[2]), prec)))
+                self.ui.FormActionsPostLabelCellParamOptimExpr2.setText("b=" + str(round(float(aprox[1]), prec)))
                 self.ui.FormActionsPostLabelCellParamOptimExpr3.setText(
-                    "x0=" + str(round(-float(aprox[1]) / float(2 * aprox[2]), 2)))
-                self.ui.FormActionsPostLabelCellParamOptimExpr4.setText("c=" + str(round(float(aprox[0]), 2)))
+                    "x0=" + str(round(-float(aprox[1]) / float(2 * aprox[2]), prec)))
+                self.ui.FormActionsPostLabelCellParamOptimExpr4.setText("c=" + str(round(float(aprox[0]), prec)))
                 self.plot_cell_approx(image_path)
                 self.plot_curv_and_points(LabelX, xs, ys, xs2, ys2)
 
