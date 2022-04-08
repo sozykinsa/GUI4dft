@@ -336,6 +336,8 @@ class GuiOpenGL(QOpenGLWidget):
 
     def auto_zoom(self):
         model_size = max(self.main_model.sizeX(), self.main_model.sizeY()) + 0.2
+        if model_size < 1:
+            model_size = 1
         aspect = min(self.width() / self.height(), 1)
 
         if not self.ViewOrtho:

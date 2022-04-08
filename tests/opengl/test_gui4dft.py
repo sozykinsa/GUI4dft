@@ -121,7 +121,7 @@ def test_cell_param(gui4dft_application, tests_path):
     gui4dft_application.plot_volume_param_energy()
     method = gui4dft_application.ui.FormActionsPostComboCellParam.currentText()
     if method == "Parabola":
-        assert gui4dft_application.ui.FormActionsPostLabelCellParamOptimExpr3.text() == "x0=11.89"
+        assert gui4dft_application.ui.FormActionsPostLabelCellParamOptimExpr4.text() == "x0=11.891"
 
 
 def test_simple_calls(gui4dft_application):

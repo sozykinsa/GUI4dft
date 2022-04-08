@@ -33,7 +33,6 @@ from PySide2.QtGui import QColor, QIcon, QImage, QKeySequence, QPixmap, QStandar
 from PySide2.QtWidgets import QListWidgetItem, QAction, QDialog, QFileDialog, QMessageBox, QColorDialog
 from PySide2.QtWidgets import QDoubleSpinBox, QMainWindow, QShortcut, QTableWidgetItem, QTreeWidgetItem
 from PySide2.QtWidgets import QTreeWidgetItemIterator
-from qtbased.atomidentifier import AtomsIdentifier
 from qtbased.image3dexporter import Image3Dexporter
 from models.gaussiancube import GaussianCube
 from models.volumericdata import VolumericData
@@ -886,29 +885,44 @@ class MainForm(QMainWindow):
         self.save_active_folder()
 
     def fill_gui(self, title=""):
-        fname = self.filename
+        file_name = self.filename
         if title == "":
-            self.fill_file_name(fname)
+            self.fill_file_name(file_name)
         else:
             self.fill_file_name(title)
         self.fill_models_list()
         self.fill_atoms_table()
         self.fill_properties_table()
-        self.check_volumeric_data(fname)
+        self.check_volumeric_data(file_name)
 
         self.ui.PropertyAtomAtomDistanceAt1.setMaximum(self.ui.openGLWidget.main_model.nAtoms())
         self.ui.PropertyAtomAtomDistanceAt2.setMaximum(self.ui.openGLWidget.main_model.nAtoms())
         self.ui.PropertyAtomAtomDistance.setText("")
 
-        if Importer.check_format(fname) == "SIESTAout":
-            self.check_dos(fname)
-            self.check_pdos(fname)
-            self.check_bands(fname)
-            self.fill_cell_info(fname)
+        if Importer.check_format(file_name) == "SIESTAout":
+            self.check_dos(file_name)
+            self.check_pdos(file_name)
+            self.check_bands(file_name)
+            self.fill_cell_info(file_name)
+            self.fill_energies(file_name)
 
-        if Importer.check_format(fname) == "SIESTAfdf":
+        if Importer.check_format(file_name) == "SIESTAfdf":
             c = self.ui.openGLWidget.main_model.get_LatVect3_norm()
             self.ui.FormActionsPreZSizeFillSpace.setValue(c)
+
+    def fill_energies(self, f_name: str) -> None:
+        """Plot energies for steps of output"""
+        energies = TSIESTA.energies(f_name)
+        self.ui.PyqtGraphWidget.set_xticks(None)
+
+        x_title = "Step"
+        y_title = "Energy, eV"
+        title = "Energies"
+
+        self.ui.PyqtGraphWidget.clear()
+        self.ui.PyqtGraphWidget.add_legend()
+        self.ui.PyqtGraphWidget.enable_auto_range()
+        self.ui.PyqtGraphWidget.plot([np.arange(0, len(energies))], [energies], [None], title, x_title, y_title)
 
     def fill_file_name(self, fname):
         self.ui.Form3Dand2DTabs.setItemText(0, "3D View: " + fname)
@@ -1305,21 +1319,6 @@ class MainForm(QMainWindow):
                 self.get_atomic_model_and_fdf(file_name)
             except Exception as e:
                 self.show_error(e)
-
-            problem_atoms = []
-            for structure in self.models:
-                for at in structure:
-                    if at.charge >= 200:
-                        problem_atoms.append(at.charge)
-            problem_atoms = set(problem_atoms)
-
-            if len(problem_atoms) > 0:
-                self.atomDialog = AtomsIdentifier(problem_atoms)
-                self.atomDialog.show()
-                ansv = self.atomDialog.ansv
-
-                for structure in self.models:
-                    structure.ModifyAtomsTypes(ansv)
 
             try:
                 self.plot_last_model()
@@ -2012,9 +2011,9 @@ class MainForm(QMainWindow):
                 image_path = str(Path(__file__).parent / 'images' / 'parabola.png')  # path to your image file
                 self.ui.FormActionsPostLabelCellParamOptimExpr.setText("a=" + str(round(float(aprox[2]), prec)))
                 self.ui.FormActionsPostLabelCellParamOptimExpr2.setText("b=" + str(round(float(aprox[1]), prec)))
-                self.ui.FormActionsPostLabelCellParamOptimExpr3.setText(
+                self.ui.FormActionsPostLabelCellParamOptimExpr3.setText("c=" + str(round(float(aprox[0]), prec)))
+                self.ui.FormActionsPostLabelCellParamOptimExpr4.setText(
                     "x0=" + str(round(-float(aprox[1]) / float(2 * aprox[2]), prec)))
-                self.ui.FormActionsPostLabelCellParamOptimExpr4.setText("c=" + str(round(float(aprox[0]), prec)))
                 self.plot_cell_approx(image_path)
                 self.plot_curv_and_points(LabelX, xs, ys, xs2, ys2)
 
