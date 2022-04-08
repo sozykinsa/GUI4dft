@@ -12,6 +12,11 @@ def test_create_swnt(gui4dft_application):
     window.create_swnt()
     assert len(window.models[-1].atoms) == 112
 
+    window.ui.FormActionsPreRadioSWNTusecell.setChecked(True)
+    window.create_swnt()
+    assert len(window.models[-1].atoms) == 28
+    window.ui.FormActionsPreRadioSWNTuselen.setChecked(True)
+
     window.ui.FormActionsPreRadioSWNTcap.setChecked(True)
     window.create_swnt()
     assert len(window.models[-1].atoms) == 132
@@ -19,11 +24,11 @@ def test_create_swnt(gui4dft_application):
     window.ui.FormActionsPreRadioSWNTcap_2.setChecked(True)
     window.ui.FormActionsPreRadioSWNTusecell.setChecked(True)
     window.create_swnt()
-    assert len(window.models[-1].atoms) == 168
+    assert len(window.models[-1].atoms) == 96
 
     window.ui.createSWGNTradio.setChecked(True)
     window.create_swnt()
-    assert len(window.models[-1].atoms) == 49
+    assert len(window.models[-1].atoms) == 63
 
 
 def test_create_graphene(gui4dft_application):
@@ -45,6 +50,36 @@ def test_menu_open(gui4dft_application, tests_path):
     window = gui4dft_application
     window.menu_open(f_name)
     assert len(window.models) == 1
+
+
+def test_xsf_operations(gui4dft_application, tests_path):
+    f_name = str(tests_path / 'ref_data' / 'h2o-ang-charges' / 'cube_and_xsf' / "siesta.XSF")
+    window = gui4dft_application
+    window.menu_open(f_name)
+    assert len(window.models) == 1
+
+    selected = window.ui.FormActionsPostList3DData.item(0).text()
+    window.parse_volumeric_data_selected(selected)
+
+    selected_items = window.ui.FormActionsPostTreeSurface.itemAt(0, 0).child(0)
+    window.volumeric_data_load_selected([selected_items])
+    assert window.ui.FormVolDataExportX2.value() == 30
+
+    window.ui.FormActionsPostCheckSurface.setChecked(True)
+    window.add_isosurface_color_to_table()
+    assert window.ui.IsosurfaceColorsTable.rowCount() == 1
+
+    window.plot_contour()
+    window.ui.FormActionsPostCheckContourXY.setChecked(True)
+    window.ui.FormActionsPostCheckContourYZ.setChecked(True)
+    window.ui.FormActionsPostCheckContourXZ.setChecked(True)
+    window.plot_contour()
+
+    window.ui.FormActionsPostRadioColorPlane.setChecked(True)
+    window.plot_contour()
+
+    window.ui.FormActionsPostRadioColorPlaneContours.setChecked(True)
+    window.plot_contour()
 
 
 def test_plot_dos(gui4dft_application, tests_path):
@@ -86,7 +121,7 @@ def test_cell_param(gui4dft_application, tests_path):
     gui4dft_application.plot_volume_param_energy()
     method = gui4dft_application.ui.FormActionsPostComboCellParam.currentText()
     if method == "Parabola":
-        assert gui4dft_application.ui.FormActionsPostLabelCellParamOptimExpr3.text() == "x0=11.89"
+        assert gui4dft_application.ui.FormActionsPostLabelCellParamOptimExpr4.text() == "x0=11.891"
 
 
 def test_simple_calls(gui4dft_application):

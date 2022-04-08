@@ -86,7 +86,7 @@ def list_n2_split(data):
     return np.array(x), np.array(y)
 
 
-def from_file_property(filename, prop, count=1, prop_type='int'):
+def from_file_property(filename: str, prop: str, count: int = 1, prop_type: str = 'int'):
     """Returns the value of the property parameter from the file filename.
     The value can be an integer or a fixed-point fractional number.
     If the required parameter occurs several times in the file, you must specify the count parameter,
@@ -108,7 +108,7 @@ def write_text_to_file(fname, text):  # pragma: no cover
 
 
 def property_from_sub_file(filename, k, prop, count, typen):
-    property = None
+    property_value = None
     is_found = False
     if os.path.exists(filename):
         MyFile = open(filename)
@@ -117,19 +117,19 @@ def property_from_sub_file(filename, k, prop, count, typen):
             if (str1 != '') and (str1.find("%include") >= 0):
                 new_f = str1.split()[1]
                 file = os.path.dirname(filename) + "/" + new_f
-                is_found, k, property = property_from_sub_file(file, k, prop, count, typen)
+                is_found, k, property_value = property_from_sub_file(file, k, prop, count, typen)
             if (str1 != '') and (str1.find(prop) >= 0) and not str1.lstrip().startswith('#'):
                 str1 = str1.replace(prop, ' ')
                 if typen == "unformatted":
-                    property = str1
+                    property_value = str1
                 if typen == 'string':
-                    property = spacedel(str1)
+                    property_value = spacedel(str1)
                 else:
                     prop1 = re.findall(r"[0-9,\.,-]+", str1)[0]
                     if typen == 'int':
-                        property = int(prop1)
+                        property_value = int(prop1)
                     if typen == 'float':
-                        property = float(prop1)
+                        property_value = float(prop1)
 
                 if k == count:
                     is_found = True
@@ -137,11 +137,11 @@ def property_from_sub_file(filename, k, prop, count, typen):
                 k += 1
             if is_found:
                 MyFile.close()
-                return is_found, k-1, property
+                return is_found, k-1, property_value
 
             str1 = MyFile.readline()
         MyFile.close()
-    return is_found, k, property
+    return is_found, k, property_value
 
 
 def utf8_letter(let):

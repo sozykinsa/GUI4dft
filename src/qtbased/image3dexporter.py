@@ -3,17 +3,15 @@
 from PySide2.QtWidgets import QMainWindow
 from PySide2.QtCore import QSize
 from ui.image3D import Ui_MainWindow as Ui_image3D
-from qtbased.guiopengl import GuiOpenGL
 
 
 class Image3Dexporter(QMainWindow):
-    def __init__(self, windowsWidth, windowsHeight, quality):
-        super(Image3Dexporter, self).__init__()
+    def __init__(self, width, height, quality):
+        super().__init__()
         self.ui = Ui_image3D()
         self.ui.setupUi(self)
-        self.setFixedSize(QSize(windowsWidth, windowsHeight))
+        self.setFixedSize(QSize(width, height))
 
-        self.MainForm = GuiOpenGL(self.ui.openGLWidget)
-        self.MainForm.set_form_elements(quality=quality)
-        self.MainForm.filter = None
+        self.ui.openGLWidget.set_form_elements(quality=quality)
+        self.ui.openGLWidget.filter = None
         self.show()

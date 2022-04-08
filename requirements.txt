@@ -3,7 +3,7 @@ numpy
 scipy
 matplotlib
 pyqtgraph
-scikit-image >= 0.17.2
+scikit-image
 pyside2
 qtpy
 pytest

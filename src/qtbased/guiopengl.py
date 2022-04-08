@@ -19,6 +19,7 @@ class GuiOpenGL(QOpenGLWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.main_model = TAtomicModel()
+        self.perspective_angle = 35
 
         self.CheckAtomSelection = False
         self.selected_atom_type = None
@@ -83,7 +84,7 @@ class GuiOpenGL(QOpenGLWidget):
                 self.move_atom(event.x(), event.y())
             else:
                 if not self.CheckAtomSelection.isChecked():
-                    self.move(event.x(), event.y())
+                    self.pan(event.x(), event.y())
             self.set_xy(event.x(), event.y())
 
     def mousePressEvent(self, event: QEvent):
@@ -101,6 +102,9 @@ class GuiOpenGL(QOpenGLWidget):
             self.selected_atom_Z = selected_atom_info[3]
             self.selected_atom_properties = selected_atom_info[4]
         self.quality = quality
+
+    def set_perspective_angle(self, perspective_angle: int) -> None:
+        self.perspective_angle = perspective_angle;
 
     def init_params(self, the_object) -> None:
         self.ViewOrtho = the_object.ViewOrtho
@@ -137,6 +141,7 @@ class GuiOpenGL(QOpenGLWidget):
         self.color_of_bonds_by_atoms = the_object.color_of_bonds_by_atoms
         self.color_of_box = the_object.color_of_box
         self.is_view_axes = the_object.is_view_axes
+        self.perspective_angle = the_object.perspective_angle
 
     def set_selected_fragment_mode(self, selected_fragment_atoms_list_view, selected_fragment_atoms_transp):
         if selected_fragment_atoms_list_view is None:
@@ -331,6 +336,8 @@ class GuiOpenGL(QOpenGLWidget):
 
     def auto_zoom(self):
         model_size = max(self.main_model.sizeX(), self.main_model.sizeY()) + 0.2
+        if model_size < 1:
+            model_size = 1
         aspect = min(self.width() / self.height(), 1)
 
         if not self.ViewOrtho:
@@ -381,6 +388,7 @@ class GuiOpenGL(QOpenGLWidget):
             self.is_view_contour_fill = False
             self.is_view_surface = False
             self.add_atoms()
+            self.main_model.find_bonds_fast()
             self.add_bonds()
             self.update()
 
@@ -398,6 +406,7 @@ class GuiOpenGL(QOpenGLWidget):
                 self.is_view_contour_fill = False
                 self.is_view_surface = False
                 self.add_atoms()
+                self.main_model.find_bonds_fast()
                 self.add_bonds()
                 self.update()
 
@@ -502,6 +511,7 @@ class GuiOpenGL(QOpenGLWidget):
             self.selected_atom_changed()
 
             self.add_atoms()
+            self.main_model.find_bonds_fast()
             self.add_bonds()
             self.is_view_voronoi = False
             self.is_view_surface = False
@@ -622,13 +632,13 @@ class GuiOpenGL(QOpenGLWidget):
                 if (len(prop) > 0) and (prop != "charge"):
                     val = at.properties[prop]
                     if val > mean_val:
-                        color[1] = math.fabs((val-mean_val)/(max_val-mean_val))
+                        color = (color[0], math.fabs((val-mean_val)/(max_val-mean_val)), color[2], color[3])
                     else:
-                        color[2] = math.fabs((val-mean_val)/(min_val-mean_val))
+                        color = (color[0], color[1], math.fabs((val-mean_val)/(min_val-mean_val)), color[3])
                 else:
                     color = self.color_of_atoms[at.charge]
                     if self.selected_fragment_mode and at.fragment1:
-                        color[3] = self.SelectedFragmentAtomsTransp
+                        color = (color[0], color[1], color[2], self.SelectedFragmentAtomsTransp)
             else:
                 color[0] = 1
                 rad_scale = 0.35
@@ -1014,7 +1024,7 @@ class GuiOpenGL(QOpenGLWidget):
         x, y, width, height = gl.glGetDoublev(gl.GL_VIEWPORT)
         if not self.ViewOrtho:
             glu.gluPerspective(
-                35,  # field of view in degrees
+                self.perspective_angle,  # field of view in degrees
                 width / float(height or 1),  # aspect ratio
                 .25,  # near clipping plane
                 200)  # far clipping plane

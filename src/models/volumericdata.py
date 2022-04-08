@@ -3,7 +3,11 @@
 from copy import deepcopy
 from utils import helpers
 import numpy as np
-from skimage.measure import marching_cubes
+import skimage
+if skimage.__version__ >= '0.17.2':
+    from skimage.measure import marching_cubes
+else:
+    from skimage.measure import marching_cubes_lewiner
 from skimage.measure import find_contours
 
 
@@ -45,9 +49,14 @@ class VolumericData:
         self.max = np.max(self.data3D)
 
     def isosurface(self, value):
-        verts, faces, normals, values = marching_cubes(self.data3D, level=value, spacing=self.spacing,
-                                                       gradient_direction='descent', step_size=1,
-                                                       allow_degenerate=True, method='lewiner')
+        if skimage.__version__ < '0.17.2':
+            verts, faces, normals, values = marching_cubes_lewiner(self.data3D, level=value, spacing=self.spacing,
+                                                                   gradient_direction='descent', step_size=1,
+                                                                   allow_degenerate=True, use_classic=False)
+        else:
+            verts, faces, normals, values = marching_cubes(self.data3D, level=value, spacing=self.spacing,
+                                                           gradient_direction='descent', step_size=1,
+                                                           allow_degenerate=True, method='lewiner')
 
         for i in range(0, len(verts)):
             verts[i] += self.origin
