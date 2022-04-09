@@ -35,6 +35,12 @@ def test_twist_z(h2o_model):
     assert model.atoms[1].x == pytest.approx(-1.2)
 
 
+def test_get_covalent_radii(h2o_model):
+    model = h2o_model
+    radii = model.get_covalent_radii()
+    assert len(radii) == 2
+
+
 def test_find_bonds_exact(h2o_model: TAtomicModel) -> None:
     model = h2o_model
     bonds = model.find_bonds_exact()

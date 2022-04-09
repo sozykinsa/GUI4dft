@@ -26,6 +26,8 @@ class TAtomicModel(object):
         self.rcp = []
         self.ccp = []
 
+        self.tags = []
+
         self.name = ""
         self.lat_vector1 = np.array([100, 0, 0])
         self.lat_vector2 = np.array([0, 100, 0])
@@ -52,11 +54,17 @@ class TAtomicModel(object):
             numb[i] = self.atoms[i].charge
         return numb
 
+    def get_covalent_radii(self):
+        ind = list(set(self.get_atomic_numbers()))
+        ind.sort()
+        mendeley = TPeriodTable()
+        return mendeley.get_covalent_radii(ind)
+
     def get_center_of_mass(self):
         return np.array(self.centr_mass())
 
     def get_tags(self):
-        return []
+        return self.tags
 
     def get_cell(self):
         cell = np.zeros((3, 3))

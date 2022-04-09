@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 
+import numpy as np
+
 
 class TPeriodTableAtom:
+    """Replace color by 'user_color', 'ase_color', 'xxx_color'"""
     def __init__(self, charge, radius, let, color, mass=1):
         self.charge = charge
         self.radius = radius
@@ -168,6 +171,12 @@ class TPeriodTable:
         for i in range(0, self.table_size):
             for j in range(i+1, self.table_size):
                 self.Bonds[j][i] = self.Bonds[i][j]
+
+    def get_covalent_radii(self, ind):
+        rad_list = []
+        for i in ind:
+            rad_list.append(self.get_rad(i))
+        return np.array(rad_list)
 
     def get_rad(self, charge):
         if int(charge) < self.table_size:

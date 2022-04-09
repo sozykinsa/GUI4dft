@@ -19,9 +19,9 @@ class GuiOpenGL(QOpenGLWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.main_model = TAtomicModel()
-        self.perspective_angle = 35
+        self.perspective_angle: int = 35
 
-        self.CheckAtomSelection = False
+        self.is_check_atom_selection: bool = False
         self.selected_atom_type = None
         self.selected_atom_X = None
         self.selected_atom_Y = None
@@ -29,7 +29,6 @@ class GuiOpenGL(QOpenGLWidget):
         self.selected_atom_properties = None
         self.quality: int = 1
 
-        self.QuadObjS = []
         self.object = None
         self.NLists = 10
         self.history_of_atom_selection = []
@@ -53,7 +52,7 @@ class GuiOpenGL(QOpenGLWidget):
         self.is_view_bond_path = False
         self.active = False
         self.ViewAtomNumbers = False
-        self.Scale = 1
+        self.scale_factor = 1
         self.bondWidth = 20
         self.x_scene = 0
         self.y_scene = 0
@@ -68,7 +67,16 @@ class GuiOpenGL(QOpenGLWidget):
         self.SelectedFragmentAtomsListView = None
         self.SelectedFragmentAtomsTransp = 1.0
         self.color_of_bonds = [0, 0, 0]
+
+        # lighting
+        self.light0_position = np.array((0.0, 0.0, 100.0, 1))
+        self.light_color_ambient = (0.2, 0.2, 0.2, 1.0)
+        self.light_color_diffuse = (0.7, 0.7, 0.7, 1.0)
+        self.light_color_specular = (1, 1, 1, 1)
         self.material_diffuse = (1.0, 1.0, 1.0, 1)
+        self.material_specular = (0.2, 0.2, 0.2, 1)
+        self.material_shininess = 8
+
         self.is_view_axes = False
 
     def wheelEvent(self, event: QEvent):
@@ -83,18 +91,18 @@ class GuiOpenGL(QOpenGLWidget):
             if self.isAtomSelected():
                 self.move_atom(event.x(), event.y())
             else:
-                if not self.CheckAtomSelection.isChecked():
+                if not self.is_check_atom_selection.isChecked():
                     self.pan(event.x(), event.y())
             self.set_xy(event.x(), event.y())
 
     def mousePressEvent(self, event: QEvent):
         if event.type() == QEvent.MouseButtonPress:
-            if self.CheckAtomSelection.isChecked() and event.buttons() == Qt.LeftButton:
+            if self.is_check_atom_selection.isChecked() and event.buttons() == Qt.LeftButton:
                 self.can_atom_search = True
             self.set_xy(event.x(), event.y())
 
     def set_form_elements(self, check_atom_selection=None, selected_atom_info=[], quality=1):
-        self.CheckAtomSelection = check_atom_selection
+        self.is_check_atom_selection = check_atom_selection
         if len(selected_atom_info) == 5:
             self.selected_atom_type = selected_atom_info[0]
             self.selected_atom_X = selected_atom_info[1]
@@ -119,7 +127,7 @@ class GuiOpenGL(QOpenGLWidget):
         self.is_view_bcp = the_object.is_view_bcp
         self.is_view_bond_path = the_object.is_view_bond_path
         self.active = the_object.active
-        self.Scale = the_object.Scale
+        self.scale_factor = the_object.scale_factor
         self.bondWidth = the_object.bondWidth
         self.x_scr_old = the_object.x_scr_old
         self.y_scr_old = the_object.y_scr_old
@@ -295,7 +303,7 @@ class GuiOpenGL(QOpenGLWidget):
         self.update()
 
     def screen2space(self, x, y, width, height):
-        radius = min(width, height)*float(self.Scale)
+        radius = min(width, height)*float(self.scale_factor)
         return (2.*x-width)/radius, -(2.*y-height)/radius
 
     def set_atomic_structure(self, structure, atoms_colors, is_view_atoms, is_view_atom_numbers, ViewBox, box_color,
@@ -335,15 +343,27 @@ class GuiOpenGL(QOpenGLWidget):
         self.update()
 
     def auto_zoom(self):
+        self.scale_factor = 1.0
         model_size = max(self.main_model.sizeX(), self.main_model.sizeY()) + 0.2
         if model_size < 1:
             model_size = 1
         aspect = min(self.width() / self.height(), 1)
 
-        if not self.ViewOrtho:
-            self.Scale = aspect * 7.0 / model_size
+        if self.ViewOrtho:
+            self.scale_factor = aspect * 6.0 / model_size
         else:
-            self.Scale = aspect * 6.0 / model_size
+            x_max = self.main_model.maxX()
+            y_max = self.main_model.maxY()
+            z_max = self.main_model.maxZ()
+            rad = self.main_model.get_covalent_radii().max()
+            h, w = self.height(), self.width()
+            size = x_max + rad if h > w else y_max + rad
+            dist = size / math.tan(math.radians(self.perspective_angle / 2))
+            dist *= h / w
+            y_dist = (y_max + rad) / math.tan(math.radians(self.perspective_angle / 2))
+            dist = max(dist, y_dist)
+            self.camera_position[:] = np.array([0, 0, -z_max - dist / 10])
+            self.light0_position[2] = z_max + 2 * dist
 
     def get_model(self):
         model = deepcopy(self.main_model)
@@ -437,8 +457,8 @@ class GuiOpenGL(QOpenGLWidget):
         self.add_bonds()
         self.update()
 
-    def set_bond_color(self, type):
-        self.color_of_bonds_by_atoms = type
+    def set_bond_color(self, bonds_type):
+        self.color_of_bonds_by_atoms = bonds_type
         self.add_bonds()
         self.update()
 
@@ -468,8 +488,12 @@ class GuiOpenGL(QOpenGLWidget):
 
     def scale(self, wheel):
         if self.active:
-            self.Scale += 0.05 * (wheel/120)
+            if self.ViewOrtho:
+                self.scale_factor += 0.05 * (wheel / 120)
+            else:
+                self.camera_position[2] += 0.5 * (wheel/120)
             self.update()
+            # print(self.scale_factor, self.camera_position)
             return True
 
     def rotat(self, x, y, width, height):
@@ -498,7 +522,7 @@ class GuiOpenGL(QOpenGLWidget):
         if self.active:
             dx = x - self.x_scene
             dy = y - self.y_scene
-            mult = 0.01*self.Scale
+            mult = 0.01*self.scale_factor
             vect = mult*np.array([-dx, dy, 0])
             al = -math.pi * self.rotX / 180
             bet = -math.pi * self.rotY / 180
@@ -583,9 +607,8 @@ class GuiOpenGL(QOpenGLWidget):
             if at.isSelected():
                 gl.glPushMatrix()
                 gl.glTranslatef(at.x, at.y, at.z)
-                self.QuadObjS.append(glu.gluNewQuadric())
                 gl.glColor3f(1, 0, 0)
-                glu.gluSphere(self.QuadObjS[-1], 0.35, 70, 70)
+                glu.gluSphere(glu.gluNewQuadric(), 0.35, 70, 70)
                 gl.glPopMatrix()
         gl.glEndList()
 
@@ -622,7 +645,6 @@ class GuiOpenGL(QOpenGLWidget):
         for at in self.main_model.atoms:
             gl.glPushMatrix()
             gl.glTranslatef(at.x, at.y, at.z)
-            self.QuadObjS.append(glu.gluNewQuadric())
             rad = mendeley.Atoms[at.charge].radius/mendeley.Atoms[6].radius
 
             color = np.array((0.0, 0.0, 0.0, 1.0))
@@ -644,7 +666,10 @@ class GuiOpenGL(QOpenGLWidget):
                 rad_scale = 0.35
 
             gl.glColor4f(*color)
-            glu.gluSphere(self.QuadObjS[-1], rad_scale * rad, self.quality * 70, self.quality * 70)
+            #gl.glMaterialfv(gl.GL_FRONT, gl.GL_AMBIENT, color)
+            #gl.glMaterialfv(gl.GL_FRONT, gl.GL_DIFFUSE, np.array((*self.material_diffuse[0:3], color[3])))
+
+            glu.gluSphere(glu.gluNewQuadric(), rad_scale * rad, self.quality * 70, self.quality * 70)
             gl.glPopMatrix()
         gl.glEndList()
         self.active = True
@@ -784,13 +809,12 @@ class GuiOpenGL(QOpenGLWidget):
         for at in self.main_model.bcp:
             gl.glPushMatrix()
             gl.glTranslatef(at.x, at.y, at.z)
-            self.QuadObjS.append(glu.gluNewQuadric())
             gl.glColor3f(1, 0, 0)
             mult = 1
             if at.isSelected():
                 gl.glColor3f(0, 0, 1)
                 mult = 1.3
-            glu.gluSphere(self.QuadObjS[-1], 0.15*mult, self.quality*70, self.quality*70)
+            glu.gluSphere(glu.gluNewQuadric(), 0.15*mult, self.quality*70, self.quality*70)
             gl.glPopMatrix()
 
         gl.glEndList()
@@ -967,54 +991,36 @@ class GuiOpenGL(QOpenGLWidget):
             if fl:
                 used_space.append([pos_x, pos_y])
                 painter.drawText(pos_x, pos_y, st)
-
         painter.end()
 
-    def light_prepare(self):
-        # очищаем буфер кадра и глубины
+    def light_prepare(self) -> None:
         gl.glClear(gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT)
 
-        # свойства материала
-        material_diffuse = [1.0, 1.0, 1.0, 1.0]
-        gl.glMaterialfv(gl.GL_FRONT_AND_BACK, gl.GL_DIFFUSE, material_diffuse)
+        gl.glMaterialfv(gl.GL_FRONT_AND_BACK, gl.GL_DIFFUSE, self.material_diffuse)
+        gl.glMaterialfv(gl.GL_FRONT, gl.GL_SPECULAR, self.material_specular)
+        gl.glMaterialf(gl.GL_FRONT, gl.GL_SHININESS, self.material_shininess)
         gl.glEnable(gl.GL_LIGHTING)
 
         gl.glEnable(gl.GL_LIGHT0)
         gl.glEnable(gl.GL_DEPTH_TEST)
         gl.glEnable(gl.GL_COLOR_MATERIAL)
-
-        # light0_position = [0.0, 0.0, 100.0, 1]
-        # gl.glLightfv(gl.GL_LIGHT0, gl.GL_POSITION, light0_position)  # Определяем положение источника света
-
         # gl.glDisable(gl.GL_COLOR_MATERIAL)
 
         # Determine the current lighting model
         gl.glLightModelf(gl.GL_LIGHT_MODEL_TWO_SIDE, gl.GL_TRUE)  # two-side lighting calculation
 
-        # lighting
-        light0_position = np.array((*(self.Scale*np.array((0.0, 0.0, 100.0))), 1))
-        # set up light colors (ambient, diffuse, specular)
-        light_color_ambient = (0.2, 0.2, 0.2, 1.0)  # ambient light
-        light_color_diffuse = (0.7, 0.7, 0.7, 1.0)  # diffuse light
-        light_color_specular = (1, 1, 1, 1)  # specular light
-        material_specular = (0.2, 0.2, 0.2, 1)
-        material_shininess = self.Scale * 4
-
         gl.glEnable(gl.GL_LIGHT0)
-        gl.glLightfv(gl.GL_LIGHT0, gl.GL_POSITION, light0_position)
-        gl.glLightfv(gl.GL_LIGHT0, gl.GL_AMBIENT, light_color_ambient)
-        gl.glLightfv(gl.GL_LIGHT0, gl.GL_DIFFUSE, light_color_diffuse)
-        gl.glLightfv(gl.GL_LIGHT0, gl.GL_SPECULAR, light_color_specular)
-
-        gl.glMaterialfv(gl.GL_FRONT, gl.GL_SPECULAR, material_specular)
-        gl.glMaterialf(gl.GL_FRONT, gl.GL_SHININESS, material_shininess)
+        gl.glLightfv(gl.GL_LIGHT0, gl.GL_POSITION, self.light0_position)
+        gl.glLightfv(gl.GL_LIGHT0, gl.GL_AMBIENT, self.light_color_ambient)
+        gl.glLightfv(gl.GL_LIGHT0, gl.GL_DIFFUSE, self.light_color_diffuse)
+        gl.glLightfv(gl.GL_LIGHT0, gl.GL_SPECULAR, self.light_color_specular)
 
     def prepare_orientation(self):
         gl.glTranslated(*self.camera_position)
         gl.glRotate(self.rotX, 1, 0, 0)
         gl.glRotate(self.rotY, 0, 1, 0)
         gl.glRotate(self.rotZ, 0, 0, 1)
-        gl.glScale(self.Scale, self.Scale, self.Scale)
+        gl.glScale(self.scale_factor, self.scale_factor, self.scale_factor)
 
     def prepere_scene(self):
         gl.glClearColor(1.0, 1.0, 1.0, 1.0)

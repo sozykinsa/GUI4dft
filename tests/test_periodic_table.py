@@ -13,6 +13,11 @@ def test_get_rad(period_table):
     assert period_table.get_rad(300) == period_table.default_radius
 
 
+def test_get_covalent_radii(period_table):
+    radii = period_table.get_covalent_radii([2, 4])
+    assert len(radii) == 2
+
+
 def test_get_let(period_table):
     assert period_table.get_let(6) == "C"
     assert period_table.get_let(300) == "Direct"
