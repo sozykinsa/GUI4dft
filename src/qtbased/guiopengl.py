@@ -40,16 +40,16 @@ class GuiOpenGL(QOpenGLWidget):
         self.y0 = 0
         self.z0 = 0
 
-        self.ViewOrtho = True
+        self.is_orthographic: bool = False
         self.ViewAtoms = True
         self.ViewBox = False
         self.ViewBonds = True
-        self.is_view_surface = False
-        self.is_view_contour = False
-        self.is_view_contour_fill = False
-        self.is_view_voronoi = False
-        self.is_view_bcp = False
-        self.is_view_bond_path = False
+        self.is_view_surface: bool = False
+        self.is_view_contour: bool = False
+        self.is_view_contour_fill: bool = False
+        self.is_view_voronoi: bool = False
+        self.is_view_bcp: bool = False
+        self.is_view_bond_path: bool = False
         self.active = False
         self.ViewAtomNumbers = False
         self.scale_factor = 1
@@ -115,7 +115,7 @@ class GuiOpenGL(QOpenGLWidget):
         self.perspective_angle = perspective_angle;
 
     def init_params(self, the_object) -> None:
-        self.ViewOrtho = the_object.ViewOrtho
+        self.is_orthographic = the_object.is_orthographic
         self.ViewAtoms = the_object.ViewAtoms
         self.ViewAtomNumbers = the_object.ViewAtomNumbers
         self.ViewBox = the_object.ViewBox
@@ -349,7 +349,7 @@ class GuiOpenGL(QOpenGLWidget):
             model_size = 1
         aspect = min(self.width() / self.height(), 1)
 
-        if self.ViewOrtho:
+        if self.is_orthographic:
             self.scale_factor = aspect * 6.0 / model_size
         else:
             x_max = self.main_model.maxX()
@@ -488,8 +488,10 @@ class GuiOpenGL(QOpenGLWidget):
 
     def scale(self, wheel):
         if self.active:
-            if self.ViewOrtho:
+            if self.is_orthographic:
                 self.scale_factor += 0.05 * (wheel / 120)
+                self.add_atoms()
+                self.add_bonds()
             else:
                 self.camera_position[2] += 0.5 * (wheel/120)
             self.update()
@@ -644,8 +646,8 @@ class GuiOpenGL(QOpenGLWidget):
 
         for at in self.main_model.atoms:
             gl.glPushMatrix()
-            gl.glTranslatef(at.x, at.y, at.z)
-            rad = mendeley.Atoms[at.charge].radius/mendeley.Atoms[6].radius
+            gl.glTranslatef(at.x * self.scale_factor, at.y * self.scale_factor, at.z * self.scale_factor)
+            rad = mendeley.Atoms[at.charge].radius/mendeley.Atoms[6].radius * self.scale_factor
 
             color = np.array((0.0, 0.0, 0.0, 1.0))
             rad_scale = 0.3
@@ -689,10 +691,13 @@ class GuiOpenGL(QOpenGLWidget):
                 x3 = (self.main_model.atoms[bond[1]].x + self.main_model.atoms[bond[0]].x) / 2
                 y3 = (self.main_model.atoms[bond[1]].y + self.main_model.atoms[bond[0]].y) / 2
                 z3 = (self.main_model.atoms[bond[1]].z + self.main_model.atoms[bond[0]].z) / 2
-                coords = ([[x1, y1, z1], [x3, y3, z3], self.color_of_atoms[self.main_model.atoms[bond[0]].charge]],
-                          [[x3, y3, z3], [x2, y2, z2], self.color_of_atoms[self.main_model.atoms[bond[1]].charge]])
+                coords = ([self.scale_factor * np.array([x1, y1, z1]), self.scale_factor * np.array([x3, y3, z3]),
+                           self.color_of_atoms[self.main_model.atoms[bond[0]].charge]],
+                          [self.scale_factor * np.array([x3, y3, z3]), self.scale_factor * np.array([x2, y2, z2]),
+                           self.color_of_atoms[self.main_model.atoms[bond[1]].charge]])
             else:
-                coords = ([[x1, y1, z1], [x2, y2, z2], self.color_of_bonds])
+                coords = ([self.scale_factor * np.array([x1, y1, z1]), self.scale_factor * np.array([x2, y2, z2]),
+                           self.color_of_bonds])
 
             for coord in coords:
                 if self.selected_fragment_mode and \
@@ -1020,7 +1025,7 @@ class GuiOpenGL(QOpenGLWidget):
         gl.glRotate(self.rotX, 1, 0, 0)
         gl.glRotate(self.rotY, 0, 1, 0)
         gl.glRotate(self.rotZ, 0, 0, 1)
-        gl.glScale(self.scale_factor, self.scale_factor, self.scale_factor)
+        #gl.glScale(self.scale_factor, self.scale_factor, self.scale_factor)
 
     def prepere_scene(self):
         gl.glClearColor(1.0, 1.0, 1.0, 1.0)
@@ -1028,7 +1033,7 @@ class GuiOpenGL(QOpenGLWidget):
         gl.glMatrixMode(gl.GL_PROJECTION)
         gl.glLoadIdentity()
         x, y, width, height = gl.glGetDoublev(gl.GL_VIEWPORT)
-        if not self.ViewOrtho:
+        if not self.is_orthographic:
             glu.gluPerspective(
                 self.perspective_angle,  # field of view in degrees
                 width / float(height or 1),  # aspect ratio

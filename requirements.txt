@@ -1,11 +1,12 @@
 pyopengl
+pyside2
+qtpy
+ase
 numpy
 scipy
 matplotlib
 pyqtgraph
 scikit-image
-pyside2
-qtpy
 pytest
 pytest-cov
 pytest-qt

@@ -1341,11 +1341,13 @@ class MainForm(QMainWindow):
                 self.save_active_folder()
 
     def menu_ortho(self):  # pragma: no cover
-        self.ui.openGLWidget.ViewOrtho = True
+        self.ui.openGLWidget.is_orthographic = True
+        self.ui.openGLWidget.auto_zoom()
         self.ui.openGLWidget.update()
 
     def menu_perspective(self):  # pragma: no cover
-        self.ui.openGLWidget.ViewOrtho = False
+        self.ui.openGLWidget.is_orthographic = False
+        self.ui.openGLWidget.auto_zoom()
         self.ui.openGLWidget.update()
 
     def menu_show_box(self):  # pragma: no cover

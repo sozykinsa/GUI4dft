@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
+#from ase.data import covalent_radii
+#from ase.data.colors import cpk_colors, jmol_colors
 
 
 class TPeriodTableAtom:
@@ -14,7 +16,7 @@ class TPeriodTableAtom:
 
 
 class TPeriodTable:
-    """The TPeriodTable class provides basic fetches of Mendelevium's table. The constructor does not have arguments"""
+    """The TPeriodTable class provides basic fetches of Mendelevium's table. The constructor does not have arguments."""
     def __init__(self):
         self.table_size = 128
         self.Atoms = []
