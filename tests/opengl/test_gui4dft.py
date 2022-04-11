@@ -1,3 +1,4 @@
+from copy import deepcopy
 
 def test_gui4dft_run(gui4dft_application, h2o_model):
     window = gui4dft_application
@@ -91,6 +92,40 @@ def test_plot_dos(gui4dft_application, tests_path):
     window.parse_bands()
     window.plot_bands()
     assert len(window.models) == 1
+
+
+def test_actions_rotate(gui4dft_application, tests_path):
+    f_name = str(tests_path / 'ref_data' / 'swcnt(8,0)' / "siesta.out")
+    window = gui4dft_application
+    window.menu_open(f_name)
+    rot = deepcopy(window.ui.openGLWidget.rotation_angles)
+    window.rotate_model_xp()
+    assert window.ui.openGLWidget.rotation_angles[0] == rot[0] + window.rotation_step
+    window.rotate_model_xm()
+    assert window.ui.openGLWidget.rotation_angles[0] == rot[0]
+    window.rotate_model_yp()
+    assert window.ui.openGLWidget.rotation_angles[1] == rot[1] + window.rotation_step
+    window.rotate_model_ym()
+    assert window.ui.openGLWidget.rotation_angles[1] == rot[1]
+    window.rotate_model_zp()
+    assert window.ui.openGLWidget.rotation_angles[2] == rot[2] + window.rotation_step
+    window.rotate_model_zm()
+    assert window.ui.openGLWidget.rotation_angles[2] == rot[2]
+
+
+def test_actions_move(gui4dft_application, tests_path):
+    f_name = str(tests_path / 'ref_data' / 'swcnt(8,0)' / "siesta.out")
+    window = gui4dft_application
+    window.menu_open(f_name)
+    cam_pos = deepcopy(window.ui.openGLWidget.camera_position)
+    window.move_model_right()
+    assert window.ui.openGLWidget.camera_position[0] == cam_pos[0] + window.move_step
+    window.move_model_left()
+    assert window.ui.openGLWidget.camera_position[0] == cam_pos[0]
+    window.move_model_up()
+    assert window.ui.openGLWidget.camera_position[1] == cam_pos[1] + window.move_step
+    window.move_model_down()
+    assert window.ui.openGLWidget.camera_position[1] == cam_pos[1]
 
 
 def test_cell_param(gui4dft_application, tests_path):

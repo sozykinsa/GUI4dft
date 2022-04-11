@@ -69,6 +69,7 @@ class MainForm(QMainWindow):
         self.table_header_stylesheet = "::section{Background-color:rgb(190,190,190)}"
         self.is_scaled_colors_for_surface = True
         self.rotation_step = 1
+        self.move_step = 1
 
         self.shortcut = QShortcut(QKeySequence("Ctrl+D"), self)
         self.shortcut.activated.connect(self.atom_delete)
@@ -332,6 +333,9 @@ class MainForm(QMainWindow):
         self.ui.FormActionsPosTableBonds.horizontalHeader().setStyleSheet(self.table_header_stylesheet)
         self.ui.FormActionsPosTableBonds.verticalHeader().setStyleSheet(self.table_header_stylesheet)
 
+        self.setup_actions()
+
+    def setup_actions(self):
         if is_with_figure and os.path.exists(Path(__file__).parent / "images" / 'Open.png'):
             open_action = QAction(QIcon(str(Path(__file__).parent / "images" / 'Open.png')), 'Open', self)
         else:
@@ -339,7 +343,6 @@ class MainForm(QMainWindow):
         open_action.setShortcut('Ctrl+O')
         open_action.triggered.connect(self.menu_open)
         self.ui.toolBar.addAction(open_action)
-
         if is_with_figure and os.path.exists(Path(__file__).parent / "images" / 'Close.png'):
             open_action = QAction(QIcon(str(Path(__file__).parent / "images" / 'Close.png')), 'Export', self)
         else:
@@ -348,7 +351,6 @@ class MainForm(QMainWindow):
         open_action.triggered.connect(self.menu_export)
         self.ui.toolBar.addAction(open_action)
         self.ui.toolBar.addSeparator()
-
         if is_with_figure and os.path.exists(Path(__file__).parent / "images" / 'Save3D.png'):
             file_path = str(Path(__file__).parent / "images" / 'Save3D.png')
             save_image_to_file_action = QAction(QIcon(file_path), 'SaveFigure3D', self)
@@ -362,45 +364,72 @@ class MainForm(QMainWindow):
             open_action = QAction(QIcon(str(Path(__file__).parent / "images" / 'UndoX.png')), 'RotateX-', self)
         else:
             open_action = QAction('RotateX-', self)
-        open_action.triggered.connect(self.rotate_model_xm)
+        open_action.triggered.connect(self.rotate_model_xp)
         self.ui.toolBar.addAction(open_action)
 
         if is_with_figure and os.path.exists(Path(__file__).parent / "images" / 'RedoX.png'):
             open_action = QAction(QIcon(str(Path(__file__).parent / "images" / 'RedoX.png')), 'RotateX+', self)
         else:
             open_action = QAction('RotateX+', self)
-        open_action.triggered.connect(self.rotate_model_xp)
+        open_action.triggered.connect(self.rotate_model_xm)
         self.ui.toolBar.addAction(open_action)
         self.ui.toolBar.addSeparator()
-
         if is_with_figure and os.path.exists(Path(__file__).parent / "images" / 'UndoY.png'):
             open_action = QAction(QIcon(str(Path(__file__).parent / "images" / 'UndoY.png')), 'RotateY-', self)
         else:
             open_action = QAction('RotateY-', self)
-        open_action.triggered.connect(self.rotate_model_ym)
+        open_action.triggered.connect(self.rotate_model_yp)
         self.ui.toolBar.addAction(open_action)
 
         if is_with_figure and os.path.exists(Path(__file__).parent / "images" / 'RedoY.png'):
             open_action = QAction(QIcon(str(Path(__file__).parent / "images" / 'RedoY.png')), 'RotateY+', self)
         else:
             open_action = QAction('RotateY+', self)
-        open_action.triggered.connect(self.rotate_model_yp)
+        open_action.triggered.connect(self.rotate_model_ym)
         self.ui.toolBar.addAction(open_action)
-        self.ui.toolBar.addSeparator()
 
+        self.ui.toolBar.addSeparator()
         if is_with_figure and os.path.exists(Path(__file__).parent / "images" / 'UndoZ.png'):
             open_action = QAction(QIcon(str(Path(__file__).parent / "images" / 'UndoZ.png')), 'RotateZ-', self)
         else:
             open_action = QAction('RotateZ-', self)
-        open_action.triggered.connect(self.rotate_model_zm)
+        open_action.triggered.connect(self.rotate_model_zp)
         self.ui.toolBar.addAction(open_action)
-
         if is_with_figure and os.path.exists(Path(__file__).parent / "images" / 'RedoZ.png'):
             open_action = QAction(QIcon(str(Path(__file__).parent / "images" / 'RedoZ.png')), 'RotateZ+', self)
         else:
             open_action = QAction('RotateZ+', self)
-        open_action.triggered.connect(self.rotate_model_zp)
+        open_action.triggered.connect(self.rotate_model_zm)
         self.ui.toolBar.addAction(open_action)
+        self.ui.toolBar.addSeparator()
+
+        if is_with_figure and os.path.exists(Path(__file__).parent / "images" / 'left.png'):
+            to_left_action = QAction(QIcon(str(Path(__file__).parent / "images" / 'left.png')), 'left', self)
+        else:
+            to_left_action = QAction('RotateX-', self)
+        to_left_action.triggered.connect(self.move_model_left)
+        self.ui.toolBar.addAction(to_left_action)
+
+        if is_with_figure and os.path.exists(Path(__file__).parent / "images" / 'right.png'):
+            to_right_action = QAction(QIcon(str(Path(__file__).parent / "images" / 'right.png')), 'right', self)
+        else:
+            to_right_action = QAction('RotateX+', self)
+        to_right_action.triggered.connect(self.move_model_right)
+        self.ui.toolBar.addAction(to_right_action)
+        self.ui.toolBar.addSeparator()
+
+        if is_with_figure and os.path.exists(Path(__file__).parent / "images" / 'down.png'):
+            to_up_action = QAction(QIcon(str(Path(__file__).parent / "images" / 'down.png')), 'Y-', self)
+        else:
+            to_up_action = QAction('RotateY-', self)
+        to_up_action.triggered.connect(self.move_model_down)
+        self.ui.toolBar.addAction(to_up_action)
+        if is_with_figure and os.path.exists(Path(__file__).parent / "images" / 'up.png'):
+            to_down_action = QAction(QIcon(str(Path(__file__).parent / "images" / 'up.png')), 'Y+', self)
+        else:
+            to_down_action = QAction('RotateY+', self)
+        to_down_action.triggered.connect(self.move_model_up)
+        self.ui.toolBar.addAction(to_down_action)
         self.ui.toolBar.addSeparator()
 
     def activate_fragment_selection_mode(self):
@@ -1341,13 +1370,11 @@ class MainForm(QMainWindow):
                 self.save_active_folder()
 
     def menu_ortho(self):  # pragma: no cover
-        self.ui.openGLWidget.is_orthographic = True
-        self.ui.openGLWidget.auto_zoom()
+        self.ui.openGLWidget.is_camera_ortho = True
         self.ui.openGLWidget.update()
 
     def menu_perspective(self):  # pragma: no cover
-        self.ui.openGLWidget.is_orthographic = False
-        self.ui.openGLWidget.auto_zoom()
+        self.ui.openGLWidget.is_camera_ortho = False
         self.ui.openGLWidget.update()
 
     def menu_show_box(self):  # pragma: no cover
@@ -2064,28 +2091,44 @@ class MainForm(QMainWindow):
         except Exception as excep:
             self.show_error(excep)
 
+    def move_model_left(self):
+        self.ui.openGLWidget.camera_position += np.array([-self.move_step, 0.0, 0.0])
+        self.ui.openGLWidget.update()
+
+    def move_model_right(self):
+        self.ui.openGLWidget.camera_position += np.array([self.move_step, 0.0, 0.0])
+        self.ui.openGLWidget.update()
+
+    def move_model_up(self):
+        self.ui.openGLWidget.camera_position += np.array([0.0, self.move_step, 0.0])
+        self.ui.openGLWidget.update()
+
+    def move_model_down(self):
+        self.ui.openGLWidget.camera_position += np.array([0.0, -self.move_step, 0.0])
+        self.ui.openGLWidget.update()
+
     def rotate_model_xp(self):
-        self.ui.openGLWidget.rotX += self.rotation_step
+        self.ui.openGLWidget.rotation_angles[0] += self.rotation_step
         self.ui.openGLWidget.update()
 
     def rotate_model_xm(self):
-        self.ui.openGLWidget.rotX -= self.rotation_step
+        self.ui.openGLWidget.rotation_angles[0] -= self.rotation_step
         self.ui.openGLWidget.update()
 
     def rotate_model_yp(self):
-        self.ui.openGLWidget.rotY += self.rotation_step
+        self.ui.openGLWidget.rotation_angles[1] += self.rotation_step
         self.ui.openGLWidget.update()
 
     def rotate_model_ym(self):
-        self.ui.openGLWidget.rotY -= self.rotation_step
+        self.ui.openGLWidget.rotation_angles[1] -= self.rotation_step
         self.ui.openGLWidget.update()
 
     def rotate_model_zp(self):
-        self.ui.openGLWidget.rotZ += self.rotation_step
+        self.ui.openGLWidget.rotation_angles[2] += self.rotation_step
         self.ui.openGLWidget.update()
 
     def rotate_model_zm(self):
-        self.ui.openGLWidget.rotZ -= self.rotation_step
+        self.ui.openGLWidget.rotation_angles[2] -= self.rotation_step
         self.ui.openGLWidget.update()
 
     def save_active_folder(self):  # pragma: no cover

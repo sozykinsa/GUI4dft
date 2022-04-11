@@ -51,15 +51,13 @@ class GuiOpenGL(QOpenGLWidget):
         self.is_view_bcp: bool = False
         self.is_view_bond_path: bool = False
         self.active = False
-        self.ViewAtomNumbers = False
+        self.is_atomic_numbers_visible = False
         self.scale_factor = 1
         self.bondWidth = 20
         self.x_scene = 0
         self.y_scene = 0
         self.camera_position = np.array([0.0, 0.0, -20.0])
-        self.rotX = 0
-        self.rotY = 0
-        self.rotZ = 0
+        self.rotation_angles = np.zeros(3, dtype=float)
         self.selected_atom = -1
         self.selected_cp = -1
         self.prop = "charge"
@@ -75,9 +73,20 @@ class GuiOpenGL(QOpenGLWidget):
         self.light_color_specular = (1, 1, 1, 1)
         self.material_diffuse = (1.0, 1.0, 1.0, 1)
         self.material_specular = (0.2, 0.2, 0.2, 1)
-        self.material_shininess = 8
+        self.material_shininess = 12
 
         self.is_view_axes = False
+
+    @property
+    def is_camera_ortho(self) -> bool:
+        return self.is_orthographic
+
+    @is_camera_ortho.setter
+    def is_camera_ortho(self, is_orthographic):
+        self.is_orthographic = is_orthographic
+        self.auto_zoom()
+        self.add_atoms()
+        self.add_bonds()
 
     def wheelEvent(self, event: QEvent):
         self.scale(event.angleDelta().y())
@@ -117,7 +126,7 @@ class GuiOpenGL(QOpenGLWidget):
     def init_params(self, the_object) -> None:
         self.is_orthographic = the_object.is_orthographic
         self.ViewAtoms = the_object.ViewAtoms
-        self.ViewAtomNumbers = the_object.ViewAtomNumbers
+        self.is_atomic_numbers_visible = the_object.is_atomic_numbers_visible
         self.ViewBox = the_object.ViewBox
         self.ViewBonds = the_object.ViewBonds
         self.is_view_surface = the_object.is_view_surface
@@ -134,9 +143,7 @@ class GuiOpenGL(QOpenGLWidget):
         self.x_scene = the_object.x_scene
         self.y_scene = the_object.y_scene
         self.camera_position = the_object.camera_position
-        self.rotX = the_object.rotX
-        self.rotY = the_object.rotY
-        self.rotZ = the_object.rotZ
+        self.rotation_angles[:] = the_object.rotation_angles
         self.selected_atom = the_object.selected_atom
         self.selected_cp = the_object.selected_cp
         self.prop = the_object.prop
@@ -318,7 +325,7 @@ class GuiOpenGL(QOpenGLWidget):
         self.main_model.move(self.x0, self.y0, self.z0)
         self.ViewBox = ViewBox
         self.ViewAtoms = is_view_atoms
-        self.ViewAtomNumbers = is_view_atom_numbers
+        self.is_atomic_numbers_visible = is_view_atom_numbers
         self.ViewBonds = ViewBonds
         self.color_of_bonds_by_atoms = Bonds_by_atoms
         self.bondWidth = bondWidth
@@ -471,7 +478,7 @@ class GuiOpenGL(QOpenGLWidget):
         self.update()
 
     def set_atoms_numbred(self, state):
-        self.ViewAtomNumbers = state
+        self.is_atomic_numbers_visible = state
         self.update()
 
     def set_box_visible(self, state):
@@ -489,20 +496,18 @@ class GuiOpenGL(QOpenGLWidget):
     def scale(self, wheel):
         if self.active:
             if self.is_orthographic:
-                self.scale_factor += 0.05 * (wheel / 120)
+                self.scale_factor -= 0.05 * (wheel / 120)
                 self.add_atoms()
                 self.add_bonds()
             else:
-                self.camera_position[2] += 0.5 * (wheel/120)
+                self.camera_position[2] -= 0.5 * (wheel/120)
             self.update()
-            # print(self.scale_factor, self.camera_position)
             return True
 
     def rotat(self, x, y, width, height):
         if self.active:
             xs, ys = self.screen2space(x, y, width, height)
-            self.rotY += 10 * (xs - self.x_scr_old)
-            self.rotX -= 10 * (ys - self.y_scr_old)
+            self.rotation_angles += np.array([-10 * (ys - self.y_scr_old), 10 * (xs - self.x_scr_old),  0.0])
             return True
 
     def pan(self, x: int, y: int) -> None:
@@ -526,9 +531,10 @@ class GuiOpenGL(QOpenGLWidget):
             dy = y - self.y_scene
             mult = 0.01*self.scale_factor
             vect = mult*np.array([-dx, dy, 0])
-            al = -math.pi * self.rotX / 180
-            bet = -math.pi * self.rotY / 180
-            gam = -math.pi * self.rotZ / 180
+            al, bet, gam = -math.pi * self.rotation_angles / 180.0
+            #al = -math.pi * self.rotX / 180
+            #bet = -math.pi * self.rotY / 180
+            #gam = -math.pi * self.rotZ / 180
             vect = self.rotate_vector(vect, al, bet, gam)
             self.x_scene, self.y_scene = x, y
             self.main_model.atoms[self.selected_atom].x -= vect[0]
@@ -705,7 +711,7 @@ class GuiOpenGL(QOpenGLWidget):
                     gl.glColor4f(coord[2][0], coord[2][1], coord[2][2], self.SelectedFragmentAtomsTransp)
                 else:
                     gl.glColor3f(coord[2][0], coord[2][1], coord[2][2])
-                self.add_bond(coord[0], coord[1], self.bondWidth)
+                self.add_bond(coord[0], coord[1], self.scale_factor * self.bondWidth)
         gl.glEndList()
 
     def add_box(self):
@@ -960,15 +966,17 @@ class GuiOpenGL(QOpenGLWidget):
                 if self.is_view_bond_path:
                     gl.glCallList(self.object + 9)  # Bondpath
 
-                if self.ViewAtomNumbers:
+                if self.is_atomic_numbers_visible:
                     text_to_render = []
                     for i in range(0, len(self.main_model.atoms)):
                         at = self.main_model.atoms[i]
-                        text_to_render.append([at.x, at.y, at.z, at.let+str(i)])
+                        text_to_render.append([self.scale_factor * at.x, self.scale_factor * at.y,
+                                               self.scale_factor * at.z, at.let+str(i)])
 
                     for i in range(0, len(self.main_model.bcp)):
                         at = self.main_model.bcp[i]
-                        text_to_render.append([at.x, at.y, at.z, at.let + str(i)])
+                        text_to_render.append([self.scale_factor * at.x, self.scale_factor * at.y,
+                                               self.scale_factor * at.z, at.let + str(i)])
                     self.render_text(text_to_render)
         except Exception as exc:
             print(exc)
@@ -1022,10 +1030,9 @@ class GuiOpenGL(QOpenGLWidget):
 
     def prepare_orientation(self):
         gl.glTranslated(*self.camera_position)
-        gl.glRotate(self.rotX, 1, 0, 0)
-        gl.glRotate(self.rotY, 0, 1, 0)
-        gl.glRotate(self.rotZ, 0, 0, 1)
-        #gl.glScale(self.scale_factor, self.scale_factor, self.scale_factor)
+        gl.glRotate(self.rotation_angles[0], 1, 0, 0)
+        gl.glRotate(self.rotation_angles[1], 0, 1, 0)
+        gl.glRotate(self.rotation_angles[2], 0, 0, 1)
 
     def prepere_scene(self):
         gl.glClearColor(1.0, 1.0, 1.0, 1.0)
@@ -1119,9 +1126,11 @@ class GuiOpenGL(QOpenGLWidget):
         winY = int(float(view[3]) - float(y))
         z = gl.glReadPixels(x, winY, 1, 1, gl.GL_DEPTH_COMPONENT, gl.GL_FLOAT)
         point = glu.gluUnProject(x, y, z, model, proj, view)
-        al = math.pi * self.rotX / 180
+        al = math.pi * self.rotation_angles[0] / 180
+        # !!! Why ????
         bet = 0  # math.pi * self.rotY / 180
-        gam = math.pi * self.rotZ / 180
+
+        gam = math.pi * self.rotation_angles[2] / 180
         point = self.rotate_un_vector(np.array(point), al, bet, gam)
         point = self.rotate_vector(np.array(point), al, bet, gam)
         return point
