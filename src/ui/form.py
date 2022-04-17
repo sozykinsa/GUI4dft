@@ -4032,7 +4032,7 @@ class Ui_MainWindow(object):
         self.toolBox_4.addItem(self.page_10, u"Export")
         self.page_14 = QWidget()
         self.page_14.setObjectName(u"page_14")
-        self.page_14.setGeometry(QRect(0, 0, 399, 644))
+        self.page_14.setGeometry(QRect(0, 0, 168, 329))
         self.verticalLayout_97 = QVBoxLayout(self.page_14)
         self.verticalLayout_97.setObjectName(u"verticalLayout_97")
         self.groupBox_29 = QGroupBox(self.page_14)
@@ -5263,32 +5263,83 @@ class Ui_MainWindow(object):
         self.toolBox_3.addItem(self.page_5, u"Mode")
         self.page_20 = QWidget()
         self.page_20.setObjectName(u"page_20")
-        self.page_20.setGeometry(QRect(0, 0, 215, 217))
+        self.page_20.setGeometry(QRect(0, 0, 399, 706))
         self.verticalLayout_14 = QVBoxLayout(self.page_20)
         self.verticalLayout_14.setObjectName(u"verticalLayout_14")
-        self.frame_16 = QFrame(self.page_20)
-        self.frame_16.setObjectName(u"frame_16")
-        self.frame_16.setMinimumSize(QSize(0, 0))
-        self.frame_16.setMaximumSize(QSize(16777215, 16777215))
-        self.frame_16.setFrameShape(QFrame.StyledPanel)
-        self.frame_16.setFrameShadow(QFrame.Raised)
-        self.verticalLayout_20 = QVBoxLayout(self.frame_16)
+        self.groupBox_46 = QGroupBox(self.page_20)
+        self.groupBox_46.setObjectName(u"groupBox_46")
+        self.groupBox_46.setMinimumSize(QSize(0, 0))
+        self.verticalLayout_20 = QVBoxLayout(self.groupBox_46)
         self.verticalLayout_20.setObjectName(u"verticalLayout_20")
-        self.verticalLayout_20.setContentsMargins(0, 0, 0, 0)
-        self.label_20 = QLabel(self.frame_16)
-        self.label_20.setObjectName(u"label_20")
-        self.label_20.setMaximumSize(QSize(16777215, 50))
+        self.frame_142 = QFrame(self.groupBox_46)
+        self.frame_142.setObjectName(u"frame_142")
+        self.frame_142.setMinimumSize(QSize(0, 50))
+        self.frame_142.setFrameShape(QFrame.NoFrame)
+        self.frame_142.setFrameShadow(QFrame.Raised)
+        self.horizontalLayout_154 = QHBoxLayout(self.frame_142)
+        self.horizontalLayout_154.setObjectName(u"horizontalLayout_154")
+        self.cpk_radio = QRadioButton(self.frame_142)
+        self.cpk_radio.setObjectName(u"cpk_radio")
+        self.cpk_radio.setChecked(True)
 
-        self.verticalLayout_20.addWidget(self.label_20)
+        self.horizontalLayout_154.addWidget(self.cpk_radio)
+
+        self.jmol_radio = QRadioButton(self.frame_142)
+        self.jmol_radio.setObjectName(u"jmol_radio")
+
+        self.horizontalLayout_154.addWidget(self.jmol_radio)
+
+        self.manual_colors_radio = QRadioButton(self.frame_142)
+        self.manual_colors_radio.setObjectName(u"manual_colors_radio")
+
+        self.horizontalLayout_154.addWidget(self.manual_colors_radio)
+
+        self.manual_colors_default = QPushButton(self.frame_142)
+        self.manual_colors_default.setObjectName(u"manual_colors_default")
+
+        self.horizontalLayout_154.addWidget(self.manual_colors_default)
 
 
-        self.verticalLayout_14.addWidget(self.frame_16)
+        self.verticalLayout_20.addWidget(self.frame_142)
 
-        self.ColorsOfAtomsTable = QTableWidget(self.page_20)
+        self.ColorsOfAtomsTable = QTableWidget(self.groupBox_46)
         self.ColorsOfAtomsTable.setObjectName(u"ColorsOfAtomsTable")
         self.ColorsOfAtomsTable.setMinimumSize(QSize(0, 30))
 
-        self.verticalLayout_14.addWidget(self.ColorsOfAtomsTable)
+        self.verticalLayout_20.addWidget(self.ColorsOfAtomsTable)
+
+
+        self.verticalLayout_14.addWidget(self.groupBox_46)
+
+        self.frame_144 = QFrame(self.page_20)
+        self.frame_144.setObjectName(u"frame_144")
+        self.frame_144.setMinimumSize(QSize(0, 0))
+        self.frame_144.setFrameShape(QFrame.StyledPanel)
+        self.frame_144.setFrameShadow(QFrame.Raised)
+        self.horizontalLayout_101 = QHBoxLayout(self.frame_144)
+        self.horizontalLayout_101.setObjectName(u"horizontalLayout_101")
+        self.horizontalLayout_101.setContentsMargins(0, 0, 0, 0)
+        self.label_106 = QLabel(self.frame_144)
+        self.label_106.setObjectName(u"label_106")
+
+        self.horizontalLayout_101.addWidget(self.label_106)
+
+        self.ColorBackground = QFrame(self.frame_144)
+        self.ColorBackground.setObjectName(u"ColorBackground")
+        self.ColorBackground.setFrameShape(QFrame.StyledPanel)
+        self.ColorBackground.setFrameShadow(QFrame.Raised)
+
+        self.horizontalLayout_101.addWidget(self.ColorBackground)
+
+        self.ColorBackgroundDialogButton = QPushButton(self.frame_144)
+        self.ColorBackgroundDialogButton.setObjectName(u"ColorBackgroundDialogButton")
+        self.ColorBackgroundDialogButton.setCheckable(False)
+        self.ColorBackgroundDialogButton.setChecked(False)
+
+        self.horizontalLayout_101.addWidget(self.ColorBackgroundDialogButton)
+
+
+        self.verticalLayout_14.addWidget(self.frame_144)
 
         self.frame_77 = QFrame(self.page_20)
         self.frame_77.setObjectName(u"frame_77")
@@ -6101,7 +6152,13 @@ class Ui_MainWindow(object):
         self.label_50.setText(QCoreApplication.translate("MainWindow", u"Preferred lattice", None))
         self.FormSettingsPreferredLattice.setCurrentText("")
         self.toolBox_3.setItemText(self.toolBox_3.indexOf(self.page_5), QCoreApplication.translate("MainWindow", u"Mode", None))
-        self.label_20.setText(QCoreApplication.translate("MainWindow", u"Atoms", None))
+        self.groupBox_46.setTitle(QCoreApplication.translate("MainWindow", u"Atoms", None))
+        self.cpk_radio.setText(QCoreApplication.translate("MainWindow", u"cpk", None))
+        self.jmol_radio.setText(QCoreApplication.translate("MainWindow", u"jmol", None))
+        self.manual_colors_radio.setText(QCoreApplication.translate("MainWindow", u"manual", None))
+        self.manual_colors_default.setText(QCoreApplication.translate("MainWindow", u"default", None))
+        self.label_106.setText(QCoreApplication.translate("MainWindow", u"Background color", None))
+        self.ColorBackgroundDialogButton.setText(QCoreApplication.translate("MainWindow", u"Edit", None))
         self.label_17.setText(QCoreApplication.translate("MainWindow", u"Bonds color", None))
         self.ColorBondDialogButton.setText(QCoreApplication.translate("MainWindow", u"Edit", None))
         self.label_19.setText(QCoreApplication.translate("MainWindow", u"Box color", None))

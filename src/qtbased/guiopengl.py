@@ -20,6 +20,7 @@ class GuiOpenGL(QOpenGLWidget):
         super().__init__(parent)
         self.main_model = TAtomicModel()
         self.perspective_angle: int = 35
+        self.background_color = np.array((1.0, 1.0, 1.0), dtype=float)
 
         self.is_check_atom_selection: bool = False
         self.selected_atom_type = None
@@ -41,9 +42,9 @@ class GuiOpenGL(QOpenGLWidget):
         self.z0 = 0
 
         self.is_orthographic: bool = False
-        self.ViewAtoms = True
-        self.ViewBox = False
-        self.ViewBonds = True
+        self.is_view_atoms = True
+        self.is_view_box = False
+        self.is_view_bonds = True
         self.is_view_surface: bool = False
         self.is_view_contour: bool = False
         self.is_view_contour_fill: bool = False
@@ -125,10 +126,10 @@ class GuiOpenGL(QOpenGLWidget):
 
     def init_params(self, the_object) -> None:
         self.is_orthographic = the_object.is_orthographic
-        self.ViewAtoms = the_object.ViewAtoms
+        self.is_view_atoms = the_object.is_view_atoms
         self.is_atomic_numbers_visible = the_object.is_atomic_numbers_visible
-        self.ViewBox = the_object.ViewBox
-        self.ViewBonds = the_object.ViewBonds
+        self.is_view_box = the_object.is_view_box
+        self.is_view_bonds = the_object.is_view_bonds
         self.is_view_surface = the_object.is_view_surface
         self.is_view_contour = the_object.is_view_contour
         self.is_view_contour_fill = the_object.is_view_contour_fill
@@ -323,10 +324,10 @@ class GuiOpenGL(QOpenGLWidget):
         self.y0 = -cm[1]
         self.z0 = -cm[2]
         self.main_model.move(self.x0, self.y0, self.z0)
-        self.ViewBox = ViewBox
-        self.ViewAtoms = is_view_atoms
+        self.is_view_box = ViewBox
+        self.is_view_atoms = is_view_atoms
         self.is_atomic_numbers_visible = is_view_atom_numbers
-        self.ViewBonds = ViewBonds
+        self.is_view_bonds = ViewBonds
         self.color_of_bonds_by_atoms = Bonds_by_atoms
         self.bondWidth = bondWidth
         self.is_view_axes = is_view_axes
@@ -441,13 +442,18 @@ class GuiOpenGL(QOpenGLWidget):
         self.color_of_atoms = colors
         self.add_atoms()
         self.add_bonds()
+        self.update()
 
     def set_color_of_bonds(self, color):
         self.color_of_bonds = color
         self.add_bonds()
 
-    def set_color_of_voronoi(self, voronoicolor):
-        self.add_voronoi(voronoicolor)
+    def set_color_of_background(self, color):
+        self.background_color = color
+        self.update()
+
+    def set_color_of_voronoi(self, color):
+        self.add_voronoi(color)
 
     def set_color_of_box(self, color):
         self.color_of_box = color
@@ -474,7 +480,7 @@ class GuiOpenGL(QOpenGLWidget):
         self.update()
 
     def set_atoms_visible(self, state):
-        self.ViewAtoms = state
+        self.is_view_atoms = state
         self.update()
 
     def set_atoms_numbred(self, state):
@@ -482,11 +488,11 @@ class GuiOpenGL(QOpenGLWidget):
         self.update()
 
     def set_box_visible(self, state):
-        self.ViewBox = state
+        self.is_view_box = state
         self.update()
 
     def set_bonds_visible(self, state):
-        self.ViewBonds = state
+        self.is_view_bonds = state
         self.update()
 
     def set_axes_visible(self, state):
@@ -506,8 +512,9 @@ class GuiOpenGL(QOpenGLWidget):
 
     def rotat(self, x, y, width, height):
         if self.active:
-            xs, ys = self.screen2space(x, y, width, height)
-            self.rotation_angles += np.array([-10 * (ys - self.y_scr_old), 10 * (xs - self.x_scr_old),  0.0])
+            x_speed = 180.0 / width
+            y_speed = 180.0 / height
+            self.rotation_angles += np.array([y_speed * (y - self.y_scene), x_speed * (x - self.x_scene),  0.0])
             return True
 
     def pan(self, x: int, y: int) -> None:
@@ -529,12 +536,9 @@ class GuiOpenGL(QOpenGLWidget):
         if self.active:
             dx = x - self.x_scene
             dy = y - self.y_scene
-            mult = 0.01*self.scale_factor
-            vect = mult*np.array([-dx, dy, 0])
+            mult = 0.01 * self.scale_factor
+            vect = mult * np.array([-dx, dy, 0])
             al, bet, gam = -math.pi * self.rotation_angles / 180.0
-            #al = -math.pi * self.rotX / 180
-            #bet = -math.pi * self.rotY / 180
-            #gam = -math.pi * self.rotZ / 180
             vect = self.rotate_vector(vect, al, bet, gam)
             self.x_scene, self.y_scene = x, y
             self.main_model.atoms[self.selected_atom].x -= vect[0]
@@ -552,50 +556,46 @@ class GuiOpenGL(QOpenGLWidget):
             return True
 
     def rotate_vector(self, vect, al, bet, gam):
-        cos = math.cos(al)
-        sin = math.sin(al)
-        Mx = np.array([[1, 0, 0], [0, cos, -sin], [0, sin, cos]])
-        cos = math.cos(bet)
-        sin = math.sin(bet)
-        My = np.array([[cos, 0, sin], [0, 1, 0], [-sin, 0, cos]])
-        cos = math.cos(gam)
-        sin = math.sin(gam)
-        Mz = np.array([[cos, -sin, 0], [sin, cos, 0], [0, 0, 1]])
-        vect = Mx.dot(vect)
-        vect = My.dot(vect)
-        vect = Mz.dot(vect)
+        mx, my, mz = self.rotation_matrix_elements(al, bet, gam)
+        vect = mx.dot(vect)
+        vect = my.dot(vect)
+        vect = mz.dot(vect)
         return vect
 
     def rotate_un_vector(self, vect, al, bet, gam):
-        cos = math.cos(al)
-        sin = math.sin(al)
-        Mx = np.array([[1, 0, 0], [0, cos, -sin], [0, sin, cos]])
-        cos = math.cos(bet)
-        sin = math.sin(bet)
-        My = np.array([[cos, 0, sin], [0, 1, 0], [-sin, 0, cos]])
-        cos = math.cos(gam)
-        sin = math.sin(gam)
-        Mz = np.array([[cos, -sin, 0], [sin, cos, 0], [0, 0, 1]])
-
-        vect = Mz.dot(vect)
-        vect = My.dot(vect)
-        vect = Mx.dot(vect)
+        mx, my, mz = self.rotation_matrix_elements(al, bet, gam)
+        vect = mz.dot(vect)
+        vect = my.dot(vect)
+        vect = mx.dot(vect)
         return vect
 
-    def add_bond(self, Atom1Pos, Atom2Pos, radius=0.1, shape='cylinder'):
+    @staticmethod
+    def rotation_matrix_elements(al, bet, gam):
+        cos = math.cos(al)
+        sin = math.sin(al)
+        mx = np.array([[1, 0, 0], [0, cos, -sin], [0, sin, cos]])
+        cos = math.cos(bet)
+        sin = math.sin(bet)
+        my = np.array([[cos, 0, sin], [0, 1, 0], [-sin, 0, cos]])
+        cos = math.cos(gam)
+        sin = math.sin(gam)
+        mz = np.array([[cos, -sin, 0], [sin, cos, 0], [0, 0, 1]])
+        return mx, my, mz
+
+    def add_bond(self, atom1_pos, atom2_pos, radius=0.1, shape='cylinder'):
         radius2 = radius
         if shape == 'conus':
             radius2 = 0
-        rel = [Atom2Pos[0]-Atom1Pos[0], Atom2Pos[1]-Atom1Pos[1], Atom2Pos[2]-Atom1Pos[2]]
-        binding_len = math.sqrt(math.pow(rel[0], 2) + math.pow(rel[1], 2) + math.pow(rel[2], 2))  # высота цилиндра
+        rel = [atom2_pos[0] - atom1_pos[0], atom2_pos[1] - atom1_pos[1], atom2_pos[2] - atom1_pos[2]]
+        binding_len = math.sqrt(math.pow(rel[0], 2) + math.pow(rel[1], 2) + math.pow(rel[2], 2))
         if binding_len != 0:
-            Fall = 180.0/math.pi*math.acos(rel[2] / binding_len)
-            Yaw = 180.0/math.pi*math.atan2(rel[1], rel[0])
+            fall = 180.0/math.pi*math.acos(rel[2] / binding_len)
+            yaw = 180.0/math.pi*math.atan2(rel[1], rel[0])
 
             gl.glPushMatrix()
-            gl.glTranslated(Atom1Pos[0], Atom1Pos[1], Atom1Pos[2])
-            gl.glRotated(Yaw, 0, 0, 1)
-            gl.glRotated(Fall, 0, 1, 0)
+            gl.glTranslated(atom1_pos[0], atom1_pos[1], atom1_pos[2])
+            gl.glRotated(yaw, 0, 0, 1)
+            gl.glRotated(fall, 0, 1, 0)
             glu.gluCylinder(glu.gluNewQuadric(),
                             radius,  # /*baseRadius:*/
                             radius2,  # /*topRadius:*/
@@ -751,18 +751,18 @@ class GuiOpenGL(QOpenGLWidget):
         gl.glNewList(self.object + 7, gl.GL_COMPILE)
         gl.glColor3f(*self.color_of_axes)
         size = 2
-        sizeCone = 0.2
-        letter_height = sizeCone
-        letter_width = 0.6*sizeCone
+        size_cone = 0.2
+        letter_height = size_cone
+        letter_width = 0.6*size_cone
         width = 0.06
-        glu.gluSphere(glu.gluNewQuadric(), 2*width, 70, 70)
+        glu.gluSphere(glu.gluNewQuadric(), 2 * width, 70, 70)
         p0 = np.array([0, 0, 0])
         p1 = np.array([size, 0, 0])
-        p1cone = np.array([size+sizeCone, 0, 0])
+        p1cone = np.array([size+size_cone, 0, 0])
         p2 = np.array([0, size, 0])
-        p2cone = np.array([0, size+sizeCone, 0])
+        p2cone = np.array([0, size+size_cone, 0])
         p3 = np.array([0, 0, size])
-        p3cone = np.array([0, 0, size+sizeCone])
+        p3cone = np.array([0, 0, size+size_cone])
         self.add_bond(p0, p1, width)
         self.add_bond(p1, p1cone, 2*width, 'conus')
         self.add_bond(p0, p2, width)
@@ -770,7 +770,7 @@ class GuiOpenGL(QOpenGLWidget):
         self.add_bond(p0, p3, width)
         self.add_bond(p3, p3cone, 2 * width, 'conus')
         # lets drow "X"
-        p_x = p1cone + np.array([0, 1.5 * sizeCone, 0])
+        p_x = p1cone + np.array([0, 1.5 * size_cone, 0])
         p_x1 = p_x + np.array([-0.5 * letter_width, -0.5 * letter_height, 0])
         p_x2 = p_x + np.array([+0.5 * letter_width, +0.5 * letter_height, 0])
         p_x3 = p_x + np.array([-0.5 * letter_width, +0.5 * letter_height, 0])
@@ -778,7 +778,7 @@ class GuiOpenGL(QOpenGLWidget):
         self.add_bond(p_x1, p_x2, 0.5 * width)
         self.add_bond(p_x3, p_x4, 0.5 * width)
         # lets drow "Y"
-        p_y = p2cone + np.array([0, 1.5 * sizeCone,  0])
+        p_y = p2cone + np.array([0, 1.5 * size_cone,  0])
         p_y1 = p_y
         p_y2 = p_y + np.array([0, +0.5 * letter_height, +0.5 * letter_width])
         p_y3 = p_y + np.array([0, -0.5 * letter_height, +0.5 * letter_width])
@@ -786,7 +786,7 @@ class GuiOpenGL(QOpenGLWidget):
         self.add_bond(p_y1, p_y2, 0.5 * width)
         self.add_bond(p_y3, p_y4, 0.5 * width)
         # lets drow "Z"
-        p_z = p3cone + np.array([1.5 * sizeCone, 0, 0])
+        p_z = p3cone + np.array([1.5 * size_cone, 0, 0])
         p_z1 = p_z + np.array([-0.5 * letter_height, 0, -0.5 * letter_width])
         p_z2 = p_z + np.array([+0.5 * letter_height, 0, +0.5 * letter_width])
         p_z3 = p_z + np.array([-0.5 * letter_height, 0,  +0.5 * letter_width])
@@ -886,12 +886,12 @@ class GuiOpenGL(QOpenGLWidget):
             points = plane[0]
             colors = plane[1]
             normal = plane[2]
-            Nx = len(points)
-            Ny = len(points[0])
+            nx = len(points)
+            ny = len(points[0])
             gl.glNormal3f(*normal)
             gl.glBegin(gl.GL_TRIANGLES)
-            for i in range(0, Nx-1):
-                for j in range(0, Ny-1):
+            for i in range(0, nx - 1):
+                for j in range(0, ny - 1):
                     gl.glColor3f(*colors[i][j])
                     gl.glVertex3f(*points[i][j][0:3])
                     gl.glColor3f(*colors[i+1][j])
@@ -913,10 +913,10 @@ class GuiOpenGL(QOpenGLWidget):
         self.color_of_voronoi = color
         volume = np.inf
         if self.selected_atom >= 0:
-            ListOfPoligons, volume = Calculators.VoronoiAnalisis(self.main_model, self.selected_atom, max_dist)
+            list_of_poligons, volume = Calculators.VoronoiAnalisis(self.main_model, self.selected_atom, max_dist)
             gl.glNewList(self.object+1, gl.GL_COMPILE)
             gl.glColor4f(color[0], color[1], color[2], 0.7)
-            for poligon in ListOfPoligons:
+            for poligon in list_of_poligons:
                 gl.glBegin(gl.GL_POLYGON)
                 for point in poligon:
                     gl.glVertex3f(point[0], point[1], point[2])
@@ -933,7 +933,7 @@ class GuiOpenGL(QOpenGLWidget):
             self.light_prepare()
             if self.active:
                 self.prepare_orientation()
-                if self.ViewAtoms:
+                if self.is_view_atoms:
                     gl.glCallList(self.object)  # atoms
 
                 if self.is_view_bcp:
@@ -942,13 +942,13 @@ class GuiOpenGL(QOpenGLWidget):
                 if self.can_atom_search:
                     self.get_atom_on_screen()
 
-                if self.ViewBonds and (len(self.main_model.bonds) > 0):
+                if self.is_view_bonds and (len(self.main_model.bonds) > 0):
                     gl.glCallList(self.object + 2)  # find_bonds_exact
 
                 if self.is_view_voronoi:
                     gl.glCallList(self.object + 1)  # Voronoi
 
-                if self.ViewBox:
+                if self.is_view_box:
                     gl.glCallList(self.object + 3)  # lattice_parameters_abc_angles
 
                 if self.is_view_surface:
@@ -984,14 +984,14 @@ class GuiOpenGL(QOpenGLWidget):
 
     def render_text(self, text_to_render, font=QFont()):
         height = self.height()
-        fontColor = QColor.fromRgbF(0.0, 0.0, 0.0, 1)
+        font_color = QColor.fromRgbF(0.0, 0.0, 0.0, 1)
 
         text_to_render.sort(key=lambda i: i[2], reverse=True)
         used_space = []
 
         # Render text
         painter = QPainter(self)
-        painter.setPen(fontColor)
+        painter.setPen(font_color)
         painter.setFont(font)
         for row in text_to_render:
             fl = True
@@ -1035,7 +1035,7 @@ class GuiOpenGL(QOpenGLWidget):
         gl.glRotate(self.rotation_angles[2], 0, 0, 1)
 
     def prepere_scene(self):
-        gl.glClearColor(1.0, 1.0, 1.0, 1.0)
+        gl.glClearColor(*self.background_color, 1.0)
         gl.glClear(gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT)
         gl.glMatrixMode(gl.GL_PROJECTION)
         gl.glLoadIdentity()
@@ -1065,10 +1065,10 @@ class GuiOpenGL(QOpenGLWidget):
         old_selected = self.selected_atom
         need_for_update = False
 
-        ind, minr = self.nearest_point(self.main_model.atoms, point)
-        cp_ind, cp_minr = self.nearest_point(self.main_model.bcp, point)
+        ind, min_r = self.nearest_point(self.main_model.atoms, point)
+        cp_ind, cp_min_r = self.nearest_point(self.main_model.bcp, point)
 
-        if cp_minr < 1.4:
+        if cp_min_r < 1.4:
             if self.selected_cp == cp_ind:
                 self.main_model.bcp[self.selected_cp].setSelected(False)
                 self.selected_cp = -1
@@ -1079,7 +1079,7 @@ class GuiOpenGL(QOpenGLWidget):
             need_for_update = True
             self.add_bcp()
 
-        if minr < 1.4:
+        if min_r < 1.4:
             if self.selected_atom >= 0:
                 self.is_view_voronoi = False
             if self.selected_atom != ind:
@@ -1107,40 +1107,40 @@ class GuiOpenGL(QOpenGLWidget):
             self.update()
 
     def nearest_point(self, ats, point):
-        minr1 = 10000
+        min_r1 = 10000
         ind1 = -1
         for at in range(0, len(ats)):
-            rx2 = (point[0] - ats[at].x) ** 2
-            ry2 = (-point[1] - ats[at].y) ** 2
-            rz2 = (point[2] - ats[at].z) ** 2
+            rx2 = (point[0] - self.scale_factor * ats[at].x) ** 2
+            ry2 = (-point[1] - self.scale_factor * ats[at].y) ** 2
+            rz2 = (point[2] - self.scale_factor * ats[at].z) ** 2
             r = math.sqrt(rx2 + ry2 + rz2)
-            if r < minr1:
-                minr1 = r
+            if r < min_r1:
+                min_r1 = r
                 ind1 = at
-        return ind1, minr1
+        return ind1, min_r1
 
     def get_point_in_3d(self, x, y):
         model = gl.glGetDoublev(gl.GL_MODELVIEW_MATRIX)
         proj = gl.glGetDoublev(gl.GL_PROJECTION_MATRIX)
         view = gl.glGetIntegerv(gl.GL_VIEWPORT)
-        winY = int(float(view[3]) - float(y))
-        z = gl.glReadPixels(x, winY, 1, 1, gl.GL_DEPTH_COMPONENT, gl.GL_FLOAT)
+        win_y = int(float(view[3]) - float(y))
+        z = gl.glReadPixels(x, win_y, 1, 1, gl.GL_DEPTH_COMPONENT, gl.GL_FLOAT)
         point = glu.gluUnProject(x, y, z, model, proj, view)
         al = math.pi * self.rotation_angles[0] / 180
         # !!! Why ????
-        bet = 0  # math.pi * self.rotY / 180
-
+        bet = 0  # math.pi * self.rotation_angles[1] / 180
         gam = math.pi * self.rotation_angles[2] / 180
         point = self.rotate_un_vector(np.array(point), al, bet, gam)
         point = self.rotate_vector(np.array(point), al, bet, gam)
         return point
 
-    def get_screen_coords(self, x, y, z):
+    @staticmethod
+    def get_screen_coords(x, y, z):
         model = gl.glGetDoublev(gl.GL_MODELVIEW_MATRIX)
         proj = gl.glGetDoublev(gl.GL_PROJECTION_MATRIX)
         view = gl.glGetIntegerv(gl.GL_VIEWPORT)
-        winx, winy, winz = glu.gluProject(x, y, z, model, proj, view)
-        return winx, winy, winz
+        win_x, win_y, win_z = glu.gluProject(x, y, z, model, proj, view)
+        return win_x, win_y, win_z
 
     def initializeGL(self):
         self.makeCurrent()
