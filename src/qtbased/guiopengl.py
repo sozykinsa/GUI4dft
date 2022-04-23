@@ -88,6 +88,8 @@ class GuiOpenGL(QOpenGLWidget):
         self.auto_zoom()
         self.add_atoms()
         self.add_bonds()
+        self.add_bcp()
+        self.add_bondpath()
 
     def wheelEvent(self, event: QEvent):
         self.scale(event.angleDelta().y())
@@ -342,12 +344,12 @@ class GuiOpenGL(QOpenGLWidget):
         self.color_of_box = box_color
         self.main_model.find_bonds_fast()
         self.contour_width = contour_width
+        self.auto_zoom()
         self.add_bonds()
         self.add_box()
         self.add_axes()
         self.add_bcp()
         self.add_bondpath()
-        self.auto_zoom()
         self.update()
 
     def auto_zoom(self):
@@ -505,6 +507,8 @@ class GuiOpenGL(QOpenGLWidget):
                 self.scale_factor -= 0.05 * (wheel / 120)
                 self.add_atoms()
                 self.add_bonds()
+                self.add_bcp()
+                self.add_bondpath()
             else:
                 self.camera_position[2] -= 0.5 * (wheel/120)
             self.update()
@@ -819,13 +823,13 @@ class GuiOpenGL(QOpenGLWidget):
         gl.glNewList(self.object + 8, gl.GL_COMPILE)
         for at in self.main_model.bcp:
             gl.glPushMatrix()
-            gl.glTranslatef(at.x, at.y, at.z)
+            gl.glTranslatef(self.scale_factor * at.x, self.scale_factor * at.y, self.scale_factor * at.z)
             gl.glColor3f(1, 0, 0)
-            mult = 1
+            mult = self.scale_factor
             if at.isSelected():
                 gl.glColor3f(0, 0, 1)
-                mult = 1.3
-            glu.gluSphere(glu.gluNewQuadric(), 0.15*mult, self.quality*70, self.quality*70)
+                mult *= 1.3
+            glu.gluSphere(glu.gluNewQuadric(), 0.15 * mult, self.quality * 70, self.quality * 70)
             gl.glPopMatrix()
 
         gl.glEndList()
@@ -846,16 +850,18 @@ class GuiOpenGL(QOpenGLWidget):
     def add_critical_path(self, bond):
         if not bond:
             return
-        for i in range(1, len(bond)):
-            x1 = bond[i - 1].x
-            y1 = bond[i - 1].y
-            z1 = bond[i - 1].z
-            x2 = bond[i].x
-            y2 = bond[i].y
-            z2 = bond[i].z
 
-            gl.glColor3f(0, 1, 0)
-            self.add_bond([x1, y1, z1], [x2, y2, z2], 0.03)
+        gl.glColor3f(0, 1, 0)
+        for i in range(1, len(bond)):
+            pos1 = np.array((bond[i - 1].x, bond[i - 1].y, bond[i - 1].z))
+            #x1 = bond[i - 1].x
+            #y1 = bond[i - 1].y
+            #z1 = bond[i - 1].z
+            pos2 = np.array((bond[i].x, bond[i].y, bond[i].z))
+            #x2 = bond[i].x
+            #y2 = bond[i].y
+            #z2 = bond[i].z
+            self.add_bond(self.scale_factor * pos1, self.scale_factor * pos2, self.scale_factor * 0.03)
 
     def add_contour(self, params):
         self.data_contour = params

@@ -456,8 +456,7 @@ class MainForm(QMainWindow):
     def add_cell_param(self):
         """Add cell parameter."""
         try:
-            f_name = QFileDialog.getOpenFileName(self, 'Open file', self.work_dir,
-                                                options=QFileDialog.DontUseNativeDialog)[0]
+            f_name = self.get_file_name_from_open_dialog("All files (*.*)")
             if Importer.check_format(f_name) == "SIESTAout":
                 self.fill_cell_info(f_name)
             self.plot_volume_param_energy()
@@ -471,8 +470,7 @@ class MainForm(QMainWindow):
     def add_data_cell_param(self):
         """Add cell params from file."""
         try:
-            f_name = QFileDialog.getOpenFileName(self, 'Open file', self.work_dir,
-                                                 options=QFileDialog.DontUseNativeDialog)[0]
+            f_name = self.get_file_name_from_open_dialog("All files (*.*)")
             self.work_dir = os.path.dirname(f_name)
 
             if os.path.exists(f_name):
@@ -500,8 +498,7 @@ class MainForm(QMainWindow):
 
     def add_critic2_cro_file(self):
         try:
-            f_name = QFileDialog.getOpenFileName(self, 'Open file', self.work_dir,
-                                                options=QFileDialog.DontUseNativeDialog)[0]
+            f_name = self.get_file_name_from_open_dialog("All files (*.*)")
             self.work_dir = os.path.dirname(f_name)
 
             box_bohr, box_ang, box_deg, cps = check_cro_file(f_name)
@@ -540,8 +537,7 @@ class MainForm(QMainWindow):
 
     def add_dos_file(self):
         try:
-            fname = QFileDialog.getOpenFileName(self, 'Open file', self.work_dir,
-                                                options=QFileDialog.DontUseNativeDialog)[0]
+            fname = self.get_file_name_from_open_dialog("All files (*.*)")
             self.work_dir = os.path.dirname(fname)
             self.check_dos(fname)
         except Exception as e:
@@ -877,8 +873,15 @@ class MainForm(QMainWindow):
         self.model_to_screen(-1)
 
     def get_file_name_from_save_dialog(self, file_mask):  # pragma: no cover
-        return QFileDialog.getSaveFileName(self, 'Save File', self.work_dir, file_mask,
-                                           options=QFileDialog.DontUseNativeDialog)[0]
+        result = QFileDialog.getSaveFileName(self, 'Save File', self.work_dir, file_mask,
+                                             options=QFileDialog.DontUseNativeDialog)
+        file_name = result[0]
+        mask = result[1]
+        if file_name is not None:
+            extention = mask.split("(*.")[1].split(")")[0]
+            if not file_name.lower().endswith(extention.lower()):
+                file_name += "." + extention
+        return file_name
 
     def get_file_name_from_open_dialog(self, file_mask):  # pragma: no cover
         return QFileDialog.getOpenFileName(self, 'Open file', self.work_dir, file_mask,
@@ -899,8 +902,7 @@ class MainForm(QMainWindow):
 
     def export_volumeric_data_to_cube(self):
         try:
-            f_name = QFileDialog.getSaveFileName(self, 'Save File', self.work_dir, "cube files (*.cube)",
-                                                options=QFileDialog.DontUseNativeDialog)[0]
+            f_name = self.get_file_name_from_save_dialog("cube files (*.cube)")
             x1 = self.ui.FormVolDataExportX1.value()
             x2 = self.ui.FormVolDataExportX2.value()
             y1 = self.ui.FormVolDataExportY1.value()
@@ -2064,43 +2066,48 @@ class MainForm(QMainWindow):
         if len(items):
             items = sorted(items, key=itemgetter(0))
 
-            xs = []
-            ys = []
+            xs, ys = [], []
+            text0, text1, text2, text3 = "", "", "", ""
+            xs2, ys2 = [], []
 
             for i in range(0, len(items)):
                 xs.append(items[i][0])
                 ys.append(items[i][1])
 
-            if (method == "Murnaghan") and (len(items) > 4):
-                aprox, xs2, ys2 = Calculator.approx_murnaghan(items)
+            if method == "Murnaghan":
                 image_path = str(Path(__file__).parent / 'images' / 'murnaghan.png')  # path to your image file
-                self.ui.FormActionsPostLabelCellParamOptimExpr.setText("E(V0)=" + str(round(float(aprox[0]), prec)))
-                self.ui.FormActionsPostLabelCellParamOptimExpr2.setText("B0=" + str(round(float(aprox[1]), prec)))
-                self.ui.FormActionsPostLabelCellParamOptimExpr3.setText("B0'=" + str(round(float(aprox[2]), prec)))
-                self.ui.FormActionsPostLabelCellParamOptimExpr4.setText("V0=" + str(round(float(aprox[3]), prec)))
-                self.plot_cell_approx(image_path)
-                self.plot_curv_and_points(LabelX, xs, ys, xs2, ys2)
+                if len(items) > 4:
+                    aprox, xs2, ys2 = Calculator.approx_murnaghan(items)
+                    text0 = "E(V0)=" + str(round(float(aprox[0]), prec))
+                    text1 = "B0=" + str(round(float(aprox[1]), prec))
+                    text2 = "B0'=" + str(round(float(aprox[2]), prec))
+                    text3 = "V0=" + str(round(float(aprox[3]), prec))
 
-            if (method == "BirchMurnaghan") and (len(items) > 4):
-                aprox, xs2, ys2 = Calculator.approx_birch_murnaghan(items)
+            elif method == "BirchMurnaghan":
                 image_path = str(Path(__file__).parent / 'images' / 'murnaghanbirch.png')  # path to your image file
-                self.ui.FormActionsPostLabelCellParamOptimExpr.setText("E(V0)=" + str(round(float(aprox[0]), prec)))
-                self.ui.FormActionsPostLabelCellParamOptimExpr2.setText("B0=" + str(round(float(aprox[1]), prec)))
-                self.ui.FormActionsPostLabelCellParamOptimExpr3.setText("B0'=" + str(round(float(aprox[2]), prec)))
-                self.ui.FormActionsPostLabelCellParamOptimExpr4.setText("V0=" + str(round(float(aprox[3]), prec)))
-                self.plot_cell_approx(image_path)
-                self.plot_curv_and_points(LabelX, xs, ys, xs2, ys2)
+                if len(items) > 4:
+                    aprox, xs2, ys2 = Calculator.approx_birch_murnaghan(items)
+                    text0 = "E(V0)=" + str(round(float(aprox[0]), prec))
+                    text1 = "B0=" + str(round(float(aprox[1]), prec))
+                    text2 = "B0'=" + str(round(float(aprox[2]), prec))
+                    text3 = "V0=" + str(round(float(aprox[3]), prec))
 
-            if (method == "Parabola") and (len(items) > 2):
-                aprox, xs2, ys2 = Calculator.approx_parabola(items)
+            else:  # method == "Parabola":
                 image_path = str(Path(__file__).parent / 'images' / 'parabola.png')
-                self.ui.FormActionsPostLabelCellParamOptimExpr.setText("a=" + str(round(float(aprox[2]), prec)))
-                self.ui.FormActionsPostLabelCellParamOptimExpr2.setText("b=" + str(round(float(aprox[1]), prec)))
-                self.ui.FormActionsPostLabelCellParamOptimExpr3.setText("c=" + str(round(float(aprox[0]), prec)))
-                self.ui.FormActionsPostLabelCellParamOptimExpr4.setText(
-                    "x0=" + str(round(-float(aprox[1]) / float(2 * aprox[2]), prec)))
-                self.plot_cell_approx(image_path)
-                self.plot_curv_and_points(LabelX, xs, ys, xs2, ys2)
+                if len(items) > 2:
+                    aprox, xs2, ys2 = Calculator.approx_parabola(items)
+                    text0 = "a=" + str(round(float(aprox[2]), prec))
+                    text1 = "b=" + str(round(float(aprox[1]), prec))
+                    text2 = "c=" + str(round(float(aprox[0]), prec))
+                    text3 = "x0=" + str(round(-float(aprox[1]) / float(2 * aprox[2]), prec))
+
+            self.ui.FormActionsPostLabelCellParamOptimExpr.setText(text0)
+            self.ui.FormActionsPostLabelCellParamOptimExpr2.setText(text1)
+            self.ui.FormActionsPostLabelCellParamOptimExpr3.setText(text2)
+            self.ui.FormActionsPostLabelCellParamOptimExpr4.setText(text3)
+
+            self.plot_cell_approx(image_path)
+            self.plot_curv_and_points(LabelX, xs, ys, xs2, ys2)
         self.ui.PyqtGraphWidget.update()
 
     def plot_curv_and_points(self, x_title, xs, ys, xs2, ys2):
@@ -2314,11 +2321,8 @@ class MainForm(QMainWindow):
         try:
             text = self.ui.FormActionsPreTextFDF.toPlainText()
             if len(text) > 0:
-                name = QFileDialog.getSaveFileName(self, 'Save File', self.work_dir, "FDF files (*.fdf)",
-                                                   options=QFileDialog.DontUseNativeDialog)[0]
-                if len(name) > 0:
-                    with open(name, 'w') as f:
-                        f.write(text)
+                fname = self.get_file_name_from_save_dialog("FDF files (*.fdf)")
+                helpers.write_text_to_file(fname, text)
         except Exception as e:
             self.show_error(e)
 
@@ -2330,8 +2334,7 @@ class MainForm(QMainWindow):
             text = ase.ase_raman_and_ir_script_create(model2, self.fdf_data)
 
             if len(text) > 0:
-                name = QFileDialog.getSaveFileName(self, 'Save File', self.work_dir, "Python file (*.py)",
-                                                   options=QFileDialog.DontUseNativeDialog)[0]
+                name = self.get_file_name_from_save_dialog("Python file (*.py)")
                 if len(name) > 0:
                     with open(name, 'w') as f:
                         f.write(text)
@@ -2340,8 +2343,7 @@ class MainForm(QMainWindow):
 
     def ase_raman_and_ir_parse(self):
         try:
-            fname = QFileDialog.getOpenFileName(self, 'Open file', self.work_dir,
-                                                options=QFileDialog.DontUseNativeDialog)[0]
+            fname = self.get_file_name_from_open_dialog("All files (*.*)")
             if os.path.exists(fname):
                 self.filename = fname
                 self.work_dir = os.path.dirname(fname)
@@ -2422,11 +2424,8 @@ class MainForm(QMainWindow):
                     z = str(model1.atoms[i].y)
                     text += "2" + str(ch) + "   " + x + "   " + y + "   " + z + "\n"
             if len(text) > 0:
-                name = QFileDialog.getSaveFileName(self, 'Save File', self.work_dir, "Crystal d12 (*.d12)",
-                                                   options=QFileDialog.DontUseNativeDialog)[0]
-                if len(name) > 0:
-                    with open(name, 'w') as f:
-                        f.write(text)
+                fname = self.get_file_name_from_save_dialog("Crystal d12 (*.d12)")
+                helpers.write_text_to_file(fname, text)
         except Exception as e:
             self.show_error(e)
 
@@ -2488,10 +2487,8 @@ class MainForm(QMainWindow):
 
     def parse_volumeric_data2(self):
         try:
-            fname = QFileDialog.getOpenFileName(self, 'Open file', self.work_dir,
-                                                options=QFileDialog.DontUseNativeDialog)
+            fname = self.get_file_name_from_open_dialog("All files (*.*)")
             if len(fname) > 0:
-                fname = fname[0]
                 if fname.endswith(".XSF"):
                     self.volumeric_data2 = XSF()
                 if fname.endswith(".cube"):
