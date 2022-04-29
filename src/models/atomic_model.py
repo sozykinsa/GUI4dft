@@ -23,8 +23,8 @@ class TAtomicModel(object):
         self.bonds_per = []  # for exact calculation in form
 
         self.bcp = []
-        self.rcp = []
-        self.ccp = []
+        # self.rcp = []
+        # self.ccp = []
 
         self.tags = []
 

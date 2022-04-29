@@ -10,7 +10,6 @@ import sys
 from pathlib import Path
 from copy import deepcopy
 from operator import itemgetter
-from ase.data.colors import cpk_colors, jmol_colors
 import matplotlib.pyplot as plt
 import numpy as np
 from utils import helpers
@@ -25,7 +24,7 @@ from utils.periodic_table import TPeriodTable
 from utils.siesta import TSIESTA
 from models.swnt import SWNT
 from models.swgnt import SWGNT
-from thirdparty.critic2 import check_cro_file
+from thirdparty.critic2 import check_cro_file, parse_cp_properties
 from thirdparty.vasp import vasp_dos
 from utils.importer import Importer
 from utils.electronic_prop_reader import read_siesta_bands, dos_from_file
@@ -59,7 +58,8 @@ class MainForm(QMainWindow):
         self.models = []
         selected_atom_info = [self.ui.FormActionsPreComboAtomsList, self.ui.FormActionsPreSpinAtomsCoordX,
                               self.ui.FormActionsPreSpinAtomsCoordY, self.ui.FormActionsPreSpinAtomsCoordZ,
-                              self.ui.AtomPropertiesText]
+                              #self.ui.AtomPropertiesText,
+                              self.selected_atom_changed, self.selected_cp_changed]
         self.ui.openGLWidget.set_form_elements(self.ui.FormSettingsViewCheckAtomSelection, selected_atom_info, 1)
         self.fdf_data = TFDFFile()
         self.volumeric_data = VolumericData()
@@ -97,8 +97,6 @@ class MainForm(QMainWindow):
         self.ui.actionShowBox.triggered.connect(self.menu_show_box)
         self.ui.actionHideBox.triggered.connect(self.menu_hide_box)
         self.ui.actionAbout.triggered.connect(self.menu_about)
-
-        self.ui.AtomPropertiesText.textChanged.connect(self.critical_point_prop_to_form)
 
         self.ui.FormModelComboModels.currentIndexChanged.connect(self.model_to_screen)
         self.ui.FormActionsPostTreeSurface.itemSelectionChanged.connect(self.type_of_surface)
@@ -500,28 +498,8 @@ class MainForm(QMainWindow):
         try:
             f_name = self.get_file_name_from_open_dialog("All files (*.*)")
             self.work_dir = os.path.dirname(f_name)
-
-            box_bohr, box_ang, box_deg, cps = check_cro_file(f_name)
-            al = math.radians(box_deg[0])
-            be = math.radians(box_deg[1])
-            ga = math.radians(box_deg[2])
-            lat_vect_1, lat_vect_2, lat_vect_3 = TSIESTA.lat_vectors_from_params(box_ang[0], box_ang[1], box_ang[2],
-                                                                                 al, be, ga)
-
             model = self.models[-1]
-            model.set_lat_vectors(lat_vect_1, lat_vect_2, lat_vect_3)
-
-            k = 0
-            for cp in model.bcp:
-                for cp1 in cps:
-                    d1 = (cp.x - cp1[1]) ** 2
-                    d2 = (cp.y - cp1[2]) ** 2
-                    d3 = (cp.z - cp1[3]) ** 2
-                    if math.sqrt(d1 + d2 + d3) < 1e-5:
-                        cp.setProperty("field", cp1[4])
-                        cp.setProperty("grad", cp1[5])
-                        cp.setProperty("lap", cp1[6])
-                        k += 1
+            parse_cp_properties(f_name, model)
             self.plot_last_model()
         except Exception as e:
             self.show_error(e)
@@ -1452,19 +1430,6 @@ class MainForm(QMainWindow):
         about_win.setFixedSize(QSize(550, 250))
         about_win.show()
 
-    def critical_point_prop_to_form(self):
-        text = self.ui.AtomPropertiesText.toPlainText().split("Selected critical point:")
-        if len(text) > 1:
-            text = text[1].split()[0]
-
-            self.ui.FormSelectedCP.setText(text)
-            f = self.models[-1].bcp[int(text)].getProperty("field")
-            self.ui.FormSelectedCP_f.setText(f)
-            g = self.models[-1].bcp[int(text)].getProperty("grad")
-            self.ui.FormSelectedCP_g.setText(g)
-            lap = self.models[-1].bcp[int(text)].getProperty("lap")
-            self.ui.FormSelectedCP_lap.setText(lap)
-
     def model_to_screen(self, value):
         self.ui.Form3Dand2DTabs.setCurrentIndex(0)
         self.plot_model(value)
@@ -2290,6 +2255,47 @@ class MainForm(QMainWindow):
         settings.setValue(var_property, value)
         settings.sync()
 
+    def selected_atom_changed(self, text):
+        self.ui.AtomPropertiesText.setText(text)
+
+    def selected_cp_changed(self, selected_cp):
+        if selected_cp >= 0:
+            model = self.models[self.active_model]
+            text = "\nSelected critical point: " + str(selected_cp) + " ("
+            cp = model.bcp[selected_cp]
+            atoms = model.atoms
+
+            bond1 = cp.getProperty("bond1")
+            bond2 = cp.getProperty("bond2")
+
+            ind1, ind2 = model.atoms_of_bond_path(selected_cp)
+            text += atoms[ind1].let + str(ind1) + "-" + atoms[ind2].let + str(ind2) + ")\n"
+            text += "Bond critical path: " + str(len(bond1) + len(bond2)) + " points\n"
+
+            self.ui.selectedCP.setText(str(selected_cp))
+            f = model.bcp[selected_cp].getProperty("field")
+            self.ui.FormSelectedCP_f.setText(f)
+            g = model.bcp[selected_cp].getProperty("grad")
+            self.ui.FormSelectedCP_g.setText(g)
+            lap = model.bcp[selected_cp].getProperty("lap")
+            self.ui.FormSelectedCP_lap.setText(lap)
+
+            dist_line = round(model.atom_atom_distance(ind1, ind2), 4)
+            self.ui.selectedCP_bpLenLine.setText(str(dist_line) + " A")
+
+            self.ui.selectedCP_nuclei.setText(atoms[ind1].let + str(ind1) + "-" + atoms[ind2].let + str(ind2))
+        else:
+            if selected_cp < 0:
+                text = "Select any critical point"
+                self.ui.selectedCP.setText("...")
+                self.ui.FormSelectedCP_f.setText("...")
+                self.ui.FormSelectedCP_g.setText("...")
+                self.ui.FormSelectedCP_lap.setText("...")
+                self.ui.selectedCP_bpLenLine.settext("...")
+                self.ui.selectedCP_nuclei.setText("...")
+
+        self.ui.criticalPointProp.setText(text)
+
     def state_changed_form_settings_colors_scale(self):
         if self.ui.FormSettingsColorsScale.currentText() == "":
             self.ui.ColorRow.clear()
@@ -2564,7 +2570,7 @@ class MainForm(QMainWindow):
         self.ui.openGLWidget.set_color_of_box(boxcolor)
 
     def add_cp_to_list(self):
-        new_cp = self.ui.FormSelectedCP.text()
+        new_cp = self.ui.selectedCP.text()
         if new_cp == "...":
             return
 

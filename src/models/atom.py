@@ -16,7 +16,6 @@ class Atom(object):
         self.selected = False
         self.fragment1 = False
         self.properties = {}
-        pass
 
     def setSelected(self, fl):
         self.selected = fl

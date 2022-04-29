@@ -115,12 +115,13 @@ class GuiOpenGL(QOpenGLWidget):
 
     def set_form_elements(self, check_atom_selection=None, selected_atom_info=[], quality=1):
         self.is_check_atom_selection = check_atom_selection
-        if len(selected_atom_info) == 5:
+        if len(selected_atom_info) == 6:
             self.selected_atom_type = selected_atom_info[0]
             self.selected_atom_X = selected_atom_info[1]
             self.selected_atom_Y = selected_atom_info[2]
             self.selected_atom_Z = selected_atom_info[3]
-            self.selected_atom_properties = selected_atom_info[4]
+            self.selected_atom_callback = selected_atom_info[4]
+            self.selected_cp_callback = selected_atom_info[5]
         self.quality = quality
 
     def set_perspective_angle(self, perspective_angle: int) -> None:
@@ -219,7 +220,7 @@ class GuiOpenGL(QOpenGLWidget):
     def selected_atom_properties_to_form(self):
         text = ""
         if self.selected_atom >= 0:
-            text += "Selected atom: " + str(self.selected_atom + 1) + "\n"
+            text += "Selected atom: " + str(self.selected_atom) + "\n"
             atom = self.main_model.atoms[self.selected_atom]
             text += "Element: " + atom.let + "\n"
             for key in atom.properties:
@@ -271,22 +272,12 @@ class GuiOpenGL(QOpenGLWidget):
                             str(self.history_of_atom_selection[-3] + 1) + " : " + \
                             str(round(math.degrees(angle), 3)) + " degrees\n"
 
-        if self.selected_cp >= 0:
-            text += "\nSelected critical point: " + str(self.selected_cp) + " ("
-            cp = self.main_model.bcp[self.selected_cp]
-            atoms = self.main_model.atoms
+        self.selected_cp_callback(self.selected_cp)
 
-            bond1 = cp.getProperty("bond1")
-            bond2 = cp.getProperty("bond2")
+        if self.selected_atom < 0:
+            text += "Select any atom."
 
-            ind1, ind2 = self.main_model.atoms_of_bond_path(self.selected_cp)
-            text += atoms[ind1].let + str(ind1) + "-" + atoms[ind2].let + str(ind2) + ")\n"
-            text += "Bond critical path: " + str(len(bond1)+len(bond2)) + " points\n"
-
-        if (self.selected_atom < 0) and (self.selected_cp < 0):
-            text += "Select any atom or critical point"
-
-        self.selected_atom_properties.setText(text)
+        self.selected_atom_callback(text)
 
     def isActive(self):
         return self.active

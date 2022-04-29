@@ -1,5 +1,9 @@
 from copy import deepcopy
 
+import pytest
+from thirdparty.critic2 import parse_cp_properties
+
+
 def test_gui4dft_run(gui4dft_application, h2o_model):
     window = gui4dft_application
     assert window.models == []
@@ -157,6 +161,20 @@ def test_cell_param(gui4dft_application, tests_path):
     method = gui4dft_application.ui.FormActionsPostComboCellParam.currentText()
     if method == "Parabola":
         assert gui4dft_application.ui.FormActionsPostLabelCellParamOptimExpr4.text() == "x0=11.891"
+
+
+def test_critic2_section(gui4dft_application, tests_path):
+    f_name = str(tests_path / 'ref_data' / 'h2o-ang-charges' / 'critic2' / "cp-file.xyz")
+    window = gui4dft_application
+    window.menu_open(f_name)
+    model = window.models[-1]
+    assert len(model.bcp) == 5
+    assert "field" not in model.bcp[0].properties
+    f_name = str(tests_path / 'ref_data' / 'h2o-ang-charges' / 'critic2' / "siesta-1-cp.cro")
+    parse_cp_properties(f_name, model)
+    assert float(model.bcp[0].properties["field"]) == pytest.approx(1.68288239)
+    model.bcp[0].setSelected(True)
+    # ?
 
 
 def test_simple_calls(gui4dft_application):

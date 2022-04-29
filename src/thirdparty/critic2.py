@@ -1,9 +1,32 @@
 # -*- coding: utf-8 -*-
 import sys
 import os
+import math
 import numpy as np
 from utils import helpers
+from utils.siesta import TSIESTA
 sys.path.append('.')
+
+
+def parse_cp_properties(filename, model):
+    box_bohr, box_ang, box_deg, cps = check_cro_file(filename)
+    al = math.radians(box_deg[0])
+    be = math.radians(box_deg[1])
+    ga = math.radians(box_deg[2])
+    lat_vect_1, lat_vect_2, lat_vect_3 = TSIESTA.lat_vectors_from_params(box_ang[0], box_ang[1], box_ang[2],
+                                                                         al, be, ga)
+    model.set_lat_vectors(lat_vect_1, lat_vect_2, lat_vect_3)
+    k = 0
+    for cp in model.bcp:
+        for cp1 in cps:
+            d1 = (cp.x - cp1[1]) ** 2
+            d2 = (cp.y - cp1[2]) ** 2
+            d3 = (cp.z - cp1[3]) ** 2
+            if math.sqrt(d1 + d2 + d3) < 1e-5:
+                cp.setProperty("field", cp1[4])
+                cp.setProperty("grad", cp1[5])
+                cp.setProperty("lap", cp1[6])
+                k += 1
 
 
 def check_cro_file(filename):
