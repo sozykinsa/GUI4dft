@@ -101,10 +101,10 @@ def from_file_property(filename: str, prop: str, count: int = 1, prop_type: str 
         return None
 
 
-def write_text_to_file(fname, text):  # pragma: no cover
-    f = open(fname, 'w')
-    print(text, file=f)
-    f.close()
+def write_text_to_file(f_name, text):  # pragma: no cover
+    if len(f_name) > 0:
+        with open(f_name, 'w') as f:
+            f.write(text)
 
 
 def property_from_sub_file(filename, k, prop, count, typen):

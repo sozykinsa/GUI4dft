@@ -7,7 +7,11 @@ GUI4dft (Graphical User Interface for support of Density Functional Theory calcu
 ## Install
 GUI4DFT program is written in Python 3 (version >= 3.4). It has some dependences. To install the necessary modules, run in the terminal (command line):
 
-pip3 install pyside2 numpy scipy pyopengl pyqtgraph matplotlib scikit-image
+pip3 install pyside2 numpy scipy pyopengl pyqtgraph matplotlib scikit-image ase
+
+or
+
+pip3 install -r ./requirements.txt
 
 These commands are suitable for Ubuntu 20, Windows 10, Mas OS Majave. For other distributions and operating systems, the command and set of required packages may differ.
 
@@ -27,7 +31,7 @@ v1.1 - Minor changes compared to version v1.0. Mostly bugs fixed.
 
 v1.2 - Contains some additional features. For example, it allows visualizing the critical paths of connections (critic2), preparing scripts for calculating spectra using PyNao. The 1.x versions of GUI4dft do not have hard-to-install dependencies and are easy to run on most popular operating systems.
 
-v1.3 - This is the next release in 1.x branch. This version will use pyqtgraph instead of matplotlib and pyside2 instead of PyQt5.
+v1.3 - This is the next release in 1.x branch. This version will use pyqtgraph instead of matplotlib and pyside2 instead of PyQt5. The colors of the atoms and covalent radii are taken from the ASE module. The project is covered with tests.
 
 The master branch contains more or less stable 1.x version functions.
 

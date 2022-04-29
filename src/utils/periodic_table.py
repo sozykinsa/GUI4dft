@@ -1,7 +1,12 @@
 # -*- coding: utf-8 -*-
 
+import numpy as np
+from ase.data import covalent_radii
+from ase.data.colors import cpk_colors, jmol_colors
+
 
 class TPeriodTableAtom:
+    """Replace color by 'user_color', 'ase_color', 'xxx_color'"""
     def __init__(self, charge, radius, let, color, mass=1):
         self.charge = charge
         self.radius = radius
@@ -11,9 +16,11 @@ class TPeriodTableAtom:
 
 
 class TPeriodTable:
-    """The TPeriodTable class provides basic fetches of Mendelevium's table. The constructor does not have arguments"""
+    """The TPeriodTable class provides basic fetches of Mendelevium's table. The constructor does not have arguments."""
     def __init__(self):
-        self.table_size = 128
+        self.table_size = 104
+        self.color_of_atoms_scheme = "dafault"
+        self.manual_colors = np.zeros((self.table_size, 3), dtype=float)
         self.Atoms = []
         self.default_color = [0.6, 0.6, 1.0]
         self.default_radius = 77
@@ -169,21 +176,44 @@ class TPeriodTable:
             for j in range(i+1, self.table_size):
                 self.Bonds[j][i] = self.Bonds[i][j]
 
+    def set_color_mode(self, color_of_atoms_scheme):
+        self.color_of_atoms_scheme = color_of_atoms_scheme
+
+    def set_manual_colors(self, manual_colors):
+        for i in range(self.table_size):
+            if i < len(manual_colors):
+                self.manual_colors[i] = np.array(manual_colors[i])
+
+    def init_manual_colors(self):
+        for i in range(self.table_size):
+            self.manual_colors[i] = np.array(self.Atoms[i].color)
+
+    def get_covalent_radii(self, ind):
+        rad_list = []
+        for i in ind:
+            rad_list.append(self.get_rad(i))
+        return np.array(rad_list)
+
     def get_rad(self, charge):
         if int(charge) < self.table_size:
-            return self.Atoms[int(charge)].radius
+            return covalent_radii[int(charge)] * 100.0
         else:
             return self.default_radius
 
     def get_let(self, charge):
         if int(charge) < self.table_size:
             return self.Atoms[int(charge)].let
-        if int(charge) >= 200:
+        if int(charge) >= self.table_size:
             return "Direct"
 
     def get_color(self, charge):
-        if int(charge) < self.table_size:
-            return self.Atoms[int(charge)].color
+        if (int(charge) < self.table_size) and (int(charge) >= 0):
+            if self.color_of_atoms_scheme == "cpk":
+                return cpk_colors[int(charge)]
+            elif self.color_of_atoms_scheme == "jmol":
+                return jmol_colors[int(charge)]
+            else:
+                return self.manual_colors[int(charge)]
         else:
             return self.default_color
 
@@ -196,9 +226,13 @@ class TPeriodTable:
         return -1
 
     def get_all_colors(self):
-        colors = []
-        for i in range(0, self.table_size):
-            colors.append(self.Atoms[i].color)
+        colors = np.ones((self.table_size, 4), dtype=float)
+        if self.color_of_atoms_scheme == "cpk":
+            colors[0:103, 0:3] = cpk_colors[0:103]
+        elif self.color_of_atoms_scheme == "jmol":
+            colors[0:103, 0:3] = jmol_colors[0:103]
+        else:
+            colors[0:103, 0:3] = self.manual_colors[0:103]
         return colors
 
     def get_all_letters(self):

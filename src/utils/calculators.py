@@ -39,7 +39,7 @@ def gaps(bands, emaxf, eminf, homo, lumo) -> Tuple[float, float]:
 
 class Calculators:
     @staticmethod
-    def fill_tube(rad_tube, length, n_atoms, rad_atom, delta, n_prompts, let, charge):
+    def fill_tube(rad_tube, length: float, n_atoms: int, rad_atom, delta, n_prompts: int, let, charge: int):
         """Getting a list of configurations from nAtoms with a radius of radAtom in a cylinder with a radius of radTube
          length. The maximum displacement of atoms in each of the models is not less than delta."""
         models = []
@@ -62,12 +62,12 @@ class Calculators:
                 print("Radius of atom was dicreased. New value: " + str(rad_atom))
 
             if len(molecule.atoms) == n_atoms:
-                myDelta = 4 * rad_tube + length
+                my_delta = 4 * rad_tube + length
                 for newMolecula in models:
                     myDelta2 = molecule.Delta(newMolecula)
-                    if myDelta2 < myDelta:
-                        myDelta = myDelta2
-                if myDelta > delta:
+                    if myDelta2 < my_delta:
+                        my_delta = myDelta2
+                if my_delta > delta:
                     models.append(molecule)
                     print("Iter " + str(i) + "/" + str(n_prompts) + "| we found " + str(len(models)) + " structures")
                 if len(models) == 0:
@@ -79,8 +79,8 @@ class Calculators:
         return b0 + b1 * x + b2 * x**2
 
     @staticmethod
-    def approx_parabola(DATA):
-        xdata, ydata = helpers.list_n2_split(DATA)
+    def approx_parabola(data):
+        xdata, ydata = helpers.list_n2_split(data)
         # y = ax^2 + bx + c
         a, b, c = polyfit(xdata, ydata, 2)
 

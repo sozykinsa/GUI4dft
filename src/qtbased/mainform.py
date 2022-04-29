@@ -10,6 +10,7 @@ import sys
 from pathlib import Path
 from copy import deepcopy
 from operator import itemgetter
+from ase.data.colors import cpk_colors, jmol_colors
 import matplotlib.pyplot as plt
 import numpy as np
 from utils import helpers
@@ -69,11 +70,16 @@ class MainForm(QMainWindow):
         self.table_header_stylesheet = "::section{Background-color:rgb(190,190,190)}"
         self.is_scaled_colors_for_surface = True
         self.rotation_step = 1
+        self.move_step = 1
 
         self.shortcut = QShortcut(QKeySequence("Ctrl+D"), self)
         self.shortcut.activated.connect(self.atom_delete)
         self.active_model = -1
         self.perspective_angle = 45
+
+        self.state_Color_Of_Atoms = None
+        self.color_of_atoms_scheme = "cpk"
+        self.periodic_table = TPeriodTable()
 
     def start_program(self):  # pragma: no cover
         if self.action_on_start == 'Open':
@@ -127,6 +133,7 @@ class MainForm(QMainWindow):
         self.ui.ExportTheVolumericDataXSF.clicked.connect(self.export_volumeric_data_to_xsf)
         self.ui.ExportTheVolumericDataCube.clicked.connect(self.export_volumeric_data_to_cube)
         self.ui.FormActionsPostButContour.clicked.connect(self.plot_contour)
+        self.ui.ColorBackgroundDialogButton.clicked.connect(self.select_background_color)
         self.ui.ColorBondDialogButton.clicked.connect(self.select_bond_color)
         self.ui.ColorBoxDialogButton.clicked.connect(self.select_box_color)
         self.ui.ColorVoronoiDialogButton.clicked.connect(self.select_voronoi_color)
@@ -332,6 +339,9 @@ class MainForm(QMainWindow):
         self.ui.FormActionsPosTableBonds.horizontalHeader().setStyleSheet(self.table_header_stylesheet)
         self.ui.FormActionsPosTableBonds.verticalHeader().setStyleSheet(self.table_header_stylesheet)
 
+        self.setup_actions()
+
+    def setup_actions(self):
         if is_with_figure and os.path.exists(Path(__file__).parent / "images" / 'Open.png'):
             open_action = QAction(QIcon(str(Path(__file__).parent / "images" / 'Open.png')), 'Open', self)
         else:
@@ -339,7 +349,6 @@ class MainForm(QMainWindow):
         open_action.setShortcut('Ctrl+O')
         open_action.triggered.connect(self.menu_open)
         self.ui.toolBar.addAction(open_action)
-
         if is_with_figure and os.path.exists(Path(__file__).parent / "images" / 'Close.png'):
             open_action = QAction(QIcon(str(Path(__file__).parent / "images" / 'Close.png')), 'Export', self)
         else:
@@ -348,7 +357,6 @@ class MainForm(QMainWindow):
         open_action.triggered.connect(self.menu_export)
         self.ui.toolBar.addAction(open_action)
         self.ui.toolBar.addSeparator()
-
         if is_with_figure and os.path.exists(Path(__file__).parent / "images" / 'Save3D.png'):
             file_path = str(Path(__file__).parent / "images" / 'Save3D.png')
             save_image_to_file_action = QAction(QIcon(file_path), 'SaveFigure3D', self)
@@ -362,45 +370,72 @@ class MainForm(QMainWindow):
             open_action = QAction(QIcon(str(Path(__file__).parent / "images" / 'UndoX.png')), 'RotateX-', self)
         else:
             open_action = QAction('RotateX-', self)
-        open_action.triggered.connect(self.rotate_model_xm)
+        open_action.triggered.connect(self.rotate_model_xp)
         self.ui.toolBar.addAction(open_action)
 
         if is_with_figure and os.path.exists(Path(__file__).parent / "images" / 'RedoX.png'):
             open_action = QAction(QIcon(str(Path(__file__).parent / "images" / 'RedoX.png')), 'RotateX+', self)
         else:
             open_action = QAction('RotateX+', self)
-        open_action.triggered.connect(self.rotate_model_xp)
+        open_action.triggered.connect(self.rotate_model_xm)
         self.ui.toolBar.addAction(open_action)
         self.ui.toolBar.addSeparator()
-
         if is_with_figure and os.path.exists(Path(__file__).parent / "images" / 'UndoY.png'):
             open_action = QAction(QIcon(str(Path(__file__).parent / "images" / 'UndoY.png')), 'RotateY-', self)
         else:
             open_action = QAction('RotateY-', self)
-        open_action.triggered.connect(self.rotate_model_ym)
+        open_action.triggered.connect(self.rotate_model_yp)
         self.ui.toolBar.addAction(open_action)
 
         if is_with_figure and os.path.exists(Path(__file__).parent / "images" / 'RedoY.png'):
             open_action = QAction(QIcon(str(Path(__file__).parent / "images" / 'RedoY.png')), 'RotateY+', self)
         else:
             open_action = QAction('RotateY+', self)
-        open_action.triggered.connect(self.rotate_model_yp)
+        open_action.triggered.connect(self.rotate_model_ym)
         self.ui.toolBar.addAction(open_action)
-        self.ui.toolBar.addSeparator()
 
+        self.ui.toolBar.addSeparator()
         if is_with_figure and os.path.exists(Path(__file__).parent / "images" / 'UndoZ.png'):
             open_action = QAction(QIcon(str(Path(__file__).parent / "images" / 'UndoZ.png')), 'RotateZ-', self)
         else:
             open_action = QAction('RotateZ-', self)
-        open_action.triggered.connect(self.rotate_model_zm)
+        open_action.triggered.connect(self.rotate_model_zp)
         self.ui.toolBar.addAction(open_action)
-
         if is_with_figure and os.path.exists(Path(__file__).parent / "images" / 'RedoZ.png'):
             open_action = QAction(QIcon(str(Path(__file__).parent / "images" / 'RedoZ.png')), 'RotateZ+', self)
         else:
             open_action = QAction('RotateZ+', self)
-        open_action.triggered.connect(self.rotate_model_zp)
+        open_action.triggered.connect(self.rotate_model_zm)
         self.ui.toolBar.addAction(open_action)
+        self.ui.toolBar.addSeparator()
+
+        if is_with_figure and os.path.exists(Path(__file__).parent / "images" / 'left.png'):
+            to_left_action = QAction(QIcon(str(Path(__file__).parent / "images" / 'left.png')), 'left', self)
+        else:
+            to_left_action = QAction('RotateX-', self)
+        to_left_action.triggered.connect(self.move_model_left)
+        self.ui.toolBar.addAction(to_left_action)
+
+        if is_with_figure and os.path.exists(Path(__file__).parent / "images" / 'right.png'):
+            to_right_action = QAction(QIcon(str(Path(__file__).parent / "images" / 'right.png')), 'right', self)
+        else:
+            to_right_action = QAction('RotateX+', self)
+        to_right_action.triggered.connect(self.move_model_right)
+        self.ui.toolBar.addAction(to_right_action)
+        self.ui.toolBar.addSeparator()
+
+        if is_with_figure and os.path.exists(Path(__file__).parent / "images" / 'down.png'):
+            to_up_action = QAction(QIcon(str(Path(__file__).parent / "images" / 'down.png')), 'Y-', self)
+        else:
+            to_up_action = QAction('RotateY-', self)
+        to_up_action.triggered.connect(self.move_model_down)
+        self.ui.toolBar.addAction(to_up_action)
+        if is_with_figure and os.path.exists(Path(__file__).parent / "images" / 'up.png'):
+            to_down_action = QAction(QIcon(str(Path(__file__).parent / "images" / 'up.png')), 'Y+', self)
+        else:
+            to_down_action = QAction('RotateY+', self)
+        to_down_action.triggered.connect(self.move_model_up)
+        self.ui.toolBar.addAction(to_down_action)
         self.ui.toolBar.addSeparator()
 
     def activate_fragment_selection_mode(self):
@@ -419,12 +454,12 @@ class MainForm(QMainWindow):
             self.ui.fragment1Clear.setEnabled(False)
 
     def add_cell_param(self):
-        """ add cell params"""
+        """Add cell parameter."""
         try:
-            fname = QFileDialog.getOpenFileName(self, 'Open file', self.work_dir,
-                                                options=QFileDialog.DontUseNativeDialog)[0]
-            if Importer.check_format(fname) == "SIESTAout":
-                self.fill_cell_info(fname)
+            f_name = self.get_file_name_from_open_dialog("All files (*.*)")
+            if Importer.check_format(f_name) == "SIESTAout":
+                self.fill_cell_info(f_name)
+            self.plot_volume_param_energy()
         except Exception as e:
             self.show_error(e)
 
@@ -433,14 +468,13 @@ class MainForm(QMainWindow):
         self.ui.FormActionsPostTableCellParam.setRowCount(i)
 
     def add_data_cell_param(self):
-        """ add cell params from file"""
+        """Add cell params from file."""
         try:
-            fname = QFileDialog.getOpenFileName(self, 'Open file', self.work_dir,
-                                                options=QFileDialog.DontUseNativeDialog)[0]
-            self.work_dir = os.path.dirname(fname)
+            f_name = self.get_file_name_from_open_dialog("All files (*.*)")
+            self.work_dir = os.path.dirname(f_name)
 
-            if os.path.exists(fname):
-                f = open(fname)
+            if os.path.exists(f_name):
+                f = open(f_name)
                 rows = f.readlines()
 
                 for i in range(2, len(rows)):
@@ -464,11 +498,10 @@ class MainForm(QMainWindow):
 
     def add_critic2_cro_file(self):
         try:
-            fname = QFileDialog.getOpenFileName(self, 'Open file', self.work_dir,
-                                                options=QFileDialog.DontUseNativeDialog)[0]
-            self.work_dir = os.path.dirname(fname)
+            f_name = self.get_file_name_from_open_dialog("All files (*.*)")
+            self.work_dir = os.path.dirname(f_name)
 
-            box_bohr, box_ang, box_deg, cps = check_cro_file(fname)
+            box_bohr, box_ang, box_deg, cps = check_cro_file(f_name)
             al = math.radians(box_deg[0])
             be = math.radians(box_deg[1])
             ga = math.radians(box_deg[2])
@@ -504,8 +537,7 @@ class MainForm(QMainWindow):
 
     def add_dos_file(self):
         try:
-            fname = QFileDialog.getOpenFileName(self, 'Open file', self.work_dir,
-                                                options=QFileDialog.DontUseNativeDialog)[0]
+            fname = self.get_file_name_from_open_dialog("All files (*.*)")
             self.work_dir = os.path.dirname(fname)
             self.check_dos(fname)
         except Exception as e:
@@ -537,14 +569,14 @@ class MainForm(QMainWindow):
         self.ui.FormActionsPostButSurfaceDelete.setEnabled(True)
 
     def set_part1_file(self) -> None:
-        fname = self.get_file_name_from_save_dialog("All files (*.*)")
-        if os.path.exists(fname):
-            self.ui.part1_file.setText(fname)
+        f_name = self.get_file_name_from_save_dialog("All files (*.*)")
+        if os.path.exists(f_name):
+            self.ui.part1_file.setText(f_name)
 
     def set_part2_file(self) -> None:
-        fname = self.get_file_name_from_save_dialog("All files (*.*)")
-        if os.path.exists(fname):
-            self.ui.part2_file.setText(fname)
+        f_name = self.get_file_name_from_save_dialog("All files (*.*)")
+        if os.path.exists(f_name):
+            self.ui.part2_file.setText(f_name)
 
     def create_model_from_parts(self) -> None:
         file_name1 = self.ui.part1_file.text()
@@ -597,25 +629,25 @@ class MainForm(QMainWindow):
         self.plot_last_model()
 
     def add_left_electrode_file(self):
-        fname = self.get_fdf_file_name()
-        if os.path.exists(fname):
-            self.work_dir = os.path.dirname(fname)
+        f_name = self.get_fdf_file_name()
+        if os.path.exists(f_name):
+            self.work_dir = os.path.dirname(f_name)
             self.save_active_folder()
-            self.ui.FormActionsPreLeftElectrode.setText(fname)
+            self.ui.FormActionsPreLeftElectrode.setText(f_name)
 
     def add_right_electrode_file(self):
-        fname = self.get_fdf_file_name()
-        if os.path.exists(fname):
-            self.work_dir = os.path.dirname(fname)
+        f_name = self.get_fdf_file_name()
+        if os.path.exists(f_name):
+            self.work_dir = os.path.dirname(f_name)
             self.save_active_folder()
-            self.ui.FormActionsPreRightElectrode.setText(fname)
+            self.ui.FormActionsPreRightElectrode.setText(f_name)
 
     def add_scat_region_file(self):
-        fname = self.get_fdf_file_name()
-        if os.path.exists(fname):
-            self.work_dir = os.path.dirname(fname)
+        f_name = self.get_fdf_file_name()
+        if os.path.exists(f_name):
+            self.work_dir = os.path.dirname(f_name)
             self.save_active_folder()
-            self.ui.FormActionsPreScatRegion.setText(fname)
+            self.ui.FormActionsPreScatRegion.setText(f_name)
 
     def atom_add(self):
         if len(self.models) == 0:
@@ -811,11 +843,7 @@ class MainForm(QMainWindow):
             self.show_error(e)
 
     def colors_of_atoms(self):
-        atoms_color = [QTableWidgetItem(self.ui.ColorsOfAtomsTable.item(1, 0)).background().color().getRgbF()]
-        for i in range(0, self.ui.ColorsOfAtomsTable.rowCount()):
-            col = self.ui.ColorsOfAtomsTable.item(i, 0).background().color().getRgbF()
-            atoms_color.append(col)
-        return atoms_color
+        return self.periodic_table.get_all_colors()
 
     def delete_cell_param_row(self):
         row = self.ui.FormActionsPostTableCellParam.currentRow()
@@ -845,8 +873,15 @@ class MainForm(QMainWindow):
         self.model_to_screen(-1)
 
     def get_file_name_from_save_dialog(self, file_mask):  # pragma: no cover
-        return QFileDialog.getSaveFileName(self, 'Save File', self.work_dir, file_mask,
-                                           options=QFileDialog.DontUseNativeDialog)[0]
+        result = QFileDialog.getSaveFileName(self, 'Save File', self.work_dir, file_mask,
+                                             options=QFileDialog.DontUseNativeDialog)
+        file_name = result[0]
+        mask = result[1]
+        if file_name is not None:
+            extention = mask.split("(*.")[1].split(")")[0]
+            if not file_name.lower().endswith(extention.lower()):
+                file_name += "." + extention
+        return file_name
 
     def get_file_name_from_open_dialog(self, file_mask):  # pragma: no cover
         return QFileDialog.getOpenFileName(self, 'Open file', self.work_dir, file_mask,
@@ -854,28 +889,27 @@ class MainForm(QMainWindow):
 
     def export_volumeric_data_to_xsf(self):
         try:
-            fname = self.get_file_name_from_save_dialog("XSF files (*.XSF)")
+            f_name = self.get_file_name_from_save_dialog("XSF files (*.XSF)")
             x1 = self.ui.FormVolDataExportX1.value()
             x2 = self.ui.FormVolDataExportX2.value()
             y1 = self.ui.FormVolDataExportY1.value()
             y2 = self.ui.FormVolDataExportY2.value()
             z1 = self.ui.FormVolDataExportZ1.value()
             z2 = self.ui.FormVolDataExportZ2.value()
-            self.export_volumeric_data_to_file(fname, x1, x2, y1, y2, z1, z2)
+            self.export_volumeric_data_to_file(f_name, x1, x2, y1, y2, z1, z2)
         except Exception as e:
             self.show_error(e)
 
     def export_volumeric_data_to_cube(self):
         try:
-            fname = QFileDialog.getSaveFileName(self, 'Save File', self.work_dir, "cube files (*.cube)",
-                                                options=QFileDialog.DontUseNativeDialog)[0]
+            f_name = self.get_file_name_from_save_dialog("cube files (*.cube)")
             x1 = self.ui.FormVolDataExportX1.value()
             x2 = self.ui.FormVolDataExportX2.value()
             y1 = self.ui.FormVolDataExportY1.value()
             y2 = self.ui.FormVolDataExportY2.value()
             z1 = self.ui.FormVolDataExportZ1.value()
             z2 = self.ui.FormVolDataExportZ2.value()
-            self.export_volumeric_data_to_file(fname, x1, x2, y1, y2, z1, z2)
+            self.export_volumeric_data_to_file(f_name, x1, x2, y1, y2, z1, z2)
         except Exception as e:
             self.show_error(e)
 
@@ -911,7 +945,7 @@ class MainForm(QMainWindow):
             self.ui.FormActionsPreZSizeFillSpace.setValue(c)
 
     def fill_energies(self, f_name: str) -> None:
-        """Plot energies for steps of output"""
+        """Plot energies for steps of output."""
         energies = TSIESTA.energies(f_name)
         self.ui.PyqtGraphWidget.set_xticks(None)
 
@@ -924,8 +958,8 @@ class MainForm(QMainWindow):
         self.ui.PyqtGraphWidget.enable_auto_range()
         self.ui.PyqtGraphWidget.plot([np.arange(0, len(energies))], [energies], [None], title, x_title, y_title)
 
-    def fill_file_name(self, fname):
-        self.ui.Form3Dand2DTabs.setItemText(0, "3D View: " + fname)
+    def fill_file_name(self, f_name):
+        self.ui.Form3Dand2DTabs.setItemText(0, "3D View: " + f_name)
         self.ui.Form3Dand2DTabs.update()
 
     def fill_models_list(self):
@@ -1224,31 +1258,52 @@ class MainForm(QMainWindow):
         state_contour_width = int(settings.value(SETTINGS_FormSettingsViewSpinContourWidth, '20'))
         self.ui.FormSettingsViewSpinContourWidth.setValue(state_contour_width)
         self.ui.FormSettingsViewSpinContourWidth.valueChanged.connect(self.save_state_view_spin_contour_width)
+
+        state_color_scheme = str(settings.value(SETTINGS_Color_Of_Atoms_Scheme, ''))
+        self.ui.manual_colors_default.setEnabled(False)
+        if (state_color_scheme == 'None') or (state_color_scheme == '') or (state_color_scheme == 'cpk'):
+            self.ui.cpk_radio.setChecked(True)
+            self.color_of_atoms_scheme = "cpk"
+        elif state_color_scheme == 'jmol':
+            self.ui.jmol_radio.setChecked(True)
+            self.color_of_atoms_scheme = "jmol"
+        else:
+            self.ui.manual_colors_radio.setChecked(True)
+            self.color_of_atoms_scheme = "manual"
+            self.ui.manual_colors_default.setEnabled(True)
+
+        self.ui.cpk_radio.clicked.connect(self.save_state_atom_color_scheme)
+        self.ui.jmol_radio.clicked.connect(self.save_state_atom_color_scheme)
+        self.ui.manual_colors_radio.clicked.connect(self.save_state_atom_color_scheme)
+
+        self.periodic_table.set_color_mode(self.color_of_atoms_scheme)
+
         self.ui.ColorsOfAtomsTable.setColumnCount(1)
         self.ui.ColorsOfAtomsTable.setHorizontalHeaderLabels(["Color"])
         self.ui.ColorsOfAtomsTable.setColumnWidth(0, 250)
         self.ui.ColorsOfAtomsTable.horizontalHeader().setStyleSheet(self.table_header_stylesheet)
         self.ui.ColorsOfAtomsTable.verticalHeader().setStyleSheet(self.table_header_stylesheet)
-        mendeley = TPeriodTable()
         self.state_Color_Of_Atoms = str(settings.value(SETTINGS_Color_Of_Atoms, ''))
         if (self.state_Color_Of_Atoms == 'None') or (self.state_Color_Of_Atoms == ''):
-            colors = mendeley.get_all_colors()
+            self.periodic_table.init_manual_colors()
         else:
             colors = []
             col = self.state_Color_Of_Atoms.split('|')
             for item in col:
                 it = helpers.list_str_to_float(item.split())
                 colors.append(it)
-        lets = mendeley.get_all_letters()
-        for i in range(1, len(lets) - 1):
-            self.ui.ColorsOfAtomsTable.setRowCount(i)  # и одну строку в таблице
-            self.ui.ColorsOfAtomsTable.setItem(i - 1, 0, QTableWidgetItem(lets[i] + " double click to edit"))
-            color = colors[i]
-            self.ui.ColorsOfAtomsTable.item(i - 1, 0).setBackground(QColor.fromRgbF(color[0], color[1], color[2], 1))
+            self.periodic_table.set_manual_colors(colors)
+
+        self.fill_colors_of_atoms_table()
         self.ui.ColorsOfAtomsTable.doubleClicked.connect(self.select_atom_color)
 
         self.state_Color_Of_Bonds = str(settings.value(SETTINGS_Color_Of_Bonds, '0 0 255'))
         self.color_to_ui(self.ui.ColorBond, self.state_Color_Of_Bonds)
+
+        state_color_of_background = str(settings.value(SETTINGS_Color_Of_Background, '255 255 255'))
+        self.color_to_ui(self.ui.ColorBackground, state_color_of_background)
+        background_color = self.get_color_from_setting(state_color_of_background)
+        self.ui.openGLWidget.set_color_of_background(background_color)
 
         self.state_Color_Of_Box = str(settings.value(SETTINGS_Color_Of_Box, '0 0 0'))
         self.color_to_ui(self.ui.ColorBox, self.state_Color_Of_Box)
@@ -1273,6 +1328,38 @@ class MainForm(QMainWindow):
         self.ui.spin_perspective_angle.setValue(self.perspective_angle)
         self.ui.openGLWidget.set_perspective_angle(self.perspective_angle)
         self.ui.spin_perspective_angle.valueChanged.connect(self.perspective_angle_change)
+
+    def save_state_atom_color_scheme(self):
+        self.ui.manual_colors_default.setEnabled(False)
+        if self.ui.cpk_radio.isChecked():
+            self.color_of_atoms_scheme = "cpk"
+        elif self.ui.jmol_radio.isChecked():
+            self.color_of_atoms_scheme = "jmol"
+        else:
+            self.color_of_atoms_scheme = "manual"
+            self.ui.manual_colors_default.setEnabled(True)
+
+        self.periodic_table.set_color_mode(self.color_of_atoms_scheme)
+        self.save_property(SETTINGS_Color_Of_Atoms_Scheme, self.color_of_atoms_scheme)
+
+        self.fill_colors_of_atoms_table()
+
+        if self.ui.openGLWidget.main_model.nAtoms() > 0:
+            self.ui.openGLWidget.set_color_of_atoms(self.periodic_table.get_all_colors())
+
+    def fill_colors_of_atoms_table(self):
+        lets = self.periodic_table.get_all_letters()
+        colors = self.periodic_table.get_all_colors()
+        edit_text = ""
+        if self.color_of_atoms_scheme == "manual":
+            edit_text = " double click to edit"
+
+        for i in range(1, len(lets) - 1):
+            self.ui.ColorsOfAtomsTable.setRowCount(i)
+            self.ui.ColorsOfAtomsTable.setItem(i - 1, 0, QTableWidgetItem(lets[i] + edit_text))
+            # color = colors[i]
+            self.ui.ColorsOfAtomsTable.item(i - 1, 0).setBackground(QColor.fromRgbF(*colors[i]))
+            # color[0], color[1], color[2], 1))
 
     def perspective_angle_change(self):
         self.perspective_angle = self.ui.spin_perspective_angle.value()
@@ -1341,21 +1428,21 @@ class MainForm(QMainWindow):
                 self.save_active_folder()
 
     def menu_ortho(self):  # pragma: no cover
-        self.ui.openGLWidget.ViewOrtho = True
+        self.ui.openGLWidget.is_camera_ortho = True
         self.ui.openGLWidget.update()
 
     def menu_perspective(self):  # pragma: no cover
-        self.ui.openGLWidget.ViewOrtho = False
+        self.ui.openGLWidget.is_camera_ortho = False
         self.ui.openGLWidget.update()
 
     def menu_show_box(self):  # pragma: no cover
         self.ui.FormSettingsViewCheckShowBox.isChecked(True)
-        self.ui.openGLWidget.ViewBox = True
+        self.ui.openGLWidget.is_view_box = True
         self.ui.openGLWidget.update()
 
     def menu_hide_box(self):  # pragma: no cover
         self.ui.FormSettingsViewCheckShowBox.isChecked(False)
-        self.ui.openGLWidget.ViewBox = False
+        self.ui.openGLWidget.is_view_box = False
         self.ui.openGLWidget.update()
 
     def menu_about(self):  # pragma: no cover
@@ -1979,43 +2066,49 @@ class MainForm(QMainWindow):
         if len(items):
             items = sorted(items, key=itemgetter(0))
 
-            xs = []
-            ys = []
+            xs, ys = [], []
+            text0, text1, text2, text3 = "", "", "", ""
+            xs2, ys2 = [], []
 
             for i in range(0, len(items)):
                 xs.append(items[i][0])
                 ys.append(items[i][1])
 
-            if (method == "Murnaghan") and (len(items) > 4):
-                aprox, xs2, ys2 = Calculator.approx_murnaghan(items)
+            if method == "Murnaghan":
                 image_path = str(Path(__file__).parent / 'images' / 'murnaghan.png')  # path to your image file
-                self.ui.FormActionsPostLabelCellParamOptimExpr.setText("E(V0)=" + str(round(float(aprox[0]), prec)))
-                self.ui.FormActionsPostLabelCellParamOptimExpr2.setText("B0=" + str(round(float(aprox[1]), prec)))
-                self.ui.FormActionsPostLabelCellParamOptimExpr3.setText("B0'=" + str(round(float(aprox[2]), prec)))
-                self.ui.FormActionsPostLabelCellParamOptimExpr4.setText("V0=" + str(round(float(aprox[3]), prec)))
-                self.plot_cell_approx(image_path)
-                self.plot_curv_and_points(LabelX, xs, ys, xs2, ys2)
+                if len(items) > 4:
+                    aprox, xs2, ys2 = Calculator.approx_murnaghan(items)
+                    text0 = "E(V0)=" + str(round(float(aprox[0]), prec))
+                    text1 = "B0=" + str(round(float(aprox[1]), prec))
+                    text2 = "B0'=" + str(round(float(aprox[2]), prec))
+                    text3 = "V0=" + str(round(float(aprox[3]), prec))
 
-            if (method == "BirchMurnaghan") and (len(items) > 4):
-                aprox, xs2, ys2 = Calculator.approx_birch_murnaghan(items)
+            elif method == "BirchMurnaghan":
                 image_path = str(Path(__file__).parent / 'images' / 'murnaghanbirch.png')  # path to your image file
-                self.ui.FormActionsPostLabelCellParamOptimExpr.setText("E(V0)=" + str(round(float(aprox[0]), prec)))
-                self.ui.FormActionsPostLabelCellParamOptimExpr2.setText("B0=" + str(round(float(aprox[1]), prec)))
-                self.ui.FormActionsPostLabelCellParamOptimExpr3.setText("B0'=" + str(round(float(aprox[2]), prec)))
-                self.ui.FormActionsPostLabelCellParamOptimExpr4.setText("V0=" + str(round(float(aprox[3]), prec)))
-                self.plot_cell_approx(image_path)
-                self.plot_curv_and_points(LabelX, xs, ys, xs2, ys2)
+                if len(items) > 4:
+                    aprox, xs2, ys2 = Calculator.approx_birch_murnaghan(items)
+                    text0 = "E(V0)=" + str(round(float(aprox[0]), prec))
+                    text1 = "B0=" + str(round(float(aprox[1]), prec))
+                    text2 = "B0'=" + str(round(float(aprox[2]), prec))
+                    text3 = "V0=" + str(round(float(aprox[3]), prec))
 
-            if (method == "Parabola") and (len(items) > 2):
-                aprox, xs2, ys2 = Calculator.approx_parabola(items)
-                image_path = str(Path(__file__).parent / 'images' / 'parabola.png')  # path to your image file
-                self.ui.FormActionsPostLabelCellParamOptimExpr.setText("a=" + str(round(float(aprox[2]), prec)))
-                self.ui.FormActionsPostLabelCellParamOptimExpr2.setText("b=" + str(round(float(aprox[1]), prec)))
-                self.ui.FormActionsPostLabelCellParamOptimExpr3.setText("c=" + str(round(float(aprox[0]), prec)))
-                self.ui.FormActionsPostLabelCellParamOptimExpr4.setText(
-                    "x0=" + str(round(-float(aprox[1]) / float(2 * aprox[2]), prec)))
-                self.plot_cell_approx(image_path)
-                self.plot_curv_and_points(LabelX, xs, ys, xs2, ys2)
+            else:  # method == "Parabola":
+                image_path = str(Path(__file__).parent / 'images' / 'parabola.png')
+                if len(items) > 2:
+                    aprox, xs2, ys2 = Calculator.approx_parabola(items)
+                    text0 = "a=" + str(round(float(aprox[2]), prec))
+                    text1 = "b=" + str(round(float(aprox[1]), prec))
+                    text2 = "c=" + str(round(float(aprox[0]), prec))
+                    text3 = "x0=" + str(round(-float(aprox[1]) / float(2 * aprox[2]), prec))
+
+            self.ui.FormActionsPostLabelCellParamOptimExpr.setText(text0)
+            self.ui.FormActionsPostLabelCellParamOptimExpr2.setText(text1)
+            self.ui.FormActionsPostLabelCellParamOptimExpr3.setText(text2)
+            self.ui.FormActionsPostLabelCellParamOptimExpr4.setText(text3)
+
+            self.plot_cell_approx(image_path)
+            self.plot_curv_and_points(LabelX, xs, ys, xs2, ys2)
+        self.ui.PyqtGraphWidget.update()
 
     def plot_curv_and_points(self, x_title, xs, ys, xs2, ys2):
         self.ui.PyqtGraphWidget.clear()
@@ -2062,28 +2155,44 @@ class MainForm(QMainWindow):
         except Exception as excep:
             self.show_error(excep)
 
+    def move_model_left(self):
+        self.ui.openGLWidget.camera_position += np.array([-self.move_step, 0.0, 0.0])
+        self.ui.openGLWidget.update()
+
+    def move_model_right(self):
+        self.ui.openGLWidget.camera_position += np.array([self.move_step, 0.0, 0.0])
+        self.ui.openGLWidget.update()
+
+    def move_model_up(self):
+        self.ui.openGLWidget.camera_position += np.array([0.0, self.move_step, 0.0])
+        self.ui.openGLWidget.update()
+
+    def move_model_down(self):
+        self.ui.openGLWidget.camera_position += np.array([0.0, -self.move_step, 0.0])
+        self.ui.openGLWidget.update()
+
     def rotate_model_xp(self):
-        self.ui.openGLWidget.rotX += self.rotation_step
+        self.ui.openGLWidget.rotation_angles[0] += self.rotation_step
         self.ui.openGLWidget.update()
 
     def rotate_model_xm(self):
-        self.ui.openGLWidget.rotX -= self.rotation_step
+        self.ui.openGLWidget.rotation_angles[0] -= self.rotation_step
         self.ui.openGLWidget.update()
 
     def rotate_model_yp(self):
-        self.ui.openGLWidget.rotY += self.rotation_step
+        self.ui.openGLWidget.rotation_angles[1] += self.rotation_step
         self.ui.openGLWidget.update()
 
     def rotate_model_ym(self):
-        self.ui.openGLWidget.rotY -= self.rotation_step
+        self.ui.openGLWidget.rotation_angles[1] -= self.rotation_step
         self.ui.openGLWidget.update()
 
     def rotate_model_zp(self):
-        self.ui.openGLWidget.rotZ += self.rotation_step
+        self.ui.openGLWidget.rotation_angles[2] += self.rotation_step
         self.ui.openGLWidget.update()
 
     def rotate_model_zm(self):
-        self.ui.openGLWidget.rotZ -= self.rotation_step
+        self.ui.openGLWidget.rotation_angles[2] -= self.rotation_step
         self.ui.openGLWidget.update()
 
     def save_active_folder(self):  # pragma: no cover
@@ -2212,11 +2321,8 @@ class MainForm(QMainWindow):
         try:
             text = self.ui.FormActionsPreTextFDF.toPlainText()
             if len(text) > 0:
-                name = QFileDialog.getSaveFileName(self, 'Save File', self.work_dir, "FDF files (*.fdf)",
-                                                   options=QFileDialog.DontUseNativeDialog)[0]
-                if len(name) > 0:
-                    with open(name, 'w') as f:
-                        f.write(text)
+                fname = self.get_file_name_from_save_dialog("FDF files (*.fdf)")
+                helpers.write_text_to_file(fname, text)
         except Exception as e:
             self.show_error(e)
 
@@ -2228,8 +2334,7 @@ class MainForm(QMainWindow):
             text = ase.ase_raman_and_ir_script_create(model2, self.fdf_data)
 
             if len(text) > 0:
-                name = QFileDialog.getSaveFileName(self, 'Save File', self.work_dir, "Python file (*.py)",
-                                                   options=QFileDialog.DontUseNativeDialog)[0]
+                name = self.get_file_name_from_save_dialog("Python file (*.py)")
                 if len(name) > 0:
                     with open(name, 'w') as f:
                         f.write(text)
@@ -2238,8 +2343,7 @@ class MainForm(QMainWindow):
 
     def ase_raman_and_ir_parse(self):
         try:
-            fname = QFileDialog.getOpenFileName(self, 'Open file', self.work_dir,
-                                                options=QFileDialog.DontUseNativeDialog)[0]
+            fname = self.get_file_name_from_open_dialog("All files (*.*)")
             if os.path.exists(fname):
                 self.filename = fname
                 self.work_dir = os.path.dirname(fname)
@@ -2320,11 +2424,8 @@ class MainForm(QMainWindow):
                     z = str(model1.atoms[i].y)
                     text += "2" + str(ch) + "   " + x + "   " + y + "   " + z + "\n"
             if len(text) > 0:
-                name = QFileDialog.getSaveFileName(self, 'Save File', self.work_dir, "Crystal d12 (*.d12)",
-                                                   options=QFileDialog.DontUseNativeDialog)[0]
-                if len(name) > 0:
-                    with open(name, 'w') as f:
-                        f.write(text)
+                fname = self.get_file_name_from_save_dialog("Crystal d12 (*.d12)")
+                helpers.write_text_to_file(fname, text)
         except Exception as e:
             self.show_error(e)
 
@@ -2386,10 +2487,8 @@ class MainForm(QMainWindow):
 
     def parse_volumeric_data2(self):
         try:
-            fname = QFileDialog.getOpenFileName(self, 'Open file', self.work_dir,
-                                                options=QFileDialog.DontUseNativeDialog)
+            fname = self.get_file_name_from_open_dialog("All files (*.*)")
             if len(fname) > 0:
-                fname = fname[0]
                 if fname.endswith(".XSF"):
                     self.volumeric_data2 = XSF()
                 if fname.endswith(".cube"):
@@ -2438,6 +2537,9 @@ class MainForm(QMainWindow):
         self.is_scaled_colors_for_surface = False
 
     def select_atom_color(self):  # pragma: no cover
+        if self.color_of_atoms_scheme != "manual":
+            return
+
         table = self.ui.ColorsOfAtomsTable
         self.change_color_of_cell_prompt(table)
 
@@ -2452,8 +2554,10 @@ class MainForm(QMainWindow):
             text_color += str(col[0]) + " " + str(col[1]) + " " + str(col[2]) + "|"
 
         self.save_property(SETTINGS_Color_Of_Atoms, text_color)
+        self.periodic_table.set_manual_colors(atomscolor)
+
         if self.ui.openGLWidget.main_model.nAtoms() > 0:
-            self.ui.openGLWidget.set_color_of_atoms(atomscolor)
+            self.ui.openGLWidget.set_color_of_atoms(self.periodic_table.get_all_colors())
 
     def select_box_color(self):  # pragma: no cover
         boxcolor = self.change_color(self.ui.ColorBox, SETTINGS_Color_Of_Box)
@@ -2538,6 +2642,10 @@ class MainForm(QMainWindow):
     def select_voronoi_color(self):  # pragma: no cover
         voronoicolor = self.change_color(self.ui.ColorVoronoi, SETTINGS_Color_Of_Voronoi)
         self.ui.openGLWidget.set_color_of_voronoi(voronoicolor)
+
+    def select_background_color(self):  # pragma: no cover
+        background_color = self.change_color(self.ui.ColorBackground, SETTINGS_Color_Of_Background)
+        self.ui.openGLWidget.set_color_of_background(background_color)
 
     def select_bond_color(self):  # pragma: no cover
         bondscolor = self.change_color(self.ui.ColorBond, SETTINGS_Color_Of_Bonds)
@@ -2749,8 +2857,10 @@ SETTINGS_FormSettingsPreferredCoordinates = 'model/FormSettingsPreferredCoordina
 SETTINGS_FormSettingsPreferredUnits = 'model/FormSettingsPreferred/units'
 SETTINGS_FormSettingsPreferredLattice = 'model/FormSettingsPreferredLattice'
 
+SETTINGS_Color_Of_Atoms_Scheme = 'colors/scheme'
 SETTINGS_Color_Of_Atoms = 'colors/atoms'
 SETTINGS_Color_Of_Bonds = 'colors/bonds'
+SETTINGS_Color_Of_Background = 'colors/background'
 SETTINGS_Color_Of_Box = 'colors/box'
 SETTINGS_Color_Of_Voronoi = 'colors/voronoi'
 SETTINGS_Color_Of_Axes = 'colors/axes'

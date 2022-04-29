@@ -26,6 +26,8 @@ class TAtomicModel(object):
         self.rcp = []
         self.ccp = []
 
+        self.tags = []
+
         self.name = ""
         self.lat_vector1 = np.array([100, 0, 0])
         self.lat_vector2 = np.array([0, 100, 0])
@@ -52,11 +54,17 @@ class TAtomicModel(object):
             numb[i] = self.atoms[i].charge
         return numb
 
+    def get_covalent_radii(self):
+        ind = list(set(self.get_atomic_numbers()))
+        ind.sort()
+        mendeley = TPeriodTable()
+        return mendeley.get_covalent_radii(ind)
+
     def get_center_of_mass(self):
         return np.array(self.centr_mass())
 
     def get_tags(self):
-        return []
+        return self.tags
 
     def get_cell(self):
         cell = np.zeros((3, 3))
@@ -98,15 +106,15 @@ class TAtomicModel(object):
 
     @staticmethod
     def atoms_from_fdf(filename):
-        """Return a AtList from fdf file"""
-        AtomicCoordinatesFormat, NumberOfAtoms, chem_spec_info, lat, lat_vect_1, lat_vect_2, lat_vect_3, units = \
+        """Return a AtList from fdf file."""
+        atomic_coordinates_format, number_of_atoms, chem_spec_info, lat, lat_vect_1, lat_vect_2, lat_vect_3, units = \
             TAtomicModel.atoms_from_fdf_prepare(filename)
         f = open(filename)
         lines = f.readlines()
         f.close()
-        AllAtoms = TAtomicModel.atoms_from_fdf_text(AtomicCoordinatesFormat, NumberOfAtoms, chem_spec_info, lat,
+        all_atoms = TAtomicModel.atoms_from_fdf_text(atomic_coordinates_format, number_of_atoms, chem_spec_info, lat,
                                                     lat_vect_1, lat_vect_2, lat_vect_3, lines, units)
-        return [AllAtoms]
+        return [all_atoms]
 
     @staticmethod
     def atoms_from_fdf_prepare(filename):
