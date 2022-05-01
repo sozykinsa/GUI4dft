@@ -56,11 +56,8 @@ class MainForm(QMainWindow):
         self.ui.setupUi(self)
 
         self.models = []
-        selected_atom_info = [self.ui.FormActionsPreComboAtomsList, self.ui.FormActionsPreSpinAtomsCoordX,
-                              self.ui.FormActionsPreSpinAtomsCoordY, self.ui.FormActionsPreSpinAtomsCoordZ,
-                              #self.ui.AtomPropertiesText,
-                              self.selected_atom_changed, self.selected_cp_changed]
-        self.ui.openGLWidget.set_form_elements(self.ui.FormSettingsViewCheckAtomSelection, selected_atom_info, 1)
+        self.ui.openGLWidget.set_form_elements(self.ui.FormSettingsViewCheckAtomSelection, self.selected_atom_position,
+                                               self.selected_atom_changed, self.selected_cp_changed, 1)
         self.fdf_data = TFDFFile()
         self.volumeric_data = VolumericData()
         self.volumeric_data2 = VolumericData()  # only for volumeric data difference
@@ -80,6 +77,8 @@ class MainForm(QMainWindow):
         self.state_Color_Of_Atoms = None
         self.color_of_atoms_scheme = "cpk"
         self.periodic_table = TPeriodTable()
+
+        self.history_of_atom_selection = []
 
     def start_program(self):  # pragma: no cover
         if self.action_on_start == 'Open':
@@ -248,7 +247,7 @@ class MainForm(QMainWindow):
         form_settings_preferred_coordinates_type.appendRow(QStandardItem("Fractional"))
         form_settings_preferred_coordinates_type.appendRow(QStandardItem("Zmatrix Cartesian"))
         self.ui.FormSettingsPreferredCoordinates.setModel(form_settings_preferred_coordinates_type)
-        self.ui.FormSettingsPreferredCoordinates.setCurrentText(self.CoordType)
+        self.ui.FormSettingsPreferredCoordinates.setCurrentText(self.coord_type)
         self.ui.FormSettingsPreferredCoordinates.currentIndexChanged.connect(
             self.save_state_preferred_coordinates)
 
@@ -263,7 +262,7 @@ class MainForm(QMainWindow):
         form_settings_preferred_lattice_type.appendRow(QStandardItem("LatticeParameters"))
         form_settings_preferred_lattice_type.appendRow(QStandardItem("LatticeVectors"))
         self.ui.FormSettingsPreferredLattice.setModel(form_settings_preferred_lattice_type)
-        self.ui.FormSettingsPreferredLattice.setCurrentText(self.LatticeType)
+        self.ui.FormSettingsPreferredLattice.setCurrentText(self.lattice_type)
         self.ui.FormSettingsPreferredLattice.currentIndexChanged.connect(self.save_state_preferred_lattice)
 
         self.ui.FormActionsPostComboBonds.currentIndexChanged.connect(self.fill_bonds)
@@ -636,6 +635,7 @@ class MainForm(QMainWindow):
         if len(self.models) == 0:
             return
         self.ui.openGLWidget.delete_selected_atom()
+        self.history_of_atom_selection = []
         self.models[-1] = self.ui.openGLWidget.main_model
         self.model_to_screen(-1)
 
@@ -1295,10 +1295,10 @@ class MainForm(QMainWindow):
         self.state_Color_Of_Contour = str(settings.value(SETTINGS_Color_Of_Contour, '0 255 0'))
         self.color_to_ui(self.ui.ColorContour, self.state_Color_Of_Contour)
 
-        self.CoordType = str(settings.value(SETTINGS_FormSettingsPreferredCoordinates, 'Cartesian'))
+        self.coord_type = str(settings.value(SETTINGS_FormSettingsPreferredCoordinates, 'Cartesian'))
         self.units_type = str(settings.value(SETTINGS_FormSettingsPreferredUnits, 'Ang'))
 
-        self.LatticeType = str(settings.value(SETTINGS_FormSettingsPreferredLattice, 'LatticeParameters'))
+        self.lattice_type = str(settings.value(SETTINGS_FormSettingsPreferredLattice, 'LatticeParameters'))
 
         self.action_on_start = str(settings.value(SETTINGS_FormSettingsActionOnStart, 'Nothing'))
 
@@ -2000,8 +2000,8 @@ class MainForm(QMainWindow):
             g = self.state_Color_Of_Voronoi.split()[1]
             b = self.state_Color_Of_Voronoi.split()[2]
             color = [float(r) / 255, float(g) / 255, float(b) / 255]
-            maxDist = float(self.ui.FormActionsPostTextVoronoiMaxDist.value())
-            atom_index, volume = self.ui.openGLWidget.add_voronoi(color, maxDist)
+            max_dist = float(self.ui.FormActionsPostTextVoronoiMaxDist.value())
+            atom_index, volume = self.ui.openGLWidget.add_voronoi(color, max_dist)
             if atom_index >= 0:
                 self.ui.FormActionsPostLabelVoronoiAtom.setText("Atom: " + str(atom_index))
                 self.ui.FormActionsPostLabelVoronoiVolume.setText("volume: " + str(volume))
@@ -2238,7 +2238,7 @@ class MainForm(QMainWindow):
     def save_state_preferred_coordinates(self):  # pragma: no cover
         self.save_property(SETTINGS_FormSettingsPreferredCoordinates,
                            self.ui.FormSettingsPreferredCoordinates.currentText())
-        self.CoordType = self.ui.FormSettingsPreferredCoordinates.currentText()
+        self.coord_type = self.ui.FormSettingsPreferredCoordinates.currentText()
 
     def save_state_preferred_units(self):  # pragma: no cover
         self.save_property(SETTINGS_FormSettingsPreferredUnits,
@@ -2247,7 +2247,7 @@ class MainForm(QMainWindow):
 
     def save_state_preferred_lattice(self):  # pragma: no cover
         self.save_property(SETTINGS_FormSettingsPreferredLattice, self.ui.FormSettingsPreferredLattice.currentText())
-        self.LatticeType = self.ui.FormSettingsPreferredLattice.currentText()
+        self.lattice_type = self.ui.FormSettingsPreferredLattice.currentText()
 
     @staticmethod
     def save_property(var_property, value):  # pragma: no cover
@@ -2255,13 +2255,82 @@ class MainForm(QMainWindow):
         settings.setValue(var_property, value)
         settings.sync()
 
-    def selected_atom_changed(self, text):
+    def selected_atom_position(self, element, position):
+        self.ui.FormActionsPreComboAtomsList.setCurrentIndex(element)
+        self.ui.FormActionsPreSpinAtomsCoordX.setValue(position[0])
+        self.ui.FormActionsPreSpinAtomsCoordX.update()
+        self.ui.FormActionsPreSpinAtomsCoordY.setValue(position[1])
+        self.ui.FormActionsPreSpinAtomsCoordY.update()
+        self.ui.FormActionsPreSpinAtomsCoordZ.setValue(position[2])
+        self.ui.FormActionsPreSpinAtomsCoordZ.update()
+
+    def selected_atom_changed(self, selected_atom):
+        if selected_atom == -1:
+            self.history_of_atom_selection = []
+        else:
+            self.history_of_atom_selection.append(selected_atom)
+
+        text = ""
+        if selected_atom >= 0:
+            model = self.models[self.active_model]
+            text += "Selected atom: " + str(selected_atom + 1) + "\n"
+            atom = model.atoms[selected_atom]
+            text += "Element: " + atom.let + "\n"
+            for key in atom.properties:
+                text += str(key) + ": " + str(atom.properties[key]) + "\n"
+
+            if len(self.history_of_atom_selection) > 1:
+                text += "\n\nHistory of atoms selection: " + str(np.array(self.history_of_atom_selection) + 1) + "\n"
+                text += "Distance from atom " + str(self.history_of_atom_selection[-1] + 1) + " to atom " + \
+                        str(self.history_of_atom_selection[-2] + 1) + " : "
+                dist = model.atom_atom_distance(self.history_of_atom_selection[-1], self.history_of_atom_selection[-2])
+                text += str(round(dist / 10, 6)) + " nm\n"
+
+                if (len(self.history_of_atom_selection) > 2) and \
+                        (self.history_of_atom_selection[-1] != self.history_of_atom_selection[-2]) \
+                        and (self.history_of_atom_selection[-3] != self.history_of_atom_selection[-2]):
+                    x1 = model.atoms[self.history_of_atom_selection[-1]].x
+                    y1 = model.atoms[self.history_of_atom_selection[-1]].y
+                    z1 = model.atoms[self.history_of_atom_selection[-1]].z
+
+                    x2 = model.atoms[self.history_of_atom_selection[-2]].x
+                    y2 = model.atoms[self.history_of_atom_selection[-2]].y
+                    z2 = model.atoms[self.history_of_atom_selection[-2]].z
+
+                    x3 = model.atoms[self.history_of_atom_selection[-3]].x
+                    y3 = model.atoms[self.history_of_atom_selection[-3]].y
+                    z3 = model.atoms[self.history_of_atom_selection[-3]].z
+
+                    vx1 = x1 - x2
+                    vy1 = y1 - y2
+                    vz1 = z1 - z2
+
+                    vx2 = x3 - x2
+                    vy2 = y3 - y2
+                    vz2 = z3 - z2
+
+                    a = vx1 * vx2 + vy1 * vy2 + vz1 * vz2
+                    b = math.sqrt(vx1 * vx1 + vy1 * vy1 + vz1 * vz1)
+                    c = math.sqrt(vx2 * vx2 + vy2 * vy2 + vz2 * vz2)
+
+                    arg = a / (b * c)
+                    if math.fabs(arg) > 1:
+                        arg = 1
+
+                    angle = math.acos(arg)
+
+                    text += "Angle " + str(self.history_of_atom_selection[-1] + 1) + " - " + \
+                            str(self.history_of_atom_selection[-2] + 1) + " - " + \
+                            str(self.history_of_atom_selection[-3] + 1) + " : " + \
+                            str(round(math.degrees(angle), 3)) + " degrees\n"
+        if selected_atom < 0:
+            text += "Select any atom."
         self.ui.AtomPropertiesText.setText(text)
 
     def selected_cp_changed(self, selected_cp):
         if selected_cp >= 0:
             model = self.models[self.active_model]
-            text = "Selected critical point: " + str(selected_cp) + " ("
+            text = "Selected critical point: " + str(selected_cp + 1) + " ("
             cp = model.bcp[selected_cp]
             atoms = model.atoms
 
@@ -2269,11 +2338,11 @@ class MainForm(QMainWindow):
             bond2 = cp.getProperty("bond2")
 
             ind1, ind2 = model.atoms_of_bond_path(selected_cp)
-            text += atoms[ind1].let + str(ind1) + "-" + atoms[ind2].let + str(ind2) + ")\n"
+            text += atoms[ind1].let + str(ind1 + 1) + "-" + atoms[ind2].let + str(ind2 + 1) + ")\n"
             text += "Bond critical path: " + str(len(bond1)) + " + " + str(len(bond2)) + " = " \
                     + str(len(bond1) + len(bond2)) + " points\n"
 
-            text += model.bcp[selected_cp].getProperty("text")
+            text += str(model.bcp[selected_cp].getProperty("text"))
 
             self.ui.selectedCP.setText(str(selected_cp))
             f = model.bcp[selected_cp].getProperty("field")
@@ -2318,8 +2387,8 @@ class MainForm(QMainWindow):
     def fdf_data_to_form(self):
         try:
             model = self.ui.openGLWidget.get_model()
-            text = self.fdf_data.get_all_data(model, self.CoordType, self.units_type, self.LatticeType)
-            print(self.CoordType, self.units_type, self.LatticeType)
+            text = self.fdf_data.get_all_data(model, self.coord_type, self.units_type, self.lattice_type)
+            print(self.coord_type, self.units_type, self.lattice_type)
             self.ui.FormActionsPreTextFDF.setText(text)
         except Exception:
             print("There are no atoms in the model")
@@ -2465,7 +2534,7 @@ class MainForm(QMainWindow):
                 second_model.add_atom(at)
             self.models.append(second_model)
             if self.ui.FormActionsPreSaveToFileFillSpace.isChecked():
-                text = self.fdf_data.get_all_data(second_model.atoms, self.CoordType, self.units_type, self.LatticeType)
+                text = self.fdf_data.get_all_data(second_model.atoms, self.coord_type, self.units_type, self.lattice_type)
                 with open(filename + str(myiter) + '.fdf', 'w') as f:
                     f.write(text)
             myiter += 1
