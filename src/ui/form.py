@@ -1957,7 +1957,7 @@ class Ui_MainWindow(object):
         self.toolBox_2.setStyleSheet(u"")
         self.page_19 = QWidget()
         self.page_19.setObjectName(u"page_19")
-        self.page_19.setGeometry(QRect(0, 0, 399, 675))
+        self.page_19.setGeometry(QRect(0, 0, 357, 500))
         self.verticalLayout_6 = QVBoxLayout(self.page_19)
         self.verticalLayout_6.setSpacing(0)
         self.verticalLayout_6.setObjectName(u"verticalLayout_6")
@@ -3986,12 +3986,15 @@ class Ui_MainWindow(object):
         self.tabWidget_13.setObjectName(u"tabWidget_13")
         self.tab_42 = QWidget()
         self.tab_42.setObjectName(u"tab_42")
+        self.verticalLayout_75 = QVBoxLayout(self.tab_42)
+        self.verticalLayout_75.setObjectName(u"verticalLayout_75")
         self.label_20 = QLabel(self.tab_42)
         self.label_20.setObjectName(u"label_20")
-        self.label_20.setGeometry(QRect(20, 10, 191, 16))
+
+        self.verticalLayout_75.addWidget(self.label_20)
+
         self.frame_127 = QFrame(self.tab_42)
         self.frame_127.setObjectName(u"frame_127")
-        self.frame_127.setGeometry(QRect(20, 50, 358, 52))
         self.frame_127.setFrameShape(QFrame.StyledPanel)
         self.frame_127.setFrameShadow(QFrame.Raised)
         self.horizontalLayout_131 = QHBoxLayout(self.frame_127)
@@ -4009,9 +4012,11 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_131.addItem(self.horizontalSpacer_85)
 
+
+        self.verticalLayout_75.addWidget(self.frame_127)
+
         self.frame_128 = QFrame(self.tab_42)
         self.frame_128.setObjectName(u"frame_128")
-        self.frame_128.setGeometry(QRect(20, 100, 358, 52))
         self.frame_128.setFrameShape(QFrame.StyledPanel)
         self.frame_128.setFrameShadow(QFrame.Raised)
         self.horizontalLayout_132 = QHBoxLayout(self.frame_128)
@@ -4029,9 +4034,11 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_132.addItem(self.horizontalSpacer_91)
 
+
+        self.verticalLayout_75.addWidget(self.frame_128)
+
         self.tabWidget_8 = QTabWidget(self.tab_42)
         self.tabWidget_8.setObjectName(u"tabWidget_8")
-        self.tabWidget_8.setGeometry(QRect(20, 160, 358, 139))
         self.tab_30 = QWidget()
         self.tab_30.setObjectName(u"tab_30")
         self.verticalLayout_84 = QVBoxLayout(self.tab_30)
@@ -4054,9 +4061,11 @@ class Ui_MainWindow(object):
         self.verticalLayout_81.addWidget(self.FormIrSpectraText)
 
         self.tabWidget_8.addTab(self.tab_31, "")
+
+        self.verticalLayout_75.addWidget(self.tabWidget_8)
+
         self.groupBox_33 = QGroupBox(self.tab_42)
         self.groupBox_33.setObjectName(u"groupBox_33")
-        self.groupBox_33.setGeometry(QRect(20, 310, 358, 239))
         self.groupBox_33.setMinimumSize(QSize(0, 0))
         self.verticalLayout_85 = QVBoxLayout(self.groupBox_33)
         self.verticalLayout_85.setObjectName(u"verticalLayout_85")
@@ -4160,6 +4169,9 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_85.addWidget(self.frame_133)
 
+
+        self.verticalLayout_75.addWidget(self.groupBox_33)
+
         self.tabWidget_13.addTab(self.tab_42, "")
         self.tab_39 = QWidget()
         self.tab_39.setObjectName(u"tab_39")
@@ -4181,6 +4193,7 @@ class Ui_MainWindow(object):
         self.frame_110.setFrameShadow(QFrame.Raised)
         self.horizontalLayout_112 = QHBoxLayout(self.frame_110)
         self.horizontalLayout_112.setObjectName(u"horizontalLayout_112")
+        self.horizontalLayout_112.setContentsMargins(-1, 0, -1, 0)
         self.label_82 = QLabel(self.frame_110)
         self.label_82.setObjectName(u"label_82")
 
@@ -4196,10 +4209,11 @@ class Ui_MainWindow(object):
 
         self.frame_87 = QFrame(self.groupBox_30)
         self.frame_87.setObjectName(u"frame_87")
-        self.frame_87.setFrameShape(QFrame.StyledPanel)
+        self.frame_87.setFrameShape(QFrame.NoFrame)
         self.frame_87.setFrameShadow(QFrame.Raised)
         self.horizontalLayout_88 = QHBoxLayout(self.frame_87)
         self.horizontalLayout_88.setObjectName(u"horizontalLayout_88")
+        self.horizontalLayout_88.setContentsMargins(-1, 0, -1, 0)
         self.label_107 = QLabel(self.frame_87)
         self.label_107.setObjectName(u"label_107")
 
@@ -4213,31 +4227,13 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_71.addWidget(self.frame_87)
 
-        self.frame_88 = QFrame(self.groupBox_30)
-        self.frame_88.setObjectName(u"frame_88")
-        self.frame_88.setFrameShape(QFrame.StyledPanel)
-        self.frame_88.setFrameShadow(QFrame.Raised)
-        self.horizontalLayout_155 = QHBoxLayout(self.frame_88)
-        self.horizontalLayout_155.setObjectName(u"horizontalLayout_155")
-        self.label_110 = QLabel(self.frame_88)
-        self.label_110.setObjectName(u"label_110")
-
-        self.horizontalLayout_155.addWidget(self.label_110)
-
-        self.selectedCP_bpLen = QLabel(self.frame_88)
-        self.selectedCP_bpLen.setObjectName(u"selectedCP_bpLen")
-
-        self.horizontalLayout_155.addWidget(self.selectedCP_bpLen)
-
-
-        self.verticalLayout_71.addWidget(self.frame_88)
-
         self.frame_109 = QFrame(self.groupBox_30)
         self.frame_109.setObjectName(u"frame_109")
-        self.frame_109.setFrameShape(QFrame.StyledPanel)
+        self.frame_109.setFrameShape(QFrame.NoFrame)
         self.frame_109.setFrameShadow(QFrame.Raised)
         self.horizontalLayout_156 = QHBoxLayout(self.frame_109)
         self.horizontalLayout_156.setObjectName(u"horizontalLayout_156")
+        self.horizontalLayout_156.setContentsMargins(-1, 0, -1, 0)
         self.label_111 = QLabel(self.frame_109)
         self.label_111.setObjectName(u"label_111")
 
@@ -4266,6 +4262,7 @@ class Ui_MainWindow(object):
         self.frame_111.setFrameShadow(QFrame.Raised)
         self.horizontalLayout_113 = QHBoxLayout(self.frame_111)
         self.horizontalLayout_113.setObjectName(u"horizontalLayout_113")
+        self.horizontalLayout_113.setContentsMargins(-1, 0, -1, 0)
         self.label_84 = QLabel(self.frame_111)
         self.label_84.setObjectName(u"label_84")
 
@@ -4285,6 +4282,7 @@ class Ui_MainWindow(object):
         self.frame_112.setFrameShadow(QFrame.Raised)
         self.horizontalLayout_114 = QHBoxLayout(self.frame_112)
         self.horizontalLayout_114.setObjectName(u"horizontalLayout_114")
+        self.horizontalLayout_114.setContentsMargins(-1, 0, -1, 0)
         self.label_85 = QLabel(self.frame_112)
         self.label_85.setObjectName(u"label_85")
 
@@ -4304,6 +4302,7 @@ class Ui_MainWindow(object):
         self.frame_113.setFrameShadow(QFrame.Raised)
         self.horizontalLayout_115 = QHBoxLayout(self.frame_113)
         self.horizontalLayout_115.setObjectName(u"horizontalLayout_115")
+        self.horizontalLayout_115.setContentsMargins(-1, 0, -1, 0)
         self.label_87 = QLabel(self.frame_113)
         self.label_87.setObjectName(u"label_87")
 
@@ -6054,8 +6053,6 @@ class Ui_MainWindow(object):
         self.selectedCP.setText(QCoreApplication.translate("MainWindow", u"...", None))
         self.label_107.setText(QCoreApplication.translate("MainWindow", u"Nuclei:", None))
         self.selectedCP_nuclei.setText(QCoreApplication.translate("MainWindow", u"...", None))
-        self.label_110.setText(QCoreApplication.translate("MainWindow", u"Bond path length:", None))
-        self.selectedCP_bpLen.setText(QCoreApplication.translate("MainWindow", u"...", None))
         self.label_111.setText(QCoreApplication.translate("MainWindow", u"Bond path length (lines):", None))
         self.selectedCP_bpLenLine.setText(QCoreApplication.translate("MainWindow", u"...", None))
         self.label_84.setText(QCoreApplication.translate("MainWindow", u"Field:", None))

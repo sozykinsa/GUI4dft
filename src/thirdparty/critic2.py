@@ -26,6 +26,7 @@ def parse_cp_properties(filename, model):
                 cp.setProperty("field", cp1[4])
                 cp.setProperty("grad", cp1[5])
                 cp.setProperty("lap", cp1[6])
+                cp.setProperty("text", cp1[7])
                 k += 1
 
 
@@ -38,16 +39,16 @@ def check_cro_file(filename):
         box_deg = helpers.from_file_property(filename, "Lattice angles (degrees):", 1, 'string').split()
         box_deg = np.array(helpers.list_str_to_float(box_deg))
 
-        MyFile = open(filename)
-        str1 = MyFile.readline()
+        filename = open(filename)
+        str1 = filename.readline()
         while str1.find("Critical point list, final report (non-equivalent cps") < 0:
-            str1 = MyFile.readline()
-        MyFile.readline()
-        MyFile.readline()
-        MyFile.readline()
+            str1 = filename.readline()
+        filename.readline()
+        filename.readline()
+        filename.readline()
 
         cps = []
-        str1 = MyFile.readline()
+        str1 = filename.readline()
 
         while len(str1) > 3:
             str1 = str1.split(')')[1].split()
@@ -55,11 +56,25 @@ def check_cro_file(filename):
             y = float(str1[2]) * box_ang[1]
             z = float(str1[3]) * box_ang[2]
 
-            line = [str1[0], x, y, z, str1[6], str1[7], str1[8]]
+            line = [str1[0], x, y, z, str1[6], str1[7], str1[8], ""]
             cps.append(line)
-            str1 = MyFile.readline()
+            str1 = filename.readline()
 
-        MyFile.close()
+        while str1.find("Additional properties at the critical points") < 0:
+            str1 = filename.readline()
+        str1 = filename.readline()
+        point = 0
+        while str1.find("+ Critical point no.") >= 0:
+            text = ""
+            while str1.find("Field 0 (f,|grad|,lap):") < 0:
+                str1 = filename.readline()
+                if len(str1) > 0:
+                    text += str1
+            cps[point][7] = text
+            point += 1
+            str1 = filename.readline()
+
+        filename.close()
         return box_bohr, box_ang, box_deg, cps
     else:
         return "", "", "", []

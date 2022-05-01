@@ -2261,7 +2261,7 @@ class MainForm(QMainWindow):
     def selected_cp_changed(self, selected_cp):
         if selected_cp >= 0:
             model = self.models[self.active_model]
-            text = "\nSelected critical point: " + str(selected_cp) + " ("
+            text = "Selected critical point: " + str(selected_cp) + " ("
             cp = model.bcp[selected_cp]
             atoms = model.atoms
 
@@ -2270,7 +2270,10 @@ class MainForm(QMainWindow):
 
             ind1, ind2 = model.atoms_of_bond_path(selected_cp)
             text += atoms[ind1].let + str(ind1) + "-" + atoms[ind2].let + str(ind2) + ")\n"
-            text += "Bond critical path: " + str(len(bond1) + len(bond2)) + " points\n"
+            text += "Bond critical path: " + str(len(bond1)) + " + " + str(len(bond2)) + " = " \
+                    + str(len(bond1) + len(bond2)) + " points\n"
+
+            text += model.bcp[selected_cp].getProperty("text")
 
             self.ui.selectedCP.setText(str(selected_cp))
             f = model.bcp[selected_cp].getProperty("field")
@@ -2282,17 +2285,15 @@ class MainForm(QMainWindow):
 
             dist_line = round(model.atom_atom_distance(ind1, ind2), 4)
             self.ui.selectedCP_bpLenLine.setText(str(dist_line) + " A")
-
             self.ui.selectedCP_nuclei.setText(atoms[ind1].let + str(ind1) + "-" + atoms[ind2].let + str(ind2))
         else:
-            if selected_cp < 0:
-                text = "Select any critical point"
-                self.ui.selectedCP.setText("...")
-                self.ui.FormSelectedCP_f.setText("...")
-                self.ui.FormSelectedCP_g.setText("...")
-                self.ui.FormSelectedCP_lap.setText("...")
-                self.ui.selectedCP_bpLenLine.settext("...")
-                self.ui.selectedCP_nuclei.setText("...")
+            text = "Select any critical point"
+            self.ui.selectedCP.setText("...")
+            self.ui.FormSelectedCP_f.setText("...")
+            self.ui.FormSelectedCP_g.setText("...")
+            self.ui.FormSelectedCP_lap.setText("...")
+            self.ui.selectedCP_bpLenLine.setText("...")
+            self.ui.selectedCP_nuclei.setText("...")
 
         self.ui.criticalPointProp.setText(text)
 

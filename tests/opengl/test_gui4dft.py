@@ -166,6 +166,7 @@ def test_cell_param(gui4dft_application, tests_path):
 def test_critic2_section(gui4dft_application, tests_path):
     f_name = str(tests_path / 'ref_data' / 'h2o-ang-charges' / 'critic2' / "cp-file.xyz")
     window = gui4dft_application
+    window.ui.FormSettingsViewCheckXYZasCritic2.setChecked(True)
     window.menu_open(f_name)
     model = window.models[-1]
     assert len(model.bcp) == 5
@@ -173,8 +174,8 @@ def test_critic2_section(gui4dft_application, tests_path):
     f_name = str(tests_path / 'ref_data' / 'h2o-ang-charges' / 'critic2' / "siesta-1-cp.cro")
     parse_cp_properties(f_name, model)
     assert float(model.bcp[0].properties["field"]) == pytest.approx(1.68288239)
-    model.bcp[0].setSelected(True)
-    # ?
+    window.selected_cp_changed(1)
+    assert window.ui.selectedCP_nuclei.text() == "O2-O2"
 
 
 def test_simple_calls(gui4dft_application):
