@@ -629,7 +629,17 @@ class MainForm(QMainWindow):
     def atom_add(self):
         if len(self.models) == 0:
             return
-        self.ui.openGLWidget.add_new_atom()
+        charge, let, position = self.selected_atom_from_form()
+        self.ui.openGLWidget.add_new_atom(charge, let, position)
+
+    def selected_atom_from_form(self):
+        charge = self.ui.FormActionsPreComboAtomsList.currentIndex()
+        let = self.ui.FormActionsPreComboAtomsList.currentText()
+        x = self.ui.FormActionsPreSpinAtomsCoordX.value()
+        y = self.ui.FormActionsPreSpinAtomsCoordY.value()
+        z = self.ui.FormActionsPreSpinAtomsCoordZ.value()
+        position = np.array((x, y, z), dtype=float)
+        return charge, let, position
 
     def atom_delete(self):
         if len(self.models) == 0:
@@ -642,7 +652,8 @@ class MainForm(QMainWindow):
     def atom_modify(self):
         if len(self.models) == 0:
             return
-        self.ui.openGLWidget.modify_selected_atom()
+        charge, position = self.selected_atom_from_form()
+        self.ui.openGLWidget.modify_selected_atom(charge, position)
         self.models.append(self.ui.openGLWidget.main_model)
         self.model_to_screen(-1)
 
@@ -1435,8 +1446,6 @@ class MainForm(QMainWindow):
         self.plot_model(value)
         self.fill_atoms_table()
         self.fill_properties_table()
-        self.ui.openGLWidget.selected_atom_properties.setText("select")
-
         self.color_with_property_enabling()
 
     def color_with_property_enabling(self):
@@ -2354,7 +2363,7 @@ class MainForm(QMainWindow):
 
             dist_line = round(model.atom_atom_distance(ind1, ind2), 4)
             self.ui.selectedCP_bpLenLine.setText(str(dist_line) + " A")
-            self.ui.selectedCP_nuclei.setText(atoms[ind1].let + str(ind1) + "-" + atoms[ind2].let + str(ind2))
+            self.ui.selectedCP_nuclei.setText(atoms[ind1].let + str(ind1 + 1) + "-" + atoms[ind2].let + str(ind2 + 1))
         else:
             text = "Select any critical point"
             self.ui.selectedCP.setText("...")

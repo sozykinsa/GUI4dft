@@ -175,7 +175,24 @@ def test_critic2_section(gui4dft_application, tests_path):
     parse_cp_properties(f_name, model)
     assert float(model.bcp[0].properties["field"]) == pytest.approx(1.68288239)
     window.selected_cp_changed(1)
-    assert window.ui.selectedCP_nuclei.text() == "O2-O2"
+    assert window.ui.selectedCP_nuclei.text() == "O3-O3"
+
+
+def test_selected_atom_from_form(gui4dft_application):
+    window = gui4dft_application
+    charge, let, position = window.selected_atom_from_form()
+    assert charge == 0
+    window.create_swnt()
+    window.ui.openGLWidget.selected_atom = 2
+    window.ui.openGLWidget.selected_atom_changed()
+    window.ui.openGLWidget.update()
+    charge, let, position = window.selected_atom_from_form()
+    assert charge == 6
+    assert len(window.ui.openGLWidget.main_model.atoms) == 112
+    window.atom_add()
+    assert len(window.ui.openGLWidget.main_model.atoms) == 113
+    window.atom_delete()
+    assert len(window.ui.openGLWidget.main_model.atoms) == 112
 
 
 def test_simple_calls(gui4dft_application):

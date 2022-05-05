@@ -25,11 +25,6 @@ class GuiOpenGL(QOpenGLWidget):
         self.background_color = np.array((1.0, 1.0, 1.0), dtype=float)
 
         self.is_check_atom_selection: bool = False
-        self.selected_atom_type = None
-        self.selected_atom_X = None
-        self.selected_atom_Y = None
-        self.selected_atom_Z = None
-        self.selected_atom_properties = None
         self.quality: int = 1
 
         self.object = None
@@ -259,7 +254,7 @@ class GuiOpenGL(QOpenGLWidget):
         self.clean()
         self.prop = "charge"
         self.main_model = deepcopy(structure)
-        self.coord0 -= self.main_model.get_center_of_mass()
+        self.coord0 = -self.main_model.get_center_of_mass()
         self.main_model.move(*self.coord0)
         self.is_view_box = ViewBox
         self.is_view_atoms = is_view_atoms
@@ -339,14 +334,9 @@ class GuiOpenGL(QOpenGLWidget):
             self.add_bonds()
             self.update()
 
-    def add_new_atom(self):
-        charge = self.selected_atom_type.currentIndex()
+    def add_new_atom(self, charge, let, position):
         if charge > 0:
-            let = self.selected_atom_type.currentText()
-            x = self.selected_atom_X.value() + self.coord0[0]
-            y = self.selected_atom_Y.value() + self.coord0[1]
-            z = self.selected_atom_Z.value() + self.coord0[2]
-            new_atom = Atom([x, y, z, let, charge])
+            new_atom = self.new_atom_for_model(charge, let, position)
             self.main_model.add_atom(new_atom)
             self.is_view_contour = False
             self.is_view_contour_fill = False
@@ -356,15 +346,10 @@ class GuiOpenGL(QOpenGLWidget):
             self.add_bonds()
             self.update()
 
-    def modify_selected_atom(self):
+    def modify_selected_atom(self, charge, let, position):
         if self.selected_atom >= 0:
-            charge = self.selected_atom_type.currentIndex()
             if charge > 0:
-                let = self.selected_atom_type.currentText()
-                x = self.selected_atom_X.value() + self.coord0[0]
-                y = self.selected_atom_Y.value() + self.coord0[1]
-                z = self.selected_atom_Z.value() + self.coord0[2]
-                new_atom = Atom([x, y, z, let, charge])
+                new_atom = self.new_atom_for_model(charge, let, position)
                 self.main_model.edit_atom(self.selected_atom, new_atom)
                 self.is_view_contour = False
                 self.is_view_contour_fill = False
@@ -373,6 +358,13 @@ class GuiOpenGL(QOpenGLWidget):
                 self.main_model.find_bonds_fast()
                 self.add_bonds()
                 self.update()
+
+    def new_atom_for_model(self, charge, let, position):
+        x = position[0] + self.coord0[0]
+        y = position[1] + self.coord0[1]
+        z = position[2] + self.coord0[2]
+        new_atom = Atom([x, y, z, let, charge])
+        return new_atom
 
     def set_color_of_atoms(self, colors):
         self.color_of_atoms = colors
