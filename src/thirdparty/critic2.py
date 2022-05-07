@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import sys
 import os
+from copy import deepcopy
 import math
 import numpy as np
 from utils import helpers
@@ -80,6 +81,25 @@ def check_cro_file(filename):
         return "", "", "", []
 
 
+def model_1d_to_d12(model):
+    text = "crystal\n"
+    text += "POLYMER\n"
+    model1 = deepcopy(model)
+    model2 = deepcopy(model)
+    model2.convert_from_cart_to_direct()
+    nat = model1.nAtoms()
+    text += "1\n"
+    text += str(model1.get_LatVect3_norm()) + "\n"
+    text += str(nat) + "\n"
+    for i in range(0, nat):
+        ch = model1.atoms[i].charge
+        x = str(model2.atoms[i].z)
+        y = str(model1.atoms[i].x)
+        z = str(model1.atoms[i].y)
+        text += str(ch) + "   " + x + "   " + y + "   " + z + "\n"
+    return text
+
+
 def model_to_critic_xyz_file(model, cps):
     """Returns data for *.xyz file with CP and BCP."""
     text = ""
@@ -110,7 +130,6 @@ def model_to_critic_xyz_file(model, cps):
 
 
 def create_critic2_xyz_file(bcp, bcp_seleсted, is_with_selected, model):
-    text = ""
     if is_with_selected:
         text = model_to_critic_xyz_file(model, bcp_seleсted)
     else:

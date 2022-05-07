@@ -24,7 +24,7 @@ from utils.periodic_table import TPeriodTable
 from utils.siesta import TSIESTA
 from models.swnt import SWNT
 from models.swgnt import SWGNT
-from thirdparty.critic2 import check_cro_file, parse_cp_properties
+from thirdparty.critic2 import check_cro_file, parse_cp_properties, model_1d_to_d12
 from thirdparty.vasp import vasp_dos
 from utils.importer import Importer
 from utils.electronic_prop_reader import read_siesta_bands, dos_from_file
@@ -120,6 +120,8 @@ class MainForm(QMainWindow):
         self.ui.but_create_nanotube.clicked.connect(self.create_swnt)
         self.ui.FormActionsPreButBiElementGenerate.clicked.connect(self.create_bi_el_nt)
         self.ui.FormActionsPreButGrapheneGenerate.clicked.connect(self.create_graphene)
+
+        # 3D data
         self.ui.FormActionsPostButSurface.clicked.connect(self.plot_surface)
         self.ui.FormActionsPostButSurfaceParse.clicked.connect(self.parse_volumeric_data)
         self.ui.FormActionsPostButSurfaceParse2.clicked.connect(self.parse_volumeric_data2)
@@ -130,14 +132,18 @@ class MainForm(QMainWindow):
         self.ui.ExportTheVolumericDataXSF.clicked.connect(self.export_volumeric_data_to_xsf)
         self.ui.ExportTheVolumericDataCube.clicked.connect(self.export_volumeric_data_to_cube)
         self.ui.FormActionsPostButContour.clicked.connect(self.plot_contour)
+        self.ui.FormActionsPostButSurfaceAdd.clicked.connect(self.add_isosurface_color_to_table)
+        self.ui.FormActionsPostButSurfaceDelete.clicked.connect(self.delete_isosurface_color_from_table)
+
+        # colors
         self.ui.ColorBackgroundDialogButton.clicked.connect(self.select_background_color)
         self.ui.ColorBondDialogButton.clicked.connect(self.select_bond_color)
         self.ui.ColorBoxDialogButton.clicked.connect(self.select_box_color)
         self.ui.ColorVoronoiDialogButton.clicked.connect(self.select_voronoi_color)
         self.ui.ColorAxesDialogButton.clicked.connect(self.select_axes_color)
         self.ui.ColorContourDialogButton.clicked.connect(self.select_contour_color)
-        self.ui.FormActionsPostButSurfaceAdd.clicked.connect(self.add_isosurface_color_to_table)
-        self.ui.FormActionsPostButSurfaceDelete.clicked.connect(self.delete_isosurface_color_from_table)
+        self.ui.manual_colors_default.clicked.connect(self.set_manual_colors_default)
+
         self.ui.FormActionsButtonPlotPDOS.clicked.connect(self.plot_pdos)
         self.ui.plot_bands.clicked.connect(self.plot_bands)
         self.ui.parse_bands.clicked.connect(self.parse_bands)
@@ -1346,9 +1352,7 @@ class MainForm(QMainWindow):
         for i in range(1, len(lets) - 1):
             self.ui.ColorsOfAtomsTable.setRowCount(i)
             self.ui.ColorsOfAtomsTable.setItem(i - 1, 0, QTableWidgetItem(lets[i] + edit_text))
-            # color = colors[i]
             self.ui.ColorsOfAtomsTable.item(i - 1, 0).setBackground(QColor.fromRgbF(*colors[i]))
-            # color[0], color[1], color[2], 1))
 
     def perspective_angle_change(self):
         self.perspective_angle = self.ui.spin_perspective_angle.value()
@@ -2375,6 +2379,22 @@ class MainForm(QMainWindow):
 
         self.ui.criticalPointProp.setText(text)
 
+    def set_manual_colors_default(self):
+        self.periodic_table.init_manual_colors()
+        self.color_of_atoms_scheme = "manual"
+        self.periodic_table.set_color_mode(self.color_of_atoms_scheme)
+        self.save_property(SETTINGS_Color_Of_Atoms_Scheme, self.color_of_atoms_scheme)
+        self.save_manual_colors()
+
+        self.fill_colors_of_atoms_table()
+
+        if self.ui.openGLWidget.main_model.nAtoms() > 0:
+            self.ui.openGLWidget.set_color_of_atoms(self.periodic_table.get_all_colors())
+
+    def save_manual_colors(self):
+        text_color = self.periodic_table.manual_color_to_text()
+        self.save_property(SETTINGS_Color_Of_Atoms, text_color)
+
     def state_changed_form_settings_colors_scale(self):
         if self.ui.FormSettingsColorsScale.currentText() == "":
             self.ui.ColorRow.clear()
@@ -2492,22 +2512,10 @@ class MainForm(QMainWindow):
         if len(self.models) == 0:
             return
         try:
-            text = "crystal\n"
+            text = ""
             if self.ui.crystal_d12_1d.isChecked():
-                text += "POLYMER\n"
-                model1 = deepcopy(self.models[self.active_model])
-                model2 = deepcopy(self.models[self.active_model])
-                model2.convert_from_cart_to_direct()
-                nat = model1.nAtoms()
-                text += "1\n"
-                text += str(model1.get_LatVect3_norm()) + "\n"
-                text += str(nat) + "\n"
-                for i in range(0, nat):
-                    ch = model1.atoms[i].charge
-                    x = str(model2.atoms[i].z)
-                    y = str(model1.atoms[i].x)
-                    z = str(model1.atoms[i].y)
-                    text += "2" + str(ch) + "   " + x + "   " + y + "   " + z + "\n"
+                model = self.models[self.active_model]
+                text = self.model_1d_to_d12(model)
             if len(text) > 0:
                 fname = self.get_file_name_from_save_dialog("Crystal d12 (*.d12)")
                 helpers.write_text_to_file(fname, text)
@@ -2554,12 +2562,12 @@ class MainForm(QMainWindow):
             selected = self.ui.FormActionsPostList3DData.selectedItems()[0].text()
             self.parse_volumeric_data_selected(selected)
 
-    def parse_volumeric_data_selected(self, selected):
-        if selected.endswith(".XSF"):
+    def parse_volumeric_data_selected(self, filename: str = ""):
+        if filename.endswith(".XSF"):
             self.volumeric_data = XSF()
-        if selected.endswith(".cube"):
+        if filename.endswith(".cube"):
             self.volumeric_data = GaussianCube()
-        if self.volumeric_data.parse(selected):
+        if self.volumeric_data.parse(filename):
             self.fill_volumeric_data(self.volumeric_data)
         self.ui.FormActionsPostButSurfaceLoadData.setEnabled(True)
         self.clear_qtree_widget(self.ui.FormActionsPostTreeSurface2)
@@ -2570,51 +2578,54 @@ class MainForm(QMainWindow):
         self.ui.VolumrricDataGrid2.setTitle("Grid")
         self.ui.FormActionsPostButSurfaceLoadData2.setEnabled(False)
 
-    def parse_volumeric_data2(self):
+    def parse_volumeric_data2(self, filename: str = ""):
         try:
-            fname = self.get_file_name_from_open_dialog("All files (*.*)")
-            if len(fname) > 0:
-                if fname.endswith(".XSF"):
+            if filename == "":  # pragma: no cover
+                filename = self.get_file_name_from_open_dialog("All files (*.*)")
+            if len(filename) > 0:
+                if filename.endswith(".XSF"):
                     self.volumeric_data2 = XSF()
-                if fname.endswith(".cube"):
+                if filename.endswith(".cube"):
                     self.volumeric_data2 = GaussianCube()
-                if self.volumeric_data2.parse(fname):
+                if self.volumeric_data2.parse(filename):
                     self.fill_volumeric_data(self.volumeric_data2, self.ui.FormActionsPostTreeSurface2)
 
                 self.ui.FormActionsPostButSurfaceLoadData2.setEnabled(True)
-                self.ui.FormActionsPosEdit3DData2.setText(fname)
+                self.ui.FormActionsPosEdit3DData2.setText(filename)
                 self.clear_form_isosurface_data2_n()
                 self.ui.CalculateTheVolumericDataDifference.setEnabled(False)
                 self.ui.CalculateTheVolumericDataSum.setEnabled(False)
                 self.ui.ExportTheVolumericDataXSF.setEnabled(False)
                 self.ui.ExportTheVolumericDataCube.setEnabled(False)
                 self.ui.VolumrricDataGrid2.setTitle("Grid")
-        except Exception as e:
+        except Exception as e:  # pragma: no cover
             self.show_error(e)
-
-    def set_xsf_z_position(self):
-        value = int(self.ui.FormActionsPostSliderContourXY.value())
-        self.ui.FormActionsPostLabelContourXYposition.setText(
-            "Slice " + str(value) + " among " + str(self.ui.FormActionsPostSliderContourXY.maximum()))
-
-    def set_xsf_y_position(self):
-        value = int(self.ui.FormActionsPostSliderContourXZ.value())
-        self.ui.FormActionsPostLabelContourXZposition.setText(
-            "Slice " + str(value) + " among " + str(self.ui.FormActionsPostSliderContourXZ.maximum()))
 
     def set_xsf_x_position(self):
         value = int(self.ui.FormActionsPostSliderContourYZ.value())
         self.ui.FormActionsPostLabelContourYZposition.setText(
             "Slice " + str(value) + " among " + str(self.ui.FormActionsPostSliderContourYZ.maximum()))
 
+    def set_xsf_y_position(self):
+        value = int(self.ui.FormActionsPostSliderContourXZ.value())
+        self.ui.FormActionsPostLabelContourXZposition.setText(
+            "Slice " + str(value) + " among " + str(self.ui.FormActionsPostSliderContourXZ.maximum()))
+
+    def set_xsf_z_position(self):
+        value = int(self.ui.FormActionsPostSliderContourXY.value())
+        self.ui.FormActionsPostLabelContourXYposition.setText(
+            "Slice " + str(value) + " among " + str(self.ui.FormActionsPostSliderContourXY.maximum()))
+
     @staticmethod
-    def change_color_of_cell_prompt(table):
+    def change_color_of_cell_prompt(table):  # pragma: no cover
         i = table.selectedIndexes()[0].row()
         color = QColorDialog.getColor(initial=table.item(i, 0).background().color())
         if not color.isValid():
             return
-        at_color = [color.getRgbF()[0], color.getRgbF()[1], color.getRgbF()[2]]
-        table.item(i, 0).setBackground(QColor.fromRgbF(at_color[0], at_color[1], at_color[2], 1))
+        at_color = color.getRgbF()
+        #at_color = [color.getRgbF()[0], color.getRgbF()[1], color.getRgbF()[2]]
+        table.item(i, 0).setBackground(QColor.fromRgbF(*at_color))
+        return i, at_color
 
     def select_isosurface_color(self):  # pragma: no cover
         table = self.ui.IsosurfaceColorsTable
@@ -2626,20 +2637,10 @@ class MainForm(QMainWindow):
             return
 
         table = self.ui.ColorsOfAtomsTable
-        self.change_color_of_cell_prompt(table)
+        i, at_color = self.change_color_of_cell_prompt(table)
+        self.periodic_table.set_manual_color(i + 1, at_color)
 
-        text_color = ""
-        atomscolor = []
-        col = table.item(0, 0).background().color().getRgbF()
-        atomscolor.append(col)
-        text_color += str(col[0]) + " " + str(col[1]) + " " + str(col[2]) + "|"
-        for i in range(0, table.rowCount()):
-            col = table.item(i, 0).background().color().getRgbF()
-            atomscolor.append(col)
-            text_color += str(col[0]) + " " + str(col[1]) + " " + str(col[2]) + "|"
-
-        self.save_property(SETTINGS_Color_Of_Atoms, text_color)
-        self.periodic_table.set_manual_colors(atomscolor)
+        self.save_manual_colors()
 
         if self.ui.openGLWidget.main_model.nAtoms() > 0:
             self.ui.openGLWidget.set_color_of_atoms(self.periodic_table.get_all_colors())

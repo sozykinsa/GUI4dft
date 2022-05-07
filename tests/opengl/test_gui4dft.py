@@ -78,6 +78,11 @@ def test_xsf_operations(gui4dft_application, tests_path):
     window.ui.FormActionsPostCheckContourXY.setChecked(True)
     window.ui.FormActionsPostCheckContourYZ.setChecked(True)
     window.ui.FormActionsPostCheckContourXZ.setChecked(True)
+
+    window.ui.FormActionsPostSliderContourXY.setValue(3)
+    window.ui.FormActionsPostSliderContourXZ.setValue(4)
+    window.ui.FormActionsPostSliderContourYZ.setValue(5)
+
     window.plot_contour()
 
     window.ui.FormActionsPostRadioColorPlane.setChecked(True)
@@ -85,6 +90,10 @@ def test_xsf_operations(gui4dft_application, tests_path):
 
     window.ui.FormActionsPostRadioColorPlaneContours.setChecked(True)
     window.plot_contour()
+
+    window.parse_volumeric_data2(f_name)
+    assert window.ui.VolumrricDataGrid2.title() == "Grid"
+    assert window.ui.FormActionsPostLabelSurfaceNx.text() == ""
 
 
 def test_plot_dos(gui4dft_application, tests_path):
@@ -174,8 +183,18 @@ def test_critic2_section(gui4dft_application, tests_path):
     f_name = str(tests_path / 'ref_data' / 'h2o-ang-charges' / 'critic2' / "siesta-1-cp.cro")
     parse_cp_properties(f_name, model)
     assert float(model.bcp[0].properties["field"]) == pytest.approx(1.68288239)
+    window.add_cp_to_list()
+    assert window.ui.FormCPlist.count() == 0
     window.selected_cp_changed(1)
     assert window.ui.selectedCP_nuclei.text() == "O3-O3"
+    window.ui.selectedCP.setText("2")
+    window.add_cp_to_list()
+    window.add_cp_to_list()
+    assert window.ui.FormCPlist.item(0).text() == "2"
+    window.ui.FormCPlist.setCurrentRow(0)
+    assert window.ui.FormCPlist.count() == 1
+    window.delete_cp_from_list()
+    assert window.ui.FormCPlist.count() == 0
 
 
 def test_selected_atom_from_form(gui4dft_application):

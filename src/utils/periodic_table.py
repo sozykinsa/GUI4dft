@@ -11,28 +11,43 @@ class TPeriodTableAtom:
         self.charge = charge
         self.radius = radius
         self.let = let
-        self.color = color
+        # self.color = color
         self.mass = mass
+
+
+default_color = [0.6, 0.6, 1.0, 1.0]
+gui4dft_colors = np.ones((104, 4), dtype=float)
+gui4dft_colors[:, 0] *= default_color[0]
+gui4dft_colors[:, 1] *= default_color[1]
+gui4dft_colors[:, 2] *= default_color[2]
+gui4dft_colors[1] = [0.0, 0.0, 0.5, 1.0]
+gui4dft_colors[2] = [0.5, 0.0, 1.0, 1.0]
+gui4dft_colors[3] = [1.0, 1.0, 0.15, 1.0]
+gui4dft_colors[4] = [0.3, 1.0, 1.0, 1.0]
+gui4dft_colors[5] = [0.6, 0.3, 0.0, 1.0]
+gui4dft_colors[6] = [0.07, 0.07, 0.28, 1.0]
+gui4dft_colors[7] = [0.45, 0.3, 0.6, 1.0]
+gui4dft_colors[8] = [1.0, 0.0, 0.5, 1.0]
 
 
 class TPeriodTable:
     """The TPeriodTable class provides basic fetches of Mendelevium's table. The constructor does not have arguments."""
     def __init__(self):
-        self.table_size = 104
+        self.table_size = 103
         self.color_of_atoms_scheme = "dafault"
-        self.manual_colors = np.zeros((self.table_size, 3), dtype=float)
+        self.manual_colors = np.zeros((self.table_size + 1, 4), dtype=float)
         self.Atoms = []
-        self.default_color = [0.6, 0.6, 1.0]
+        self.default_color = [0.6, 0.6, 1.0, 1.0]
         self.default_radius = 77
-        self.Atoms.append(TPeriodTableAtom(0,    0, ' ',  [0.1, 1.0, 0.1]))
-        self.Atoms.append(TPeriodTableAtom(1,   53, 'H',  [0.1, 0.6, 0.1], 1))
-        self.Atoms.append(TPeriodTableAtom(2,   31, 'He', [0.5, 0.0, 1.0]))
-        self.Atoms.append(TPeriodTableAtom(3,  145, 'Li', [1.0, 1.0, 0.15]))
-        self.Atoms.append(TPeriodTableAtom(4,  112, 'Be', [0.3, 1.0, 1.0]))
-        self.Atoms.append(TPeriodTableAtom(5,   98,  'B', [0.6, 0.3, 0.0]))
-        self.Atoms.append(TPeriodTableAtom(6,   77,  'C', [0.2, 0.2, 0.8], 12))
-        self.Atoms.append(TPeriodTableAtom(7,   92,  'N', [0.45, 0.3, 0.6]))
-        self.Atoms.append(TPeriodTableAtom(8,   60,  'O', [1.0, 0.0, 0.5], 16))
+        self.Atoms.append(TPeriodTableAtom(0,    0, ' ',  self.default_color))
+        self.Atoms.append(TPeriodTableAtom(1,   53, 'H',  [0.0, 0.0, 0.5, 1.0], 1))
+        self.Atoms.append(TPeriodTableAtom(2,   31, 'He', [0.5, 0.0, 1.0, 1.0]))
+        self.Atoms.append(TPeriodTableAtom(3,  145, 'Li', [1.0, 1.0, 0.15, 1.0]))
+        self.Atoms.append(TPeriodTableAtom(4,  112, 'Be', [0.3, 1.0, 1.0, 1.0]))
+        self.Atoms.append(TPeriodTableAtom(5,   98,  'B', [0.6, 0.3, 0.0, 1.0]))
+        self.Atoms.append(TPeriodTableAtom(6,   77,  'C', [0.2, 0.2, 0.8, 1.0], 12))
+        self.Atoms.append(TPeriodTableAtom(7,   92,  'N', [0.45, 0.3, 0.6, 1.0]))
+        self.Atoms.append(TPeriodTableAtom(8,   60,  'O', [1.0, 0.0, 0.5, 1.0], 16))
         self.Atoms.append(TPeriodTableAtom(9,   73,  'F', self.default_color))
         self.Atoms.append(TPeriodTableAtom(10,  38, 'Ne', self.default_color))
         self.Atoms.append(TPeriodTableAtom(11, 190, 'Na', self.default_color))
@@ -182,11 +197,24 @@ class TPeriodTable:
     def set_manual_colors(self, manual_colors):
         for i in range(self.table_size):
             if i < len(manual_colors):
+                if len(manual_colors[i]) != 4:
+                    manual_colors[i] = self.default_color
                 self.manual_colors[i] = np.array(manual_colors[i])
 
+    def set_manual_color(self, charge, manual_color):
+        if len(manual_color) != 4:
+            manual_color = self.default_color
+        self.manual_colors[charge] = np.array(manual_color)
+
+    def manual_color_to_text(self):
+        text_color = ""
+        for i in range(0, self.table_size + 1):
+            col = self.manual_colors[i]
+            text_color += str(col[0]) + " " + str(col[1]) + " " + str(col[2]) + " " + str(col[3]) + "|"
+        return text_color
+
     def init_manual_colors(self):
-        for i in range(self.table_size):
-            self.manual_colors[i] = np.array(self.Atoms[i].color)
+        self.manual_colors = gui4dft_colors
 
     def get_covalent_radii(self, ind):
         rad_list = []
@@ -232,7 +260,7 @@ class TPeriodTable:
         elif self.color_of_atoms_scheme == "jmol":
             colors[0:103, 0:3] = jmol_colors[0:103]
         else:
-            colors[0:103, 0:3] = self.manual_colors[0:103]
+            colors[0:103, 0:4] = self.manual_colors[0:103]
         return colors
 
     def get_all_letters(self):
