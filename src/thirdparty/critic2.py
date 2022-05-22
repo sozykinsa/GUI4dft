@@ -1,9 +1,34 @@
 # -*- coding: utf-8 -*-
 import sys
 import os
+from copy import deepcopy
+import math
 import numpy as np
 from utils import helpers
+from utils.siesta import TSIESTA
 sys.path.append('.')
+
+
+def parse_cp_properties(filename, model):
+    box_bohr, box_ang, box_deg, cps = check_cro_file(filename)
+    al = math.radians(box_deg[0])
+    be = math.radians(box_deg[1])
+    ga = math.radians(box_deg[2])
+    lat_vect_1, lat_vect_2, lat_vect_3 = TSIESTA.lat_vectors_from_params(box_ang[0], box_ang[1], box_ang[2],
+                                                                         al, be, ga)
+    model.set_lat_vectors(lat_vect_1, lat_vect_2, lat_vect_3)
+    k = 0
+    for cp in model.bcp:
+        for cp1 in cps:
+            d1 = (cp.x - cp1[1]) ** 2
+            d2 = (cp.y - cp1[2]) ** 2
+            d3 = (cp.z - cp1[3]) ** 2
+            if math.sqrt(d1 + d2 + d3) < 1e-5:
+                cp.setProperty("field", cp1[4])
+                cp.setProperty("grad", cp1[5])
+                cp.setProperty("lap", cp1[6])
+                cp.setProperty("text", cp1[7])
+                k += 1
 
 
 def check_cro_file(filename):
@@ -15,16 +40,16 @@ def check_cro_file(filename):
         box_deg = helpers.from_file_property(filename, "Lattice angles (degrees):", 1, 'string').split()
         box_deg = np.array(helpers.list_str_to_float(box_deg))
 
-        MyFile = open(filename)
-        str1 = MyFile.readline()
+        filename = open(filename)
+        str1 = filename.readline()
         while str1.find("Critical point list, final report (non-equivalent cps") < 0:
-            str1 = MyFile.readline()
-        MyFile.readline()
-        MyFile.readline()
-        MyFile.readline()
+            str1 = filename.readline()
+        filename.readline()
+        filename.readline()
+        filename.readline()
 
         cps = []
-        str1 = MyFile.readline()
+        str1 = filename.readline()
 
         while len(str1) > 3:
             str1 = str1.split(')')[1].split()
@@ -32,14 +57,47 @@ def check_cro_file(filename):
             y = float(str1[2]) * box_ang[1]
             z = float(str1[3]) * box_ang[2]
 
-            line = [str1[0], x, y, z, str1[6], str1[7], str1[8]]
+            line = [str1[0], x, y, z, str1[6], str1[7], str1[8], ""]
             cps.append(line)
-            str1 = MyFile.readline()
+            str1 = filename.readline()
 
-        MyFile.close()
+        while str1.find("Additional properties at the critical points") < 0:
+            str1 = filename.readline()
+        str1 = filename.readline()
+        point = 0
+        while str1.find("+ Critical point no.") >= 0:
+            text = ""
+            while str1.find("Field 0 (f,|grad|,lap):") < 0:
+                str1 = filename.readline()
+                if len(str1) > 0:
+                    text += str1
+            cps[point][7] = text
+            point += 1
+            str1 = filename.readline()
+
+        filename.close()
         return box_bohr, box_ang, box_deg, cps
     else:
         return "", "", "", []
+
+
+def model_1d_to_d12(model):
+    text = "crystal\n"
+    text += "POLYMER\n"
+    model1 = deepcopy(model)
+    model2 = deepcopy(model)
+    model2.convert_from_cart_to_direct()
+    nat = model1.nAtoms()
+    text += "1\n"
+    text += str(model1.get_LatVect3_norm()) + "\n"
+    text += str(nat) + "\n"
+    for i in range(0, nat):
+        ch = model1.atoms[i].charge
+        x = str(model2.atoms[i].z)
+        y = str(model1.atoms[i].x)
+        z = str(model1.atoms[i].y)
+        text += str(ch) + "   " + x + "   " + y + "   " + z + "\n"
+    return text
 
 
 def model_to_critic_xyz_file(model, cps):
@@ -72,7 +130,6 @@ def model_to_critic_xyz_file(model, cps):
 
 
 def create_critic2_xyz_file(bcp, bcp_seleсted, is_with_selected, model):
-    text = ""
     if is_with_selected:
         text = model_to_critic_xyz_file(model, bcp_seleсted)
     else:

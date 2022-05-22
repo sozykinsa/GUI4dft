@@ -14,6 +14,15 @@ def spacedel(row: str) -> str:
     return row
 
 
+def clear_fdf_lines(lines):
+    result = []
+    for line in lines:
+        tmp = spacedel(line)
+        if not (tmp.startswith("#") or len(tmp) == 0):
+            result.append(tmp)
+    return result
+
+
 def float_to_string(fl):
     res = '{0:12.8f}'.format(fl)
     if res == " -0.00000000":

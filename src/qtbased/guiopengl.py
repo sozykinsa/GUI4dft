@@ -1,4 +1,6 @@
-# -*- coding: utf-8 -*-
+# This file is a part of GUI4dft programm.
+
+from typing import Callable
 
 import OpenGL.GL as gl
 import OpenGL.GLU as glu
@@ -23,23 +25,15 @@ class GuiOpenGL(QOpenGLWidget):
         self.background_color = np.array((1.0, 1.0, 1.0), dtype=float)
 
         self.is_check_atom_selection: bool = False
-        self.selected_atom_type = None
-        self.selected_atom_X = None
-        self.selected_atom_Y = None
-        self.selected_atom_Z = None
-        self.selected_atom_properties = None
         self.quality: int = 1
 
         self.object = None
         self.NLists = 10
-        self.history_of_atom_selection = []
         self.can_atom_search = False
         self.x_scr_old = 0
         self.y_scr_old = 0
 
-        self.x0 = 0
-        self.y0 = 0
-        self.z0 = 0
+        self.coord0 = np.zeros(3, dtype=float)
 
         self.is_orthographic: bool = False
         self.is_view_atoms = True
@@ -66,6 +60,12 @@ class GuiOpenGL(QOpenGLWidget):
         self.SelectedFragmentAtomsListView = None
         self.SelectedFragmentAtomsTransp = 1.0
         self.color_of_bonds = [0, 0, 0]
+        self.color_of_voronoi = [0, 0, 0]
+        self.color_of_axes = [0, 0, 0]
+
+        self.selected_atom_position: Callable = None
+        self.selected_atom_callback: Callable = None
+        self.selected_cp_callback: Callable = None
 
         # lighting
         self.light0_position = np.array((0.0, 0.0, 100.0, 1))
@@ -113,18 +113,25 @@ class GuiOpenGL(QOpenGLWidget):
                 self.can_atom_search = True
             self.set_xy(event.x(), event.y())
 
-    def set_form_elements(self, check_atom_selection=None, selected_atom_info=[], quality=1):
+    def set_form_elements(self, check_atom_selection=None, selected_atom_position: Callable = None,
+                          selected_atom_changed: Callable = None,
+                          selected_cp_changed: Callable = None, quality=1):
+        """Set pointers for Form update.
+            Args:
+                check_atom_selection: ...
+                selected_atom_position: pointer to MainForm.selected_atom_position();
+                selected_atom_changed: pointer to MainForm.selected_atom_changed();
+                selected_cp_changed: pointer to MainForm.selected_cp_changed().
+                quality: ... .
+        """
         self.is_check_atom_selection = check_atom_selection
-        if len(selected_atom_info) == 5:
-            self.selected_atom_type = selected_atom_info[0]
-            self.selected_atom_X = selected_atom_info[1]
-            self.selected_atom_Y = selected_atom_info[2]
-            self.selected_atom_Z = selected_atom_info[3]
-            self.selected_atom_properties = selected_atom_info[4]
+        self.selected_atom_position = selected_atom_position
+        self.selected_atom_callback = selected_atom_changed
+        self.selected_cp_callback = selected_cp_changed
         self.quality = quality
 
     def set_perspective_angle(self, perspective_angle: int) -> None:
-        self.perspective_angle = perspective_angle;
+        self.perspective_angle = perspective_angle
 
     def init_params(self, the_object) -> None:
         self.is_orthographic = the_object.is_orthographic
@@ -196,9 +203,9 @@ class GuiOpenGL(QOpenGLWidget):
 
     def selected_atom_changed(self):
         if self.selected_atom >= 0:
-            x = self.main_model[self.selected_atom].x - self.x0
-            y = self.main_model[self.selected_atom].y - self.y0
-            z = self.main_model[self.selected_atom].z - self.z0
+            x = self.main_model[self.selected_atom].x - self.coord0[0]
+            y = self.main_model[self.selected_atom].y - self.coord0[1]
+            z = self.main_model[self.selected_atom].z - self.coord0[2]
             self.selected_atom_data_to_form(self.main_model[self.selected_atom].charge, x, y, z)
             if self.selected_fragment_mode:
                 self.main_model[self.selected_atom].fragment1 = not self.main_model[self.selected_atom].fragment1
@@ -208,85 +215,11 @@ class GuiOpenGL(QOpenGLWidget):
         self.selected_atom_properties_to_form()
 
     def selected_atom_data_to_form(self, a, b, c, d):
-        self.selected_atom_type.setCurrentIndex(a)
-        self.selected_atom_X.setValue(b)
-        self.selected_atom_X.update()
-        self.selected_atom_Y.setValue(c)
-        self.selected_atom_Y.update()
-        self.selected_atom_Z.setValue(d)
-        self.selected_atom_Z.update()
+        self.selected_atom_position(a, np.array((b, c, d)))
 
     def selected_atom_properties_to_form(self):
-        text = ""
-        if self.selected_atom >= 0:
-            text += "Selected atom: " + str(self.selected_atom + 1) + "\n"
-            atom = self.main_model.atoms[self.selected_atom]
-            text += "Element: " + atom.let + "\n"
-            for key in atom.properties:
-                text += str(key) + ": " + str(atom.properties[key]) + "\n"
-
-            if len(self.history_of_atom_selection) > 1:
-                text += "\n\nHistory of atoms selection: "+str(self.history_of_atom_selection)+"\n"
-                text += "Distance from atom " + str(self.history_of_atom_selection[-1] + 1) + " to atom " + \
-                        str(self.history_of_atom_selection[-2] + 1) + " : "
-                dist = self.main_model.atom_atom_distance(self.history_of_atom_selection[-1],
-                                                          self.history_of_atom_selection[-2])
-                text += str(round(dist/10, 6)) + " nm\n"
-
-                if (len(self.history_of_atom_selection) > 2) and \
-                        (self.history_of_atom_selection[-1] != self.history_of_atom_selection[-2]) \
-                        and (self.history_of_atom_selection[-3] != self.history_of_atom_selection[-2]):
-                    x1 = self.main_model.atoms[self.history_of_atom_selection[-1]].x
-                    y1 = self.main_model.atoms[self.history_of_atom_selection[-1]].y
-                    z1 = self.main_model.atoms[self.history_of_atom_selection[-1]].z
-
-                    x2 = self.main_model.atoms[self.history_of_atom_selection[-2]].x
-                    y2 = self.main_model.atoms[self.history_of_atom_selection[-2]].y
-                    z2 = self.main_model.atoms[self.history_of_atom_selection[-2]].z
-
-                    x3 = self.main_model.atoms[self.history_of_atom_selection[-3]].x
-                    y3 = self.main_model.atoms[self.history_of_atom_selection[-3]].y
-                    z3 = self.main_model.atoms[self.history_of_atom_selection[-3]].z
-
-                    vx1 = x1 - x2
-                    vy1 = y1 - y2
-                    vz1 = z1 - z2
-
-                    vx2 = x3 - x2
-                    vy2 = y3 - y2
-                    vz2 = z3 - z2
-
-                    a = vx1*vx2 + vy1*vy2 + vz1*vz2
-                    b = math.sqrt(vx1*vx1 + vy1*vy1 + vz1*vz1)
-                    c = math.sqrt(vx2 * vx2 + vy2 * vy2 + vz2 * vz2)
-
-                    arg = a / (b * c)
-                    if math.fabs(arg) > 1:
-                        arg = 1
-
-                    angle = math.acos(arg)
-
-                    text += "Angle " + str(self.history_of_atom_selection[-1] + 1) + " - " + \
-                            str(self.history_of_atom_selection[-2] + 1) + " - " + \
-                            str(self.history_of_atom_selection[-3] + 1) + " : " + \
-                            str(round(math.degrees(angle), 3)) + " degrees\n"
-
-        if self.selected_cp >= 0:
-            text += "\nSelected critical point: " + str(self.selected_cp) + " ("
-            cp = self.main_model.bcp[self.selected_cp]
-            atoms = self.main_model.atoms
-
-            bond1 = cp.getProperty("bond1")
-            bond2 = cp.getProperty("bond2")
-
-            ind1, ind2 = self.main_model.atoms_of_bond_path(self.selected_cp)
-            text += atoms[ind1].let + str(ind1) + "-" + atoms[ind2].let + str(ind2) + ")\n"
-            text += "Bond critical path: " + str(len(bond1)+len(bond2)) + " points\n"
-
-        if (self.selected_atom < 0) and (self.selected_cp < 0):
-            text += "Select any atom or critical point"
-
-        self.selected_atom_properties.setText(text)
+        self.selected_cp_callback(self.selected_cp)
+        self.selected_atom_callback(self.selected_atom)
 
     def isActive(self):
         return self.active
@@ -321,11 +254,8 @@ class GuiOpenGL(QOpenGLWidget):
         self.clean()
         self.prop = "charge"
         self.main_model = deepcopy(structure)
-        cm = self.main_model.get_center_of_mass()
-        self.x0 = -cm[0]
-        self.y0 = -cm[1]
-        self.z0 = -cm[2]
-        self.main_model.move(self.x0, self.y0, self.z0)
+        self.coord0 = -self.main_model.get_center_of_mass()
+        self.main_model.move(*self.coord0)
         self.is_view_box = ViewBox
         self.is_view_atoms = is_view_atoms
         self.is_atomic_numbers_visible = is_view_atom_numbers
@@ -377,7 +307,7 @@ class GuiOpenGL(QOpenGLWidget):
 
     def get_model(self):
         model = deepcopy(self.main_model)
-        model.move(-self.x0, -self.y0, -self.z0)
+        model.move(*(-self.coord0))
         return model
 
     def image3D_to_file(self, f_name):
@@ -392,53 +322,12 @@ class GuiOpenGL(QOpenGLWidget):
             f_name = f_name.split(".")[0]
             model.toCUBEfile(f_name, volumeric_data, x1, x2, y1, y2, z1, z2)
 
-    def delete_selected_atom(self):
-        if self.selected_atom >= 0:
-            self.main_model.delete_atom(self.selected_atom)
-            self.selected_atom = -1
-            self.history_of_atom_selection = []
-            self.is_view_contour = False
-            self.is_view_contour_fill = False
-            self.is_view_surface = False
-            self.main_model.find_bonds_fast()
-            self.add_atoms()
-            self.add_bonds()
-            self.update()
-
-    def add_new_atom(self):
-        charge = self.selected_atom_type.currentIndex()
-        if charge > 0:
-            let = self.selected_atom_type.currentText()
-            x = self.selected_atom_X.value() + self.x0
-            y = self.selected_atom_Y.value() + self.y0
-            z = self.selected_atom_Z.value() + self.z0
-            new_atom = Atom([x, y, z, let, charge])
-            self.main_model.add_atom(new_atom)
-            self.is_view_contour = False
-            self.is_view_contour_fill = False
-            self.is_view_surface = False
-            self.add_atoms()
-            self.main_model.find_bonds_fast()
-            self.add_bonds()
-            self.update()
-
-    def modify_selected_atom(self):
-        if self.selected_atom >= 0:
-            charge = self.selected_atom_type.currentIndex()
-            if charge > 0:
-                let = self.selected_atom_type.currentText()
-                x = self.selected_atom_X.value() + self.x0
-                y = self.selected_atom_Y.value() + self.y0
-                z = self.selected_atom_Z.value() + self.z0
-                new_atom = Atom([x, y, z, let, charge])
-                self.main_model.edit_atom(self.selected_atom, new_atom)
-                self.is_view_contour = False
-                self.is_view_contour_fill = False
-                self.is_view_surface = False
-                self.add_atoms()
-                self.main_model.find_bonds_fast()
-                self.add_bonds()
-                self.update()
+    def new_atom_for_model(self, charge, let, position):
+        x = position[0] + self.coord0[0]
+        y = position[1] + self.coord0[1]
+        z = position[2] + self.coord0[2]
+        new_atom = Atom([x, y, z, let, charge])
+        return new_atom
 
     def set_color_of_atoms(self, colors):
         self.color_of_atoms = colors
@@ -854,13 +743,7 @@ class GuiOpenGL(QOpenGLWidget):
         gl.glColor3f(0, 1, 0)
         for i in range(1, len(bond)):
             pos1 = np.array((bond[i - 1].x, bond[i - 1].y, bond[i - 1].z))
-            #x1 = bond[i - 1].x
-            #y1 = bond[i - 1].y
-            #z1 = bond[i - 1].z
             pos2 = np.array((bond[i].x, bond[i].y, bond[i].z))
-            #x2 = bond[i].x
-            #y2 = bond[i].y
-            #z2 = bond[i].z
             self.add_bond(self.scale_factor * pos1, self.scale_factor * pos2, self.scale_factor * 0.03)
 
     def add_contour(self, params):
@@ -920,7 +803,7 @@ class GuiOpenGL(QOpenGLWidget):
         volume = np.inf
         if self.selected_atom >= 0:
             list_of_poligons, volume = Calculators.VoronoiAnalisis(self.main_model, self.selected_atom, max_dist)
-            gl.glNewList(self.object+1, gl.GL_COMPILE)
+            gl.glNewList(self.object + 1, gl.GL_COMPILE)
             gl.glColor4f(color[0], color[1], color[2], 0.7)
             for poligon in list_of_poligons:
                 gl.glBegin(gl.GL_POLYGON)
@@ -977,12 +860,12 @@ class GuiOpenGL(QOpenGLWidget):
                     for i in range(0, len(self.main_model.atoms)):
                         at = self.main_model.atoms[i]
                         text_to_render.append([self.scale_factor * at.x, self.scale_factor * at.y,
-                                               self.scale_factor * at.z, at.let+str(i)])
+                                               self.scale_factor * at.z, at.let + str(i + 1)])
 
                     for i in range(0, len(self.main_model.bcp)):
                         at = self.main_model.bcp[i]
                         text_to_render.append([self.scale_factor * at.x, self.scale_factor * at.y,
-                                               self.scale_factor * at.z, at.let + str(i)])
+                                               self.scale_factor * at.z, at.let + str(i + 1)])
                     self.render_text(text_to_render)
         except Exception as exc:
             print(exc)
@@ -1102,10 +985,6 @@ class GuiOpenGL(QOpenGLWidget):
 
         self.can_atom_search = False
         if old_selected != self.selected_atom:
-            if self.selected_atom == -1:
-                self.history_of_atom_selection = []
-            else:
-                self.history_of_atom_selection.append(self.selected_atom)
             need_for_update = True
 
         if need_for_update:

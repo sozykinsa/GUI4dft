@@ -13,6 +13,7 @@ from utils import helpers
 from utils.periodic_table import TPeriodTable
 from utils.siesta import TSIESTA
 from utils.fdfdata import TFDFFile
+from utils.helpers import clear_fdf_lines
 from models.atom import Atom
 
 
@@ -23,8 +24,6 @@ class TAtomicModel(object):
         self.bonds_per = []  # for exact calculation in form
 
         self.bcp = []
-        self.rcp = []
-        self.ccp = []
 
         self.tags = []
 
@@ -113,7 +112,7 @@ class TAtomicModel(object):
         lines = f.readlines()
         f.close()
         all_atoms = TAtomicModel.atoms_from_fdf_text(atomic_coordinates_format, number_of_atoms, chem_spec_info, lat,
-                                                    lat_vect_1, lat_vect_2, lat_vect_3, lines, units)
+                                                     lat_vect_1, lat_vect_2, lat_vect_3, lines, units)
         return [all_atoms]
 
     @staticmethod
@@ -143,6 +142,7 @@ class TAtomicModel(object):
     @staticmethod
     def atoms_from_fdf_text(atomic_coordinates_format, number_of_atoms, chem_spec_info, lat, lat_vect_1, lat_vect_2,
                             lat_vect_3, lines, units):
+        lines = clear_fdf_lines(lines)
         all_atoms = TAtomicModel()
         at_list = []
         at_list1 = []
@@ -407,7 +407,7 @@ class TAtomicModel(object):
         search3 = "outcoor: Final (unrelaxed) atomic coordinates (Bohr)"
 
         for line in open(filename, 'r'):
-            if (line.find("outcell: Unit cell vectors (Ang):") > -1):
+            if line.find("outcell: Unit cell vectors (Ang):") > -1:
                 f2 = True
                 n_vec = 0
             else:

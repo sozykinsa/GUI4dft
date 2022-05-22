@@ -1,5 +1,9 @@
 from copy import deepcopy
 
+import pytest
+from thirdparty.critic2 import parse_cp_properties
+
+
 def test_gui4dft_run(gui4dft_application, h2o_model):
     window = gui4dft_application
     assert window.models == []
@@ -74,6 +78,11 @@ def test_xsf_operations(gui4dft_application, tests_path):
     window.ui.FormActionsPostCheckContourXY.setChecked(True)
     window.ui.FormActionsPostCheckContourYZ.setChecked(True)
     window.ui.FormActionsPostCheckContourXZ.setChecked(True)
+
+    window.ui.FormActionsPostSliderContourXY.setValue(3)
+    window.ui.FormActionsPostSliderContourXZ.setValue(4)
+    window.ui.FormActionsPostSliderContourYZ.setValue(5)
+
     window.plot_contour()
 
     window.ui.FormActionsPostRadioColorPlane.setChecked(True)
@@ -81,6 +90,10 @@ def test_xsf_operations(gui4dft_application, tests_path):
 
     window.ui.FormActionsPostRadioColorPlaneContours.setChecked(True)
     window.plot_contour()
+
+    window.parse_volumeric_data2(f_name)
+    assert window.ui.VolumrricDataGrid2.title() == "Grid"
+    assert window.ui.FormActionsPostLabelSurfaceNx.text() == ""
 
 
 def test_plot_dos(gui4dft_application, tests_path):
@@ -157,6 +170,48 @@ def test_cell_param(gui4dft_application, tests_path):
     method = gui4dft_application.ui.FormActionsPostComboCellParam.currentText()
     if method == "Parabola":
         assert gui4dft_application.ui.FormActionsPostLabelCellParamOptimExpr4.text() == "x0=11.891"
+
+
+def test_critic2_section(gui4dft_application, tests_path):
+    f_name = str(tests_path / 'ref_data' / 'h2o-ang-charges' / 'critic2' / "cp-file.xyz")
+    window = gui4dft_application
+    window.ui.FormSettingsViewCheckXYZasCritic2.setChecked(True)
+    window.menu_open(f_name)
+    model = window.models[-1]
+    assert len(model.bcp) == 5
+    assert "field" not in model.bcp[0].properties
+    f_name = str(tests_path / 'ref_data' / 'h2o-ang-charges' / 'critic2' / "siesta-1-cp.cro")
+    parse_cp_properties(f_name, model)
+    assert float(model.bcp[0].properties["field"]) == pytest.approx(1.68288239)
+    window.add_cp_to_list()
+    assert window.ui.FormCPlist.count() == 0
+    window.selected_cp_changed(1)
+    assert window.ui.selectedCP_nuclei.text() == "O3-O3"
+    window.ui.selectedCP.setText("2")
+    window.add_cp_to_list()
+    window.add_cp_to_list()
+    assert window.ui.FormCPlist.item(0).text() == "2"
+    window.ui.FormCPlist.setCurrentRow(0)
+    assert window.ui.FormCPlist.count() == 1
+    window.delete_cp_from_list()
+    assert window.ui.FormCPlist.count() == 0
+
+
+def test_selected_atom_from_form(gui4dft_application):
+    window = gui4dft_application
+    charge, let, position = window.selected_atom_from_form()
+    assert charge == 0
+    window.create_swnt()
+    window.ui.openGLWidget.selected_atom = 2
+    window.ui.openGLWidget.selected_atom_changed()
+    window.ui.openGLWidget.update()
+    charge, let, position = window.selected_atom_from_form()
+    assert charge == 6
+    assert len(window.ui.openGLWidget.main_model.atoms) == 112
+    window.atom_add()
+    assert len(window.ui.openGLWidget.main_model.atoms) == 113
+    window.atom_delete()
+    assert len(window.ui.openGLWidget.main_model.atoms) == 112
 
 
 def test_simple_calls(gui4dft_application):

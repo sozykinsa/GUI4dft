@@ -6415,8 +6415,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>370</width>
-             <height>482</height>
+             <width>399</width>
+             <height>675</height>
             </rect>
            </property>
            <attribute name="label">
@@ -7433,338 +7433,24 @@
        <attribute name="title">
         <string>Third party</string>
        </attribute>
-       <layout class="QVBoxLayout" name="verticalLayout_71">
+       <layout class="QVBoxLayout" name="verticalLayout_21">
         <item>
-         <widget class="QToolBox" name="toolBox_4">
+         <widget class="QTabWidget" name="tabWidget_13">
           <property name="currentIndex">
            <number>0</number>
           </property>
-          <widget class="QWidget" name="page_9">
-           <property name="geometry">
-            <rect>
-             <x>0</x>
-             <y>0</y>
-             <width>399</width>
-             <height>644</height>
-            </rect>
-           </property>
-           <attribute name="label">
-            <string>Import</string>
-           </attribute>
-           <layout class="QVBoxLayout" name="verticalLayout_72">
-            <item>
-             <widget class="QTextBrowser" name="textBrowser">
-              <property name="enabled">
-               <bool>true</bool>
-              </property>
-              <property name="html">
-               <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:7.8pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;You can open some non-SEISETA files as easily as regular SEISETA files:&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;1) VASP POSCAR/CONTCAR files&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;2) Critic2 *.XYZ files with information about critical points and bond critical paths. It is nesessary to change Settings  &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-          <widget class="QWidget" name="page_10">
-           <property name="geometry">
-            <rect>
-             <x>0</x>
-             <y>0</y>
-             <width>384</width>
-             <height>148</height>
-            </rect>
-           </property>
-           <attribute name="label">
-            <string>Export</string>
+          <widget class="QWidget" name="tab_42">
+           <attribute name="title">
+            <string>ASE</string>
            </attribute>
            <layout class="QVBoxLayout" name="verticalLayout_75">
             <item>
-             <widget class="QGroupBox" name="groupBox_11">
-              <property name="title">
-               <string>to VASP POSCAR</string>
+             <widget class="QLabel" name="label_20">
+              <property name="text">
+               <string>Raman and IR</string>
               </property>
-              <layout class="QVBoxLayout" name="verticalLayout_74">
-               <item>
-                <widget class="QLabel" name="label_36">
-                 <property name="text">
-                  <string>Just specify the extension of the exported file to &quot;.POSCAR&quot;</string>
-                 </property>
-                </widget>
-               </item>
-              </layout>
              </widget>
             </item>
-            <item>
-             <widget class="QGroupBox" name="groupBox_24">
-              <property name="title">
-               <string>to FireFly inp file</string>
-              </property>
-              <layout class="QVBoxLayout" name="verticalLayout_73">
-               <item>
-                <widget class="QLabel" name="label_35">
-                 <property name="text">
-                  <string>Just specify the extension of the exported file to &quot;.inp&quot;</string>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </widget>
-            </item>
-            <item>
-             <spacer name="verticalSpacer_26">
-              <property name="orientation">
-               <enum>Qt::Vertical</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>20</width>
-                <height>529</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-           </layout>
-          </widget>
-          <widget class="QWidget" name="page_14">
-           <property name="geometry">
-            <rect>
-             <x>0</x>
-             <y>0</y>
-             <width>168</width>
-             <height>329</height>
-            </rect>
-           </property>
-           <attribute name="label">
-            <string>Crystal</string>
-           </attribute>
-           <layout class="QVBoxLayout" name="verticalLayout_97">
-            <item>
-             <widget class="QGroupBox" name="groupBox_29">
-              <property name="minimumSize">
-               <size>
-                <width>0</width>
-                <height>300</height>
-               </size>
-              </property>
-              <property name="title">
-               <string>to CRYSTAL *.d12 file</string>
-              </property>
-              <widget class="QLabel" name="label_81">
-               <property name="geometry">
-                <rect>
-                 <x>10</x>
-                 <y>40</y>
-                 <width>261</width>
-                 <height>16</height>
-                </rect>
-               </property>
-               <property name="text">
-                <string>coming soon (1D only in test)</string>
-               </property>
-              </widget>
-              <widget class="QGroupBox" name="groupBox_32">
-               <property name="geometry">
-                <rect>
-                 <x>10</x>
-                 <y>70</y>
-                 <width>363</width>
-                 <height>63</height>
-                </rect>
-               </property>
-               <property name="title">
-                <string>Translational symmetry</string>
-               </property>
-               <layout class="QHBoxLayout" name="horizontalLayout_122">
-                <item>
-                 <widget class="QRadioButton" name="radioButton">
-                  <property name="text">
-                   <string>3D</string>
-                  </property>
-                  <property name="checkable">
-                   <bool>false</bool>
-                  </property>
-                  <property name="checked">
-                   <bool>false</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <spacer name="horizontalSpacer_81">
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>40</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-                <item>
-                 <widget class="QRadioButton" name="radioButton_4">
-                  <property name="text">
-                   <string>2D</string>
-                  </property>
-                  <property name="checkable">
-                   <bool>false</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <spacer name="horizontalSpacer_82">
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>40</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-                <item>
-                 <widget class="QRadioButton" name="crystal_d12_1d">
-                  <property name="text">
-                   <string>1D</string>
-                  </property>
-                  <property name="checked">
-                   <bool>true</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <spacer name="horizontalSpacer_83">
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>40</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-                <item>
-                 <widget class="QRadioButton" name="radioButton_6">
-                  <property name="text">
-                   <string>0D</string>
-                  </property>
-                  <property name="checkable">
-                   <bool>false</bool>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </widget>
-              <widget class="QTabWidget" name="tabWidget_7">
-               <property name="geometry">
-                <rect>
-                 <x>10</x>
-                 <y>140</y>
-                 <width>361</width>
-                 <height>91</height>
-                </rect>
-               </property>
-               <property name="currentIndex">
-                <number>2</number>
-               </property>
-               <widget class="QWidget" name="tab_25">
-                <attribute name="title">
-                 <string>3D</string>
-                </attribute>
-               </widget>
-               <widget class="QWidget" name="tab_26">
-                <attribute name="title">
-                 <string>2D</string>
-                </attribute>
-               </widget>
-               <widget class="QWidget" name="tab_27">
-                <attribute name="title">
-                 <string>1D</string>
-                </attribute>
-                <widget class="QFrame" name="frame_119">
-                 <property name="geometry">
-                  <rect>
-                   <x>10</x>
-                   <y>10</y>
-                   <width>322</width>
-                   <height>47</height>
-                  </rect>
-                 </property>
-                 <property name="frameShape">
-                  <enum>QFrame::StyledPanel</enum>
-                 </property>
-                 <property name="frameShadow">
-                  <enum>QFrame::Raised</enum>
-                 </property>
-                 <layout class="QHBoxLayout" name="horizontalLayout_123">
-                  <item>
-                   <widget class="QLabel" name="label_90">
-                    <property name="text">
-                     <string>IGR = 1</string>
-                    </property>
-                   </widget>
-                  </item>
-                 </layout>
-                </widget>
-               </widget>
-               <widget class="QWidget" name="tab_28">
-                <attribute name="title">
-                 <string>0D</string>
-                </attribute>
-               </widget>
-              </widget>
-              <widget class="QPushButton" name="FormIEd12Generate">
-               <property name="geometry">
-                <rect>
-                 <x>140</x>
-                 <y>250</y>
-                 <width>93</width>
-                 <height>28</height>
-                </rect>
-               </property>
-               <property name="text">
-                <string>Save</string>
-               </property>
-              </widget>
-             </widget>
-            </item>
-            <item>
-             <spacer name="verticalSpacer_20">
-              <property name="orientation">
-               <enum>Qt::Vertical</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>20</width>
-                <height>312</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-           </layout>
-          </widget>
-          <widget class="QWidget" name="page_3">
-           <property name="geometry">
-            <rect>
-             <x>0</x>
-             <y>0</y>
-             <width>216</width>
-             <height>525</height>
-            </rect>
-           </property>
-           <attribute name="label">
-            <string>Raman and IR (ASE)</string>
-           </attribute>
-           <layout class="QVBoxLayout" name="verticalLayout_69">
             <item>
              <widget class="QFrame" name="frame_127">
               <property name="frameShape">
@@ -8093,19 +7779,11 @@ p, li { white-space: pre-wrap; }
             </item>
            </layout>
           </widget>
-          <widget class="QWidget" name="page_23">
-           <property name="geometry">
-            <rect>
-             <x>0</x>
-             <y>0</y>
-             <width>371</width>
-             <height>716</height>
-            </rect>
-           </property>
-           <attribute name="label">
-            <string>Critical points (Critic2 *.cri file)</string>
+          <widget class="QWidget" name="tab_39">
+           <attribute name="title">
+            <string>Critic2</string>
            </attribute>
-           <layout class="QVBoxLayout" name="verticalLayout_83">
+           <layout class="QVBoxLayout" name="verticalLayout_69">
             <item>
              <widget class="QPushButton" name="FormButtonAddCroData">
               <property name="text">
@@ -8114,138 +7792,111 @@ p, li { white-space: pre-wrap; }
              </widget>
             </item>
             <item>
-             <widget class="QFrame" name="frame_109">
+             <widget class="QGroupBox" name="groupBox_30">
               <property name="minimumSize">
                <size>
-                <width>150</width>
+                <width>0</width>
                 <height>0</height>
                </size>
               </property>
-              <property name="frameShape">
-               <enum>QFrame::StyledPanel</enum>
+              <property name="title">
+               <string>Selected CP</string>
               </property>
-              <property name="frameShadow">
-               <enum>QFrame::Raised</enum>
-              </property>
-              <layout class="QVBoxLayout" name="verticalLayout_80">
+              <layout class="QVBoxLayout" name="verticalLayout_71">
                <item>
-                <widget class="QGroupBox" name="groupBox_30">
-                 <property name="title">
-                  <string>Selected CP</string>
+                <widget class="QFrame" name="frame_110">
+                 <property name="frameShape">
+                  <enum>QFrame::NoFrame</enum>
                  </property>
-                 <layout class="QVBoxLayout" name="verticalLayout_79">
+                 <property name="frameShadow">
+                  <enum>QFrame::Raised</enum>
+                 </property>
+                 <layout class="QHBoxLayout" name="horizontalLayout_112">
+                  <property name="topMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="bottomMargin">
+                   <number>0</number>
+                  </property>
                   <item>
-                   <widget class="QFrame" name="frame_110">
-                    <property name="frameShape">
-                     <enum>QFrame::NoFrame</enum>
+                   <widget class="QLabel" name="label_82">
+                    <property name="text">
+                     <string>Number:</string>
                     </property>
-                    <property name="frameShadow">
-                     <enum>QFrame::Raised</enum>
-                    </property>
-                    <layout class="QHBoxLayout" name="horizontalLayout_112">
-                     <item>
-                      <widget class="QLabel" name="label_82">
-                       <property name="text">
-                        <string>Number:</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QLabel" name="FormSelectedCP">
-                       <property name="text">
-                        <string>...</string>
-                       </property>
-                      </widget>
-                     </item>
-                    </layout>
                    </widget>
                   </item>
                   <item>
-                   <widget class="QFrame" name="frame_111">
-                    <property name="frameShape">
-                     <enum>QFrame::NoFrame</enum>
+                   <widget class="QLabel" name="selectedCP">
+                    <property name="text">
+                     <string>...</string>
                     </property>
-                    <property name="frameShadow">
-                     <enum>QFrame::Raised</enum>
-                    </property>
-                    <layout class="QHBoxLayout" name="horizontalLayout_113">
-                     <item>
-                      <widget class="QLabel" name="label_84">
-                       <property name="text">
-                        <string>Field:</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QLabel" name="FormSelectedCP_f">
-                       <property name="text">
-                        <string>...</string>
-                       </property>
-                      </widget>
-                     </item>
-                    </layout>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QFrame" name="frame_112">
-                    <property name="frameShape">
-                     <enum>QFrame::NoFrame</enum>
-                    </property>
-                    <property name="frameShadow">
-                     <enum>QFrame::Raised</enum>
-                    </property>
-                    <layout class="QHBoxLayout" name="horizontalLayout_114">
-                     <item>
-                      <widget class="QLabel" name="label_85">
-                       <property name="text">
-                        <string>|grad|:</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QLabel" name="FormSelectedCP_g">
-                       <property name="text">
-                        <string>...</string>
-                       </property>
-                      </widget>
-                     </item>
-                    </layout>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QFrame" name="frame_113">
-                    <property name="frameShape">
-                     <enum>QFrame::NoFrame</enum>
-                    </property>
-                    <property name="frameShadow">
-                     <enum>QFrame::Raised</enum>
-                    </property>
-                    <layout class="QHBoxLayout" name="horizontalLayout_115">
-                     <item>
-                      <widget class="QLabel" name="label_87">
-                       <property name="text">
-                        <string>Lap:</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QLabel" name="FormSelectedCP_lap">
-                       <property name="text">
-                        <string>...</string>
-                       </property>
-                      </widget>
-                     </item>
-                    </layout>
                    </widget>
                   </item>
                  </layout>
                 </widget>
                </item>
                <item>
-                <widget class="QPushButton" name="FormCPaddToList">
-                 <property name="text">
-                  <string>Add to List</string>
+                <widget class="QFrame" name="frame_87">
+                 <property name="frameShape">
+                  <enum>QFrame::NoFrame</enum>
                  </property>
+                 <property name="frameShadow">
+                  <enum>QFrame::Raised</enum>
+                 </property>
+                 <layout class="QHBoxLayout" name="horizontalLayout_88">
+                  <property name="topMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="bottomMargin">
+                   <number>0</number>
+                  </property>
+                  <item>
+                   <widget class="QLabel" name="label_107">
+                    <property name="text">
+                     <string>Nuclei:</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QLabel" name="selectedCP_nuclei">
+                    <property name="text">
+                     <string>...</string>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </widget>
+               </item>
+               <item>
+                <widget class="QFrame" name="frame_109">
+                 <property name="frameShape">
+                  <enum>QFrame::NoFrame</enum>
+                 </property>
+                 <property name="frameShadow">
+                  <enum>QFrame::Raised</enum>
+                 </property>
+                 <layout class="QHBoxLayout" name="horizontalLayout_156">
+                  <property name="topMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="bottomMargin">
+                   <number>0</number>
+                  </property>
+                  <item>
+                   <widget class="QLabel" name="label_111">
+                    <property name="text">
+                     <string>Bond path length (lines):</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QLabel" name="selectedCP_bpLenLine">
+                    <property name="text">
+                     <string>...</string>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
                 </widget>
                </item>
               </layout>
@@ -8254,13 +7905,119 @@ p, li { white-space: pre-wrap; }
             <item>
              <widget class="QTabWidget" name="tabWidget_10">
               <property name="currentIndex">
-               <number>1</number>
+               <number>0</number>
               </property>
+              <widget class="QWidget" name="tab_45">
+               <attribute name="title">
+                <string>Info</string>
+               </attribute>
+               <layout class="QVBoxLayout" name="verticalLayout_72">
+                <item>
+                 <widget class="QFrame" name="frame_111">
+                  <property name="frameShape">
+                   <enum>QFrame::NoFrame</enum>
+                  </property>
+                  <property name="frameShadow">
+                   <enum>QFrame::Raised</enum>
+                  </property>
+                  <layout class="QHBoxLayout" name="horizontalLayout_113">
+                   <property name="topMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="bottomMargin">
+                    <number>0</number>
+                   </property>
+                   <item>
+                    <widget class="QLabel" name="label_84">
+                     <property name="text">
+                      <string>Field:</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QLabel" name="FormSelectedCP_f">
+                     <property name="text">
+                      <string>...</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QFrame" name="frame_112">
+                  <property name="frameShape">
+                   <enum>QFrame::NoFrame</enum>
+                  </property>
+                  <property name="frameShadow">
+                   <enum>QFrame::Raised</enum>
+                  </property>
+                  <layout class="QHBoxLayout" name="horizontalLayout_114">
+                   <property name="topMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="bottomMargin">
+                    <number>0</number>
+                   </property>
+                   <item>
+                    <widget class="QLabel" name="label_85">
+                     <property name="text">
+                      <string>|grad|:</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QLabel" name="FormSelectedCP_g">
+                     <property name="text">
+                      <string>...</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QFrame" name="frame_113">
+                  <property name="frameShape">
+                   <enum>QFrame::NoFrame</enum>
+                  </property>
+                  <property name="frameShadow">
+                   <enum>QFrame::Raised</enum>
+                  </property>
+                  <layout class="QHBoxLayout" name="horizontalLayout_115">
+                   <property name="topMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="bottomMargin">
+                    <number>0</number>
+                   </property>
+                   <item>
+                    <widget class="QLabel" name="label_87">
+                     <property name="text">
+                      <string>Lap:</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QLabel" name="FormSelectedCP_lap">
+                     <property name="text">
+                      <string>...</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QTextBrowser" name="criticalPointProp"/>
+                </item>
+               </layout>
+              </widget>
               <widget class="QWidget" name="tab_35">
                <attribute name="title">
                 <string>List of CP</string>
                </attribute>
-               <layout class="QVBoxLayout" name="verticalLayout_11">
+               <layout class="QHBoxLayout" name="horizontalLayout_87">
                 <item>
                  <widget class="QListWidget" name="FormCPlist">
                   <property name="maximumSize">
@@ -8272,10 +8029,42 @@ p, li { white-space: pre-wrap; }
                  </widget>
                 </item>
                 <item>
-                 <widget class="QPushButton" name="FormCPdeleteFromList">
-                  <property name="text">
-                   <string>Delete selected from List</string>
+                 <widget class="QFrame" name="frame_16">
+                  <property name="frameShape">
+                   <enum>QFrame::StyledPanel</enum>
                   </property>
+                  <property name="frameShadow">
+                   <enum>QFrame::Raised</enum>
+                  </property>
+                  <layout class="QVBoxLayout" name="verticalLayout_11">
+                   <item>
+                    <widget class="QPushButton" name="FormCPaddToList">
+                     <property name="text">
+                      <string>Add to List</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="FormCPdeleteFromList">
+                     <property name="text">
+                      <string>Delete selected from List</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <spacer name="verticalSpacer_20">
+                     <property name="orientation">
+                      <enum>Qt::Vertical</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>20</width>
+                       <height>232</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                  </layout>
                  </widget>
                 </item>
                </layout>
@@ -8672,6 +8461,282 @@ p, li { white-space: pre-wrap; }
             </item>
            </layout>
           </widget>
+          <widget class="QWidget" name="tab_43">
+           <attribute name="title">
+            <string>Crystal</string>
+           </attribute>
+           <widget class="QGroupBox" name="groupBox_29">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>20</y>
+              <width>358</width>
+              <height>300</height>
+             </rect>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>300</height>
+             </size>
+            </property>
+            <property name="title">
+             <string>to CRYSTAL *.d12 file</string>
+            </property>
+            <widget class="QLabel" name="label_81">
+             <property name="geometry">
+              <rect>
+               <x>10</x>
+               <y>40</y>
+               <width>261</width>
+               <height>16</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string>coming soon (1D only in test)</string>
+             </property>
+            </widget>
+            <widget class="QGroupBox" name="groupBox_32">
+             <property name="geometry">
+              <rect>
+               <x>10</x>
+               <y>70</y>
+               <width>363</width>
+               <height>63</height>
+              </rect>
+             </property>
+             <property name="title">
+              <string>Translational symmetry</string>
+             </property>
+             <layout class="QHBoxLayout" name="horizontalLayout_122">
+              <item>
+               <widget class="QRadioButton" name="radioButton">
+                <property name="text">
+                 <string>3D</string>
+                </property>
+                <property name="checkable">
+                 <bool>false</bool>
+                </property>
+                <property name="checked">
+                 <bool>false</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="horizontalSpacer_81">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item>
+               <widget class="QRadioButton" name="radioButton_4">
+                <property name="text">
+                 <string>2D</string>
+                </property>
+                <property name="checkable">
+                 <bool>false</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="horizontalSpacer_82">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item>
+               <widget class="QRadioButton" name="crystal_d12_1d">
+                <property name="text">
+                 <string>1D</string>
+                </property>
+                <property name="checked">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="horizontalSpacer_83">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item>
+               <widget class="QRadioButton" name="radioButton_6">
+                <property name="text">
+                 <string>0D</string>
+                </property>
+                <property name="checkable">
+                 <bool>false</bool>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+            <widget class="QTabWidget" name="tabWidget_7">
+             <property name="geometry">
+              <rect>
+               <x>10</x>
+               <y>140</y>
+               <width>361</width>
+               <height>91</height>
+              </rect>
+             </property>
+             <property name="currentIndex">
+              <number>2</number>
+             </property>
+             <widget class="QWidget" name="tab_25">
+              <attribute name="title">
+               <string>3D</string>
+              </attribute>
+             </widget>
+             <widget class="QWidget" name="tab_26">
+              <attribute name="title">
+               <string>2D</string>
+              </attribute>
+             </widget>
+             <widget class="QWidget" name="tab_27">
+              <attribute name="title">
+               <string>1D</string>
+              </attribute>
+              <widget class="QFrame" name="frame_119">
+               <property name="geometry">
+                <rect>
+                 <x>10</x>
+                 <y>10</y>
+                 <width>322</width>
+                 <height>47</height>
+                </rect>
+               </property>
+               <property name="frameShape">
+                <enum>QFrame::StyledPanel</enum>
+               </property>
+               <property name="frameShadow">
+                <enum>QFrame::Raised</enum>
+               </property>
+               <layout class="QHBoxLayout" name="horizontalLayout_123">
+                <item>
+                 <widget class="QLabel" name="label_90">
+                  <property name="text">
+                   <string>IGR = 1</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </widget>
+             <widget class="QWidget" name="tab_28">
+              <attribute name="title">
+               <string>0D</string>
+              </attribute>
+             </widget>
+            </widget>
+            <widget class="QPushButton" name="FormIEd12Generate">
+             <property name="geometry">
+              <rect>
+               <x>140</x>
+               <y>250</y>
+               <width>93</width>
+               <height>28</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string>Save</string>
+             </property>
+            </widget>
+           </widget>
+          </widget>
+          <widget class="QWidget" name="tab_44">
+           <attribute name="title">
+            <string>Page</string>
+           </attribute>
+           <widget class="QGroupBox" name="groupBox_24">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>20</y>
+              <width>379</width>
+              <height>56</height>
+             </rect>
+            </property>
+            <property name="title">
+             <string>to FireFly inp file</string>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_73">
+             <item>
+              <widget class="QLabel" name="label_35">
+               <property name="text">
+                <string>Just specify the extension of the exported file to &quot;.inp&quot;</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+           <widget class="QGroupBox" name="groupBox_11">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>100</y>
+              <width>379</width>
+              <height>56</height>
+             </rect>
+            </property>
+            <property name="title">
+             <string>to VASP POSCAR</string>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_74">
+             <item>
+              <widget class="QLabel" name="label_36">
+               <property name="text">
+                <string>Just specify the extension of the exported file to &quot;.POSCAR&quot;</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+           <widget class="QTextBrowser" name="textBrowser">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
+            <property name="geometry">
+             <rect>
+              <x>30</x>
+              <y>180</y>
+              <width>256</width>
+              <height>192</height>
+             </rect>
+            </property>
+            <property name="html">
+             <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:7.8pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;You can open some non-SEISETA files as easily as regular SEISETA files:&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;1) VASP POSCAR/CONTCAR files&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;2) Critic2 *.XYZ files with information about critical points and bond critical paths. It is nesessary to change Settings  &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+           </widget>
+          </widget>
          </widget>
         </item>
        </layout>
@@ -8692,154 +8757,40 @@ p, li { white-space: pre-wrap; }
            </attribute>
            <layout class="QVBoxLayout" name="verticalLayout_31">
             <item>
-             <widget class="QFrame" name="frame_65">
-              <property name="minimumSize">
-               <size>
-                <width>200</width>
-                <height>0</height>
-               </size>
+             <widget class="QCheckBox" name="FormSettingsViewCheckShowAtoms">
+              <property name="enabled">
+               <bool>true</bool>
               </property>
-              <property name="frameShape">
-               <enum>QFrame::StyledPanel</enum>
+              <property name="text">
+               <string>Show atoms</string>
               </property>
-              <property name="frameShadow">
-               <enum>QFrame::Raised</enum>
-              </property>
-              <layout class="QHBoxLayout" name="horizontalLayout_57">
-               <property name="leftMargin">
-                <number>0</number>
-               </property>
-               <property name="topMargin">
-                <number>0</number>
-               </property>
-               <property name="rightMargin">
-                <number>0</number>
-               </property>
-               <property name="bottomMargin">
-                <number>0</number>
-               </property>
-               <item>
-                <widget class="QCheckBox" name="FormSettingsViewCheckShowAtoms">
-                 <property name="enabled">
-                  <bool>true</bool>
-                 </property>
-                 <property name="text">
-                  <string>Show atoms</string>
-                 </property>
-                </widget>
-               </item>
-              </layout>
              </widget>
             </item>
             <item>
-             <widget class="QFrame" name="frame_91">
-              <property name="frameShape">
-               <enum>QFrame::StyledPanel</enum>
+             <widget class="QCheckBox" name="FormSettingsViewCheckShowBox">
+              <property name="styleSheet">
+               <string notr="true"/>
               </property>
-              <property name="frameShadow">
-               <enum>QFrame::Raised</enum>
+              <property name="text">
+               <string>Show box</string>
               </property>
-              <layout class="QHBoxLayout" name="horizontalLayout_139">
-               <property name="leftMargin">
-                <number>0</number>
-               </property>
-               <property name="topMargin">
-                <number>0</number>
-               </property>
-               <property name="rightMargin">
-                <number>0</number>
-               </property>
-               <property name="bottomMargin">
-                <number>0</number>
-               </property>
-               <item>
-                <widget class="QCheckBox" name="FormSettingsViewCheckShowAtomNumber">
-                 <property name="enabled">
-                  <bool>true</bool>
-                 </property>
-                 <property name="text">
-                  <string>Show atom number</string>
-                 </property>
-                </widget>
-               </item>
-              </layout>
              </widget>
             </item>
             <item>
-             <widget class="QFrame" name="frame_66">
-              <property name="minimumSize">
-               <size>
-                <width>200</width>
-                <height>0</height>
-               </size>
+             <widget class="QCheckBox" name="FormSettingsViewCheckShowAtomNumber">
+              <property name="enabled">
+               <bool>true</bool>
               </property>
-              <property name="frameShape">
-               <enum>QFrame::StyledPanel</enum>
+              <property name="text">
+               <string>Show atom number</string>
               </property>
-              <property name="frameShadow">
-               <enum>QFrame::Raised</enum>
-              </property>
-              <layout class="QHBoxLayout" name="horizontalLayout_58">
-               <property name="leftMargin">
-                <number>0</number>
-               </property>
-               <property name="topMargin">
-                <number>0</number>
-               </property>
-               <property name="rightMargin">
-                <number>0</number>
-               </property>
-               <property name="bottomMargin">
-                <number>0</number>
-               </property>
-               <item>
-                <widget class="QCheckBox" name="FormSettingsViewCheckShowBox">
-                 <property name="styleSheet">
-                  <string notr="true"/>
-                 </property>
-                 <property name="text">
-                  <string>Show box</string>
-                 </property>
-                </widget>
-               </item>
-              </layout>
              </widget>
             </item>
             <item>
-             <widget class="QFrame" name="frame_67">
-              <property name="minimumSize">
-               <size>
-                <width>200</width>
-                <height>0</height>
-               </size>
+             <widget class="QCheckBox" name="FormSettingsViewCheckShowAxes">
+              <property name="text">
+               <string>Show axes</string>
               </property>
-              <property name="frameShape">
-               <enum>QFrame::StyledPanel</enum>
-              </property>
-              <property name="frameShadow">
-               <enum>QFrame::Raised</enum>
-              </property>
-              <layout class="QHBoxLayout" name="horizontalLayout_59">
-               <property name="leftMargin">
-                <number>0</number>
-               </property>
-               <property name="topMargin">
-                <number>0</number>
-               </property>
-               <property name="rightMargin">
-                <number>0</number>
-               </property>
-               <property name="bottomMargin">
-                <number>0</number>
-               </property>
-               <item>
-                <widget class="QCheckBox" name="FormSettingsViewCheckShowAxes">
-                 <property name="text">
-                  <string>Show axes</string>
-                 </property>
-                </widget>
-               </item>
-              </layout>
              </widget>
             </item>
             <item>
@@ -8939,7 +8890,7 @@ p, li { white-space: pre-wrap; }
                </size>
               </property>
               <property name="frameShape">
-               <enum>QFrame::StyledPanel</enum>
+               <enum>QFrame::NoFrame</enum>
               </property>
               <property name="frameShadow">
                <enum>QFrame::Raised</enum>
@@ -9137,6 +9088,9 @@ p, li { white-space: pre-wrap; }
                   <enum>QFrame::Raised</enum>
                  </property>
                  <layout class="QHBoxLayout" name="horizontalLayout_116">
+                  <property name="leftMargin">
+                   <number>0</number>
+                  </property>
                   <item>
                    <widget class="QLabel" name="label_83">
                     <property name="minimumSize">
@@ -9570,7 +9524,7 @@ p, li { white-space: pre-wrap; }
             <item>
              <widget class="QTabWidget" name="tabWidget_12">
               <property name="currentIndex">
-               <number>1</number>
+               <number>0</number>
               </property>
               <widget class="QWidget" name="tab_40">
                <attribute name="title">
@@ -9652,7 +9606,7 @@ p, li { white-space: pre-wrap; }
                    </size>
                   </property>
                   <property name="frameShape">
-                   <enum>QFrame::StyledPanel</enum>
+                   <enum>QFrame::NoFrame</enum>
                   </property>
                   <property name="frameShadow">
                    <enum>QFrame::Raised</enum>
