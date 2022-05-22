@@ -322,43 +322,6 @@ class GuiOpenGL(QOpenGLWidget):
             f_name = f_name.split(".")[0]
             model.toCUBEfile(f_name, volumeric_data, x1, x2, y1, y2, z1, z2)
 
-    def delete_selected_atom(self):
-        if self.selected_atom >= 0:
-            self.main_model.delete_atom(self.selected_atom)
-            self.selected_atom = -1
-            self.is_view_contour = False
-            self.is_view_contour_fill = False
-            self.is_view_surface = False
-            self.main_model.find_bonds_fast()
-            self.add_atoms()
-            self.add_bonds()
-            self.update()
-
-    def add_new_atom(self, charge, let, position):
-        if charge > 0:
-            new_atom = self.new_atom_for_model(charge, let, position)
-            self.main_model.add_atom(new_atom)
-            self.is_view_contour = False
-            self.is_view_contour_fill = False
-            self.is_view_surface = False
-            self.add_atoms()
-            self.main_model.find_bonds_fast()
-            self.add_bonds()
-            self.update()
-
-    def modify_selected_atom(self, charge, let, position):
-        if self.selected_atom >= 0:
-            if charge > 0:
-                new_atom = self.new_atom_for_model(charge, let, position)
-                self.main_model.edit_atom(self.selected_atom, new_atom)
-                self.is_view_contour = False
-                self.is_view_contour_fill = False
-                self.is_view_surface = False
-                self.add_atoms()
-                self.main_model.find_bonds_fast()
-                self.add_bonds()
-                self.update()
-
     def new_atom_for_model(self, charge, let, position):
         x = position[0] + self.coord0[0]
         y = position[1] + self.coord0[1]

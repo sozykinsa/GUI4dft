@@ -25,7 +25,7 @@ gui4dft_colors[2] = [0.5, 0.0, 1.0, 1.0]
 gui4dft_colors[3] = [1.0, 1.0, 0.15, 1.0]
 gui4dft_colors[4] = [0.3, 1.0, 1.0, 1.0]
 gui4dft_colors[5] = [0.6, 0.3, 0.0, 1.0]
-gui4dft_colors[6] = [0.07, 0.07, 0.28, 1.0]
+gui4dft_colors[6] = [0.20, 0.20, 0.20, 1.0]
 gui4dft_colors[7] = [0.45, 0.3, 0.6, 1.0]
 gui4dft_colors[8] = [1.0, 0.0, 0.5, 1.0]
 

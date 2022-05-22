@@ -13,6 +13,7 @@ from operator import itemgetter
 import matplotlib.pyplot as plt
 import numpy as np
 from utils import helpers
+from models.atom import Atom
 from models.atomic_model import TAtomicModel
 from utils.calculators import Calculators as Calculator
 from utils.calculators import gaps
@@ -24,7 +25,7 @@ from utils.periodic_table import TPeriodTable
 from utils.siesta import TSIESTA
 from models.swnt import SWNT
 from models.swgnt import SWGNT
-from thirdparty.critic2 import check_cro_file, parse_cp_properties, model_1d_to_d12
+from thirdparty.critic2 import parse_cp_properties, model_1d_to_d12
 from thirdparty.vasp import vasp_dos
 from utils.importer import Importer
 from utils.electronic_prop_reader import read_siesta_bands, dos_from_file
@@ -552,12 +553,12 @@ class MainForm(QMainWindow):
         self.ui.FormActionsPostButSurfaceDelete.setEnabled(True)
 
     def set_part1_file(self) -> None:
-        f_name = self.get_file_name_from_save_dialog("All files (*.*)")
+        f_name = self.get_file_name_from_open_dialog("All files (*.*)")
         if os.path.exists(f_name):
             self.ui.part1_file.setText(f_name)
 
     def set_part2_file(self) -> None:
-        f_name = self.get_file_name_from_save_dialog("All files (*.*)")
+        f_name = self.get_file_name_from_open_dialog("All files (*.*)")
         if os.path.exists(f_name):
             self.ui.part2_file.setText(f_name)
 
@@ -636,7 +637,27 @@ class MainForm(QMainWindow):
         if len(self.models) == 0:
             return
         charge, let, position = self.selected_atom_from_form()
-        self.ui.openGLWidget.add_new_atom(charge, let, position)
+        self.models[self.active_model].add_atom(Atom((position[0], position[1], position[2], let, charge)))
+        self.model_to_screen(self.active_model)
+
+    def atom_delete(self):
+        if len(self.models) == 0:
+            return
+        if self.ui.openGLWidget.selected_atom < 0:
+            return
+        self.models[self.active_model].delete_atom(self.ui.openGLWidget.selected_atom)
+        self.history_of_atom_selection = []
+        self.model_to_screen(self.active_model)
+
+    def atom_modify(self):
+        if len(self.models) == 0:
+            return
+        if self.ui.openGLWidget.selected_atom < 0:
+            return
+        charge, let, position = self.selected_atom_from_form()
+        self.models[self.active_model].atoms[self.ui.openGLWidget.selected_atom] = Atom((position[0], position[1],
+                                                                                        position[2], let, charge))
+        self.model_to_screen(self.active_model)
 
     def selected_atom_from_form(self):
         charge = self.ui.FormActionsPreComboAtomsList.currentIndex()
@@ -646,22 +667,6 @@ class MainForm(QMainWindow):
         z = self.ui.FormActionsPreSpinAtomsCoordZ.value()
         position = np.array((x, y, z), dtype=float)
         return charge, let, position
-
-    def atom_delete(self):
-        if len(self.models) == 0:
-            return
-        self.ui.openGLWidget.delete_selected_atom()
-        self.history_of_atom_selection = []
-        self.models[-1] = self.ui.openGLWidget.main_model
-        self.model_to_screen(-1)
-
-    def atom_modify(self):
-        if len(self.models) == 0:
-            return
-        charge, position = self.selected_atom_from_form()
-        self.ui.openGLWidget.modify_selected_atom(charge, position)
-        self.models.append(self.ui.openGLWidget.main_model)
-        self.model_to_screen(-1)
 
     def bond_len_to_screen(self):
         let1 = self.ui.FormAtomsList1.currentIndex()
@@ -988,6 +993,7 @@ class MainForm(QMainWindow):
         properties.append(["LatVect1", str(model.lat_vector1)])
         properties.append(["LatVect2", str(model.lat_vector2)])
         properties.append(["LatVect3", str(model.lat_vector3)])
+        properties.append(["Formula", model.formula()])
 
         self.ui.FormModelTableProperties.setRowCount(len(properties))
 
@@ -1398,6 +1404,7 @@ class MainForm(QMainWindow):
             try:
                 self.get_atomic_model_and_fdf(file_name)
             except Exception as e:
+                print("Incorrect file format")
                 self.show_error(e)
 
             try:
@@ -1517,6 +1524,10 @@ class MainForm(QMainWindow):
         self.model_to_screen(-1)
 
     def plot_model(self, value):
+        if len(self.models) < value:
+            return
+        if len(self.models[value].atoms) == 0:
+            return
         self.active_model = value
         self.ui.Form3Dand2DTabs.setCurrentIndex(0)
         view_atoms = self.ui.FormSettingsViewCheckShowAtoms.isChecked()
@@ -2515,7 +2526,7 @@ class MainForm(QMainWindow):
             text = ""
             if self.ui.crystal_d12_1d.isChecked():
                 model = self.models[self.active_model]
-                text = self.model_1d_to_d12(model)
+                text = model_1d_to_d12(model)
             if len(text) > 0:
                 fname = self.get_file_name_from_save_dialog("Crystal d12 (*.d12)")
                 helpers.write_text_to_file(fname, text)
