@@ -1384,7 +1384,8 @@ class MainForm(QMainWindow):
             fname = fname.split(".")[0]
             model.toVASPposcar(fname)
         if fname.endswith(".inp"):
-            atomic_model_to_firefly_inp(model, fname)
+            text = atomic_model_to_firefly_inp(model)
+            helpers.write_text_to_file(fname, text)
         if fname.endswith(".fdf"):
             model.toSIESTAfdf(fname)
         if fname.endswith(".xyz"):
@@ -1409,7 +1410,7 @@ class MainForm(QMainWindow):
 
             try:
                 self.plot_last_model()
-            except Exception as e:
+            except Exception as e:  # pragma: no cover
                 self.show_error(e)
 
     def get_atomic_model_and_fdf(self, fname):
