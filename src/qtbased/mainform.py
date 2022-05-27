@@ -25,8 +25,6 @@ from utils.periodic_table import TPeriodTable
 from utils.siesta import TSIESTA
 from models.swnt import SWNT
 from models.swgnt import SWGNT
-from thirdparty.critic2 import parse_cp_properties, model_1d_to_d12
-from thirdparty.vasp import vasp_dos
 from utils.importer import Importer
 from utils.electronic_prop_reader import read_siesta_bands, dos_from_file
 from PySide2.QtCore import QLocale, QSettings, Qt, QSize
@@ -41,7 +39,9 @@ from models.xsf import XSF
 from ui.about import Ui_DialogAbout as Ui_about
 from ui.form import Ui_MainWindow as Ui_form
 from thirdparty.firefly import atomic_model_to_firefly_inp
-
+from thirdparty.critic2 import parse_cp_properties
+from thirdparty.crystal import model_1d_to_d12
+from thirdparty.vasp import vasp_dos
 from thirdparty import ase, critic2
 
 sys.path.append('.')

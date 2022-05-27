@@ -40,6 +40,10 @@ def test_importer_output(tests_path):
     model, fdf = Importer.import_from_file(f_name, fl='all', prop=True, xyzcritic2=False)
     assert len(model[0].atoms) == 3
 
+    f_name = str(tests_path / 'ref_data' / 'siesta4-md' / "siesta.out")
+    model, fdf = Importer.import_from_file(f_name, fl='all', prop=True, xyzcritic2=False)
+    assert len(model[0].atoms) == 119
+
     f_name = str(tests_path / 'ref_data' / 'h2o-ang-charges' / "siesta.out")
     model, fdf = Importer.import_from_file(f_name, fl='all', prop=True, xyzcritic2=False)
     assert len(model[0].atoms) == 3
