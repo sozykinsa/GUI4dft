@@ -228,39 +228,38 @@ class TAtomicModel(object):
                     lat_vect_3 = helpers.list_str_to_float(lat_vect_3)
 
                     if len(atoms) > 0:
-                        AllAtoms = TAtomicModel(atoms)
-                        AllAtoms.set_lat_vectors(lat_vect_1, lat_vect_2, lat_vect_3)
+                        all_atoms = TAtomicModel(atoms)
+                        all_atoms.set_lat_vectors(lat_vect_1, lat_vect_2, lat_vect_3)
                         if need_to_convert1:
-                            AllAtoms.convert_from_direct_to_cart()
+                            all_atoms.convert_from_direct_to_cart()
                             need_to_convert1 = 0
-                        molecules.append(AllAtoms)
+                        molecules.append(all_atoms)
 
-                isFractionalfound = str1.find("outcoor: Atomic coordinates (fractional)") >= 0
-                if isFractionalfound:
+                is_fractionalfound = str1.find("outcoor: Atomic coordinates (fractional)") >= 0
+                if is_fractionalfound:
                     need_to_convert1 = 1
 
-                isAngfound = str1.find("zmatrix: Z-matrix coordinates: (Ang ; rad )") >= 0
+                is_angfound = str1.find("zmatrix: Z-matrix coordinates: (Ang ; rad )") >= 0
                 is_bohr_found = str1.find("zmatrix: Z-matrix coordinates: (Bohr; rad )") >= 0
                 mult = 1.0
                 if is_bohr_found:
                     mult = 0.52917720859
 
-                if (str1 != '') and (isAngfound or is_bohr_found or isFractionalfound) and (isSpesF == 1):
-                    if not isFractionalfound:
+                if (str1 != '') and (is_angfound or is_bohr_found or is_fractionalfound) and (isSpesF == 1):
+                    if not is_fractionalfound:
                         for j in range(0, 2):
-                            str1 = siesta_file.readline()
+                            siesta_file.readline()
                     atoms = []
 
                     for i1 in range(0, number_of_atoms):
                         str1 = helpers.spacedel(siesta_file.readline())
-                        S = str1.split(' ')
-                        d1 = float(S[0]) * mult
-                        d2 = float(S[1]) * mult
-                        d3 = float(S[2]) * mult
-                        Charge = species_label_charges[sl[len(atoms)]]
-                        C = periodTable.get_let(Charge)
-                        A = [d1, d2, d3, C, Charge]
-                        atoms.append(A)
+                        s = str1.split(' ')
+                        d1 = float(s[0]) * mult
+                        d2 = float(s[1]) * mult
+                        d3 = float(s[2]) * mult
+                        charge = species_label_charges[sl[len(atoms)]]
+                        c = periodTable.get_let(charge)
+                        atoms.append([d1, d2, d3, c, charge])
                 str1 = siesta_file.readline()
             siesta_file.close()
         return molecules
@@ -354,12 +353,12 @@ class TAtomicModel(object):
                 lat3 = helpers.spacedel(struct_file.readline()).split()
                 lat3 = helpers.list_str_to_float(lat3)
                 lat3 = LatConst * np.array(lat3)
-                NumbersOfAtoms = helpers.spacedel(struct_file.readline()).split()
-                NumbersOfAtoms = helpers.list_str_to_int(NumbersOfAtoms)
+                numbers_of_atoms = helpers.spacedel(struct_file.readline()).split()
+                numbers_of_atoms = helpers.list_str_to_int(numbers_of_atoms)
                 str1 = struct_file.readline()
                 if helpers.spacedel(str1) == "Direct":
-                    for i in range(0, len(NumbersOfAtoms)):
-                        for j in range(0, NumbersOfAtoms[i]):
+                    for i in range(0, len(numbers_of_atoms)):
+                        for j in range(0, numbers_of_atoms[i]):
                             row = helpers.spacedel(struct_file.readline()).split()
                             row = helpers.list_str_to_float(row)
 
@@ -377,23 +376,21 @@ class TAtomicModel(object):
 
     @staticmethod
     def atoms_from_output_sp(filename):
-        """Return the initial AtList from single point output file"""
+        """Return the initial AtList from single point output file."""
         coordinates_format, number_of_atoms, chem_spec_info, lat, lat_vect_1, lat_vect_2, lat_vect_3, units = \
             TAtomicModel.atoms_from_fdf_prepare(filename)
 
         lines = TFDFFile.fdf_data_dump(filename)
 
-        AllAtoms = TAtomicModel.atoms_from_fdf_text(coordinates_format, number_of_atoms, chem_spec_info, lat,
-                                                    lat_vect_1, lat_vect_2, lat_vect_3, lines, units)
-
-        return [AllAtoms]
+        return [TAtomicModel.atoms_from_fdf_text(coordinates_format, number_of_atoms, chem_spec_info, lat,
+                                                 lat_vect_1, lat_vect_2, lat_vect_3, lines, units)]
 
     @staticmethod
     def atoms_from_output_optim(filename):
         """Return the relaxed AtList from output file."""
         number_of_atoms = TSIESTA.number_of_atoms(filename)
-        Species = TSIESTA.get_species(filename)
-        AtList = []
+        species = TSIESTA.get_species(filename)
+        at_list = []
         f1 = False
         f2 = False
         f3 = False
@@ -429,24 +426,24 @@ class TAtomicModel(object):
                 if line.find("(Bohr)") > -1:
                     mult = 0.52917720859
             else:
-                if (len(AtList) < number_of_atoms) and f1:
+                if (len(at_list) < number_of_atoms) and f1:
                     line1 = line.split()
                     line2 = [float(line1[0]) * mult, float(line1[1]) * mult, float(line1[2]) * mult, line1[5],
-                             Species[int(line1[3]) - 1][1]]
-                    AtList.append(line2)
-                if len(AtList) == number_of_atoms:
-                    AllAtoms = TAtomicModel(AtList)
+                             species[int(line1[3]) - 1][1]]
+                    at_list.append(line2)
+                if len(at_list) == number_of_atoms:
+                    AllAtoms = TAtomicModel(at_list)
                     AllAtoms.set_lat_vectors(lat_vect_1, lat_vect_2, lat_vect_3)
                     return [AllAtoms]
             if line.find("outcoor: Relaxed atomic coordinates (fractional)") > -1:
                 f3 = True
             else:
-                if (len(AtList) < number_of_atoms) and f3:
+                if (len(at_list) < number_of_atoms) and f3:
                     line1 = line.split()
-                    line2 = [float(line1[0]), float(line1[1]), float(line1[2]), line1[5], Species[int(line1[3]) - 1][1]]
-                    AtList.append(line2)
-                if len(AtList) == number_of_atoms:
-                    AllAtoms = TAtomicModel(AtList)
+                    line2 = [float(line1[0]), float(line1[1]), float(line1[2]), line1[5], species[int(line1[3]) - 1][1]]
+                    at_list.append(line2)
+                if len(at_list) == number_of_atoms:
+                    AllAtoms = TAtomicModel(at_list)
                     AllAtoms.set_lat_vectors(lat_vect_1, lat_vect_2, lat_vect_3)
                     AllAtoms.convert_from_direct_to_cart()
                     return [AllAtoms]
@@ -543,15 +540,14 @@ class TAtomicModel(object):
         return molecules
 
     @staticmethod
-    def atoms_from_XMOLxyz(filename):
-        """import from XMOL xyz file"""
+    def atoms_from_XMOLxyz(filename: str):
+        """Import from XMOL xyz file."""
         periodTable = TPeriodTable()
         molecules = []
         if os.path.exists(filename):
             f = open(filename)
-            NumberOfAtoms = int(math.fabs(int(f.readline())))
-            newModel = TAtomicModel.atoms_from_xyz_structure(NumberOfAtoms, f, periodTable, [1, 2, 3, 4])
-            molecules.append(newModel)
+            number_of_atoms = int(math.fabs(int(f.readline())))
+            molecules.append(TAtomicModel.atoms_from_xyz_structure(number_of_atoms, f, periodTable, [1, 2, 3, 4]))
         return molecules
 
     @staticmethod

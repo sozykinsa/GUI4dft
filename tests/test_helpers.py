@@ -39,3 +39,9 @@ def test_list_n2_split():
 def test_getsubs():
     dirs, files = helpers.getsubs(".")
     assert len(dirs) > 0
+
+
+def test_cdev():
+    assert helpers.cdev(5, 3) == 1
+    assert helpers.cdev(6, 3) == 3
+    assert helpers.cdev(3, 6) == 3

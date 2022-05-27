@@ -62,3 +62,15 @@ def test_get_all_colors(period_table):
     period_table.set_color_mode("jmol")
     colors = period_table.get_all_colors()
     assert len(colors) == period_table.table_size
+
+
+def test_set_manual_colors(period_table):
+    period_table.set_color_mode("man")
+    period_table.set_manual_color(0, (0.5, 0.4, 0.3))
+    colors = period_table.get_all_colors()
+    assert colors[0] == pytest.approx(period_table.default_color)
+    period_table.set_manual_color(0, (0.5, 0.4, 0.3, 1.0))
+    colors = period_table.get_all_colors()
+    assert colors[0] == pytest.approx((0.5, 0.4, 0.3, 1.0))
+    text = period_table.manual_color_to_text()
+    assert len(text) == 1664

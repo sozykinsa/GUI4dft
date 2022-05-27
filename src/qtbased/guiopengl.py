@@ -595,15 +595,15 @@ class GuiOpenGL(QOpenGLWidget):
                           [self.scale_factor * np.array([x3, y3, z3]), self.scale_factor * np.array([x2, y2, z2]),
                            self.color_of_atoms[self.main_model.atoms[bond[1]].charge]])
             else:
-                coords = ([self.scale_factor * np.array([x1, y1, z1]), self.scale_factor * np.array([x2, y2, z2]),
-                           self.color_of_bonds])
+                coords = [[self.scale_factor * np.array([x1, y1, z1]), self.scale_factor * np.array([x2, y2, z2]),
+                           np.array(self.color_of_bonds)]]
 
             for coord in coords:
                 if self.selected_fragment_mode and \
                         (self.main_model.atoms[bond[0]].fragment1 or self.main_model.atoms[bond[1]].fragment1):
-                    gl.glColor4f(coord[2][0], coord[2][1], coord[2][2], self.SelectedFragmentAtomsTransp)
+                    gl.glColor4f(*coord[2], self.SelectedFragmentAtomsTransp)
                 else:
-                    gl.glColor3f(coord[2][0], coord[2][1], coord[2][2])
+                    gl.glColor4f(*coord[2][0:3], 1)
                 self.add_bond(coord[0], coord[1], self.scale_factor * self.bondWidth)
         gl.glEndList()
 
