@@ -2426,6 +2426,8 @@ class MainForm(QMainWindow):
         self.plot_model(self.active_model)
 
     def fdf_data_to_form(self):
+        if len(self.models) == 0:
+            return
         try:
             model = self.ui.openGLWidget.get_model()
             text = self.fdf_data.get_all_data(model, self.coord_type, self.units_type, self.lattice_type)
