@@ -4,4 +4,3 @@ pytest-qt
 pytest-xvfb
 black
 flake8
-pyinstaller
