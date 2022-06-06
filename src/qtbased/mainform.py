@@ -41,7 +41,7 @@ from ui.form import Ui_MainWindow as Ui_form
 from thirdparty.firefly import atomic_model_to_firefly_inp
 from thirdparty.critic2 import parse_cp_properties
 from thirdparty.crystal import model_1d_to_d12
-from thirdparty.vasp import vasp_dos
+from thirdparty.vasp import vasp_dos, model_to_vasp_poscar
 from thirdparty import ase, critic2
 
 sys.path.append('.')
@@ -1370,7 +1370,7 @@ class MainForm(QMainWindow):
     def menu_export(self):  # pragma: no cover
         if self.ui.openGLWidget.main_model.nAtoms() > 0:
             try:
-                format = "FDF files (*.fdf);;XYZ files (*.xyz);;FireFly input files (*.inp);;VASP POSCAR file (POSCAR)"
+                format = "FDF files (*.fdf);;XYZ files (*.xyz);;FireFly input files (*.inp);;VASP POSCAR file (*.POSCAR)"
                 fname = self.get_file_name_from_save_dialog(format)
                 self.export_to_file(self.models[self.active_model], fname)
                 self.work_dir = os.path.dirname(fname)
@@ -1382,7 +1382,7 @@ class MainForm(QMainWindow):
     def export_to_file(model, fname):  # pragma: no cover
         if fname.find("POSCAR") >= 0:
             fname = fname.split(".")[0]
-            model.toVASPposcar(fname)
+            model_to_vasp_poscar(model, fname)
         if fname.endswith(".inp"):
             text = atomic_model_to_firefly_inp(model)
             helpers.write_text_to_file(fname, text)

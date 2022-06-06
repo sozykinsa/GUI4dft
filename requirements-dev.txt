@@ -1,0 +1,7 @@
+pytest
+pytest-cov
+pytest-qt
+pytest-xvfb
+black
+flake8
+pyinstaller

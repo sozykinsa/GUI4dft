@@ -79,8 +79,6 @@ def vasp_dos(filename):
 
 def model_to_vasp_poscar(model, filename):
     """Create file in VASP POSCAR format."""
-    f = open(filename, 'w')
-
     data = ""
     data += "model \n"
     data += ' 1.0 \n'
@@ -114,5 +112,6 @@ def model_to_vasp_poscar(model, filename):
     model.convert_from_cart_to_direct()
     data += model.coords_for_export("FractionalPOSCAR")
 
+    f = open(filename, 'w')
     print(data, file=f)
     f.close()

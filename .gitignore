@@ -1,9 +1,10 @@
 # Default ignored files
 .idea/
 src/__pycache__/
-dist/
-build/
+doc-code/build
+executable/dist/
+executable/build/
+executable/gui4dft.spec
 tests/.coverage
 .coverage
 coverage.xml
-p4dft.spec

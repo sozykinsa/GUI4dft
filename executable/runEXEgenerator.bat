@@ -1,0 +1,1 @@
+pyinstaller --onefile --windowed ./../src/gui4dft.py

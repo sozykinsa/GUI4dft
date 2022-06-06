@@ -7,9 +7,3 @@ scipy
 matplotlib
 pyqtgraph
 scikit-image
-pytest
-pytest-cov
-pytest-qt
-pytest-xvfb
-black
-flake8
