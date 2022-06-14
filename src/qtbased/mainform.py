@@ -1568,10 +1568,12 @@ class MainForm(QMainWindow):
                 value = float(self.ui.IsosurfaceColorsTable.item(i, 0).text())
                 verts, faces, normals = self.volumeric_data.isosurface(value)
                 transp = float(self.ui.IsosurfaceColorsTable.cellWidget(i, 1).text())
-                if self.is_scaled_colors_for_surface:
+                if __name__ != 'qtbased.mainform':
                     color = self.get_color(cmap, minv, maxv, value, color_scale)
                 else:
-                    if __name__ == '__main__':
+                    if self.is_scaled_colors_for_surface:
+                        color = self.get_color(cmap, minv, maxv, value, color_scale)
+                    else:
                         color = self.ui.IsosurfaceColorsTable.item(i, 0).background().color().getRgbF()
                 color = (color[0], color[1], color[2], transp)
                 data.append([verts, faces, color, normals])
