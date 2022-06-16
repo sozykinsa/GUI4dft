@@ -1841,9 +1841,10 @@ class MainForm(QMainWindow):
 
             self.ui.PyqtGraphWidget.clear()
 
-            title = "PDOS"
-            x_title = "Energy, eV"
-            y_title = "PDOS, states/eV"
+            x_title = self.ui.pdos_x_label.text()
+            y_title = self.ui.pdos_y_label.text()
+            title = self.ui.pdos_title.text()
+
             self.ui.PyqtGraphWidget.plot([energy], ys, labels, title, x_title, y_title, True)
 
             if self.ui.FormActionsCheckBANDSfermyShow_2.isChecked():
@@ -1888,9 +1889,10 @@ class MainForm(QMainWindow):
                 y.append(spin_down)
                 labels.append(item.text() + "_down")
 
-        title = "PDOS"
-        x_title = "Energy, eV"
-        y_title = "PDOS, states/eV"
+        x_title = self.ui.pdos_x_label.text()
+        y_title = self.ui.pdos_y_label.text()
+        title = self.ui.pdos_title.text()
+
         self.ui.PyqtGraphWidget.clear()
         self.ui.PyqtGraphWidget.plot(x, y, labels, title, x_title, y_title, True)
 
@@ -1952,9 +1954,11 @@ class MainForm(QMainWindow):
             self.ui.PyqtGraphWidget.clear()
             delta = 0.05 * (kmax - kmin)
             self.ui.PyqtGraphWidget.set_limits(kmin - delta, kmax + delta, emin, emax)
-            title = "Bands"
-            x_title = "k"
-            y_title = "Energy, eV"
+
+            x_title = self.ui.bands_x_label.text()
+            y_title = self.ui.bands_y_label.text()
+            title = self.ui.bands_title.text()
+
             self.ui.PyqtGraphWidget.plot([kmesh], bands, [None], title, x_title, y_title, False)
             major_tick = []
             for index in range(len(xticks)):
@@ -2007,9 +2011,9 @@ class MainForm(QMainWindow):
                     y.append(spin_down)
                     labels.append("spin_down")
 
-        x_title = "Energy, eV"
-        y_title = "DOS, states/eV"
-        title = "DOS"
+        x_title = self.ui.dos_x_label.text()
+        y_title = self.ui.dos_y_label.text()
+        title = self.ui.dos_title.text()
 
         self.ui.PyqtGraphWidget.clear()
         self.ui.PyqtGraphWidget.add_legend()
