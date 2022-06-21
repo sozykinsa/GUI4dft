@@ -875,6 +875,10 @@ class MainForm(QMainWindow):
     def get_file_name_from_save_dialog(self, file_mask):  # pragma: no cover
         result = QFileDialog.getSaveFileName(self, 'Save File', self.work_dir, file_mask,
                                              options=QFileDialog.DontUseNativeDialog)
+
+        if len(result[0]) == 0:
+            return None
+
         file_name = result[0]
         mask = result[1]
         if file_name is not None:
@@ -1039,7 +1043,7 @@ class MainForm(QMainWindow):
 
     def fill_bonds(self):
         c1, c2 = self.fill_bonds_charges()
-        bonds = self.self.ui.openGLWidget.main_model.find_bonds_exact()
+        bonds = self.ui.openGLWidget.main_model.find_bonds_exact()
         self.ui.FormActionsPosTableBonds.setRowCount(0)
 
         mean = 0
@@ -1372,6 +1376,10 @@ class MainForm(QMainWindow):
             try:
                 format = "FDF files (*.fdf);;XYZ files (*.xyz);;FireFly input files (*.inp);;VASP POSCAR file (*.POSCAR)"
                 fname = self.get_file_name_from_save_dialog(format)
+
+                if not fname:
+                    return
+
                 self.export_to_file(self.models[self.active_model], fname)
                 self.work_dir = os.path.dirname(fname)
                 self.save_active_folder()
