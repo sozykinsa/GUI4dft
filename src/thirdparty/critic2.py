@@ -1,11 +1,9 @@
 # -*- coding: utf-8 -*-
 import sys
 import os
-from copy import deepcopy
 import math
 import numpy as np
 from utils import helpers
-from utils.siesta import TSIESTA
 sys.path.append('.')
 
 
@@ -14,7 +12,7 @@ def parse_cp_properties(filename, model):
     al = math.radians(box_deg[0])
     be = math.radians(box_deg[1])
     ga = math.radians(box_deg[2])
-    lat_vect_1, lat_vect_2, lat_vect_3 = TSIESTA.lat_vectors_from_params(box_ang[0], box_ang[1], box_ang[2],
+    lat_vect_1, lat_vect_2, lat_vect_3 = helpers.lat_vectors_from_params(box_ang[0], box_ang[1], box_ang[2],
                                                                          al, be, ga)
     model.set_lat_vectors(lat_vect_1, lat_vect_2, lat_vect_3)
     k = 0
@@ -42,7 +40,7 @@ def check_cro_file(filename):
 
         filename = open(filename)
         str1 = filename.readline()
-        while str1.find("Critical point list, final report (non-equivalent cps") < 0:
+        while (str1.find("Critical point list, final report (non-equivalent cps") < 0) and (len(str1) > 0):
             str1 = filename.readline()
         filename.readline()
         filename.readline()
@@ -61,7 +59,7 @@ def check_cro_file(filename):
             cps.append(line)
             str1 = filename.readline()
 
-        while str1.find("Additional properties at the critical points") < 0:
+        while (str1.find("Additional properties at the critical points") < 0) and (len(str1) > 0):
             str1 = filename.readline()
         str1 = filename.readline()
         point = 0

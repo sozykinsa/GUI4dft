@@ -1,4 +1,5 @@
 from utils.siesta import TSIESTA
+from utils.helpers import lat_vectors_from_params
 
 
 def test_lattice_constant(tests_path):
@@ -17,7 +18,7 @@ def test_siesta_lattice(tests_path):
     a = 1
     b = 2
     c = 3
-    lat1, lat2, lat3 = TSIESTA.lat_vectors_from_params(a, b, c, 90, 90, 90)
+    lat1, lat2, lat3 = lat_vectors_from_params(a, b, c, 90, 90, 90)
     assert lat1 == [1, 0, 0]
 
     lat1, lat2, lat3 = TSIESTA.lattice_parameters_abc_angles(f_name)

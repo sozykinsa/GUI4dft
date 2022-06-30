@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
 import re
+import math
 import numpy as np
 
 
@@ -45,6 +46,44 @@ def is_integer(n):
         return False
     else:
         return float(n).is_integer()
+
+
+def lat_vectors_from_params(a, b, c, alpha, beta, gamma):
+    tm = math.pow(math.cos(alpha), 2) + math.pow(math.cos(beta), 2) + math.pow(math.cos(gamma), 2)
+    tmp = math.sqrt(1 + 2 * math.cos(alpha) * math.cos(beta) * math.cos(gamma) - tm)
+    h = c * tmp / math.sin(gamma)
+    lat_vect_1 = [a, 0, 0]
+    lat_vect_2 = [b * math.cos(gamma), b * math.sin(gamma), 0]
+    lat_vect_3 = [c * math.cos(beta), c * math.cos(alpha) * math.sin(gamma), h]
+    if math.fabs(lat_vect_2[0]) < 1e-8:
+        lat_vect_2[0] = 0
+    if math.fabs(lat_vect_2[1]) < 1e-8:
+        lat_vect_2[1] = 0
+    if math.fabs(lat_vect_3[0]) < 1e-8:
+        lat_vect_3[0] = 0
+    if math.fabs(lat_vect_3[1]) < 1e-8:
+        lat_vect_3[1] = 0
+    if math.fabs(lat_vect_3[2]) < 1e-8:
+        lat_vect_3[2] = 0
+    return lat_vect_1, lat_vect_2, lat_vect_3
+
+
+def lattice_parameters_abc_angles(lattice_parameters, lat_constant):
+    """..."""
+    if len(lattice_parameters) > 0:
+        data = spacedel(lattice_parameters[0]).split()
+        a = lat_constant * float(data[0])
+        b = lat_constant * float(data[1])
+        c = lat_constant * float(data[2])
+        alpha = math.radians(float(data[3]))
+        beta = math.radians(float(data[4]))
+        gamma = math.radians(float(data[5]))
+
+        lat_vect_1, lat_vect_2, lat_vect_3 = lat_vectors_from_params(a, b, c, alpha, beta, gamma)
+
+        return lat_vect_1, lat_vect_2, lat_vect_3
+    else:
+        return [False, False, False], [False, False, False], [False, False, False]
 
 
 def list_str_to_float(x):

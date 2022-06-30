@@ -58,7 +58,7 @@ def test_menu_open(gui4dft_application, tests_path):
     window.menu_open(f_name)
     assert len(window.models) == 1
     window.fdf_data_to_form()
-    assert len(window.ui.FormActionsPreTextFDF.toPlainText()) == 2649
+    assert len(window.ui.FormActionsPreTextFDF.toPlainText()) > 2500
 
 
 def test_xsf_operations(gui4dft_application, tests_path):

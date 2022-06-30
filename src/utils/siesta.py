@@ -29,40 +29,8 @@ class TSIESTA:
         """Returns data from LatticeParameters block of file."""
         lattice_parameters = TSIESTA.get_block_from_siesta_fdf(filename, 'LatticeParameters')
         lat_constant = float(TSIESTA.lattice_constant(filename))
-        if len(lattice_parameters) > 0:
-            data = helpers.spacedel(lattice_parameters[0]).split()
-            a = lat_constant * float(data[0])
-            b = lat_constant * float(data[1])
-            c = lat_constant * float(data[2])
-            alpha = math.radians(float(data[3]))
-            beta = math.radians(float(data[4]))
-            gamma = math.radians(float(data[5]))
+        return helpers.lattice_parameters_abc_angles(lattice_parameters, lat_constant)
 
-            lat_vect_1, lat_vect_2, lat_vect_3 = TSIESTA.lat_vectors_from_params(a, b, c, alpha, beta, gamma)
-
-            return lat_vect_1, lat_vect_2, lat_vect_3
-        else:
-            return [False, False, False], [False, False, False], [False, False, False]
-
-    @staticmethod
-    def lat_vectors_from_params(a, b, c, alpha, beta, gamma):
-        tm = math.pow(math.cos(alpha), 2) + math.pow(math.cos(beta), 2) + math.pow(math.cos(gamma), 2)
-        tmp = math.sqrt(1 + 2 * math.cos(alpha) * math.cos(beta) * math.cos(gamma) - tm)
-        h = c * tmp / math.sin(gamma)
-        lat_vect_1 = [a, 0, 0]
-        lat_vect_2 = [b * math.cos(gamma), b * math.sin(gamma), 0]
-        lat_vect_3 = [c * math.cos(beta), c * math.cos(alpha) * math.sin(gamma), h]
-        if math.fabs(lat_vect_2[0]) < 1e-8:
-            lat_vect_2[0] = 0
-        if math.fabs(lat_vect_2[1]) < 1e-8:
-            lat_vect_2[1] = 0
-        if math.fabs(lat_vect_3[0]) < 1e-8:
-            lat_vect_3[0] = 0
-        if math.fabs(lat_vect_3[1]) < 1e-8:
-            lat_vect_3[1] = 0
-        if math.fabs(lat_vect_3[2]) < 1e-8:
-            lat_vect_3[2] = 0
-        return lat_vect_1, lat_vect_2, lat_vect_3
 
     @staticmethod
     def lattice_vectors(filename):
