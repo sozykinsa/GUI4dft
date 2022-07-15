@@ -733,29 +733,32 @@ class MainForm(QMainWindow):
             self.ui.FormActionsPostList3DData.update()
 
     def change_fragment1_status_by_x(self):
-        xmin = self.ui.xminborder.value()
-        xmax = self.ui.xmaxborder.value()
-        for at in self.ui.openGLWidget.main_model.atoms:
-            if (at.x >= xmin) and (at.x <= xmax):
-                at.fragment1 = True
+        x_min = self.ui.xminborder.value()
+        x_max = self.ui.xmaxborder.value()
+        model = self.ui.openGLWidget.get_model()
+        for ind, at in enumerate(model.atoms):
+            if (at.x >= x_min) and (at.x <= x_max):
+                self.ui.openGLWidget.main_model.atoms[ind].fragment1 = True
         self.ui.openGLWidget.atoms_of_selected_fragment_to_form()
         self.ui.openGLWidget.update_view()
 
     def change_fragment1_status_by_y(self):
-        ymin = self.ui.yminborder.value()
-        ymax = self.ui.ymaxborder.value()
-        for at in self.ui.openGLWidget.main_model.atoms:
-            if (at.y >= ymin) and (at.y <= ymax):
-                at.fragment1 = True
+        y_min = self.ui.yminborder.value()
+        y_max = self.ui.ymaxborder.value()
+        model = self.ui.openGLWidget.get_model()
+        for ind, at in enumerate(model.atoms):
+            if (at.y >= y_min) and (at.y <= y_max):
+                self.ui.openGLWidget.main_model.atoms[ind].fragment1 = True
         self.ui.openGLWidget.atoms_of_selected_fragment_to_form()
         self.ui.openGLWidget.update_view()
 
     def change_fragment1_status_by_z(self):
-        zmin = self.ui.zminborder.value()
-        zmax = self.ui.zmaxborder.value()
-        for at in self.ui.openGLWidget.main_model.atoms:
-            if (at.z >= zmin) and (at.z <= zmax):
-                at.fragment1 = True
+        z_min = self.ui.zminborder.value()
+        z_max = self.ui.zmaxborder.value()
+        model = self.ui.openGLWidget.get_model()
+        for ind, at in enumerate(model.atoms):
+            if (at.z >= z_min) and (at.z <= z_max):
+                self.ui.openGLWidget.main_model.atoms[ind].fragment1 = True
         self.ui.openGLWidget.atoms_of_selected_fragment_to_form()
         self.ui.openGLWidget.update_view()
 
