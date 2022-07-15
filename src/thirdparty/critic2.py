@@ -139,8 +139,8 @@ def create_cri_file(cp_list, extra_points, is_form_bp, model, text_prop):
         cp = model.bcp[ind]
         text += "Bond Critical Point: " + str(ind) + "  :  "
         ind1, ind2 = model.atoms_of_bond_path(ind)
-        atom1 = model.atoms[ind1].let + str(ind1)
-        atom2 = model.atoms[ind2].let + str(ind2)
+        atom1 = model.atoms[ind1].let + str(ind1 + 1)
+        atom2 = model.atoms[ind2].let + str(ind2 + 1)
         title = atom1 + "-" + atom2
         text += title + "\n"
 
@@ -151,9 +151,9 @@ def create_cri_file(cp_list, extra_points, is_form_bp, model, text_prop):
 
             path_low = []
             for i in range(0, len(bond1)):
-                Coord = np.array(
-                        [bond1[len(bond1) - i - 1].x, bond1[len(bond1) - i - 1].y, bond1[len(bond1) - i - 1].z])
-                res = obr.dot(Coord)
+                index = len(bond1) - i
+                coord = np.array([bond1[index - 1].x, bond1[index - 1].y, bond1[index - 1].z])
+                res = obr.dot(coord)
                 path_low.append(np.array([float(res[0]), float(res[1]), float(res[2])]))
 
             from_to = "{0:14.10} {1:14.10} {2:14.10} {3:14.10} {4:14.10} {5:14.10} ".format(path_low[0][0],
@@ -167,24 +167,24 @@ def create_cri_file(cp_list, extra_points, is_form_bp, model, text_prop):
             lines += "REFERENCE 1\n"
             lines += "LINE " + from_to + " 100 FILE ./lines/lines-" + title + "-00-charge.txt\n"
             lines += "REFERENCE 4\n"
-            lines += "LINE " + from_to + " 100 FILE ./lines/lines-" + title + "-00-elpot.txt\n"
+            lines += "LINE " + from_to + " 100 FILE ./lines/lines-" + title + "-00-totpot.txt\n"
             lines += "REFERENCE 5\n"
-            lines += "LINE " + from_to + " 100 FILE ./lines/lines-" + title + "-00-lapl.txt\n"
+            lines += "LINE " + from_to + " 100 FILE ./lines/lines-" + title + "-00-elpot.txt\n"
 
             first = "{0:14.10} {1:14.10} {2:14.10} ".format(path_low[-1][0], path_low[-1][1], path_low[-1][2])
 
             for i in range(1, len(bond2)):
-                Coord = np.array([bond2[i].x, bond2[i].y, bond2[i].z])
-                res = obr.dot(Coord)
+                coord = np.array([bond2[i].x, bond2[i].y, bond2[i].z])
+                res = obr.dot(coord)
                 path_low.append(np.array([float(res[0]), float(res[1]), float(res[2])]))
 
             last = "{0:14.10} {1:14.10} {2:14.10} ".format(path_low[-1][0], path_low[-1][1], path_low[-1][2])
             lines += "REFERENCE 1\n"
             lines += "LINE " + first + last + " 100 FILE ./lines/lines-" + title + "-01-charge.txt\n"
             lines += "REFERENCE 4\n"
-            lines += "LINE " + first + last + " 100 FILE ./lines/lines-" + title + "-01-elpot.txt\n"
+            lines += "LINE " + first + last + " 100 FILE ./lines/lines-" + title + "-01-totpot.txt\n"
             lines += "REFERENCE 5\n"
-            lines += "LINE " + first + last + " 100 FILE ./lines/lines-" + title + "-01-lapl.txt\n"
+            lines += "LINE " + first + last + " 100 FILE ./lines/lines-" + title + "-01-elpot.txt\n"
 
             path_fine = [path_low[0]]
             for i in range(1, len(path_low)):
