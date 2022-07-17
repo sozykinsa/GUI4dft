@@ -8877,7 +8877,7 @@
               </rect>
              </property>
              <property name="text">
-              <string>coming soon (1D only in test)</string>
+              <string>coming soon (2D and 1D only in test)</string>
              </property>
             </widget>
             <widget class="QGroupBox" name="groupBox_32">
@@ -8920,12 +8920,12 @@
                </spacer>
               </item>
               <item>
-               <widget class="QRadioButton" name="radioButton_4">
+               <widget class="QRadioButton" name="crystal_d12_2d">
                 <property name="text">
                  <string>2D</string>
                 </property>
                 <property name="checkable">
-                 <bool>false</bool>
+                 <bool>true</bool>
                 </property>
                </widget>
               </item>
@@ -8987,7 +8987,7 @@
               </rect>
              </property>
              <property name="currentIndex">
-              <number>2</number>
+              <number>1</number>
              </property>
              <widget class="QWidget" name="tab_25">
               <attribute name="title">

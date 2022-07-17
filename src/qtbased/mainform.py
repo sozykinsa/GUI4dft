@@ -40,7 +40,7 @@ from ui.about import Ui_DialogAbout as Ui_about
 from ui.form import Ui_MainWindow as Ui_form
 from thirdparty.firefly import atomic_model_to_firefly_inp
 from thirdparty.critic2 import parse_cp_properties
-from thirdparty.crystal import model_1d_to_d12
+from thirdparty.crystal import model_1d_to_d12, model_2d_to_d12
 from thirdparty.vasp import vasp_dos, model_to_vasp_poscar
 from thirdparty import ase, critic2
 
@@ -2547,9 +2547,12 @@ class MainForm(QMainWindow):
             if self.ui.crystal_d12_1d.isChecked():
                 model = self.models[self.active_model]
                 text = model_1d_to_d12(model)
+            if self.ui.crystal_d12_2d.isChecked():
+                model = self.models[self.active_model]
+                text = model_2d_to_d12(model)
             if len(text) > 0:
-                fname = self.get_file_name_from_save_dialog("Crystal d12 (*.d12)")
-                helpers.write_text_to_file(fname, text)
+                file_name = self.get_file_name_from_save_dialog("Crystal d12 (*.d12)")
+                helpers.write_text_to_file(file_name, text)
         except Exception as e:
             self.show_error(e)
 
