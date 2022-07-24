@@ -48,7 +48,7 @@ class GuiOpenGL(QOpenGLWidget):
         self.active = False
         self.is_atomic_numbers_visible = False
         self.scale_factor = 1
-        self.bondWidth = 20
+        self.bond_width = 20
         self.x_scene = 0
         self.y_scene = 0
         self.camera_position = np.array([0.0, 0.0, -20.0])
@@ -85,11 +85,14 @@ class GuiOpenGL(QOpenGLWidget):
     @is_camera_ortho.setter
     def is_camera_ortho(self, is_orthographic):
         self.is_orthographic = is_orthographic
+        if len(self.main_model.atoms) == 0:
+            return
         self.auto_zoom()
         self.add_atoms()
         self.add_bonds()
         self.add_bcp()
         self.add_bondpath()
+        self.add_axes()
 
     def wheelEvent(self, event: QEvent):
         self.scale(event.angleDelta().y())
@@ -147,7 +150,7 @@ class GuiOpenGL(QOpenGLWidget):
         self.is_view_bond_path = the_object.is_view_bond_path
         self.active = the_object.active
         self.scale_factor = the_object.scale_factor
-        self.bondWidth = the_object.bondWidth
+        self.bond_width = the_object.bond_width
         self.x_scr_old = the_object.x_scr_old
         self.y_scr_old = the_object.y_scr_old
         self.x_scene = the_object.x_scene
@@ -246,22 +249,23 @@ class GuiOpenGL(QOpenGLWidget):
         self.update()
 
     def screen2space(self, x, y, width, height):
-        radius = min(width, height)*float(self.scale_factor)
-        return (2.*x-width)/radius, -(2.*y-height)/radius
+        radius = min(width, height) * float(self.scale_factor)
+        return (2.0 * x - width)/radius, -(2.0 * y - height)/radius
 
-    def set_atomic_structure(self, structure, atoms_colors, is_view_atoms, is_view_atom_numbers, ViewBox, box_color,
-                             ViewBonds, bondscolor, bondWidth, Bonds_by_atoms, is_view_axes, axes_color, contour_width):
+    def set_atomic_structure(self, structure, atoms_colors, is_view_atoms, is_view_atom_numbers, is_view_box, box_color,
+                             is_view_bonds, bonds_color, bond_width, bonds_by_atoms, is_view_axes, axes_color,
+                             contour_width):
         self.clean()
         self.prop = "charge"
         self.main_model = deepcopy(structure)
         self.coord0 = -self.main_model.get_center_of_mass()
         self.main_model.move(*self.coord0)
-        self.is_view_box = ViewBox
+        self.is_view_box = is_view_box
         self.is_view_atoms = is_view_atoms
         self.is_atomic_numbers_visible = is_view_atom_numbers
-        self.is_view_bonds = ViewBonds
-        self.color_of_bonds_by_atoms = Bonds_by_atoms
-        self.bondWidth = bondWidth
+        self.is_view_bonds = is_view_bonds
+        self.color_of_bonds_by_atoms = bonds_by_atoms
+        self.bond_width = bond_width
         self.is_view_axes = is_view_axes
         self.color_of_axes = axes_color
         self.is_view_surface = False
@@ -269,12 +273,12 @@ class GuiOpenGL(QOpenGLWidget):
         self.is_view_contour_fill = False
         self.active = False
         self.color_of_atoms = atoms_colors
+        self.auto_zoom()
         self.add_atoms()
-        self.color_of_bonds = bondscolor
+        self.color_of_bonds = bonds_color
         self.color_of_box = box_color
         self.main_model.find_bonds_fast()
         self.contour_width = contour_width
-        self.auto_zoom()
         self.add_bonds()
         self.add_box()
         self.add_axes()
@@ -357,7 +361,7 @@ class GuiOpenGL(QOpenGLWidget):
         self.update()
 
     def set_bond_width(self, width):
-        self.bondWidth = width
+        self.bond_width = width
         self.add_bonds()
         self.update()
 
@@ -482,8 +486,8 @@ class GuiOpenGL(QOpenGLWidget):
         rel = [atom2_pos[0] - atom1_pos[0], atom2_pos[1] - atom1_pos[1], atom2_pos[2] - atom1_pos[2]]
         binding_len = math.sqrt(math.pow(rel[0], 2) + math.pow(rel[1], 2) + math.pow(rel[2], 2))
         if binding_len != 0:
-            fall = 180.0/math.pi*math.acos(rel[2] / binding_len)
-            yaw = 180.0/math.pi*math.atan2(rel[1], rel[0])
+            fall = 180.0 / math.pi * math.acos(rel[2] / binding_len)
+            yaw = 180.0 / math.pi * math.atan2(rel[1], rel[0])
 
             gl.glPushMatrix()
             gl.glTranslated(atom1_pos[0], atom1_pos[1], atom1_pos[2])
@@ -604,7 +608,7 @@ class GuiOpenGL(QOpenGLWidget):
                     gl.glColor4f(*coord[2][0:3], self.SelectedFragmentAtomsTransp)
                 else:
                     gl.glColor4f(*coord[2][0:3], 1)
-                self.add_bond(coord[0], coord[1], self.scale_factor * self.bondWidth)
+                self.add_bond(coord[0], coord[1], self.scale_factor * self.bond_width)
         gl.glEndList()
 
     def add_box(self):
@@ -643,21 +647,21 @@ class GuiOpenGL(QOpenGLWidget):
     def add_axes(self):
         gl.glNewList(self.object + 7, gl.GL_COMPILE)
         gl.glColor3f(*self.color_of_axes)
-        size = 2
-        size_cone = 0.2
+        size = 2 * self.scale_factor
+        size_cone = 0.2 * self.scale_factor
         letter_height = size_cone
-        letter_width = 0.6*size_cone
-        width = 0.06
+        letter_width = 0.6 * size_cone
+        width = 0.06 * self.scale_factor
         glu.gluSphere(glu.gluNewQuadric(), 2 * width, 70, 70)
         p0 = np.array([0, 0, 0])
         p1 = np.array([size, 0, 0])
-        p1cone = np.array([size+size_cone, 0, 0])
+        p1cone = np.array([size + size_cone, 0, 0])
         p2 = np.array([0, size, 0])
-        p2cone = np.array([0, size+size_cone, 0])
+        p2cone = np.array([0, size + size_cone, 0])
         p3 = np.array([0, 0, size])
-        p3cone = np.array([0, 0, size+size_cone])
+        p3cone = np.array([0, 0, size + size_cone])
         self.add_bond(p0, p1, width)
-        self.add_bond(p1, p1cone, 2*width, 'conus')
+        self.add_bond(p1, p1cone, 2 * width, 'conus')
         self.add_bond(p0, p2, width)
         self.add_bond(p2, p2cone, 2 * width, 'conus')
         self.add_bond(p0, p3, width)

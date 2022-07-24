@@ -10889,8 +10889,8 @@ p, li { white-space: pre-wrap; }
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>642</width>
-         <height>765</height>
+         <width>98</width>
+         <height>100</height>
         </rect>
        </property>
        <attribute name="label">
@@ -10974,6 +10974,7 @@ p, li { white-space: pre-wrap; }
      <string>Help</string>
     </property>
     <addaction name="actionAbout"/>
+    <addaction name="actionManual"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuView"/>
@@ -11046,6 +11047,11 @@ p, li { white-space: pre-wrap; }
   <action name="actionClose">
    <property name="text">
     <string>Close</string>
+   </property>
+  </action>
+  <action name="actionManual">
+   <property name="text">
+    <string>Manual</string>
    </property>
   </action>
  </widget>

@@ -39,6 +39,8 @@ class Ui_MainWindow(object):
         self.actionHideBox.setObjectName(u"actionHideBox")
         self.actionClose = QAction(MainWindow)
         self.actionClose.setObjectName(u"actionClose")
+        self.actionManual = QAction(MainWindow)
+        self.actionManual.setObjectName(u"actionManual")
         self.centralwidget = QWidget(MainWindow)
         self.centralwidget.setObjectName(u"centralwidget")
         self.horizontalLayout_2 = QHBoxLayout(self.centralwidget)
@@ -5861,7 +5863,7 @@ class Ui_MainWindow(object):
         self.Form3Dand2DTabs.addItem(self.page_7, u"3D View")
         self.page_8 = QWidget()
         self.page_8.setObjectName(u"page_8")
-        self.page_8.setGeometry(QRect(0, 0, 642, 765))
+        self.page_8.setGeometry(QRect(0, 0, 98, 100))
         self.horizontalLayout = QHBoxLayout(self.page_8)
         self.horizontalLayout.setObjectName(u"horizontalLayout")
         self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
@@ -5913,6 +5915,7 @@ class Ui_MainWindow(object):
         self.menuBox.addAction(self.actionShowBox)
         self.menuBox.addAction(self.actionHideBox)
         self.menuHelp.addAction(self.actionAbout)
+        self.menuHelp.addAction(self.actionManual)
 
         self.retranslateUi(MainWindow)
 
@@ -5948,6 +5951,7 @@ class Ui_MainWindow(object):
         self.actionShowBox.setText(QCoreApplication.translate("MainWindow", u"Show Box", None))
         self.actionHideBox.setText(QCoreApplication.translate("MainWindow", u"Hide Box", None))
         self.actionClose.setText(QCoreApplication.translate("MainWindow", u"Close", None))
+        self.actionManual.setText(QCoreApplication.translate("MainWindow", u"Manual", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.FormTabModel), QCoreApplication.translate("MainWindow", u"Model", None))
         self.label_75.setText(QCoreApplication.translate("MainWindow", u"n:", None))
         self.label_76.setText(QCoreApplication.translate("MainWindow", u"m:", None))

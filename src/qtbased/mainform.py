@@ -97,6 +97,7 @@ class MainForm(QMainWindow):
         self.ui.actionShowBox.triggered.connect(self.menu_show_box)
         self.ui.actionHideBox.triggered.connect(self.menu_hide_box)
         self.ui.actionAbout.triggered.connect(self.menu_about)
+        self.ui.actionManual.triggered.connect(self.menu_manual)
 
         self.ui.FormModelComboModels.currentIndexChanged.connect(self.model_to_screen)
         self.ui.FormActionsPostTreeSurface.itemSelectionChanged.connect(self.type_of_surface)
@@ -563,54 +564,46 @@ class MainForm(QMainWindow):
             self.ui.part2_file.setText(f_name)
 
     def create_model_from_parts(self) -> None:
-        file_name1 = self.ui.part1_file.text()
-        file_name2 = self.ui.part2_file.text()
+        param = 'all'
         if self.ui.FormSettingsOpeningCheckOnlyOptimal.isChecked():
-            models1, fdf_data1 = Importer.import_from_file(file_name1, 'opt', False, False)
-        else:
-            models1, fdf_data1 = Importer.import_from_file(file_name1, 'all', False, False)
-
-        if self.ui.FormSettingsOpeningCheckOnlyOptimal.isChecked():
-            models2, fdf_data2 = Importer.import_from_file(file_name2, 'opt', False, False)
-        else:
-            models2, fdf_data2 = Importer.import_from_file(file_name2, 'all', False, False)
+            param = 'opt'
+        models1, fdf_data1 = Importer.import_from_file(self.ui.part1_file.text(), param, False, False)
+        models2, fdf_data2 = Importer.import_from_file(self.ui.part2_file.text(), param, False, False)
 
         combo_model = TAtomicModel()
         if len(models1) > 0:
-            part1 = models1[-1]
-            cm_old = - part1.centr_mass()
-            part1.move(*cm_old)
-            rot_x = self.ui.FormPart1RotX.value()
-            rot_y = self.ui.FormPart1RotY.value()
-            rot_z = self.ui.FormPart1RotZ.value()
-            part1.rotate(rot_x, rot_y, rot_z)
+            rot_x1 = self.ui.FormPart1RotX.value()
+            rot_y1 = self.ui.FormPart1RotY.value()
+            rot_z1 = self.ui.FormPart1RotZ.value()
+            cm_x_new1 = self.ui.FormPart1CMx.value()
+            cm_y_new1 = self.ui.FormPart1CMy.value()
+            cm_z_new1 = self.ui.FormPart1CMz.value()
 
-            cm_x_new = self.ui.FormPart1CMx.value()
-            cm_y_new = self.ui.FormPart1CMy.value()
-            cm_z_new = self.ui.FormPart1CMz.value()
-            part1.move(cm_x_new, cm_y_new, cm_z_new)
-
+            part1 = self.model_part_prepare(cm_x_new1, cm_y_new1, cm_z_new1, models1, rot_x1, rot_y1, rot_z1)
             combo_model.add_atomic_model(part1)
 
         if len(models2) > 0:
-            part2 = models2[-1]
+            rot_x2 = self.ui.FormPart2RotX.value()
+            rot_y2 = self.ui.FormPart2RotY.value()
+            rot_z2 = self.ui.FormPart2RotZ.value()
+            cm_x_new2 = self.ui.FormPart2CMx.value()
+            cm_y_new2 = self.ui.FormPart2CMy.value()
+            cm_z_new2 = self.ui.FormPart2CMz.value()
 
-            cm_old = - part2.centr_mass()
-            part2.move(*cm_old)
-            rot_x = self.ui.FormPart2RotX.value()
-            rot_y = self.ui.FormPart2RotY.value()
-            rot_z = self.ui.FormPart2RotZ.value()
-            part2.rotate(rot_x, rot_y, rot_z)
-
-            cm_x_new = self.ui.FormPart2CMx.value()
-            cm_y_new = self.ui.FormPart2CMy.value()
-            cm_z_new = self.ui.FormPart2CMz.value()
-            part2.move(cm_x_new, cm_y_new, cm_z_new)
-
+            part2 = self.model_part_prepare(cm_x_new2, cm_y_new2, cm_z_new2, models2, rot_x2, rot_y2, rot_z2)
             combo_model.add_atomic_model(part2)
 
         self.models.append(combo_model)
         self.plot_last_model()
+
+    @staticmethod
+    def model_part_prepare(cm_x_new, cm_y_new, cm_z_new, models, rot_x, rot_y, rot_z):
+        part = models[-1]
+        cm_old = - part.centr_mass()
+        part.move(*cm_old)
+        part.rotate(rot_x, rot_y, rot_z)
+        part.move(cm_x_new, cm_y_new, cm_z_new)
+        return part
 
     def add_left_electrode_file(self):
         f_name = self.get_fdf_file_name()
@@ -1457,6 +1450,10 @@ class MainForm(QMainWindow):
         self.ui.openGLWidget.is_view_box = False
         self.ui.openGLWidget.update()
 
+    def menu_manual(self):  # pragma: no cover
+        path = str(Path(__file__).parent.parent.parent / 'doc' / 'gui4dft.pdf')
+        os.system(path)
+
     def menu_about(self):  # pragma: no cover
         about_win = QDialog(self)
         about_win.ui = Ui_about()
@@ -1560,6 +1557,7 @@ class MainForm(QMainWindow):
                                                   view_axes, axescolor, contour_width)
         self.prepare_form_actions_combo_pdos_species()
         self.prepare_form_actions_combo_pdos_indexes()
+        self.ui.AtomsInSelectedFragment.clear()
 
         self.color_with_property_enabling()
 
