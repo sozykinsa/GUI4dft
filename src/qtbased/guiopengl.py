@@ -545,7 +545,7 @@ class GuiOpenGL(QOpenGLWidget):
                 if max_val < val:
                     max_val = val
                 mean_val += val
-            mean_val /= self.main_model.nAtoms()
+            mean_val /= self.main_model.n_atoms()
 
         for at in self.main_model.atoms:
             gl.glPushMatrix()

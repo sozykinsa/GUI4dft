@@ -43,7 +43,7 @@ class CapedSWNT(TAtomicModel):
 
                 capatoms.move(0, 0, minz - maxz - zaz)
                 capatoms.rotate_z(angle1)
-                for i in range(0, capatoms.nAtoms()):
+                for i in range(0, capatoms.n_atoms()):
                     self.add_atom(capatoms[i])
 
             if type == 2:
@@ -59,7 +59,7 @@ class CapedSWNT(TAtomicModel):
 
                 capatoms.move(0, 0, (maxz - minz) + zaz)
                 capatoms.rotate_z(angle2)
-                for i in range(0, capatoms.nAtoms()):
+                for i in range(0, capatoms.n_atoms()):
                     self.add_atom(capatoms[i])
             # end cap generation
 
@@ -71,11 +71,11 @@ class CapedSWNT(TAtomicModel):
     def cap4swnt_norm(self):
         if (self.n == self.availableind[0]) and (self.m == self.availableind[1]):
             cap1 = TAtomicModel()
-            for j in range(0, self.cap_atoms.nAtoms()):
+            for j in range(0, self.cap_atoms.n_atoms()):
                 cap1.add_atom(self.cap_atoms[j])
             cap1.move(- 1.0 * self.availableind[4] / 2.0, - 1.0 * self.availableind[5] / 2.0, 0)
 
-            for j in range(0, cap1.nAtoms()):
+            for j in range(0, cap1.n_atoms()):
                 xnn = cap1[j].x * math.cos(self.availableind[6] * math.pi / 180.0) - \
                     cap1[j].y * math.sin(self.availableind[6] * math.pi / 180.0)
                 ynn = cap1[j].x * math.sin(self.availableind[6] * math.pi / 180.0) + \

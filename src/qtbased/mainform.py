@@ -599,7 +599,7 @@ class MainForm(QMainWindow):
     @staticmethod
     def model_part_prepare(cm_x_new, cm_y_new, cm_z_new, models, rot_x, rot_y, rot_z):
         part = models[-1]
-        cm_old = - part.centr_mass()
+        cm_old = - part.center_mass()
         part.move(*cm_old)
         part.rotate(rot_x, rot_y, rot_z)
         part.move(cm_x_new, cm_y_new, cm_z_new)
@@ -929,8 +929,8 @@ class MainForm(QMainWindow):
         self.fill_properties_table()
         self.check_volumeric_data(file_name)
 
-        self.ui.PropertyAtomAtomDistanceAt1.setMaximum(self.ui.openGLWidget.main_model.nAtoms())
-        self.ui.PropertyAtomAtomDistanceAt2.setMaximum(self.ui.openGLWidget.main_model.nAtoms())
+        self.ui.PropertyAtomAtomDistanceAt1.setMaximum(self.ui.openGLWidget.main_model.n_atoms())
+        self.ui.PropertyAtomAtomDistanceAt2.setMaximum(self.ui.openGLWidget.main_model.n_atoms())
         self.ui.PropertyAtomAtomDistance.setText("")
 
         if Importer.check_format(file_name) == "SIESTAout":
@@ -1345,7 +1345,7 @@ class MainForm(QMainWindow):
 
         self.fill_colors_of_atoms_table()
 
-        if self.ui.openGLWidget.main_model.nAtoms() > 0:
+        if self.ui.openGLWidget.main_model.n_atoms() > 0:
             self.ui.openGLWidget.set_color_of_atoms(self.periodic_table.get_all_colors())
 
     def fill_colors_of_atoms_table(self):
@@ -1368,7 +1368,7 @@ class MainForm(QMainWindow):
         self.ui.openGLWidget.update()
 
     def menu_export(self):  # pragma: no cover
-        if self.ui.openGLWidget.main_model.nAtoms() > 0:
+        if self.ui.openGLWidget.main_model.n_atoms() > 0:
             try:
                 format = "FDF files (*.fdf);;XYZ files (*.xyz);;FireFly input files (*.inp);;VASP POSCAR file (*.POSCAR)"
                 fname = self.get_file_name_from_save_dialog(format)
@@ -1469,7 +1469,7 @@ class MainForm(QMainWindow):
         self.color_with_property_enabling()
 
     def color_with_property_enabling(self):
-        if self.ui.openGLWidget.main_model.nAtoms() > 0:
+        if self.ui.openGLWidget.main_model.n_atoms() > 0:
             atom = self.ui.openGLWidget.main_model.atoms[0]
             atom_prop_type = QStandardItemModel()
             for key in atom.properties:
@@ -1488,7 +1488,7 @@ class MainForm(QMainWindow):
         self.ui.openGLWidget.update()
 
     def model_rotation(self):
-        if self.ui.openGLWidget.main_model.nAtoms() == 0:
+        if self.ui.openGLWidget.main_model.n_atoms() == 0:
             return
         angle = self.ui.FormModifyRotationAngle.value()
         model = self.ui.openGLWidget.main_model
@@ -1506,7 +1506,7 @@ class MainForm(QMainWindow):
         self.model_to_screen(-1)
 
     def model_grow_x(self):
-        if self.ui.openGLWidget.main_model.nAtoms() == 0:
+        if self.ui.openGLWidget.main_model.n_atoms() == 0:
             return
         model = self.ui.openGLWidget.main_model
         model = model.grow_x()
@@ -1515,7 +1515,7 @@ class MainForm(QMainWindow):
         self.model_to_screen(-1)
 
     def model_grow_y(self):
-        if self.ui.openGLWidget.main_model.nAtoms() == 0:
+        if self.ui.openGLWidget.main_model.n_atoms() == 0:
             return
         model = self.ui.openGLWidget.main_model
         model = model.grow_y()
@@ -1524,7 +1524,7 @@ class MainForm(QMainWindow):
         self.model_to_screen(-1)
 
     def model_grow_z(self):
-        if self.ui.openGLWidget.main_model.nAtoms() == 0:
+        if self.ui.openGLWidget.main_model.n_atoms() == 0:
             return
         model = self.ui.openGLWidget.main_model
         model = model.grow_z()
@@ -1698,7 +1698,7 @@ class MainForm(QMainWindow):
     def get_filter_atom(self):
         atom_index = []
         if self.ui.FormActionsComboPDOSIndexes.currentText() == 'All':
-            atom_index = range(1, self.ui.openGLWidget.main_model.nAtoms() + 1)
+            atom_index = range(1, self.ui.openGLWidget.main_model.n_atoms() + 1)
         if self.ui.FormActionsComboPDOSIndexes.currentText() == 'Selected atom (3D View)':
             atom_index = [self.ui.openGLWidget.main_model.selected_atom + 1]
         if self.ui.FormActionsComboPDOSIndexes.currentText() == 'Selected in list below':
@@ -2415,7 +2415,7 @@ class MainForm(QMainWindow):
 
         self.fill_colors_of_atoms_table()
 
-        if self.ui.openGLWidget.main_model.nAtoms() > 0:
+        if self.ui.openGLWidget.main_model.n_atoms() > 0:
             self.ui.openGLWidget.set_color_of_atoms(self.periodic_table.get_all_colors())
 
     def save_manual_colors(self):
@@ -2674,7 +2674,7 @@ class MainForm(QMainWindow):
 
         self.save_manual_colors()
 
-        if self.ui.openGLWidget.main_model.nAtoms() > 0:
+        if self.ui.openGLWidget.main_model.n_atoms() > 0:
             self.ui.openGLWidget.set_color_of_atoms(self.periodic_table.get_all_colors())
 
     def select_box_color(self):  # pragma: no cover

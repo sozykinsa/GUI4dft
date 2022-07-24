@@ -87,7 +87,7 @@ class Importer(object):
                 models = TAtomicModel.atoms_from_xyz(filename, xyzcritic2)
 
             if file_format == "XMolXYZ":
-                models = TAtomicModel.atoms_from_XMOLxyz(filename)
+                models = TAtomicModel.atoms_from_xmol_xyz(filename)
 
             if file_format == "VASPposcar":
                 models = atoms_from_POSCAR(filename)

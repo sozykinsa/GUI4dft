@@ -3,6 +3,7 @@ import sys
 import os
 import math
 import numpy as np
+from copy import deepcopy
 from utils import helpers
 sys.path.append('.')
 
@@ -83,7 +84,7 @@ def model_to_critic_xyz_file(model, cps):
     """Returns data for *.xyz file with CP and BCP."""
     text = ""
 
-    n_atoms = model.nAtoms()
+    n_atoms = model.n_atoms()
     for i in range(0, n_atoms):
         text += model.atoms[i].to_string() + "\n"
 
@@ -207,3 +208,20 @@ def create_cri_file(cp_list, extra_points, is_form_bp, model, text_prop):
     lines += "UNLOAD ALL\nEND"
 
     return textl, lines, te, text
+
+
+def critical_path_simplifier(b, cp):
+    bond = deepcopy(cp.getProperty(b))
+    if bond is None:
+        print(b)
+        return
+    i = 2
+    while (i < len(bond)) and (len(bond) > 1):
+        m = (bond[i].x - bond[i - 1].x) * (bond[i - 2].y - bond[i - 1].y) * (bond[i - 2].z - bond[i - 1].z)
+        j = (bond[i].y - bond[i - 1].y) * (bond[i - 2].x - bond[i - 1].x) * (bond[i - 2].z - bond[i - 1].z)
+        k = (bond[i].z - bond[i - 1].z) * (bond[i - 2].x - bond[i - 1].x) * (bond[i - 2].y - bond[i - 1].y)
+        i += 1
+        if (math.fabs(m - j) < 1e-6) and (math.fabs(m - k) < 1e-6):
+            bond.pop(i - 2)
+            i -= 1
+    cp.setProperty(b + "opt", bond)
