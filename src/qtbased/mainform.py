@@ -40,7 +40,7 @@ from ui.about import Ui_DialogAbout as Ui_about
 from ui.form import Ui_MainWindow as Ui_form
 from thirdparty.firefly import atomic_model_to_firefly_inp
 from thirdparty.critic2 import parse_cp_properties
-from thirdparty.crystal import model_1d_to_d12
+from thirdparty.crystal import model_1d_to_d12, model_2d_to_d12
 from thirdparty.vasp import vasp_dos, model_to_vasp_poscar
 from thirdparty import ase, critic2
 
@@ -733,29 +733,32 @@ class MainForm(QMainWindow):
             self.ui.FormActionsPostList3DData.update()
 
     def change_fragment1_status_by_x(self):
-        xmin = self.ui.xminborder.value()
-        xmax = self.ui.xmaxborder.value()
-        for at in self.ui.openGLWidget.main_model.atoms:
-            if (at.x >= xmin) and (at.x <= xmax):
-                at.fragment1 = True
+        x_min = self.ui.xminborder.value()
+        x_max = self.ui.xmaxborder.value()
+        model = self.ui.openGLWidget.get_model()
+        for ind, at in enumerate(model.atoms):
+            if (at.x >= x_min) and (at.x <= x_max):
+                self.ui.openGLWidget.main_model.atoms[ind].fragment1 = True
         self.ui.openGLWidget.atoms_of_selected_fragment_to_form()
         self.ui.openGLWidget.update_view()
 
     def change_fragment1_status_by_y(self):
-        ymin = self.ui.yminborder.value()
-        ymax = self.ui.ymaxborder.value()
-        for at in self.ui.openGLWidget.main_model.atoms:
-            if (at.y >= ymin) and (at.y <= ymax):
-                at.fragment1 = True
+        y_min = self.ui.yminborder.value()
+        y_max = self.ui.ymaxborder.value()
+        model = self.ui.openGLWidget.get_model()
+        for ind, at in enumerate(model.atoms):
+            if (at.y >= y_min) and (at.y <= y_max):
+                self.ui.openGLWidget.main_model.atoms[ind].fragment1 = True
         self.ui.openGLWidget.atoms_of_selected_fragment_to_form()
         self.ui.openGLWidget.update_view()
 
     def change_fragment1_status_by_z(self):
-        zmin = self.ui.zminborder.value()
-        zmax = self.ui.zmaxborder.value()
-        for at in self.ui.openGLWidget.main_model.atoms:
-            if (at.z >= zmin) and (at.z <= zmax):
-                at.fragment1 = True
+        z_min = self.ui.zminborder.value()
+        z_max = self.ui.zmaxborder.value()
+        model = self.ui.openGLWidget.get_model()
+        for ind, at in enumerate(model.atoms):
+            if (at.z >= z_min) and (at.z <= z_max):
+                self.ui.openGLWidget.main_model.atoms[ind].fragment1 = True
         self.ui.openGLWidget.atoms_of_selected_fragment_to_form()
         self.ui.openGLWidget.update_view()
 
@@ -2544,9 +2547,12 @@ class MainForm(QMainWindow):
             if self.ui.crystal_d12_1d.isChecked():
                 model = self.models[self.active_model]
                 text = model_1d_to_d12(model)
+            if self.ui.crystal_d12_2d.isChecked():
+                model = self.models[self.active_model]
+                text = model_2d_to_d12(model)
             if len(text) > 0:
-                fname = self.get_file_name_from_save_dialog("Crystal d12 (*.d12)")
-                helpers.write_text_to_file(fname, text)
+                file_name = self.get_file_name_from_save_dialog("Crystal d12 (*.d12)")
+                helpers.write_text_to_file(file_name, text)
         except Exception as e:
             self.show_error(e)
 

@@ -31,7 +31,9 @@ v1.1 - Minor changes compared to version v1.0. Mostly bugs fixed.
 
 v1.2 - Contains some additional features. For example, it allows visualizing the critical paths of connections (critic2), preparing scripts for calculating spectra using PyNao. The 1.x versions of GUI4dft do not have hard-to-install dependencies and are easy to run on most popular operating systems.
 
-v1.3 - This is the next release in 1.x branch. This version will use pyqtgraph instead of matplotlib and pyside2 instead of PyQt5. The colors of the atoms and covalent radii are taken from the ASE module. The project is covered with tests.
+v1.3 - This version uses pyqtgraph instead of matplotlib and pyside2 instead of PyQt5. The colors of the atoms and covalent radii are taken from the ASE module. The project is covered with tests.
+
+v1.4 - This is the next release in 1.x branch. 
 
 The master branch contains more or less stable 1.x version functions.
 

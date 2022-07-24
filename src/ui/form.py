@@ -4841,11 +4841,11 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_122.addItem(self.horizontalSpacer_81)
 
-        self.radioButton_4 = QRadioButton(self.groupBox_32)
-        self.radioButton_4.setObjectName(u"radioButton_4")
-        self.radioButton_4.setCheckable(False)
+        self.crystal_d12_2d = QRadioButton(self.groupBox_32)
+        self.crystal_d12_2d.setObjectName(u"crystal_d12_2d")
+        self.crystal_d12_2d.setCheckable(True)
 
-        self.horizontalLayout_122.addWidget(self.radioButton_4)
+        self.horizontalLayout_122.addWidget(self.crystal_d12_2d)
 
         self.horizontalSpacer_82 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
@@ -4900,9 +4900,15 @@ class Ui_MainWindow(object):
         self.tabWidget_13.addTab(self.tab_43, "")
         self.tab_44 = QWidget()
         self.tab_44.setObjectName(u"tab_44")
+        self.verticalLayout_97 = QVBoxLayout(self.tab_44)
+        self.verticalLayout_97.setObjectName(u"verticalLayout_97")
+        self.label_110 = QLabel(self.tab_44)
+        self.label_110.setObjectName(u"label_110")
+
+        self.verticalLayout_97.addWidget(self.label_110)
+
         self.groupBox_24 = QGroupBox(self.tab_44)
         self.groupBox_24.setObjectName(u"groupBox_24")
-        self.groupBox_24.setGeometry(QRect(10, 20, 379, 56))
         self.verticalLayout_73 = QVBoxLayout(self.groupBox_24)
         self.verticalLayout_73.setObjectName(u"verticalLayout_73")
         self.label_35 = QLabel(self.groupBox_24)
@@ -4910,9 +4916,11 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_73.addWidget(self.label_35)
 
+
+        self.verticalLayout_97.addWidget(self.groupBox_24)
+
         self.groupBox_11 = QGroupBox(self.tab_44)
         self.groupBox_11.setObjectName(u"groupBox_11")
-        self.groupBox_11.setGeometry(QRect(10, 100, 379, 56))
         self.verticalLayout_74 = QVBoxLayout(self.groupBox_11)
         self.verticalLayout_74.setObjectName(u"verticalLayout_74")
         self.label_36 = QLabel(self.groupBox_11)
@@ -4920,10 +4928,24 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_74.addWidget(self.label_36)
 
+
+        self.verticalLayout_97.addWidget(self.groupBox_11)
+
+        self.label_123 = QLabel(self.tab_44)
+        self.label_123.setObjectName(u"label_123")
+
+        self.verticalLayout_97.addWidget(self.label_123)
+
         self.textBrowser = QTextBrowser(self.tab_44)
         self.textBrowser.setObjectName(u"textBrowser")
         self.textBrowser.setEnabled(True)
-        self.textBrowser.setGeometry(QRect(30, 180, 256, 192))
+
+        self.verticalLayout_97.addWidget(self.textBrowser)
+
+        self.verticalSpacer_26 = QSpacerItem(20, 281, QSizePolicy.Minimum, QSizePolicy.Expanding)
+
+        self.verticalLayout_97.addItem(self.verticalSpacer_26)
+
         self.tabWidget_13.addTab(self.tab_44, "")
 
         self.verticalLayout_21.addWidget(self.tabWidget_13)
@@ -5907,7 +5929,7 @@ class Ui_MainWindow(object):
         self.tabWidget_13.setCurrentIndex(0)
         self.tabWidget_8.setCurrentIndex(0)
         self.tabWidget_10.setCurrentIndex(0)
-        self.tabWidget_7.setCurrentIndex(2)
+        self.tabWidget_7.setCurrentIndex(1)
         self.tabWidget_9.setCurrentIndex(0)
         self.tabWidget_12.setCurrentIndex(0)
         self.Form3Dand2DTabs.setCurrentIndex(0)
@@ -6294,10 +6316,10 @@ class Ui_MainWindow(object):
         self.tabWidget_10.setTabText(self.tabWidget_10.indexOf(self.tab_34), QCoreApplication.translate("MainWindow", u"Export to *.xyz", None))
         self.tabWidget_13.setTabText(self.tabWidget_13.indexOf(self.tab_39), QCoreApplication.translate("MainWindow", u"Critic2", None))
         self.groupBox_29.setTitle(QCoreApplication.translate("MainWindow", u"to CRYSTAL *.d12 file", None))
-        self.label_81.setText(QCoreApplication.translate("MainWindow", u"coming soon (1D only in test)", None))
+        self.label_81.setText(QCoreApplication.translate("MainWindow", u"coming soon (2D and 1D only in test)", None))
         self.groupBox_32.setTitle(QCoreApplication.translate("MainWindow", u"Translational symmetry", None))
         self.radioButton.setText(QCoreApplication.translate("MainWindow", u"3D", None))
-        self.radioButton_4.setText(QCoreApplication.translate("MainWindow", u"2D", None))
+        self.crystal_d12_2d.setText(QCoreApplication.translate("MainWindow", u"2D", None))
         self.crystal_d12_1d.setText(QCoreApplication.translate("MainWindow", u"1D", None))
         self.radioButton_6.setText(QCoreApplication.translate("MainWindow", u"0D", None))
         self.tabWidget_7.setTabText(self.tabWidget_7.indexOf(self.tab_25), QCoreApplication.translate("MainWindow", u"3D", None))
@@ -6307,10 +6329,12 @@ class Ui_MainWindow(object):
         self.tabWidget_7.setTabText(self.tabWidget_7.indexOf(self.tab_28), QCoreApplication.translate("MainWindow", u"0D", None))
         self.FormIEd12Generate.setText(QCoreApplication.translate("MainWindow", u"Save", None))
         self.tabWidget_13.setTabText(self.tabWidget_13.indexOf(self.tab_43), QCoreApplication.translate("MainWindow", u"Crystal", None))
+        self.label_110.setText(QCoreApplication.translate("MainWindow", u"Export", None))
         self.groupBox_24.setTitle(QCoreApplication.translate("MainWindow", u"to FireFly inp file", None))
         self.label_35.setText(QCoreApplication.translate("MainWindow", u"Just specify the extension of the exported file to \".inp\"", None))
         self.groupBox_11.setTitle(QCoreApplication.translate("MainWindow", u"to VASP POSCAR", None))
         self.label_36.setText(QCoreApplication.translate("MainWindow", u"Just specify the extension of the exported file to \".POSCAR\"", None))
+        self.label_123.setText(QCoreApplication.translate("MainWindow", u"Import", None))
         self.textBrowser.setHtml(QCoreApplication.translate("MainWindow", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
@@ -6318,7 +6342,7 @@ class Ui_MainWindow(object):
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">You can open some non-SEISETA files as easily as regular SEISETA files:</p>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">1) VASP POSCAR/CONTCAR files</p>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">2) Critic2 *.XYZ files with information about critical points and bond critical paths. It is nesessary to change Settings  </p></body></html>", None))
-        self.tabWidget_13.setTabText(self.tabWidget_13.indexOf(self.tab_44), QCoreApplication.translate("MainWindow", u"Page", None))
+        self.tabWidget_13.setTabText(self.tabWidget_13.indexOf(self.tab_44), QCoreApplication.translate("MainWindow", u"Other", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_23), QCoreApplication.translate("MainWindow", u"Third party", None))
         self.FormSettingsViewCheckShowAtoms.setText(QCoreApplication.translate("MainWindow", u"Show atoms", None))
         self.FormSettingsViewCheckShowBox.setText(QCoreApplication.translate("MainWindow", u"Show box", None))

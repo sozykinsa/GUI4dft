@@ -8877,7 +8877,7 @@
               </rect>
              </property>
              <property name="text">
-              <string>coming soon (1D only in test)</string>
+              <string>coming soon (2D and 1D only in test)</string>
              </property>
             </widget>
             <widget class="QGroupBox" name="groupBox_32">
@@ -8920,12 +8920,12 @@
                </spacer>
               </item>
               <item>
-               <widget class="QRadioButton" name="radioButton_4">
+               <widget class="QRadioButton" name="crystal_d12_2d">
                 <property name="text">
                  <string>2D</string>
                 </property>
                 <property name="checkable">
-                 <bool>false</bool>
+                 <bool>true</bool>
                 </property>
                </widget>
               </item>
@@ -8987,7 +8987,7 @@
               </rect>
              </property>
              <property name="currentIndex">
-              <number>2</number>
+              <number>1</number>
              </property>
              <widget class="QWidget" name="tab_25">
               <attribute name="title">
@@ -9052,74 +9052,85 @@
           </widget>
           <widget class="QWidget" name="tab_44">
            <attribute name="title">
-            <string>Page</string>
+            <string>Other</string>
            </attribute>
-           <widget class="QGroupBox" name="groupBox_24">
-            <property name="geometry">
-             <rect>
-              <x>10</x>
-              <y>20</y>
-              <width>379</width>
-              <height>56</height>
-             </rect>
-            </property>
-            <property name="title">
-             <string>to FireFly inp file</string>
-            </property>
-            <layout class="QVBoxLayout" name="verticalLayout_73">
-             <item>
-              <widget class="QLabel" name="label_35">
-               <property name="text">
-                <string>Just specify the extension of the exported file to &quot;.inp&quot;</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </widget>
-           <widget class="QGroupBox" name="groupBox_11">
-            <property name="geometry">
-             <rect>
-              <x>10</x>
-              <y>100</y>
-              <width>379</width>
-              <height>56</height>
-             </rect>
-            </property>
-            <property name="title">
-             <string>to VASP POSCAR</string>
-            </property>
-            <layout class="QVBoxLayout" name="verticalLayout_74">
-             <item>
-              <widget class="QLabel" name="label_36">
-               <property name="text">
-                <string>Just specify the extension of the exported file to &quot;.POSCAR&quot;</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </widget>
-           <widget class="QTextBrowser" name="textBrowser">
-            <property name="enabled">
-             <bool>true</bool>
-            </property>
-            <property name="geometry">
-             <rect>
-              <x>30</x>
-              <y>180</y>
-              <width>256</width>
-              <height>192</height>
-             </rect>
-            </property>
-            <property name="html">
-             <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+           <layout class="QVBoxLayout" name="verticalLayout_97">
+            <item>
+             <widget class="QLabel" name="label_110">
+              <property name="text">
+               <string>Export</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QGroupBox" name="groupBox_24">
+              <property name="title">
+               <string>to FireFly inp file</string>
+              </property>
+              <layout class="QVBoxLayout" name="verticalLayout_73">
+               <item>
+                <widget class="QLabel" name="label_35">
+                 <property name="text">
+                  <string>Just specify the extension of the exported file to &quot;.inp&quot;</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
+             <widget class="QGroupBox" name="groupBox_11">
+              <property name="title">
+               <string>to VASP POSCAR</string>
+              </property>
+              <layout class="QVBoxLayout" name="verticalLayout_74">
+               <item>
+                <widget class="QLabel" name="label_36">
+                 <property name="text">
+                  <string>Just specify the extension of the exported file to &quot;.POSCAR&quot;</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="label_123">
+              <property name="text">
+               <string>Import</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QTextBrowser" name="textBrowser">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
+              <property name="html">
+               <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:7.8pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;You can open some non-SEISETA files as easily as regular SEISETA files:&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;1) VASP POSCAR/CONTCAR files&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;2) Critic2 *.XYZ files with information about critical points and bond critical paths. It is nesessary to change Settings  &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-            </property>
-           </widget>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="verticalSpacer_26">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>281</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
           </widget>
          </widget>
         </item>

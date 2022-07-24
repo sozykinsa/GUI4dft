@@ -2,6 +2,13 @@
 .idea/
 src/__pycache__/
 doc-code/build
+doc/gui4dft.aux
+doc/gui4dft.bbl
+doc/gui4dft.blg
+doc/gui4dft.log
+doc/gui4dft.synctex.gz
+doc/gui4dft.toc
+doc/gui4dft.out
 executable/dist/
 executable/build/
 executable/gui4dft.spec

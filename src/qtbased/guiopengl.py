@@ -601,7 +601,7 @@ class GuiOpenGL(QOpenGLWidget):
             for coord in coords:
                 if self.selected_fragment_mode and \
                         (self.main_model.atoms[bond[0]].fragment1 or self.main_model.atoms[bond[1]].fragment1):
-                    gl.glColor4f(*coord[2], self.SelectedFragmentAtomsTransp)
+                    gl.glColor4f(*coord[2][0:3], self.SelectedFragmentAtomsTransp)
                 else:
                     gl.glColor4f(*coord[2][0:3], 1)
                 self.add_bond(coord[0], coord[1], self.scale_factor * self.bondWidth)
@@ -1030,6 +1030,7 @@ class GuiOpenGL(QOpenGLWidget):
     def initializeGL(self):
         self.makeCurrent()
         gl.glEnable(gl.GL_BLEND)
+        gl.glEnable(gl.GL_CULL_FACE)
         gl.glBlendFunc(gl.GL_SRC_ALPHA, gl.GL_ONE_MINUS_SRC_ALPHA)
         gl.glEnable(gl.GL_DEPTH_TEST)
         gl.glDepthMask(1)
