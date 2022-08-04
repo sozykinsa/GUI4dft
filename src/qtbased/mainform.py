@@ -1402,7 +1402,7 @@ class MainForm(QMainWindow):
             os.execl(sys.executable, sys.executable, *sys.argv)
         self.ui.Form3Dand2DTabs.setCurrentIndex(0)
         if not file_name:
-            file_name = self.get_file_name_from_open_dialog("All files (*.*)")
+            file_name = self.get_file_name_from_open_dialog("All files (*)")
         if os.path.exists(file_name):
             self.filename = file_name
             self.work_dir = os.path.dirname(file_name)

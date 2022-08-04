@@ -93,6 +93,7 @@ class GuiOpenGL(QOpenGLWidget):
         self.add_bcp()
         self.add_bondpath()
         self.add_axes()
+        self.add_box()
 
     def wheelEvent(self, event: QEvent):
         self.scale(event.angleDelta().y())
@@ -257,6 +258,7 @@ class GuiOpenGL(QOpenGLWidget):
                              contour_width):
         self.clean()
         self.prop = "charge"
+        self.selected_atom = -1
         self.main_model = deepcopy(structure)
         self.coord0 = -self.main_model.get_center_of_mass()
         self.main_model.move(*self.coord0)
@@ -402,6 +404,7 @@ class GuiOpenGL(QOpenGLWidget):
                 self.add_bonds()
                 self.add_bcp()
                 self.add_bondpath()
+                self.add_box()
             else:
                 self.camera_position[2] -= 0.5 * (wheel/120)
             self.update()
@@ -613,11 +616,11 @@ class GuiOpenGL(QOpenGLWidget):
 
     def add_box(self):
         gl.glNewList(self.object + 3, gl.GL_COMPILE)
-        gl.glColor3f(self.color_of_box[0], self.color_of_box[1], self.color_of_box[2])
+        gl.glColor3f(*self.color_of_box[0:3])
 
-        v1 = self.main_model.lat_vector1
-        v2 = self.main_model.lat_vector2
-        v3 = self.main_model.lat_vector3
+        v1 = self.main_model.lat_vector1 * self.scale_factor
+        v2 = self.main_model.lat_vector2 * self.scale_factor
+        v3 = self.main_model.lat_vector3 * self.scale_factor
 
         origin = - (v1 + v2 + v3) / 2
 
@@ -629,7 +632,7 @@ class GuiOpenGL(QOpenGLWidget):
         p6 = p2 + v3
         p7 = p3 + v3
         p8 = p4 + v3
-        width = 0.03
+        width = 0.03 * self.scale_factor
         self.add_bond(p1, p2, width)
         self.add_bond(p1, p3, width)
         self.add_bond(p1, p5, width)
@@ -973,6 +976,7 @@ class GuiOpenGL(QOpenGLWidget):
             self.add_bcp()
 
         if min_r < 1.4:
+            print("--- ", self.selected_atom, "len ", len(self.main_model.atoms))
             if self.selected_atom >= 0:
                 self.is_view_voronoi = False
             if self.selected_atom != ind:

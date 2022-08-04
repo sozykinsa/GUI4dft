@@ -29,9 +29,12 @@ class TAtomicModel(object):
         self.tags = []
 
         self.name = ""
-        self.lat_vector1 = np.array([100, 0, 0])
-        self.lat_vector2 = np.array([0, 100, 0])
-        self.lat_vector3 = np.array([0, 0, 100])
+        self.lat_vectors = 100 * np.eye(3)
+        # self.lat_vector1 = np.array([100, 0, 0])
+        # self.lat_vector2 = np.array([0, 100, 0])
+        # self.lat_vector3 = np.array([0, 0, 100])
+
+        self.mendeley = TPeriodTable()
 
         for at in newatoms:
             if isinstance(at, Atom):
@@ -41,6 +44,30 @@ class TAtomicModel(object):
             self.add_atom(atom)
 
         self.selected_atom = -1
+
+    @property
+    def lat_vector1(self) -> float:
+        return self.lat_vectors[0]
+
+    @lat_vector1.setter
+    def lat_vector1(self, value):
+        self.lat_vectors[0] = value
+
+    @property
+    def lat_vector2(self) -> float:
+        return self.lat_vectors[1]
+
+    @lat_vector2.setter
+    def lat_vector2(self, value):
+        self.lat_vectors[1] = value
+
+    @property
+    def lat_vector3(self) -> float:
+        return self.lat_vectors[2]
+
+    @lat_vector3.setter
+    def lat_vector3(self, value):
+        self.lat_vectors[2] = value
 
     def get_positions(self):
         pos = np.zeros((len(self.atoms), 3))
@@ -57,8 +84,7 @@ class TAtomicModel(object):
     def get_covalent_radii(self):
         ind = list(set(self.get_atomic_numbers()))
         ind.sort()
-        mendeley = TPeriodTable()
-        return mendeley.get_covalent_radii(ind)
+        return self.mendeley.get_covalent_radii(ind)
 
     def get_center_of_mass(self):
         return np.array(self.center_mass())
@@ -621,20 +647,19 @@ class TAtomicModel(object):
         sz = self.sizeZ()
         if sz < 0.3:
             sz = 5
-        self.lat_vector1 = np.array([1.4 * sx, 0, 0])
-        self.lat_vector2 = np.array([0, 1.4 * sy, 0])
-        self.lat_vector3 = np.array([0, 0, 1.4 * sz])
+        self.lat_vectors = 1.4 * np.eye(3) * np.array((sx, sy, sz))
 
     def delete_atom(self, ind):
-        if self.n_atoms() == 1:
-            return
+        #if self.n_atoms() == 1:
+        #    return
+        print("delete_atom ", self.selected_atom, ind)
         if (ind >= 0) and (ind < self.n_atoms()):
             self.selected_atom = -1
             self.atoms.pop(ind)
             self.find_bonds_fast()
 
     def add_atom(self, atom, min_dist=0):
-        """ Adds atom to the molecule is minimal distance to other atoms more then minDist """
+        """Adds atom to the molecule is minimal distance to other atoms more then minDist."""
         dist = 10000
         if min_dist > 0:
             model = TAtomicModel(self.atoms)
@@ -751,10 +776,9 @@ class TAtomicModel(object):
         return self.atoms[i]
 
     def modify_atoms_types(self, changes):
-        mendeley = TPeriodTable()
         for change in changes:
             let = change[1]
-            charge = mendeley.get_charge_by_letter(let)
+            charge = self.mendeley.get_charge_by_letter(let)
 
             old_charge = change[0]
 
@@ -774,9 +798,8 @@ class TAtomicModel(object):
         n = 0
 
         if charge == 0:
-            mendeley = TPeriodTable()
             for j in range(0, len(self.atoms)):
-                m = mendeley.Atoms[self.atoms[j].charge].mass
+                m = self.mendeley.Atoms[self.atoms[j].charge].mass
                 cx += self.atoms[j].x * m
                 cy += self.atoms[j].y * m
                 cz += self.atoms[j].z * m
@@ -788,12 +811,10 @@ class TAtomicModel(object):
                     cy += self.atoms[j].y
                     cz += self.atoms[j].z
                     n += 1
-        try:
+        if n == 0:
+            res = [0, 0, 0]
+        else:
             res = [cx / n, cy / n, cz / n]
-        except Exception:
-            print("ZeroDivisionError")
-            return [0, 0, 0]
-
         return np.array(res)
 
     def rotate_x(self, alpha):
@@ -1045,14 +1066,13 @@ class TAtomicModel(object):
 
     def find_bonds_fast(self):
         self.bonds = []
-        Mendeley = TPeriodTable()
         for i in range(0, len(self.atoms)):
             for j in range(i + 1, len(self.atoms)):
                 rx2 = math.pow(self.atoms[i].x - self.atoms[j].x, 2)
                 ry2 = math.pow(self.atoms[i].y - self.atoms[j].y, 2)
                 rz2 = math.pow(self.atoms[i].z - self.atoms[j].z, 2)
                 r = math.sqrt(rx2 + ry2 + rz2)
-                r_tab = Mendeley.Bonds[self.atoms[i].charge][self.atoms[j].charge]
+                r_tab = self.mendeley.Bonds[self.atoms[i].charge][self.atoms[j].charge]
                 if (r > 1e-4) and (r < 1.2 * r_tab):
                     self.bonds.append([i, j])
         return self.bonds
@@ -1174,12 +1194,11 @@ class TAtomicModel(object):
         return types
 
     def formula(self):
-        mendeley = TPeriodTable()
         text = ""
         charges = self.types_of_atoms()
         for charge in charges:
             ind = self.indexes_of_atoms_with_charge(charge[0])
-            let = mendeley.get_let(self.atoms[ind[0]].charge)
+            let = self.mendeley.get_let(self.atoms[ind[0]].charge)
             text += let + str(len(ind))
         return text
 
