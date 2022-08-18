@@ -173,6 +173,7 @@ class MainForm(QMainWindow):
         self.ui.FormCreateCriXYZFile.clicked.connect(self.create_critic2_xyz_file)
         self.ui.FormCPdeleteFromList.clicked.connect(self.delete_cp_from_list)
         self.ui.FormCPaddToList.clicked.connect(self.add_cp_to_list)
+        self.ui.export_cp_to_csv.clicked.connect(self.export_cp_to_csv)
 
         self.ui.FormActionsPreButDeleteAtom.clicked.connect(self.atom_delete)
         self.ui.FormActionsPreButModifyAtom.clicked.connect(self.atom_modify)
@@ -503,7 +504,7 @@ class MainForm(QMainWindow):
 
     def add_critic2_cro_file(self):
         try:
-            f_name = self.get_file_name_from_open_dialog("All files (*.*)")
+            f_name = self.get_file_name_from_open_dialog("Critic output (*.cro)")
             self.work_dir = os.path.dirname(f_name)
             model = self.models[-1]
             parse_cp_properties(f_name, model)
@@ -2713,6 +2714,23 @@ class MainForm(QMainWindow):
             text = critic2.create_critic2_xyz_file(bcp, bcp_selected, is_with_selected, model)
             helpers.write_text_to_file(fname, text)
 
+    def export_cp_to_csv(self):
+        name = QFileDialog.getSaveFileName(self, 'Save File', self.work_dir, options=QFileDialog.DontUseNativeDialog)
+        fname = name[0]
+        if len(fname) > 0:
+            model = self.models[self.active_model]
+
+            cp_list = []
+            if self.ui.form_critic_all_cp.isChecked():
+                cp_list = range(len(model.bcp))
+            else:
+                for i in range(0, self.ui.FormCPlist.count()):
+                    ind = int(self.ui.FormCPlist.item(i).text())
+                    cp_list.append(ind)
+            text = critic2.create_csv_file_cp(cp_list, model)
+
+            helpers.write_text_to_file(fname, text)
+
     def create_cri_file(self):  # pragma: no cover
         name = QFileDialog.getSaveFileName(self, 'Save File', self.work_dir, options=QFileDialog.DontUseNativeDialog)
         extra_points = self.ui.FormExtraPoints.value() + 1
@@ -2744,7 +2762,7 @@ class MainForm(QMainWindow):
 
             cp_list = []
             if self.ui.form_critic_all_cp.isChecked():
-                cp_list = range(model.bcp)
+                cp_list = range(len(model.bcp))
             else:
                 for i in range(0, self.ui.FormCPlist.count()):
                     ind = int(self.ui.FormCPlist.item(i).text())

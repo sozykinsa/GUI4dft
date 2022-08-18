@@ -976,7 +976,6 @@ class GuiOpenGL(QOpenGLWidget):
             self.add_bcp()
 
         if min_r < 1.4:
-            print("--- ", self.selected_atom, "len ", len(self.main_model.atoms))
             if self.selected_atom >= 0:
                 self.is_view_voronoi = False
             if self.selected_atom != ind:

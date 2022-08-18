@@ -8436,6 +8436,13 @@
                     </widget>
                    </item>
                    <item>
+                    <widget class="QPushButton" name="export_cp_to_csv">
+                     <property name="text">
+                      <string>Export to *.csv</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
                     <spacer name="verticalSpacer_20">
                      <property name="orientation">
                       <enum>Qt::Vertical</enum>
@@ -8459,242 +8466,284 @@
                </attribute>
                <layout class="QVBoxLayout" name="verticalLayout_90">
                 <item>
-                 <widget class="QGroupBox" name="groupBox_34">
+                 <widget class="QTabWidget" name="tabWidget_14">
+                  <property name="currentIndex">
+                   <number>0</number>
+                  </property>
+                  <widget class="QWidget" name="tab_48">
+                   <attribute name="title">
+                    <string>Imports</string>
+                   </attribute>
+                   <layout class="QHBoxLayout" name="horizontalLayout_162">
+                    <item>
+                     <widget class="QTextBrowser" name="criticalPointImports"/>
+                    </item>
+                   </layout>
+                  </widget>
+                  <widget class="QWidget" name="tab_46">
+                   <attribute name="title">
+                    <string>CP</string>
+                   </attribute>
+                   <layout class="QVBoxLayout" name="verticalLayout_87">
+                    <item>
+                     <widget class="QFrame" name="frame_140">
+                      <property name="frameShape">
+                       <enum>QFrame::NoFrame</enum>
+                      </property>
+                      <property name="frameShadow">
+                       <enum>QFrame::Raised</enum>
+                      </property>
+                      <layout class="QHBoxLayout" name="horizontalLayout_143">
+                       <item>
+                        <widget class="QCheckBox" name="form_critic_all_cp">
+                         <property name="text">
+                          <string>All CP</string>
+                         </property>
+                        </widget>
+                       </item>
+                      </layout>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QFrame" name="frame_134">
+                      <property name="frameShape">
+                       <enum>QFrame::NoFrame</enum>
+                      </property>
+                      <property name="frameShadow">
+                       <enum>QFrame::Raised</enum>
+                      </property>
+                      <layout class="QHBoxLayout" name="horizontalLayout_137">
+                       <item>
+                        <widget class="QRadioButton" name="radioButton_9">
+                         <property name="text">
+                          <string>CP only</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QRadioButton" name="formCriticBPradio">
+                         <property name="text">
+                          <string>BP with</string>
+                         </property>
+                         <property name="checked">
+                          <bool>true</bool>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QSpinBox" name="FormExtraPoints"/>
+                       </item>
+                       <item>
+                        <widget class="QLabel" name="label_86">
+                         <property name="text">
+                          <string>extra points</string>
+                         </property>
+                        </widget>
+                       </item>
+                      </layout>
+                     </widget>
+                    </item>
+                    <item>
+                     <spacer name="verticalSpacer_30">
+                      <property name="orientation">
+                       <enum>Qt::Vertical</enum>
+                      </property>
+                      <property name="sizeHint" stdset="0">
+                       <size>
+                        <width>20</width>
+                        <height>342</height>
+                       </size>
+                      </property>
+                     </spacer>
+                    </item>
+                   </layout>
+                  </widget>
+                  <widget class="QWidget" name="tab_47">
+                   <attribute name="title">
+                    <string>Properties</string>
+                   </attribute>
+                   <layout class="QVBoxLayout" name="verticalLayout_86">
+                    <item>
+                     <widget class="QFrame" name="frame_135">
+                      <property name="frameShape">
+                       <enum>QFrame::NoFrame</enum>
+                      </property>
+                      <property name="frameShadow">
+                       <enum>QFrame::Raised</enum>
+                      </property>
+                      <layout class="QHBoxLayout" name="horizontalLayout_138">
+                       <property name="rightMargin">
+                        <number>0</number>
+                       </property>
+                       <item>
+                        <widget class="QCheckBox" name="form_critic_prop_lag">
+                         <property name="text">
+                          <string>lag</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QCheckBox" name="form_critic_prop_htf_kir">
+                         <property name="text">
+                          <string>htf_kir</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QCheckBox" name="form_critic_prop_htf">
+                         <property name="text">
+                          <string>htf</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QCheckBox" name="form_critic_prop_gtf">
+                         <property name="text">
+                          <string>gtf</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QCheckBox" name="form_critic_prop_gtf_kir">
+                         <property name="text">
+                          <string>gtf_kir</string>
+                         </property>
+                        </widget>
+                       </item>
+                      </layout>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QFrame" name="frame_136">
+                      <property name="minimumSize">
+                       <size>
+                        <width>0</width>
+                        <height>0</height>
+                       </size>
+                      </property>
+                      <property name="frameShape">
+                       <enum>QFrame::NoFrame</enum>
+                      </property>
+                      <property name="frameShadow">
+                       <enum>QFrame::Raised</enum>
+                      </property>
+                      <layout class="QHBoxLayout" name="horizontalLayout_86">
+                       <property name="rightMargin">
+                        <number>0</number>
+                       </property>
+                       <item>
+                        <widget class="QCheckBox" name="form_critic_prop_lol_kir">
+                         <property name="text">
+                          <string>lol_kir</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QCheckBox" name="form_critic_prop_rdg">
+                         <property name="text">
+                          <string>rdg</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QCheckBox" name="form_critic_prop_vtf">
+                         <property name="text">
+                          <string>vtf</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QCheckBox" name="form_critic_prop_vtf_kir">
+                         <property name="text">
+                          <string>vtf_kir</string>
+                         </property>
+                        </widget>
+                       </item>
+                      </layout>
+                     </widget>
+                    </item>
+                    <item>
+                     <spacer name="verticalSpacer_28">
+                      <property name="orientation">
+                       <enum>Qt::Vertical</enum>
+                      </property>
+                      <property name="sizeHint" stdset="0">
+                       <size>
+                        <width>20</width>
+                        <height>344</height>
+                       </size>
+                      </property>
+                     </spacer>
+                    </item>
+                   </layout>
+                  </widget>
+                  <widget class="QWidget" name="tab_49">
+                   <attribute name="title">
+                    <string>Lines</string>
+                   </attribute>
+                   <widget class="QCheckBox" name="addLinesToCriticFile">
+                    <property name="geometry">
+                     <rect>
+                      <x>10</x>
+                      <y>10</y>
+                      <width>311</width>
+                      <height>20</height>
+                     </rect>
+                    </property>
+                    <property name="text">
+                     <string>add lines to *.cri file</string>
+                    </property>
+                   </widget>
+                  </widget>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QFrame" name="frame_115">
                   <property name="minimumSize">
                    <size>
                     <width>0</width>
                     <height>0</height>
                    </size>
                   </property>
-                  <property name="title">
-                   <string>*.cri file</string>
+                  <property name="frameShape">
+                   <enum>QFrame::NoFrame</enum>
                   </property>
-                  <layout class="QVBoxLayout" name="verticalLayout_87">
-                   <property name="rightMargin">
-                    <number>0</number>
-                   </property>
+                  <property name="frameShadow">
+                   <enum>QFrame::Raised</enum>
+                  </property>
+                  <layout class="QHBoxLayout" name="horizontalLayout_141">
                    <item>
-                    <widget class="QFrame" name="frame_140">
-                     <property name="frameShape">
-                      <enum>QFrame::NoFrame</enum>
+                    <spacer name="horizontalSpacer_77">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
                      </property>
-                     <property name="frameShadow">
-                      <enum>QFrame::Raised</enum>
-                     </property>
-                     <layout class="QHBoxLayout" name="horizontalLayout_143">
-                      <item>
-                       <widget class="QCheckBox" name="form_critic_all_cp">
-                        <property name="text">
-                         <string>All CP</string>
-                        </property>
-                       </widget>
-                      </item>
-                     </layout>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QFrame" name="frame_134">
-                     <property name="frameShape">
-                      <enum>QFrame::NoFrame</enum>
-                     </property>
-                     <property name="frameShadow">
-                      <enum>QFrame::Raised</enum>
-                     </property>
-                     <layout class="QHBoxLayout" name="horizontalLayout_137">
-                      <property name="rightMargin">
-                       <number>0</number>
-                      </property>
-                      <item>
-                       <widget class="QRadioButton" name="radioButton_9">
-                        <property name="text">
-                         <string>CP only</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item>
-                       <widget class="QRadioButton" name="formCriticBPradio">
-                        <property name="text">
-                         <string>BP with</string>
-                        </property>
-                        <property name="checked">
-                         <bool>true</bool>
-                        </property>
-                       </widget>
-                      </item>
-                      <item>
-                       <widget class="QSpinBox" name="FormExtraPoints"/>
-                      </item>
-                      <item>
-                       <widget class="QLabel" name="label_86">
-                        <property name="text">
-                         <string>extra points</string>
-                        </property>
-                       </widget>
-                      </item>
-                     </layout>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QGroupBox" name="groupBox_37">
-                     <property name="title">
-                      <string>Properties:</string>
-                     </property>
-                     <layout class="QVBoxLayout" name="verticalLayout_86">
-                      <property name="rightMargin">
-                       <number>0</number>
-                      </property>
-                      <item>
-                       <widget class="QFrame" name="frame_135">
-                        <property name="frameShape">
-                         <enum>QFrame::NoFrame</enum>
-                        </property>
-                        <property name="frameShadow">
-                         <enum>QFrame::Raised</enum>
-                        </property>
-                        <layout class="QHBoxLayout" name="horizontalLayout_138">
-                         <property name="rightMargin">
-                          <number>0</number>
-                         </property>
-                         <item>
-                          <widget class="QCheckBox" name="form_critic_prop_lag">
-                           <property name="text">
-                            <string>lag</string>
-                           </property>
-                          </widget>
-                         </item>
-                         <item>
-                          <widget class="QCheckBox" name="form_critic_prop_htf_kir">
-                           <property name="text">
-                            <string>htf_kir</string>
-                           </property>
-                          </widget>
-                         </item>
-                         <item>
-                          <widget class="QCheckBox" name="form_critic_prop_htf">
-                           <property name="text">
-                            <string>htf</string>
-                           </property>
-                          </widget>
-                         </item>
-                         <item>
-                          <widget class="QCheckBox" name="form_critic_prop_gtf">
-                           <property name="text">
-                            <string>gtf</string>
-                           </property>
-                          </widget>
-                         </item>
-                         <item>
-                          <widget class="QCheckBox" name="form_critic_prop_gtf_kir">
-                           <property name="text">
-                            <string>gtf_kir</string>
-                           </property>
-                          </widget>
-                         </item>
-                        </layout>
-                       </widget>
-                      </item>
-                      <item>
-                       <widget class="QFrame" name="frame_136">
-                        <property name="minimumSize">
-                         <size>
-                          <width>0</width>
-                          <height>0</height>
-                         </size>
-                        </property>
-                        <property name="frameShape">
-                         <enum>QFrame::NoFrame</enum>
-                        </property>
-                        <property name="frameShadow">
-                         <enum>QFrame::Raised</enum>
-                        </property>
-                        <layout class="QHBoxLayout" name="horizontalLayout_86">
-                         <property name="rightMargin">
-                          <number>0</number>
-                         </property>
-                         <item>
-                          <widget class="QCheckBox" name="form_critic_prop_lol_kir">
-                           <property name="text">
-                            <string>lol_kir</string>
-                           </property>
-                          </widget>
-                         </item>
-                         <item>
-                          <widget class="QCheckBox" name="form_critic_prop_rdg">
-                           <property name="text">
-                            <string>rdg</string>
-                           </property>
-                          </widget>
-                         </item>
-                         <item>
-                          <widget class="QCheckBox" name="form_critic_prop_vtf">
-                           <property name="text">
-                            <string>vtf</string>
-                           </property>
-                          </widget>
-                         </item>
-                         <item>
-                          <widget class="QCheckBox" name="form_critic_prop_vtf_kir">
-                           <property name="text">
-                            <string>vtf_kir</string>
-                           </property>
-                          </widget>
-                         </item>
-                        </layout>
-                       </widget>
-                      </item>
-                     </layout>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QFrame" name="frame_115">
-                     <property name="minimumSize">
+                     <property name="sizeHint" stdset="0">
                       <size>
-                       <width>0</width>
-                       <height>0</height>
+                       <width>95</width>
+                       <height>20</height>
                       </size>
                      </property>
-                     <property name="frameShape">
-                      <enum>QFrame::NoFrame</enum>
+                    </spacer>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="FormCreateCriFile">
+                     <property name="text">
+                      <string>Create *.cri file</string>
                      </property>
-                     <property name="frameShadow">
-                      <enum>QFrame::Raised</enum>
-                     </property>
-                     <layout class="QHBoxLayout" name="horizontalLayout_141">
-                      <item>
-                       <spacer name="horizontalSpacer_77">
-                        <property name="orientation">
-                         <enum>Qt::Horizontal</enum>
-                        </property>
-                        <property name="sizeHint" stdset="0">
-                         <size>
-                          <width>95</width>
-                          <height>20</height>
-                         </size>
-                        </property>
-                       </spacer>
-                      </item>
-                      <item>
-                       <widget class="QPushButton" name="FormCreateCriFile">
-                        <property name="text">
-                         <string>Create *.cri file</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item>
-                       <spacer name="horizontalSpacer_97">
-                        <property name="orientation">
-                         <enum>Qt::Horizontal</enum>
-                        </property>
-                        <property name="sizeHint" stdset="0">
-                         <size>
-                          <width>95</width>
-                          <height>20</height>
-                         </size>
-                        </property>
-                       </spacer>
-                      </item>
-                     </layout>
                     </widget>
+                   </item>
+                   <item>
+                    <spacer name="horizontalSpacer_97">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>95</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                    </spacer>
                    </item>
                   </layout>
                  </widget>
@@ -10889,8 +10938,8 @@ p, li { white-space: pre-wrap; }
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>98</width>
-         <height>100</height>
+         <width>642</width>
+         <height>765</height>
         </rect>
        </property>
        <attribute name="label">

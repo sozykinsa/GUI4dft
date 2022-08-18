@@ -66,18 +66,46 @@ def check_cro_file(filename):
         point = 0
         while str1.find("+ Critical point no.") >= 0:
             text = ""
-            while str1.find("Field 0 (f,|grad|,lap):") < 0:
-                str1 = filename.readline()
+            str1 = filename.readline()
+            while not str1.startswith("+ "):
                 if len(str1) > 0:
                     text += str1
+                str1 = filename.readline()
             cps[point][7] = text
             point += 1
-            str1 = filename.readline()
 
         filename.close()
         return box_bohr, box_ang, box_deg, cps
     else:
         return "", "", "", []
+
+
+def create_csv_file_cp(cp_list, model, delimiter: str = ";"):
+    title = ""
+    data = ""
+    for ind in cp_list:
+        title = ""
+        cp = model.bcp[ind]
+        title += "BCP" + delimiter + "atoms" + delimiter
+        data += str(ind) + delimiter
+        ind1, ind2 = model.atoms_of_bond_path(ind)
+        atom1 = model.atoms[ind1].let + str(ind1 + 1)
+        atom2 = model.atoms[ind2].let + str(ind2 + 1)
+        data += atom1 + "-" + atom2 + delimiter
+        data_list = cp.getProperty("text")
+        if data_list:
+            data_list = data_list.split("\n")
+            i = 0
+
+            while i < len(data_list):
+                if (data_list[i].find("Hessian") < 0) and (len(data_list[i]) > 0):
+                    title += data_list[i].split(":")[0] + delimiter
+                    data += '"' + data_list[i].split(":")[1] + '"' + delimiter
+                    i += 1
+                else:
+                    i += 4
+            data += '\n'
+    return title + "\n" + data
 
 
 def model_to_critic_xyz_file(model, cps):
