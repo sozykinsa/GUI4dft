@@ -5080,7 +5080,7 @@ class Ui_MainWindow(object):
 
         self.groupBox = QGroupBox(self.tab_32)
         self.groupBox.setObjectName(u"groupBox")
-        self.groupBox.setMinimumSize(QSize(0, 150))
+        self.groupBox.setMinimumSize(QSize(0, 0))
         self.verticalLayout_68 = QVBoxLayout(self.groupBox)
         self.verticalLayout_68.setObjectName(u"verticalLayout_68")
         self.FormSettingsViewCheckShowBonds = QCheckBox(self.groupBox)
@@ -5196,6 +5196,20 @@ class Ui_MainWindow(object):
 
 
         self.verticalLayout_31.addWidget(self.groupBox)
+
+        self.groupBox_34 = QGroupBox(self.tab_32)
+        self.groupBox_34.setObjectName(u"groupBox_34")
+        self.groupBox_34.setMinimumSize(QSize(0, 0))
+        self.horizontalLayout_163 = QHBoxLayout(self.groupBox_34)
+        self.horizontalLayout_163.setObjectName(u"horizontalLayout_163")
+        self.OpenGL_GL_CULL_FACE = QCheckBox(self.groupBox_34)
+        self.OpenGL_GL_CULL_FACE.setObjectName(u"OpenGL_GL_CULL_FACE")
+        self.OpenGL_GL_CULL_FACE.setEnabled(True)
+
+        self.horizontalLayout_163.addWidget(self.OpenGL_GL_CULL_FACE)
+
+
+        self.verticalLayout_31.addWidget(self.groupBox_34)
 
         self.verticalSpacer_9 = QSpacerItem(20, 374, QSizePolicy.Minimum, QSizePolicy.Expanding)
 
@@ -6394,6 +6408,8 @@ class Ui_MainWindow(object):
         self.label_2.setText(QCoreApplication.translate("MainWindow", u"Bond parameter", None))
         self.label_31.setText(QCoreApplication.translate("MainWindow", u"-", None))
         self.label_30.setText(QCoreApplication.translate("MainWindow", u"A", None))
+        self.groupBox_34.setTitle(QCoreApplication.translate("MainWindow", u"OpenGl", None))
+        self.OpenGL_GL_CULL_FACE.setText(QCoreApplication.translate("MainWindow", u"GL_CULL_FACE", None))
         self.tabWidget_9.setTabText(self.tabWidget_9.indexOf(self.tab_32), QCoreApplication.translate("MainWindow", u"View 3D", None))
         self.groupBox_9.setTitle(QCoreApplication.translate("MainWindow", u"Colors", None))
         self.label_32.setText(QCoreApplication.translate("MainWindow", u"Font color", None))

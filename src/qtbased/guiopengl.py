@@ -36,17 +36,18 @@ class GuiOpenGL(QOpenGLWidget):
         self.coord0 = np.zeros(3, dtype=float)
 
         self.is_orthographic: bool = False
-        self.is_view_atoms = True
-        self.is_view_box = False
-        self.is_view_bonds = True
+        self.is_view_atoms: bool = True
+        self.is_view_box: bool = False
+        self.is_view_bonds: bool = True
+        self.is_gl_cull_face: bool = False
         self.is_view_surface: bool = False
         self.is_view_contour: bool = False
         self.is_view_contour_fill: bool = False
         self.is_view_voronoi: bool = False
         self.is_view_bcp: bool = False
         self.is_view_bond_path: bool = False
-        self.active = False
-        self.is_atomic_numbers_visible = False
+        self.active: bool = False
+        self.is_atomic_numbers_visible: bool = False
         self.scale_factor = 1
         self.bond_width = 20
         self.x_scene = 0
@@ -394,6 +395,10 @@ class GuiOpenGL(QOpenGLWidget):
 
     def set_axes_visible(self, state):
         self.is_view_axes = state
+        self.update()
+
+    def set_gl_cull_face(self, state):
+        self.is_gl_cull_face = state
         self.update()
 
     def scale(self, wheel):
@@ -933,6 +938,10 @@ class GuiOpenGL(QOpenGLWidget):
     def prepere_scene(self):
         gl.glClearColor(*self.background_color, 1.0)
         gl.glClear(gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT)
+        if self.is_gl_cull_face:
+            gl.glEnable(gl.GL_CULL_FACE)
+        else:
+            gl.glDisable(gl.GL_CULL_FACE)
         gl.glMatrixMode(gl.GL_PROJECTION)
         gl.glLoadIdentity()
         x, y, width, height = gl.glGetDoublev(gl.GL_VIEWPORT)
@@ -1037,7 +1046,6 @@ class GuiOpenGL(QOpenGLWidget):
     def initializeGL(self):
         self.makeCurrent()
         gl.glEnable(gl.GL_BLEND)
-        gl.glEnable(gl.GL_CULL_FACE)
         gl.glBlendFunc(gl.GL_SRC_ALPHA, gl.GL_ONE_MINUS_SRC_ALPHA)
         gl.glEnable(gl.GL_DEPTH_TEST)
         gl.glDepthMask(1)

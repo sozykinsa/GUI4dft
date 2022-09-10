@@ -1235,6 +1235,10 @@ class MainForm(QMainWindow):
         self.ui.FormSettingsViewCheckShowBonds.setChecked(state_show_bonds)
         self.ui.FormSettingsViewCheckShowBonds.clicked.connect(self.save_state_view_show_bonds)
 
+        state_gl_cull_face = settings.value(SETTINGS_GlCullFace, True, type=bool)
+        self.ui.OpenGL_GL_CULL_FACE.setChecked(state_gl_cull_face)
+        self.ui.OpenGL_GL_CULL_FACE.clicked.connect(self.save_state_gl_cull_face)
+
         self.work_dir = str(settings.value(SETTINGS_Folder, "/home"))
         self.ColorType = str(settings.value(SETTINGS_FormSettingsColorsScale, 'rainbow'))
         self.ui.FormSettingsColorsScale.currentIndexChanged.connect(self.save_state_colors_scale)
@@ -2250,6 +2254,10 @@ class MainForm(QMainWindow):
         self.save_property(SETTINGS_FormSettingsViewCheckShowBonds, self.ui.FormSettingsViewCheckShowBonds.isChecked())
         self.ui.openGLWidget.set_bonds_visible(self.ui.FormSettingsViewCheckShowBonds.isChecked())
 
+    def save_state_gl_cull_face(self):  # pragma: no cover
+        self.save_property(SETTINGS_GlCullFace, self.ui.OpenGL_GL_CULL_FACE.isChecked())
+        self.ui.openGLWidget.set_gl_cull_face(self.ui.OpenGL_GL_CULL_FACE.isChecked())
+
     def save_state_colors_fixed(self):  # pragma: no cover
         self.save_property(SETTINGS_FormSettingsColorsFixed, self.ui.FormSettingsColorsFixed.isChecked())
 
@@ -2987,6 +2995,7 @@ SETTINGS_FormSettingsViewCheckShowAxes = 'view/CheckShowAxes'
 SETTINGS_FormSettingsViewCheckShowBonds = 'view/CheckShowBonds'
 SETTINGS_FormSettingsViewSpinBondWidth = 'view/SpinBondWidth'
 SETTINGS_FormSettingsViewSpinContourWidth = 'view/SpinContourWidth'
+SETTINGS_GlCullFace = 'view/GlCullFace'
 SETTINGS_FormSettingsActionOnStart = 'action/OnStart'
 
 SETTINGS_FormSettingsPreferredCoordinates = 'model/FormSettingsPreferredCoordinates'
