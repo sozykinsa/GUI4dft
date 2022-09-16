@@ -1,0 +1,50 @@
+NumberOfAtoms 3
+NumberOfSpecies 2
+%block ChemicalSpeciesLabel
+ 1  1  H
+ 2  8  O
+%endblock ChemicalSpeciesLabel
+LatticeConstant       4.0 Ang
+%block LatticeVectors
+  20.0  0.0  0.0
+  0.0  20.0  0.0
+  0.0  0.0  20.0
+%endblock LatticeVectors
+AtomicCoordinatesFormat ScaledCartesian
+%block AtomicCoordinatesAndAtomicSpecies
+0.1748617975	0	 0.1937264875  1
+0.1748617975	0	-0.193726485   1
+0.031938685	    0	 0             2
+%endblock AtomicCoordinatesAndAtomicSpecies
+SystemName          H2O
+SystemLabel         siesta
+WriteMullikenPop    1
+PAO.BasisSize  DZP
+MeshCutoff       200.0 Ry
+Spin non-polarized
+MaxSCFIterations       150
+SolutionMethod         diagon
+NetCharge     0.00
+DM.NumberPulay    4
+DM.MixingWeight   0.3
+DM.UseSaveDM      .true.
+NeglNonOverlapInt False
+XC.functional=LDA
+XC.authors=CA
+ZM.UnitsLength = Ang
+WriteCoorXmol     True
+WriteForces .true.
+WriteMullikenPop     1
+MD.TypeOfRun           cg               # Type of dynamics: Conjugate gradients
+MD.NumCGsteps          320              # number of CG steps
+MD.MaxCGDispl          0.15 Ang
+MD.MaxForceTol         0.04 eV/Ang
+MD.UseSaveXV           yes
+MD.VariableCell        .false.
+%block kgrid_Monkhorst_Pack
+  1  0  0   0.0
+  0  1  0   0.0
+  0  0  16  0.0
+%endblock kgrid_Monkhorst_Pack
+
+WriteCoorStep True
