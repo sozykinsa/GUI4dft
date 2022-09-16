@@ -88,3 +88,13 @@ def test_get_charges_for_atoms(tests_path):
     f_name = str(tests_path / 'ref_data' / 'h2o-ang-charges' / "siesta.out")
     mulliken = TSIESTA.get_charges_for_atoms(f_name, "Mulliken")
     assert mulliken[0] != []
+
+
+def test_coord_type(tests_path):
+    f_name = str(tests_path / 'ref_data' / 'h2o-scaled' / "siesta.fdf")
+    coord_t = TSIESTA.atomic_coordinates_format(f_name)
+    assert coord_t == "ScaledCartesian"
+
+    f_name = str(tests_path / 'ref_data' / 'swcnt(8,0)' / "siesta.out")
+    coord_t = TSIESTA.atomic_coordinates_format(f_name)
+    assert coord_t == "NotScaledCartesianAng"

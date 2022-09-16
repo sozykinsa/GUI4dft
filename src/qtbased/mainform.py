@@ -1325,7 +1325,6 @@ class MainForm(QMainWindow):
 
         self.coord_type = str(settings.value(SETTINGS_FormSettingsPreferredCoordinates, 'Cartesian'))
         self.units_type = str(settings.value(SETTINGS_FormSettingsPreferredUnits, 'Ang'))
-
         self.lattice_type = str(settings.value(SETTINGS_FormSettingsPreferredLattice, 'LatticeParameters'))
 
         self.action_on_start = str(settings.value(SETTINGS_FormSettingsActionOnStart, 'Nothing'))
@@ -2289,6 +2288,14 @@ class MainForm(QMainWindow):
                            self.ui.FormSettingsPreferredCoordinates.currentText())
         self.coord_type = self.ui.FormSettingsPreferredCoordinates.currentText()
 
+    def save_state_preferred_coordinates_style(self):  # pragma: no cover
+        self.save_property(SETTINGS_FormSettingsPreferredCoordinatesStyle,
+                           self.ui.PreferredCoordinatesTypeSimple.isChecked())
+        if self.ui.PreferredCoordinatesTypeSimple.isChecked():
+            self.ui.FormSettingsPreferredCoordinates.setEnabled(True)
+        else:
+            self.ui.FormSettingsPreferredCoordinates.setEnabled(False)
+
     def save_state_preferred_units(self):  # pragma: no cover
         self.save_property(SETTINGS_FormSettingsPreferredUnits,
                            self.ui.FormSettingsPreferredUnits.currentText())
@@ -2998,6 +3005,7 @@ SETTINGS_FormSettingsViewSpinContourWidth = 'view/SpinContourWidth'
 SETTINGS_GlCullFace = 'view/GlCullFace'
 SETTINGS_FormSettingsActionOnStart = 'action/OnStart'
 
+SETTINGS_FormSettingsPreferredCoordinatesStyle = 'model/FormSettingsPreferredCoordinatesStyle'
 SETTINGS_FormSettingsPreferredCoordinates = 'model/FormSettingsPreferredCoordinates'
 SETTINGS_FormSettingsPreferredUnits = 'model/FormSettingsPreferred/units'
 SETTINGS_FormSettingsPreferredLattice = 'model/FormSettingsPreferredLattice'

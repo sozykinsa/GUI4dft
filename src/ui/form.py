@@ -5835,26 +5835,27 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_3.addWidget(self.frame_122)
 
-        self.frame_80 = QFrame(self.FormTabSettings)
-        self.frame_80.setObjectName(u"frame_80")
-        self.frame_80.setFrameShape(QFrame.NoFrame)
-        self.frame_80.setFrameShadow(QFrame.Raised)
-        self.horizontalLayout_84 = QHBoxLayout(self.frame_80)
-        self.horizontalLayout_84.setObjectName(u"horizontalLayout_84")
-        self.horizontalLayout_84.setContentsMargins(0, 0, 0, 0)
-        self.label_49 = QLabel(self.frame_80)
+        self.frame_151 = QFrame(self.FormTabSettings)
+        self.frame_151.setObjectName(u"frame_151")
+        self.frame_151.setFrameShape(QFrame.NoFrame)
+        self.frame_151.setFrameShadow(QFrame.Raised)
+        self.horizontalLayout_164 = QHBoxLayout(self.frame_151)
+        self.horizontalLayout_164.setObjectName(u"horizontalLayout_164")
+        self.horizontalLayout_164.setContentsMargins(0, -1, 0, -1)
+        self.label_49 = QLabel(self.frame_151)
         self.label_49.setObjectName(u"label_49")
+        self.label_49.setFrameShape(QFrame.NoFrame)
 
-        self.horizontalLayout_84.addWidget(self.label_49)
+        self.horizontalLayout_164.addWidget(self.label_49)
 
-        self.FormSettingsPreferredCoordinates = QComboBox(self.frame_80)
+        self.FormSettingsPreferredCoordinates = QComboBox(self.frame_151)
         self.FormSettingsPreferredCoordinates.setObjectName(u"FormSettingsPreferredCoordinates")
         self.FormSettingsPreferredCoordinates.setEditable(False)
 
-        self.horizontalLayout_84.addWidget(self.FormSettingsPreferredCoordinates)
+        self.horizontalLayout_164.addWidget(self.FormSettingsPreferredCoordinates)
 
 
-        self.verticalLayout_3.addWidget(self.frame_80)
+        self.verticalLayout_3.addWidget(self.frame_151)
 
         self.frame_85 = QFrame(self.FormTabSettings)
         self.frame_85.setObjectName(u"frame_85")
@@ -5876,6 +5877,16 @@ class Ui_MainWindow(object):
 
 
         self.verticalLayout_3.addWidget(self.frame_85)
+
+        self.frame_80 = QFrame(self.FormTabSettings)
+        self.frame_80.setObjectName(u"frame_80")
+        self.frame_80.setFrameShape(QFrame.NoFrame)
+        self.frame_80.setFrameShadow(QFrame.Raised)
+        self.horizontalLayout_84 = QHBoxLayout(self.frame_80)
+        self.horizontalLayout_84.setObjectName(u"horizontalLayout_84")
+        self.horizontalLayout_84.setContentsMargins(0, 0, 0, 0)
+
+        self.verticalLayout_3.addWidget(self.frame_80)
 
         self.verticalSpacer_18 = QSpacerItem(20, 568, QSizePolicy.Minimum, QSizePolicy.Expanding)
 

@@ -6,6 +6,10 @@ def test_importer_fdf(tests_path):
     model, fdf = Importer.import_from_file(f_name, fl='all', prop=False, xyzcritic2=False)
     assert len(model[0].atoms) == 3
 
+    f_name = str(tests_path / 'ref_data' / 'h2o-scaled' / "siesta.fdf")
+    model, fdf = Importer.import_from_file(f_name, fl='all', prop=False, xyzcritic2=False)
+    assert len(model[0].atoms) == 3
+
     f_name = str(tests_path / 'ref_data' / 'h2o-bohr' / "siesta.fdf")
     model, fdf = Importer.import_from_file(f_name, fl='all', prop=False, xyzcritic2=False)
     assert len(model[0].atoms) == 3
@@ -19,6 +23,10 @@ def test_importer_fdf(tests_path):
     assert len(model[0].atoms) == 3
 
     f_name = str(tests_path / 'ref_data' / 'h2o-zmatrix' / "siesta.fdf")
+    model, fdf = Importer.import_from_file(f_name, fl='all', prop=False, xyzcritic2=False)
+    assert len(model[0].atoms) == 3
+
+    f_name = str(tests_path / 'ref_data' / 'incorrect' / "siesta-no-cell.fdf")
     model, fdf = Importer.import_from_file(f_name, fl='all', prop=False, xyzcritic2=False)
     assert len(model[0].atoms) == 3
 

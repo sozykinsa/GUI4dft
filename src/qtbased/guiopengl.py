@@ -410,6 +410,7 @@ class GuiOpenGL(QOpenGLWidget):
                 self.add_bcp()
                 self.add_bondpath()
                 self.add_box()
+                self.add_axes()
             else:
                 self.camera_position[2] -= 0.5 * (wheel/120)
             self.update()
