@@ -2192,8 +2192,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>337</width>
-                 <height>258</height>
+                 <width>371</width>
+                 <height>593</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -3033,70 +3033,6 @@
                 </item>
                </layout>
               </widget>
-              <widget class="QWidget" name="page_12">
-               <property name="geometry">
-                <rect>
-                 <x>0</x>
-                 <y>0</y>
-                 <width>337</width>
-                 <height>79</height>
-                </rect>
-               </property>
-               <attribute name="label">
-                <string>Grow model</string>
-               </attribute>
-               <layout class="QVBoxLayout" name="verticalLayout_41">
-                <item>
-                 <widget class="QFrame" name="frame_58">
-                  <property name="enabled">
-                   <bool>true</bool>
-                  </property>
-                  <property name="frameShape">
-                   <enum>QFrame::NoFrame</enum>
-                  </property>
-                  <property name="frameShadow">
-                   <enum>QFrame::Raised</enum>
-                  </property>
-                  <layout class="QHBoxLayout" name="horizontalLayout_50">
-                   <item>
-                    <widget class="QPushButton" name="FormModifyGrowX">
-                     <property name="text">
-                      <string>Grow X</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QPushButton" name="FormModifyGrowY">
-                     <property name="text">
-                      <string>Grow Y</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QPushButton" name="FormModifyGrowZ">
-                     <property name="text">
-                      <string>Grow Z</string>
-                     </property>
-                    </widget>
-                   </item>
-                  </layout>
-                 </widget>
-                </item>
-                <item>
-                 <spacer name="verticalSpacer_8">
-                  <property name="orientation">
-                   <enum>Qt::Vertical</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>20</width>
-                    <height>400</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-               </layout>
-              </widget>
               <widget class="QWidget" name="page_11">
                <property name="geometry">
                 <rect>
@@ -3439,6 +3375,118 @@
                    <size>
                     <width>20</width>
                     <height>288</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+               </layout>
+              </widget>
+              <widget class="QWidget" name="page_12">
+               <property name="geometry">
+                <rect>
+                 <x>0</x>
+                 <y>0</y>
+                 <width>371</width>
+                 <height>593</height>
+                </rect>
+               </property>
+               <attribute name="label">
+                <string>Transforms</string>
+               </attribute>
+               <layout class="QVBoxLayout" name="verticalLayout_41">
+                <item>
+                 <widget class="QGroupBox" name="groupBox_37">
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                  <property name="title">
+                   <string>Grow model</string>
+                  </property>
+                  <layout class="QHBoxLayout" name="horizontalLayout_165">
+                   <item>
+                    <widget class="QPushButton" name="FormModifyGrowX">
+                     <property name="text">
+                      <string>Grow X</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="FormModifyGrowY">
+                     <property name="text">
+                      <string>Grow Y</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="FormModifyGrowZ">
+                     <property name="text">
+                      <string>Grow Z</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QGroupBox" name="groupBox_49">
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                  <property name="title">
+                   <string>Go to positive!</string>
+                  </property>
+                  <layout class="QHBoxLayout" name="horizontalLayout_50">
+                   <item>
+                    <spacer name="horizontalSpacer_117">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>106</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="FormModifyGoPositive">
+                     <property name="text">
+                      <string>Go</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <spacer name="horizontalSpacer_118">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>106</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="verticalSpacer_8">
+                  <property name="orientation">
+                   <enum>Qt::Vertical</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>20</width>
+                    <height>400</height>
                    </size>
                   </property>
                  </spacer>

@@ -1268,7 +1268,7 @@ class Ui_MainWindow(object):
         self.toolBox_6.setSizePolicy(sizePolicy2)
         self.page_29 = QWidget()
         self.page_29.setObjectName(u"page_29")
-        self.page_29.setGeometry(QRect(0, 0, 337, 258))
+        self.page_29.setGeometry(QRect(0, 0, 371, 593))
         self.verticalLayout_26 = QVBoxLayout(self.page_29)
         self.verticalLayout_26.setObjectName(u"verticalLayout_26")
         self.frame_28 = QFrame(self.page_29)
@@ -1672,41 +1672,6 @@ class Ui_MainWindow(object):
         self.verticalLayout_10.addItem(self.verticalSpacer_24)
 
         self.toolBox_6.addItem(self.page_28, u"Fill Space")
-        self.page_12 = QWidget()
-        self.page_12.setObjectName(u"page_12")
-        self.page_12.setGeometry(QRect(0, 0, 337, 79))
-        self.verticalLayout_41 = QVBoxLayout(self.page_12)
-        self.verticalLayout_41.setObjectName(u"verticalLayout_41")
-        self.frame_58 = QFrame(self.page_12)
-        self.frame_58.setObjectName(u"frame_58")
-        self.frame_58.setEnabled(True)
-        self.frame_58.setFrameShape(QFrame.NoFrame)
-        self.frame_58.setFrameShadow(QFrame.Raised)
-        self.horizontalLayout_50 = QHBoxLayout(self.frame_58)
-        self.horizontalLayout_50.setObjectName(u"horizontalLayout_50")
-        self.FormModifyGrowX = QPushButton(self.frame_58)
-        self.FormModifyGrowX.setObjectName(u"FormModifyGrowX")
-
-        self.horizontalLayout_50.addWidget(self.FormModifyGrowX)
-
-        self.FormModifyGrowY = QPushButton(self.frame_58)
-        self.FormModifyGrowY.setObjectName(u"FormModifyGrowY")
-
-        self.horizontalLayout_50.addWidget(self.FormModifyGrowY)
-
-        self.FormModifyGrowZ = QPushButton(self.frame_58)
-        self.FormModifyGrowZ.setObjectName(u"FormModifyGrowZ")
-
-        self.horizontalLayout_50.addWidget(self.FormModifyGrowZ)
-
-
-        self.verticalLayout_41.addWidget(self.frame_58)
-
-        self.verticalSpacer_8 = QSpacerItem(20, 400, QSizePolicy.Minimum, QSizePolicy.Expanding)
-
-        self.verticalLayout_41.addItem(self.verticalSpacer_8)
-
-        self.toolBox_6.addItem(self.page_12, u"Grow model")
         self.page_11 = QWidget()
         self.page_11.setObjectName(u"page_11")
         self.page_11.setGeometry(QRect(0, 0, 293, 425))
@@ -1891,6 +1856,60 @@ class Ui_MainWindow(object):
         self.verticalLayout_82.addItem(self.verticalSpacer_7)
 
         self.toolBox_6.addItem(self.page_11, u"Rotate model")
+        self.page_12 = QWidget()
+        self.page_12.setObjectName(u"page_12")
+        self.page_12.setGeometry(QRect(0, 0, 371, 593))
+        self.verticalLayout_41 = QVBoxLayout(self.page_12)
+        self.verticalLayout_41.setObjectName(u"verticalLayout_41")
+        self.groupBox_37 = QGroupBox(self.page_12)
+        self.groupBox_37.setObjectName(u"groupBox_37")
+        self.groupBox_37.setMinimumSize(QSize(0, 0))
+        self.horizontalLayout_165 = QHBoxLayout(self.groupBox_37)
+        self.horizontalLayout_165.setObjectName(u"horizontalLayout_165")
+        self.FormModifyGrowX = QPushButton(self.groupBox_37)
+        self.FormModifyGrowX.setObjectName(u"FormModifyGrowX")
+
+        self.horizontalLayout_165.addWidget(self.FormModifyGrowX)
+
+        self.FormModifyGrowY = QPushButton(self.groupBox_37)
+        self.FormModifyGrowY.setObjectName(u"FormModifyGrowY")
+
+        self.horizontalLayout_165.addWidget(self.FormModifyGrowY)
+
+        self.FormModifyGrowZ = QPushButton(self.groupBox_37)
+        self.FormModifyGrowZ.setObjectName(u"FormModifyGrowZ")
+
+        self.horizontalLayout_165.addWidget(self.FormModifyGrowZ)
+
+
+        self.verticalLayout_41.addWidget(self.groupBox_37)
+
+        self.groupBox_49 = QGroupBox(self.page_12)
+        self.groupBox_49.setObjectName(u"groupBox_49")
+        self.groupBox_49.setMinimumSize(QSize(0, 0))
+        self.horizontalLayout_50 = QHBoxLayout(self.groupBox_49)
+        self.horizontalLayout_50.setObjectName(u"horizontalLayout_50")
+        self.horizontalSpacer_117 = QSpacerItem(106, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_50.addItem(self.horizontalSpacer_117)
+
+        self.FormModifyGoPositive = QPushButton(self.groupBox_49)
+        self.FormModifyGoPositive.setObjectName(u"FormModifyGoPositive")
+
+        self.horizontalLayout_50.addWidget(self.FormModifyGoPositive)
+
+        self.horizontalSpacer_118 = QSpacerItem(106, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_50.addItem(self.horizontalSpacer_118)
+
+
+        self.verticalLayout_41.addWidget(self.groupBox_49)
+
+        self.verticalSpacer_8 = QSpacerItem(20, 400, QSizePolicy.Minimum, QSizePolicy.Expanding)
+
+        self.verticalLayout_41.addItem(self.verticalSpacer_8)
+
+        self.toolBox_6.addItem(self.page_12, u"Transforms")
 
         self.verticalLayout_16.addWidget(self.toolBox_6)
 
@@ -6107,10 +6126,6 @@ class Ui_MainWindow(object):
         self.FormActionsPreSaveToFileFillSpace.setText(QCoreApplication.translate("MainWindow", u"Save to files", None))
         self.FormActionsPreButFillSpace.setText(QCoreApplication.translate("MainWindow", u"Create", None))
         self.toolBox_6.setItemText(self.toolBox_6.indexOf(self.page_28), QCoreApplication.translate("MainWindow", u"Fill Space", None))
-        self.FormModifyGrowX.setText(QCoreApplication.translate("MainWindow", u"Grow X", None))
-        self.FormModifyGrowY.setText(QCoreApplication.translate("MainWindow", u"Grow Y", None))
-        self.FormModifyGrowZ.setText(QCoreApplication.translate("MainWindow", u"Grow Z", None))
-        self.toolBox_6.setItemText(self.toolBox_6.indexOf(self.page_12), QCoreApplication.translate("MainWindow", u"Grow model", None))
         self.groupBox_44.setTitle(QCoreApplication.translate("MainWindow", u"Rotate", None))
         self.label_51.setText(QCoreApplication.translate("MainWindow", u"Rotate", None))
         self.label_53.setText(QCoreApplication.translate("MainWindow", u"degrees", None))
@@ -6125,6 +6140,13 @@ class Ui_MainWindow(object):
         self.label_104.setText(QCoreApplication.translate("MainWindow", u"Twist angle in degrees", None))
         self.FormModifyTwist.setText(QCoreApplication.translate("MainWindow", u"Twist", None))
         self.toolBox_6.setItemText(self.toolBox_6.indexOf(self.page_11), QCoreApplication.translate("MainWindow", u"Rotate model", None))
+        self.groupBox_37.setTitle(QCoreApplication.translate("MainWindow", u"Grow model", None))
+        self.FormModifyGrowX.setText(QCoreApplication.translate("MainWindow", u"Grow X", None))
+        self.FormModifyGrowY.setText(QCoreApplication.translate("MainWindow", u"Grow Y", None))
+        self.FormModifyGrowZ.setText(QCoreApplication.translate("MainWindow", u"Grow Z", None))
+        self.groupBox_49.setTitle(QCoreApplication.translate("MainWindow", u"Go to positive!", None))
+        self.FormModifyGoPositive.setText(QCoreApplication.translate("MainWindow", u"Go", None))
+        self.toolBox_6.setItemText(self.toolBox_6.indexOf(self.page_12), QCoreApplication.translate("MainWindow", u"Transforms", None))
         self.tabWidget_3.setTabText(self.tabWidget_3.indexOf(self.tab_7), QCoreApplication.translate("MainWindow", u"Modify", None))
         self.FormActionsPreButFDFGenerate.setText(QCoreApplication.translate("MainWindow", u"Generate", None))
         self.FormActionsPreButFDFToFile.setText(QCoreApplication.translate("MainWindow", u"Save", None))

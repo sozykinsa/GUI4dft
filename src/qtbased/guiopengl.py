@@ -725,7 +725,7 @@ class GuiOpenGL(QOpenGLWidget):
         gl.glNewList(self.object + 8, gl.GL_COMPILE)
         for at in self.main_model.bcp:
             gl.glPushMatrix()
-            gl.glTranslatef(self.scale_factor * at.x, self.scale_factor * at.y, self.scale_factor * at.z)
+            gl.glTranslatef(*(self.scale_factor * at.xyz))
             gl.glColor3f(1, 0, 0)
             mult = self.scale_factor
             if at.isSelected():
@@ -755,9 +755,9 @@ class GuiOpenGL(QOpenGLWidget):
 
         gl.glColor3f(0, 1, 0)
         for i in range(1, len(bond)):
-            pos1 = np.array((bond[i - 1].x, bond[i - 1].y, bond[i - 1].z))
-            pos2 = np.array((bond[i].x, bond[i].y, bond[i].z))
-            self.add_bond(self.scale_factor * pos1, self.scale_factor * pos2, self.scale_factor * 0.03)
+            self.add_bond(self.scale_factor * bond[i - 1].xyz,
+                          self.scale_factor * bond[i].xyz,
+                          self.scale_factor * 0.03)
 
     def add_contour(self, params):
         self.data_contour = params

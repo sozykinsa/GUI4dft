@@ -64,7 +64,7 @@ class Calculators:
             if len(molecule.atoms) == n_atoms:
                 my_delta = 4 * rad_tube + length
                 for newMolecula in models:
-                    myDelta2 = molecule.Delta(newMolecula)
+                    myDelta2 = molecule.delta(newMolecula)
                     if myDelta2 < my_delta:
                         my_delta = myDelta2
                 if my_delta > delta:

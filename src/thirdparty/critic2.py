@@ -86,12 +86,17 @@ def create_csv_file_cp(cp_list, model, delimiter: str = ";"):
     for ind in cp_list:
         title = ""
         cp = model.bcp[ind]
-        title += "BCP" + delimiter + "atoms" + delimiter
+        title += "BCP" + delimiter + "atoms" + delimiter + "dist" + delimiter
         data += str(ind) + delimiter
-        ind1, ind2 = model.atoms_of_bond_path(ind)
+        ind1 = cp.getProperty("atom1")
+        ind2 = cp.getProperty("atom2")
         atom1 = model.atoms[ind1].let + str(ind1 + 1)
         atom2 = model.atoms[ind2].let + str(ind2 + 1)
         data += atom1 + "-" + atom2 + delimiter
+
+        dist_line = round(model.atom_atom_distance(ind1, ind2), 4)
+        data += '" ' + str(dist_line) + ' "' + delimiter
+
         data_list = cp.getProperty("text")
         if data_list:
             data_list = data_list.split("\n")
@@ -99,8 +104,14 @@ def create_csv_file_cp(cp_list, model, delimiter: str = ";"):
 
             while i < len(data_list):
                 if (data_list[i].find("Hessian") < 0) and (len(data_list[i]) > 0):
-                    title += data_list[i].split(":")[0] + delimiter
-                    data += '"' + data_list[i].split(":")[1] + '"' + delimiter
+                    col_title = helpers.spacedel(data_list[i].split(":")[0])
+                    col_data = data_list[i].split(":")[1].split()
+                    for k in range(len(col_data)):
+                        title += col_title
+                        if len(col_data) > 1:
+                            title += "_" + str(k + 1)
+                        title += delimiter
+                        data += '"' + col_data[k] + '"' + delimiter
                     i += 1
                 else:
                     i += 4
@@ -167,7 +178,8 @@ def create_cri_file(cp_list, extra_points, is_form_bp, model, text_prop):
     for ind in cp_list:
         cp = model.bcp[ind]
         text += "Bond Critical Point: " + str(ind) + "  :  "
-        ind1, ind2 = model.atoms_of_bond_path(ind)
+        ind1 = cp.getProperty("atom1")
+        ind2 = cp.getProperty("atom2")
         atom1 = model.atoms[ind1].let + str(ind1 + 1)
         atom2 = model.atoms[ind2].let + str(ind2 + 1)
         title = atom1 + "-" + atom2
@@ -234,7 +246,6 @@ def create_cri_file(cp_list, extra_points, is_form_bp, model, text_prop):
     textl += 'POINTPROP lapl "$5"\n'
     textl += "POINT ./POINTS.txt\n"
     lines += "UNLOAD ALL\nEND"
-
     return textl, lines, te, text
 
 

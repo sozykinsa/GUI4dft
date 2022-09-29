@@ -201,6 +201,8 @@ class MainForm(QMainWindow):
         self.ui.FormModifyGrowY.clicked.connect(self.model_grow_y)
         self.ui.FormModifyGrowZ.clicked.connect(self.model_grow_z)
 
+        self.ui.FormModifyGoPositive.clicked.connect(self.model_go_to_positive)
+
         self.ui.FormActionsPostButVoronoi.clicked.connect(self.plot_voronoi)
         self.ui.FormActionsPostButOptimizeCellParam.clicked.connect(self.plot_volume_param_energy)
 
@@ -1509,6 +1511,17 @@ class MainForm(QMainWindow):
         self.fill_models_list()
         self.model_to_screen(-1)
 
+    def model_go_to_positive(self):
+        if self.ui.openGLWidget.main_model.n_atoms() == 0:
+            return
+        model = self.ui.openGLWidget.main_model
+        # model.go_to_positive_coordinates()
+        model.go_to_positive_coordinates_translate()
+        # model.move_atoms_to_cell()
+        self.models.append(model)
+        self.fill_models_list()
+        self.model_to_screen(-1)
+
     def model_grow_x(self):
         if self.ui.openGLWidget.main_model.n_atoms() == 0:
             return
@@ -2393,10 +2406,14 @@ class MainForm(QMainWindow):
             bond1 = cp.getProperty("bond1")
             bond2 = cp.getProperty("bond2")
 
-            ind1, ind2 = model.atoms_of_bond_path(selected_cp)
+            # ind1, ind2 = model.atoms_of_bond_path(selected_cp)
+            ind1 = cp.getProperty("atom1")
+            ind2 = cp.getProperty("atom2")
+
             text += atoms[ind1].let + str(ind1 + 1) + "-" + atoms[ind2].let + str(ind2 + 1) + ")\n"
-            text += "Bond critical path: " + str(len(bond1)) + " + " + str(len(bond2)) + " = " \
-                    + str(len(bond1) + len(bond2)) + " points\n"
+            if bond1 is not None and bond2 is not None:
+                text += "Bond critical path: " + str(len(bond1)) + " + " + str(len(bond2)) + " = " \
+                        + str(len(bond1) + len(bond2)) + " points\n"
 
             text += str(model.bcp[selected_cp].getProperty("text"))
 
@@ -2419,7 +2436,6 @@ class MainForm(QMainWindow):
             self.ui.FormSelectedCP_lap.setText("...")
             self.ui.selectedCP_bpLenLine.setText("...")
             self.ui.selectedCP_nuclei.setText("...")
-
         self.ui.criticalPointProp.setText(text)
 
     def set_manual_colors_default(self):
@@ -2743,7 +2759,6 @@ class MainForm(QMainWindow):
                     ind = int(self.ui.FormCPlist.item(i).text())
                     cp_list.append(ind)
             text = critic2.create_csv_file_cp(cp_list, model)
-
             helpers.write_text_to_file(fname, text)
 
     def create_cri_file(self):  # pragma: no cover

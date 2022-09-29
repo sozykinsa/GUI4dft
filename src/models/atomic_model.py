@@ -25,15 +25,10 @@ class TAtomicModel(object):
         self.bonds_per = []  # for exact calculation in form
 
         self.bcp = []
-
         self.tags = []
 
         self.name = ""
         self.lat_vectors = 100 * np.eye(3)
-        # self.lat_vector1 = np.array([100, 0, 0])
-        # self.lat_vector2 = np.array([0, 100, 0])
-        # self.lat_vector3 = np.array([0, 0, 100])
-
         self.mendeley = TPeriodTable()
 
         for at in newatoms:
@@ -297,8 +292,8 @@ class TAtomicModel(object):
         periodTable = TPeriodTable()
         molecules = []
         if os.path.exists(filename):
-            NumberOfSpecies = TSIESTA.number_of_species(filename)
-            NumberOfAtoms = TSIESTA.number_of_atoms(filename)
+            number_of_species = TSIESTA.number_of_species(filename)
+            number_of_atoms = TSIESTA.number_of_atoms(filename)
             MdSiestaFile = open(filename)
             speciesLabel = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
             sl = []
@@ -315,7 +310,7 @@ class TAtomicModel(object):
                         str1 = MdSiestaFile.readline()
                     isSpesF = 1
                 if (str1 != '') and (str1.find("ChemicalSpeciesLabel") >= 0) and (isSpesFinde == 0):
-                    for i in range(0, NumberOfSpecies):
+                    for i in range(0, number_of_species):
                         str1 = helpers.spacedel(MdSiestaFile.readline())
                         S = str.split(str1, ' ')
                         speciesLabel[int(S[0])] = S[1]
@@ -333,7 +328,7 @@ class TAtomicModel(object):
                                 str1 = MdSiestaFile.readline()
 
                     atoms = []
-                    for i1 in range(0, NumberOfAtoms):
+                    for i1 in range(0, number_of_atoms):
                         str1 = helpers.spacedel(MdSiestaFile.readline())
                         if str1 == "":
                             return []
@@ -479,7 +474,7 @@ class TAtomicModel(object):
     @staticmethod
     def atoms_from_struct_out(filename):
         """import from STRUCT_OUT file"""
-        periodTable = TPeriodTable()
+        period_table = TPeriodTable()
         molecules = []
         if os.path.exists(filename):
             struct_file = open(filename)
@@ -489,48 +484,48 @@ class TAtomicModel(object):
             lat2 = helpers.list_str_to_float(lat2)
             lat3 = helpers.spacedel(struct_file.readline()).split()
             lat3 = helpers.list_str_to_float(lat3)
-            NumberOfAtoms = int(struct_file.readline())
+            number_of_atoms = int(struct_file.readline())
 
-            newStr = TAtomicModel()
-            for i1 in range(0, NumberOfAtoms):
+            new_str = TAtomicModel()
+            for i1 in range(0, number_of_atoms):
                 str1 = helpers.spacedel(struct_file.readline())
                 S = str1.split(' ')
                 x = float(S[2])
                 y = float(S[3])
                 z = float(S[4])
                 charge = int(S[1])
-                let = periodTable.get_let(charge)
-                newStr.add_atom(Atom([x, y, z, let, charge]))
-            newStr.set_lat_vectors(lat1, lat2, lat3)
-            newStr.convert_from_direct_to_cart()
-            molecules.append(newStr)
+                let = period_table.get_let(charge)
+                new_str.add_atom(Atom([x, y, z, let, charge]))
+            new_str.set_lat_vectors(lat1, lat2, lat3)
+            new_str.convert_from_direct_to_cart()
+            molecules.append(new_str)
         return molecules
 
     @staticmethod
     def atoms_from_xyz(filename, xyzcritic2):
         """Import from *.xyz file."""
-        periodTable = TPeriodTable()
+        period_table = TPeriodTable()
         molecules = []
         if os.path.exists(filename):
             f = open(filename)
-            NumberOfAtoms = int(math.fabs(int(f.readline())))
-            newModel = TAtomicModel.atoms_from_xyz_structure(NumberOfAtoms, f, periodTable)
+            number_of_atoms = int(math.fabs(int(f.readline())))
+            new_model = TAtomicModel.atoms_from_xyz_structure(number_of_atoms, f, period_table)
             if xyzcritic2:
                 fl = False
                 critic_data = {"xn", "xr", "xb", "xc", "xz"}
-                for atom in newModel.atoms:
+                for atom in new_model.atoms:
                     if atom.let.lower() in critic_data:
                         fl = True
 
                 if fl:
-                    newModel2 = TAtomicModel()
+                    new_model2 = TAtomicModel()
                     xz_points = []
 
-                    for atom in newModel.atoms:
+                    for atom in new_model.atoms:
                         if atom.let.lower() not in critic_data:
-                            newModel2.add_atom(atom)
+                            new_model2.add_atom(atom)
                         if atom.let.lower() == "xb":
-                            newModel2.add_critical_point_bond(atom)
+                            new_model2.add_critical_point_bond(atom)
                         if atom.let.lower() == "xz":
                             xz_points.append(atom)
 
@@ -553,17 +548,17 @@ class TAtomicModel(object):
                             if d < 0.09:
                                 points.append(xz_points[i])
                             else:
-                                newModel2.add_bond_path_point(points)
+                                new_model2.add_bond_path_point(points)
                                 points = [xz_points[i]]
 
                     if len(points) > 0:
-                        newModel2.add_bond_path_point(points)
+                        new_model2.add_bond_path_point(points)
 
-                    newModel2.bond_path_points_optimize()
+                    new_model2.bond_path_points_optimize()
 
-                    molecules.append(newModel2)
+                    molecules.append(new_model2)
                     return molecules
-            molecules.append(newModel)
+            molecules.append(new_model)
         return molecules
 
     @staticmethod
@@ -650,8 +645,6 @@ class TAtomicModel(object):
         self.lat_vectors = 1.4 * np.eye(3) * np.array((sx, sy, sz))
 
     def delete_atom(self, ind):
-        #if self.n_atoms() == 1:
-        #    return
         print("delete_atom ", self.selected_atom, ind)
         if (ind >= 0) and (ind < self.n_atoms()):
             self.selected_atom = -1
@@ -689,12 +682,17 @@ class TAtomicModel(object):
                     cp.setProperty("bond1", deepcopy(points))
                 else:
                     cp.setProperty("bond2", deepcopy(points))
+                    ind1, ind2 = self.atoms_of_bond_path(self.bcp.index(cp))
+                    cp.setProperty("atom1", ind1)
+                    cp.setProperty("atom2", ind2)
 
     def atoms_of_bond_path(self, ind):
         atoms = self.atoms
         cp = self.bcp[ind]
         bond1 = cp.getProperty("bond1")
         bond2 = cp.getProperty("bond2")
+        if bond1 is None or bond2 is None:
+            return 0, 0
         cpx1 = bond1[-1].x
         cpy1 = bond1[-1].y
         cpz1 = bond1[-1].z
@@ -735,6 +733,7 @@ class TAtomicModel(object):
         return ind1, ind2
 
     def bond_path_points_optimize(self):
+        print(len(self.bcp))
         i = 0
 
         while i < len(self.bcp):
@@ -984,8 +983,8 @@ class TAtomicModel(object):
                     self.atoms[j] = self.atoms[j + 1]
                     self.atoms[j + 1] = atom
 
-    def AngleToCenterOfAtoms(self, atomslist):
-        """The method returns the Angle To Center Of atoms_from_fdf list atomslist in the molecule"""
+    def angle_to_center_of_atoms(self, atomslist):
+        """The method returns the Angle To Center Of atoms_from_fdf list atomslist in the molecule."""
         angle = 0
 
         for at in range(0, len(atomslist)):
@@ -998,8 +997,7 @@ class TAtomicModel(object):
 
     def atom_atom_distance(self, at1, at2):
         """ atom_atom_distance
-        All atoms MUST be in the Cell!!!
-        """
+        All atoms MUST be in the Cell!!!"""
         pos1 = np.array([self.atoms[at1].x, self.atoms[at1].y, self.atoms[at1].z])
         pos2 = np.array([self.atoms[at2].x, self.atoms[at2].y, self.atoms[at2].z])
         delta_pos = pos2 - pos1
@@ -1018,16 +1016,17 @@ class TAtomicModel(object):
     def move_atoms_to_cell(self):
         a = np.array([self.lat_vector1, self.lat_vector2, self.lat_vector3])
         ainv = inv(a)
+        self.move_object_to_cell(self.atoms, ainv)
+        self.move_object_to_cell(self.bcp, ainv)
 
-        for at in self.atoms:
+    def move_object_to_cell(self, arr, ainv):
+        for at in arr:
             pos = np.array([at.x, at.y, at.z])
             b = pos.transpose()
             total = ainv.dot(b)
             pos -= math.trunc(total[0]) * self.lat_vector1 + math.trunc(total[1]) * self.lat_vector2 + math.trunc(
                 total[2]) * self.lat_vector3
-            at.x = pos[0]
-            at.y = pos[1]
-            at.z = pos[2]
+            at.x, at.y, at.z = pos[0], pos[1], pos[2]
 
     def neighbors(self, atom, col, charge):
         """Look for number of neighbors of atom "atom" with a charge "charge"."""
@@ -1052,15 +1051,15 @@ class TAtomicModel(object):
 
     def find_bonds_exact(self):
         """The method returns list of bonds of the molecule."""
-        if self.bonds_per != []:
+        if self.bonds_per:
             return self.bonds_per
-        PeriodTable = TPeriodTable()
+        period_table = TPeriodTable()
         for i in range(0, len(self.atoms)):
             for j in range(i + 1, len(self.atoms)):
                 length = round(self.atom_atom_distance(i, j), 4)
                 t1 = int(self.atoms[i].charge)
                 t2 = int(self.atoms[j].charge)
-                if math.fabs(length - PeriodTable.Bonds[t1][t2]) < 0.2 * PeriodTable.Bonds[t1][t2]:
+                if math.fabs(length - period_table.Bonds[t1][t2]) < 0.2 * period_table.Bonds[t1][t2]:
                     self.bonds_per.append([t1, t2, length, self.atoms[i].let, i, self.atoms[j].let, j])
         return self.bonds_per
 
@@ -1077,32 +1076,69 @@ class TAtomicModel(object):
                     self.bonds.append([i, j])
         return self.bonds
 
-    def Delta(self, newMolecula):
+    def delta(self, molecula):
         """ maximum distance from atoms in self to the atoms in the newMolecula"""
-        DeltaMolecula1 = 0
+        delta_molecula1 = 0
         r1 = norm(self.lat_vector1) + norm(self.lat_vector2) + norm(self.lat_vector3)
-        for at2 in newMolecula.atoms:
+        for at2 in molecula.atoms:
             model = TAtomicModel(self.atoms)
             model.add_atom(at2)
             for ind in range(0, len(self.atoms)):
                 r = model.atom_atom_distance(ind, len(model.atoms) - 1)
                 if r < r1:
                     r1 = r
-            if r1 > DeltaMolecula1:
-                DeltaMolecula1 = r1
-        return DeltaMolecula1
+            if r1 > delta_molecula1:
+                delta_molecula1 = r1
+        return delta_molecula1
 
     def go_to_positive_coordinates(self):
         xm = self.minX()
         ym = self.minY()
         zm = self.minZ()
-        for i in range(0, self.n_atoms()):
-            self.atoms[i].x -= xm
-            self.atoms[i].x = self.minus0(self.atoms[i].x)
-            self.atoms[i].y -= ym
-            self.atoms[i].y = self.minus0(self.atoms[i].y)
-            self.atoms[i].z -= zm
-            self.atoms[i].z = self.minus0(self.atoms[i].z)
+        self.go_to_positive_array(self.atoms, xm, ym, zm)
+        self.go_to_positive_array(self.bcp, xm, ym, zm)
+
+    def go_to_positive_array(self, arr, xm, ym, zm):
+        for i in range(len(arr)):
+            arr[i].x -= xm
+            arr[i].x = self.minus0(arr[i].x)
+            arr[i].y -= ym
+            arr[i].y = self.minus0(arr[i].y)
+            arr[i].z -= zm
+            arr[i].z = self.minus0(arr[i].z)
+
+    def go_to_positive_coordinates_translate(self):
+        self.go_to_positive_array_translate(self.atoms)
+        self.go_to_positive_array_translate(self.bcp)
+        self.bond_path_opt_update()
+
+    def go_to_positive_array_translate(self, arr):
+        for i in range(len(arr)):
+            if (arr[i].x < 0) and (np.linalg.norm(self.lat_vectors[0]) < 500):
+                arr[i].xyz += self.lat_vectors[0]
+            if (arr[i].y < 0) and (np.linalg.norm(self.lat_vectors[1]) < 500):
+                arr[i].xyz += self.lat_vectors[1]
+            if (arr[i].z < 0) and (np.linalg.norm(self.lat_vectors[2]) < 500):
+                arr[i].xyz += self.lat_vectors[2]
+
+    def bond_path_opt_update(self):
+        for i in range(len(self.bcp)):
+            self.bcp[i].properties.pop("bond1")
+            self.bcp[i].properties.pop("bond2")
+            self.bcp[i].properties.pop("bond1opt")
+            self.bcp[i].properties.pop("bond2opt")
+
+            ind1 = self.bcp[i].getProperty("atom1")
+            ind2 = self.bcp[i].getProperty("atom2")
+            p1 = Atom([*self.atoms[ind1].xyz, "xz", 1])
+            p2 = Atom([*self.bcp[i].xyz, "xz", 1])
+            p3 = Atom([*self.atoms[ind2].xyz, "xz", 1])
+            #self.bcp[i].setProperty("bond1opt", [p1, p3])
+            #self.bcp[i].setProperty("bond2opt", [p1, p3])
+
+            self.add_bond_path_point([p2, p1])
+            self.add_bond_path_point([p2, p3])
+        self.bond_path_points_optimize()
 
     def minus0(self, fl):
         return 0 if fl < 0 else fl
