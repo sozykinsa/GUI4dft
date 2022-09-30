@@ -77,7 +77,7 @@ def vasp_dos(filename):
         return np.array(spin_up), np.array(spin_down), np.array(energy)
 
 
-def model_to_vasp_poscar(model, filename):
+def model_to_vasp_poscar(model):
     """Create file in VASP POSCAR format."""
     data = ""
     data += "model \n"
@@ -111,7 +111,4 @@ def model_to_vasp_poscar(model, filename):
     model.go_to_positive_coordinates()
     model.convert_from_cart_to_direct()
     data += model.coords_for_export("FractionalPOSCAR")
-
-    f = open(filename, 'w')
-    print(data, file=f)
-    f.close()
+    return data

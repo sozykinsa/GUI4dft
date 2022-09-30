@@ -6,11 +6,27 @@ def test_importer_fdf(tests_path):
     model, fdf = Importer.import_from_file(f_name, fl='all', prop=False, xyzcritic2=False)
     assert len(model[0].atoms) == 3
 
+    f_name = str(tests_path / 'ref_data' / 'h2o-scaled' / "siesta.fdf")
+    model, fdf = Importer.import_from_file(f_name, fl='all', prop=False, xyzcritic2=False)
+    assert len(model[0].atoms) == 3
+
     f_name = str(tests_path / 'ref_data' / 'h2o-bohr' / "siesta.fdf")
     model, fdf = Importer.import_from_file(f_name, fl='all', prop=False, xyzcritic2=False)
     assert len(model[0].atoms) == 3
 
+    f_name = str(tests_path / 'ref_data' / 'h2o-bohr' / "siesta-params.fdf")
+    model, fdf = Importer.import_from_file(f_name, fl='all', prop=False, xyzcritic2=False)
+    assert len(model[0].atoms) == 3
+
+    f_name = str(tests_path / 'ref_data' / 'h2o-bohr' / "siesta-without-cell.fdf")
+    model, fdf = Importer.import_from_file(f_name, fl='all', prop=False, xyzcritic2=False)
+    assert len(model[0].atoms) == 3
+
     f_name = str(tests_path / 'ref_data' / 'h2o-zmatrix' / "siesta.fdf")
+    model, fdf = Importer.import_from_file(f_name, fl='all', prop=False, xyzcritic2=False)
+    assert len(model[0].atoms) == 3
+
+    f_name = str(tests_path / 'ref_data' / 'incorrect' / "siesta-no-cell.fdf")
     model, fdf = Importer.import_from_file(f_name, fl='all', prop=False, xyzcritic2=False)
     assert len(model[0].atoms) == 3
 
@@ -66,6 +82,10 @@ def test_importer_xyz(tests_path):
     model, fdf = Importer.import_from_file(f_name, fl='all', prop=False, xyzcritic2=False)
     assert len(model[0].atoms) == 3
 
+    f_name = str(tests_path / 'ref_data' / "xmol.xyz")
+    model, fdf = Importer.import_from_file(f_name, fl='all', prop=False, xyzcritic2=False)
+    assert len(model[0].atoms) == 6
+
 
 def test_importer_struct_out(tests_path):
     f_name = str(tests_path / 'ref_data' / 'h2o-ang' / "siesta.STRUCT_OUT")
@@ -81,6 +101,12 @@ def test_importer_struct_out(tests_path):
     assert len(model[0].atoms) == 3
     atom = model[-1].atoms[0]
     assert atom.getProperty("charge Voronoi") is None
+
+
+def test_importer_md_car(tests_path):
+    f_name = str(tests_path / 'ref_data' / 'siesta4-md' / "C112.MD_CAR")
+    model, fdf = Importer.import_from_file(f_name, fl='all', prop=False, xyzcritic2=False)
+    assert len(model[0].atoms) == 119
 
 
 def test_importer_cube(tests_path):

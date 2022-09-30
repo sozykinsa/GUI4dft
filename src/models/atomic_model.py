@@ -15,6 +15,7 @@ from utils.siesta import TSIESTA
 from utils.fdfdata import TFDFFile
 from utils.helpers import clear_fdf_lines
 from models.atom import Atom
+from thirdparty.critic2 import critical_path_simplifier
 
 
 class TAtomicModel(object):
@@ -24,13 +25,11 @@ class TAtomicModel(object):
         self.bonds_per = []  # for exact calculation in form
 
         self.bcp = []
-
         self.tags = []
 
         self.name = ""
-        self.lat_vector1 = np.array([100, 0, 0])
-        self.lat_vector2 = np.array([0, 100, 0])
-        self.lat_vector3 = np.array([0, 0, 100])
+        self.lat_vectors = 100 * np.eye(3)
+        self.mendeley = TPeriodTable()
 
         for at in newatoms:
             if isinstance(at, Atom):
@@ -40,6 +39,30 @@ class TAtomicModel(object):
             self.add_atom(atom)
 
         self.selected_atom = -1
+
+    @property
+    def lat_vector1(self) -> float:
+        return self.lat_vectors[0]
+
+    @lat_vector1.setter
+    def lat_vector1(self, value):
+        self.lat_vectors[0] = value
+
+    @property
+    def lat_vector2(self) -> float:
+        return self.lat_vectors[1]
+
+    @lat_vector2.setter
+    def lat_vector2(self, value):
+        self.lat_vectors[1] = value
+
+    @property
+    def lat_vector3(self) -> float:
+        return self.lat_vectors[2]
+
+    @lat_vector3.setter
+    def lat_vector3(self, value):
+        self.lat_vectors[2] = value
 
     def get_positions(self):
         pos = np.zeros((len(self.atoms), 3))
@@ -56,11 +79,10 @@ class TAtomicModel(object):
     def get_covalent_radii(self):
         ind = list(set(self.get_atomic_numbers()))
         ind.sort()
-        mendeley = TPeriodTable()
-        return mendeley.get_covalent_radii(ind)
+        return self.mendeley.get_covalent_radii(ind)
 
     def get_center_of_mass(self):
-        return np.array(self.centr_mass())
+        return np.array(self.center_mass())
 
     def get_tags(self):
         return self.tags
@@ -73,7 +95,7 @@ class TAtomicModel(object):
         return cell
 
     def twist_z(self, alpha):
-        cm = self.centr_mass()
+        cm = self.center_mass()
         self.move(*(-cm))
         z0 = self.minZ()
         z1 = np.linalg.norm(self.lat_vector3)
@@ -194,7 +216,7 @@ class TAtomicModel(object):
     @staticmethod
     def atoms_from_output_cg(filename):
         """import from CG output"""
-        periodTable = TPeriodTable()
+        period_table = TPeriodTable()
         molecules = []
         if os.path.exists(filename):
             number_of_atoms = TSIESTA.number_of_atoms(filename)
@@ -235,8 +257,8 @@ class TAtomicModel(object):
                             need_to_convert1 = 0
                         molecules.append(all_atoms)
 
-                is_fractionalfound = str1.find("outcoor: Atomic coordinates (fractional)") >= 0
-                if is_fractionalfound:
+                is_fractional_found = str1.find("outcoor: Atomic coordinates (fractional)") >= 0
+                if is_fractional_found:
                     need_to_convert1 = 1
 
                 is_angfound = str1.find("zmatrix: Z-matrix coordinates: (Ang ; rad )") >= 0
@@ -245,8 +267,8 @@ class TAtomicModel(object):
                 if is_bohr_found:
                     mult = 0.52917720859
 
-                if (str1 != '') and (is_angfound or is_bohr_found or is_fractionalfound) and (isSpesF == 1):
-                    if not is_fractionalfound:
+                if (str1 != '') and (is_angfound or is_bohr_found or is_fractional_found) and (isSpesF == 1):
+                    if not is_fractional_found:
                         for j in range(0, 2):
                             siesta_file.readline()
                     atoms = []
@@ -258,7 +280,7 @@ class TAtomicModel(object):
                         d2 = float(s[1]) * mult
                         d3 = float(s[2]) * mult
                         charge = species_label_charges[sl[len(atoms)]]
-                        c = periodTable.get_let(charge)
+                        c = period_table.get_let(charge)
                         atoms.append([d1, d2, d3, c, charge])
                 str1 = siesta_file.readline()
             siesta_file.close()
@@ -270,8 +292,8 @@ class TAtomicModel(object):
         periodTable = TPeriodTable()
         molecules = []
         if os.path.exists(filename):
-            NumberOfSpecies = TSIESTA.number_of_species(filename)
-            NumberOfAtoms = TSIESTA.number_of_atoms(filename)
+            number_of_species = TSIESTA.number_of_species(filename)
+            number_of_atoms = TSIESTA.number_of_atoms(filename)
             MdSiestaFile = open(filename)
             speciesLabel = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
             sl = []
@@ -288,7 +310,7 @@ class TAtomicModel(object):
                         str1 = MdSiestaFile.readline()
                     isSpesF = 1
                 if (str1 != '') and (str1.find("ChemicalSpeciesLabel") >= 0) and (isSpesFinde == 0):
-                    for i in range(0, NumberOfSpecies):
+                    for i in range(0, number_of_species):
                         str1 = helpers.spacedel(MdSiestaFile.readline())
                         S = str.split(str1, ' ')
                         speciesLabel[int(S[0])] = S[1]
@@ -306,7 +328,7 @@ class TAtomicModel(object):
                                 str1 = MdSiestaFile.readline()
 
                     atoms = []
-                    for i1 in range(0, NumberOfAtoms):
+                    for i1 in range(0, number_of_atoms):
                         str1 = helpers.spacedel(MdSiestaFile.readline())
                         if str1 == "":
                             return []
@@ -343,16 +365,16 @@ class TAtomicModel(object):
             str1 = struct_file.readline()
             while str1.find("---") >= 0:
                 newStr = TAtomicModel()
-                LatConst = float(struct_file.readline())
+                lat_const = float(struct_file.readline())
                 lat1 = helpers.spacedel(struct_file.readline()).split()
                 lat1 = helpers.list_str_to_float(lat1)
-                lat1 = LatConst * np.array(lat1)
+                lat1 = lat_const * np.array(lat1)
                 lat2 = helpers.spacedel(struct_file.readline()).split()
                 lat2 = helpers.list_str_to_float(lat2)
-                lat2 = LatConst * np.array(lat2)
+                lat2 = lat_const * np.array(lat2)
                 lat3 = helpers.spacedel(struct_file.readline()).split()
                 lat3 = helpers.list_str_to_float(lat3)
-                lat3 = LatConst * np.array(lat3)
+                lat3 = lat_const * np.array(lat3)
                 numbers_of_atoms = helpers.spacedel(struct_file.readline()).split()
                 numbers_of_atoms = helpers.list_str_to_int(numbers_of_atoms)
                 str1 = struct_file.readline()
@@ -452,7 +474,7 @@ class TAtomicModel(object):
     @staticmethod
     def atoms_from_struct_out(filename):
         """import from STRUCT_OUT file"""
-        periodTable = TPeriodTable()
+        period_table = TPeriodTable()
         molecules = []
         if os.path.exists(filename):
             struct_file = open(filename)
@@ -462,48 +484,48 @@ class TAtomicModel(object):
             lat2 = helpers.list_str_to_float(lat2)
             lat3 = helpers.spacedel(struct_file.readline()).split()
             lat3 = helpers.list_str_to_float(lat3)
-            NumberOfAtoms = int(struct_file.readline())
+            number_of_atoms = int(struct_file.readline())
 
-            newStr = TAtomicModel()
-            for i1 in range(0, NumberOfAtoms):
+            new_str = TAtomicModel()
+            for i1 in range(0, number_of_atoms):
                 str1 = helpers.spacedel(struct_file.readline())
                 S = str1.split(' ')
                 x = float(S[2])
                 y = float(S[3])
                 z = float(S[4])
                 charge = int(S[1])
-                let = periodTable.get_let(charge)
-                newStr.add_atom(Atom([x, y, z, let, charge]))
-            newStr.set_lat_vectors(lat1, lat2, lat3)
-            newStr.convert_from_direct_to_cart()
-            molecules.append(newStr)
+                let = period_table.get_let(charge)
+                new_str.add_atom(Atom([x, y, z, let, charge]))
+            new_str.set_lat_vectors(lat1, lat2, lat3)
+            new_str.convert_from_direct_to_cart()
+            molecules.append(new_str)
         return molecules
 
     @staticmethod
     def atoms_from_xyz(filename, xyzcritic2):
         """Import from *.xyz file."""
-        periodTable = TPeriodTable()
+        period_table = TPeriodTable()
         molecules = []
         if os.path.exists(filename):
             f = open(filename)
-            NumberOfAtoms = int(math.fabs(int(f.readline())))
-            newModel = TAtomicModel.atoms_from_xyz_structure(NumberOfAtoms, f, periodTable)
+            number_of_atoms = int(math.fabs(int(f.readline())))
+            new_model = TAtomicModel.atoms_from_xyz_structure(number_of_atoms, f, period_table)
             if xyzcritic2:
                 fl = False
                 critic_data = {"xn", "xr", "xb", "xc", "xz"}
-                for atom in newModel.atoms:
+                for atom in new_model.atoms:
                     if atom.let.lower() in critic_data:
                         fl = True
 
                 if fl:
-                    newModel2 = TAtomicModel()
+                    new_model2 = TAtomicModel()
                     xz_points = []
 
-                    for atom in newModel.atoms:
+                    for atom in new_model.atoms:
                         if atom.let.lower() not in critic_data:
-                            newModel2.add_atom(atom)
+                            new_model2.add_atom(atom)
                         if atom.let.lower() == "xb":
-                            newModel2.add_critical_point_bond(atom)
+                            new_model2.add_critical_point_bond(atom)
                         if atom.let.lower() == "xz":
                             xz_points.append(atom)
 
@@ -526,28 +548,28 @@ class TAtomicModel(object):
                             if d < 0.09:
                                 points.append(xz_points[i])
                             else:
-                                newModel2.add_bond_path_point(points)
+                                new_model2.add_bond_path_point(points)
                                 points = [xz_points[i]]
 
                     if len(points) > 0:
-                        newModel2.add_bond_path_point(points)
+                        new_model2.add_bond_path_point(points)
 
-                    newModel2.bond_path_points_optimize()
+                    new_model2.bond_path_points_optimize()
 
-                    molecules.append(newModel2)
+                    molecules.append(new_model2)
                     return molecules
-            molecules.append(newModel)
+            molecules.append(new_model)
         return molecules
 
     @staticmethod
-    def atoms_from_XMOLxyz(filename: str):
+    def atoms_from_xmol_xyz(filename: str):
         """Import from XMOL xyz file."""
-        periodTable = TPeriodTable()
+        period_table = TPeriodTable()
         molecules = []
         if os.path.exists(filename):
             f = open(filename)
             number_of_atoms = int(math.fabs(int(f.readline())))
-            molecules.append(TAtomicModel.atoms_from_xyz_structure(number_of_atoms, f, periodTable, [1, 2, 3, 4]))
+            molecules.append(TAtomicModel.atoms_from_xyz_structure(number_of_atoms, f, period_table, [1, 2, 3, 4]))
         return molecules
 
     @staticmethod
@@ -620,20 +642,17 @@ class TAtomicModel(object):
         sz = self.sizeZ()
         if sz < 0.3:
             sz = 5
-        self.lat_vector1 = np.array([1.4 * sx, 0, 0])
-        self.lat_vector2 = np.array([0, 1.4 * sy, 0])
-        self.lat_vector3 = np.array([0, 0, 1.4 * sz])
+        self.lat_vectors = 1.4 * np.eye(3) * np.array((sx, sy, sz))
 
     def delete_atom(self, ind):
-        if self.nAtoms() == 1:
-            return
-        if (ind >= 0) and (ind < self.nAtoms()):
+        print("delete_atom ", self.selected_atom, ind)
+        if (ind >= 0) and (ind < self.n_atoms()):
             self.selected_atom = -1
             self.atoms.pop(ind)
             self.find_bonds_fast()
 
     def add_atom(self, atom, min_dist=0):
-        """ Adds atom to the molecule is minimal distance to other atoms more then minDist """
+        """Adds atom to the molecule is minimal distance to other atoms more then minDist."""
         dist = 10000
         if min_dist > 0:
             model = TAtomicModel(self.atoms)
@@ -663,12 +682,17 @@ class TAtomicModel(object):
                     cp.setProperty("bond1", deepcopy(points))
                 else:
                     cp.setProperty("bond2", deepcopy(points))
+                    ind1, ind2 = self.atoms_of_bond_path(self.bcp.index(cp))
+                    cp.setProperty("atom1", ind1)
+                    cp.setProperty("atom2", ind2)
 
     def atoms_of_bond_path(self, ind):
         atoms = self.atoms
         cp = self.bcp[ind]
         bond1 = cp.getProperty("bond1")
         bond2 = cp.getProperty("bond2")
+        if bond1 is None or bond2 is None:
+            return 0, 0
         cpx1 = bond1[-1].x
         cpy1 = bond1[-1].y
         cpz1 = bond1[-1].z
@@ -709,6 +733,7 @@ class TAtomicModel(object):
         return ind1, ind2
 
     def bond_path_points_optimize(self):
+        print(len(self.bcp))
         i = 0
 
         while i < len(self.bcp):
@@ -724,36 +749,20 @@ class TAtomicModel(object):
             i += 1
 
         for cp in self.bcp:
-            self.critical_path_simplifier("bond1", cp)
-            self.critical_path_simplifier("bond2", cp)
-
-    def critical_path_simplifier(self, b, cp):
-        bond = deepcopy(cp.getProperty(b))
-        if bond is None:
-            print(b)
-            return
-        i = 2
-        while (i < len(bond)) and (len(bond) > 1):
-            m = (bond[i].x - bond[i - 1].x) * (bond[i - 2].y - bond[i - 1].y) * (bond[i - 2].z - bond[i - 1].z)
-            j = (bond[i].y - bond[i - 1].y) * (bond[i - 2].x - bond[i - 1].x) * (bond[i - 2].z - bond[i - 1].z)
-            k = (bond[i].z - bond[i - 1].z) * (bond[i - 2].x - bond[i - 1].x) * (bond[i - 2].y - bond[i - 1].y)
-            i += 1
-            if (math.fabs(m - j) < 1e-6) and (math.fabs(m - k) < 1e-6):
-                bond.pop(i - 2)
-                i -= 1
-        cp.setProperty(b + "opt", bond)
+            critical_path_simplifier("bond1", cp)
+            critical_path_simplifier("bond2", cp)
 
     def add_atomic_model(self, atomic_model, min_dist=0):
         for at in atomic_model:
             self.add_atom(at, min_dist)
 
-    def edit_atom(self, ind, newAtom):
-        if (ind >= 0) and (ind < self.nAtoms()):
-            self.atoms[ind] = newAtom
+    def edit_atom(self, ind, new_atom):
+        if (ind >= 0) and (ind < self.n_atoms()):
+            self.atoms[ind] = new_atom
 
     def add_atoms_property(self, prop, value):
-        if self.nAtoms() == len(value):
-            for i in range(0, self.nAtoms()):
+        if self.n_atoms() == len(value):
+            for i in range(0, self.n_atoms()):
                 self.atoms[i].setProperty(prop, value[i][1])
 
     def AddBond(self, bond):
@@ -765,11 +774,10 @@ class TAtomicModel(object):
     def __getitem__(self, i):
         return self.atoms[i]
 
-    def ModifyAtomsTypes(self, changes):
-        Mendeley = TPeriodTable()
+    def modify_atoms_types(self, changes):
         for change in changes:
             let = change[1]
-            charge = Mendeley.get_charge_by_letter(let)
+            charge = self.mendeley.get_charge_by_letter(let)
 
             old_charge = change[0]
 
@@ -778,10 +786,10 @@ class TAtomicModel(object):
                     atom.charge = charge
                     atom.let = let
 
-    def nAtoms(self):
+    def n_atoms(self):
         return len(self.atoms)
 
-    def centr_mass(self, charge=0):
+    def center_mass(self, charge=0):
         """The method returns the center of mass of the molecule."""
         cx = 0
         cy = 0
@@ -789,9 +797,8 @@ class TAtomicModel(object):
         n = 0
 
         if charge == 0:
-            mendeley = TPeriodTable()
             for j in range(0, len(self.atoms)):
-                m = mendeley.Atoms[self.atoms[j].charge].mass
+                m = self.mendeley.Atoms[self.atoms[j].charge].mass
                 cx += self.atoms[j].x * m
                 cy += self.atoms[j].y * m
                 cz += self.atoms[j].z * m
@@ -803,12 +810,10 @@ class TAtomicModel(object):
                     cy += self.atoms[j].y
                     cz += self.atoms[j].z
                     n += 1
-        try:
+        if n == 0:
+            res = [0, 0, 0]
+        else:
             res = [cx / n, cy / n, cz / n]
-        except Exception:
-            print("ZeroDivisionError")
-            return [0, 0, 0]
-
         return np.array(res)
 
     def rotate_x(self, alpha):
@@ -971,15 +976,15 @@ class TAtomicModel(object):
         return self.maxZ() - self.minZ()
 
     def sort_atoms_by_type(self):
-        for i in range(0, self.nAtoms()):
-            for j in range(0, self.nAtoms() - i - 1):
+        for i in range(0, self.n_atoms()):
+            for j in range(0, self.n_atoms() - i - 1):
                 if self.atoms[j].charge > self.atoms[j + 1].charge:
                     atom = self.atoms[j]
                     self.atoms[j] = self.atoms[j + 1]
                     self.atoms[j + 1] = atom
 
-    def AngleToCenterOfAtoms(self, atomslist):
-        """The method returns the Angle To Center Of atoms_from_fdf list atomslist in the molecule"""
+    def angle_to_center_of_atoms(self, atomslist):
+        """The method returns the Angle To Center Of atoms_from_fdf list atomslist in the molecule."""
         angle = 0
 
         for at in range(0, len(atomslist)):
@@ -992,8 +997,7 @@ class TAtomicModel(object):
 
     def atom_atom_distance(self, at1, at2):
         """ atom_atom_distance
-        All atoms MUST be in the Cell!!!
-        """
+        All atoms MUST be in the Cell!!!"""
         pos1 = np.array([self.atoms[at1].x, self.atoms[at1].y, self.atoms[at1].z])
         pos2 = np.array([self.atoms[at2].x, self.atoms[at2].y, self.atoms[at2].z])
         delta_pos = pos2 - pos1
@@ -1012,16 +1016,17 @@ class TAtomicModel(object):
     def move_atoms_to_cell(self):
         a = np.array([self.lat_vector1, self.lat_vector2, self.lat_vector3])
         ainv = inv(a)
+        self.move_object_to_cell(self.atoms, ainv)
+        self.move_object_to_cell(self.bcp, ainv)
 
-        for at in self.atoms:
+    def move_object_to_cell(self, arr, ainv):
+        for at in arr:
             pos = np.array([at.x, at.y, at.z])
             b = pos.transpose()
             total = ainv.dot(b)
             pos -= math.trunc(total[0]) * self.lat_vector1 + math.trunc(total[1]) * self.lat_vector2 + math.trunc(
                 total[2]) * self.lat_vector3
-            at.x = pos[0]
-            at.y = pos[1]
-            at.z = pos[2]
+            at.x, at.y, at.z = pos[0], pos[1], pos[2]
 
     def neighbors(self, atom, col, charge):
         """Look for number of neighbors of atom "atom" with a charge "charge"."""
@@ -1046,58 +1051,94 @@ class TAtomicModel(object):
 
     def find_bonds_exact(self):
         """The method returns list of bonds of the molecule."""
-        if self.bonds_per != []:
+        if self.bonds_per:
             return self.bonds_per
-        PeriodTable = TPeriodTable()
+        period_table = TPeriodTable()
         for i in range(0, len(self.atoms)):
             for j in range(i + 1, len(self.atoms)):
                 length = round(self.atom_atom_distance(i, j), 4)
                 t1 = int(self.atoms[i].charge)
                 t2 = int(self.atoms[j].charge)
-                if math.fabs(length - PeriodTable.Bonds[t1][t2]) < 0.2 * PeriodTable.Bonds[t1][t2]:
+                if math.fabs(length - period_table.Bonds[t1][t2]) < 0.2 * period_table.Bonds[t1][t2]:
                     self.bonds_per.append([t1, t2, length, self.atoms[i].let, i, self.atoms[j].let, j])
         return self.bonds_per
 
     def find_bonds_fast(self):
         self.bonds = []
-        Mendeley = TPeriodTable()
         for i in range(0, len(self.atoms)):
             for j in range(i + 1, len(self.atoms)):
                 rx2 = math.pow(self.atoms[i].x - self.atoms[j].x, 2)
                 ry2 = math.pow(self.atoms[i].y - self.atoms[j].y, 2)
                 rz2 = math.pow(self.atoms[i].z - self.atoms[j].z, 2)
                 r = math.sqrt(rx2 + ry2 + rz2)
-                r_tab = Mendeley.Bonds[self.atoms[i].charge][self.atoms[j].charge]
+                r_tab = self.mendeley.Bonds[self.atoms[i].charge][self.atoms[j].charge]
                 if (r > 1e-4) and (r < 1.2 * r_tab):
                     self.bonds.append([i, j])
         return self.bonds
 
-    def Delta(self, newMolecula):
+    def delta(self, molecula):
         """ maximum distance from atoms in self to the atoms in the newMolecula"""
-        DeltaMolecula1 = 0
+        delta_molecula1 = 0
         r1 = norm(self.lat_vector1) + norm(self.lat_vector2) + norm(self.lat_vector3)
-        for at2 in newMolecula.atoms:
+        for at2 in molecula.atoms:
             model = TAtomicModel(self.atoms)
             model.add_atom(at2)
             for ind in range(0, len(self.atoms)):
                 r = model.atom_atom_distance(ind, len(model.atoms) - 1)
                 if r < r1:
                     r1 = r
-            if r1 > DeltaMolecula1:
-                DeltaMolecula1 = r1
-        return DeltaMolecula1
+            if r1 > delta_molecula1:
+                delta_molecula1 = r1
+        return delta_molecula1
 
     def go_to_positive_coordinates(self):
         xm = self.minX()
         ym = self.minY()
         zm = self.minZ()
-        for i in range(0, self.nAtoms()):
-            self.atoms[i].x -= xm
-            self.atoms[i].x = self.minus0(self.atoms[i].x)
-            self.atoms[i].y -= ym
-            self.atoms[i].y = self.minus0(self.atoms[i].y)
-            self.atoms[i].z -= zm
-            self.atoms[i].z = self.minus0(self.atoms[i].z)
+        self.go_to_positive_array(self.atoms, xm, ym, zm)
+        self.go_to_positive_array(self.bcp, xm, ym, zm)
+
+    def go_to_positive_array(self, arr, xm, ym, zm):
+        for i in range(len(arr)):
+            arr[i].x -= xm
+            arr[i].x = self.minus0(arr[i].x)
+            arr[i].y -= ym
+            arr[i].y = self.minus0(arr[i].y)
+            arr[i].z -= zm
+            arr[i].z = self.minus0(arr[i].z)
+
+    def go_to_positive_coordinates_translate(self):
+        self.go_to_positive_array_translate(self.atoms)
+        self.go_to_positive_array_translate(self.bcp)
+        self.bond_path_opt_update()
+
+    def go_to_positive_array_translate(self, arr):
+        for i in range(len(arr)):
+            if (arr[i].x < 0) and (np.linalg.norm(self.lat_vectors[0]) < 500):
+                arr[i].xyz += self.lat_vectors[0]
+            if (arr[i].y < 0) and (np.linalg.norm(self.lat_vectors[1]) < 500):
+                arr[i].xyz += self.lat_vectors[1]
+            if (arr[i].z < 0) and (np.linalg.norm(self.lat_vectors[2]) < 500):
+                arr[i].xyz += self.lat_vectors[2]
+
+    def bond_path_opt_update(self):
+        for i in range(len(self.bcp)):
+            self.bcp[i].properties.pop("bond1")
+            self.bcp[i].properties.pop("bond2")
+            self.bcp[i].properties.pop("bond1opt")
+            self.bcp[i].properties.pop("bond2opt")
+
+            ind1 = self.bcp[i].getProperty("atom1")
+            ind2 = self.bcp[i].getProperty("atom2")
+            p1 = Atom([*self.atoms[ind1].xyz, "xz", 1])
+            p2 = Atom([*self.bcp[i].xyz, "xz", 1])
+            p3 = Atom([*self.atoms[ind2].xyz, "xz", 1])
+            #self.bcp[i].setProperty("bond1opt", [p1, p3])
+            #self.bcp[i].setProperty("bond2opt", [p1, p3])
+
+            self.add_bond_path_point([p2, p1])
+            self.add_bond_path_point([p2, p3])
+        self.bond_path_points_optimize()
 
     def minus0(self, fl):
         return 0 if fl < 0 else fl
@@ -1189,12 +1230,11 @@ class TAtomicModel(object):
         return types
 
     def formula(self):
-        mendeley = TPeriodTable()
         text = ""
         charges = self.types_of_atoms()
         for charge in charges:
             ind = self.indexes_of_atoms_with_charge(charge[0])
-            let = mendeley.get_let(self.atoms[ind[0]].charge)
+            let = self.mendeley.get_let(self.atoms[ind[0]].charge)
             text += let + str(len(ind))
         return text
 
@@ -1300,7 +1340,7 @@ class TAtomicModel(object):
         origin = volumeric_data.origin_to_export + x1 * self.lat_vector1 / multx + y1 * self.lat_vector2 / multy + \
             z1 * self.lat_vector3 / multz
 
-        text += str(self.nAtoms()) + "     " + str(origin[0]) + "    " + str(origin[1]) + "    " + str(origin[2]) + "\n"
+        text += str(self.n_atoms()) + "     " + str(origin[0]) + "    " + str(origin[1]) + "    " + str(origin[2]) + "\n"
         text += " " + str(n_x) + " "
         text += " " + str(self.lat_vector1[0] / multx) + "   " + str(self.lat_vector1[1] / multx) + "   " + str(
             self.lat_vector1[2] / multx) + "\n"
@@ -1419,7 +1459,7 @@ class TAtomicModel(object):
     def toSIESTAxyzdata(self):
         """Returns data for *.xyz file."""
         data = "  "
-        nAtoms = self.nAtoms()
+        nAtoms = self.n_atoms()
         data += str(nAtoms) + "\n"
         for i in range(0, nAtoms):
             data += "\n" + self.atoms[i].let + '       ' + self.xyz_string(i)

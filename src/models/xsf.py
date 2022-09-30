@@ -105,7 +105,7 @@ class XSF(VolumericData):
                 self.origin = np.array(origin)
                 self.origin_to_export = deepcopy(self.origin)
                 tmp_model = TAtomicModel(self.atoms)
-                center_mass = tmp_model.centr_mass()
+                center_mass = tmp_model.center_mass()
                 self.origin -= np.array([center_mass[0], center_mass[1], center_mass[2]])
                 vec1 = f.readline().split()
                 vec2 = f.readline().split()

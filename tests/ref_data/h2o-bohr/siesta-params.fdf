@@ -5,11 +5,9 @@ NumberOfSpecies 2
  2  8  O
 %endblock ChemicalSpeciesLabel
 LatticeConstant       1.0 Bohr
-%block LatticeVectors
-  37.79452265771286  0.0  0.0
-  0.0  37.79452265771286  0.0
-  0.0  0.0  37.79452265771286
-%endblock LatticeVectors
+%block LatticeParameters
+  37.7945   37.79452  37.794522 90.0  90.0  90.0
+%endblock LatticeParameters
 AtomicCoordinatesFormat Bohr
 %block AtomicCoordinatesAndAtomicSpecies
     1.32176363    0.00000000    1.46436002 1

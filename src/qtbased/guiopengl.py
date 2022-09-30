@@ -36,19 +36,20 @@ class GuiOpenGL(QOpenGLWidget):
         self.coord0 = np.zeros(3, dtype=float)
 
         self.is_orthographic: bool = False
-        self.is_view_atoms = True
-        self.is_view_box = False
-        self.is_view_bonds = True
+        self.is_view_atoms: bool = True
+        self.is_view_box: bool = False
+        self.is_view_bonds: bool = True
+        self.is_gl_cull_face: bool = False
         self.is_view_surface: bool = False
         self.is_view_contour: bool = False
         self.is_view_contour_fill: bool = False
         self.is_view_voronoi: bool = False
         self.is_view_bcp: bool = False
         self.is_view_bond_path: bool = False
-        self.active = False
-        self.is_atomic_numbers_visible = False
+        self.active: bool = False
+        self.is_atomic_numbers_visible: bool = False
         self.scale_factor = 1
-        self.bondWidth = 20
+        self.bond_width = 20
         self.x_scene = 0
         self.y_scene = 0
         self.camera_position = np.array([0.0, 0.0, -20.0])
@@ -85,11 +86,15 @@ class GuiOpenGL(QOpenGLWidget):
     @is_camera_ortho.setter
     def is_camera_ortho(self, is_orthographic):
         self.is_orthographic = is_orthographic
+        if len(self.main_model.atoms) == 0:
+            return
         self.auto_zoom()
         self.add_atoms()
         self.add_bonds()
         self.add_bcp()
         self.add_bondpath()
+        self.add_axes()
+        self.add_box()
 
     def wheelEvent(self, event: QEvent):
         self.scale(event.angleDelta().y())
@@ -147,7 +152,7 @@ class GuiOpenGL(QOpenGLWidget):
         self.is_view_bond_path = the_object.is_view_bond_path
         self.active = the_object.active
         self.scale_factor = the_object.scale_factor
-        self.bondWidth = the_object.bondWidth
+        self.bond_width = the_object.bond_width
         self.x_scr_old = the_object.x_scr_old
         self.y_scr_old = the_object.y_scr_old
         self.x_scene = the_object.x_scene
@@ -246,22 +251,24 @@ class GuiOpenGL(QOpenGLWidget):
         self.update()
 
     def screen2space(self, x, y, width, height):
-        radius = min(width, height)*float(self.scale_factor)
-        return (2.*x-width)/radius, -(2.*y-height)/radius
+        radius = min(width, height) * float(self.scale_factor)
+        return (2.0 * x - width)/radius, -(2.0 * y - height)/radius
 
-    def set_atomic_structure(self, structure, atoms_colors, is_view_atoms, is_view_atom_numbers, ViewBox, box_color,
-                             ViewBonds, bondscolor, bondWidth, Bonds_by_atoms, is_view_axes, axes_color, contour_width):
+    def set_atomic_structure(self, structure, atoms_colors, is_view_atoms, is_view_atom_numbers, is_view_box, box_color,
+                             is_view_bonds, bonds_color, bond_width, bonds_by_atoms, is_view_axes, axes_color,
+                             contour_width):
         self.clean()
         self.prop = "charge"
+        self.selected_atom = -1
         self.main_model = deepcopy(structure)
         self.coord0 = -self.main_model.get_center_of_mass()
         self.main_model.move(*self.coord0)
-        self.is_view_box = ViewBox
+        self.is_view_box = is_view_box
         self.is_view_atoms = is_view_atoms
         self.is_atomic_numbers_visible = is_view_atom_numbers
-        self.is_view_bonds = ViewBonds
-        self.color_of_bonds_by_atoms = Bonds_by_atoms
-        self.bondWidth = bondWidth
+        self.is_view_bonds = is_view_bonds
+        self.color_of_bonds_by_atoms = bonds_by_atoms
+        self.bond_width = bond_width
         self.is_view_axes = is_view_axes
         self.color_of_axes = axes_color
         self.is_view_surface = False
@@ -269,12 +276,12 @@ class GuiOpenGL(QOpenGLWidget):
         self.is_view_contour_fill = False
         self.active = False
         self.color_of_atoms = atoms_colors
+        self.auto_zoom()
         self.add_atoms()
-        self.color_of_bonds = bondscolor
+        self.color_of_bonds = bonds_color
         self.color_of_box = box_color
         self.main_model.find_bonds_fast()
         self.contour_width = contour_width
-        self.auto_zoom()
         self.add_bonds()
         self.add_box()
         self.add_axes()
@@ -357,7 +364,7 @@ class GuiOpenGL(QOpenGLWidget):
         self.update()
 
     def set_bond_width(self, width):
-        self.bondWidth = width
+        self.bond_width = width
         self.add_bonds()
         self.update()
 
@@ -390,6 +397,10 @@ class GuiOpenGL(QOpenGLWidget):
         self.is_view_axes = state
         self.update()
 
+    def set_gl_cull_face(self, state):
+        self.is_gl_cull_face = state
+        self.update()
+
     def scale(self, wheel):
         if self.active:
             if self.is_orthographic:
@@ -398,6 +409,8 @@ class GuiOpenGL(QOpenGLWidget):
                 self.add_bonds()
                 self.add_bcp()
                 self.add_bondpath()
+                self.add_box()
+                self.add_axes()
             else:
                 self.camera_position[2] -= 0.5 * (wheel/120)
             self.update()
@@ -482,8 +495,8 @@ class GuiOpenGL(QOpenGLWidget):
         rel = [atom2_pos[0] - atom1_pos[0], atom2_pos[1] - atom1_pos[1], atom2_pos[2] - atom1_pos[2]]
         binding_len = math.sqrt(math.pow(rel[0], 2) + math.pow(rel[1], 2) + math.pow(rel[2], 2))
         if binding_len != 0:
-            fall = 180.0/math.pi*math.acos(rel[2] / binding_len)
-            yaw = 180.0/math.pi*math.atan2(rel[1], rel[0])
+            fall = 180.0 / math.pi * math.acos(rel[2] / binding_len)
+            yaw = 180.0 / math.pi * math.atan2(rel[1], rel[0])
 
             gl.glPushMatrix()
             gl.glTranslated(atom1_pos[0], atom1_pos[1], atom1_pos[2])
@@ -541,7 +554,7 @@ class GuiOpenGL(QOpenGLWidget):
                 if max_val < val:
                     max_val = val
                 mean_val += val
-            mean_val /= self.main_model.nAtoms()
+            mean_val /= self.main_model.n_atoms()
 
         for at in self.main_model.atoms:
             gl.glPushMatrix()
@@ -604,16 +617,16 @@ class GuiOpenGL(QOpenGLWidget):
                     gl.glColor4f(*coord[2][0:3], self.SelectedFragmentAtomsTransp)
                 else:
                     gl.glColor4f(*coord[2][0:3], 1)
-                self.add_bond(coord[0], coord[1], self.scale_factor * self.bondWidth)
+                self.add_bond(coord[0], coord[1], self.scale_factor * self.bond_width)
         gl.glEndList()
 
     def add_box(self):
         gl.glNewList(self.object + 3, gl.GL_COMPILE)
-        gl.glColor3f(self.color_of_box[0], self.color_of_box[1], self.color_of_box[2])
+        gl.glColor3f(*self.color_of_box[0:3])
 
-        v1 = self.main_model.lat_vector1
-        v2 = self.main_model.lat_vector2
-        v3 = self.main_model.lat_vector3
+        v1 = self.main_model.lat_vector1 * self.scale_factor
+        v2 = self.main_model.lat_vector2 * self.scale_factor
+        v3 = self.main_model.lat_vector3 * self.scale_factor
 
         origin = - (v1 + v2 + v3) / 2
 
@@ -625,7 +638,7 @@ class GuiOpenGL(QOpenGLWidget):
         p6 = p2 + v3
         p7 = p3 + v3
         p8 = p4 + v3
-        width = 0.03
+        width = 0.03 * self.scale_factor
         self.add_bond(p1, p2, width)
         self.add_bond(p1, p3, width)
         self.add_bond(p1, p5, width)
@@ -643,21 +656,21 @@ class GuiOpenGL(QOpenGLWidget):
     def add_axes(self):
         gl.glNewList(self.object + 7, gl.GL_COMPILE)
         gl.glColor3f(*self.color_of_axes)
-        size = 2
-        size_cone = 0.2
+        size = 2 * self.scale_factor
+        size_cone = 0.2 * self.scale_factor
         letter_height = size_cone
-        letter_width = 0.6*size_cone
-        width = 0.06
+        letter_width = 0.6 * size_cone
+        width = 0.06 * self.scale_factor
         glu.gluSphere(glu.gluNewQuadric(), 2 * width, 70, 70)
         p0 = np.array([0, 0, 0])
         p1 = np.array([size, 0, 0])
-        p1cone = np.array([size+size_cone, 0, 0])
+        p1cone = np.array([size + size_cone, 0, 0])
         p2 = np.array([0, size, 0])
-        p2cone = np.array([0, size+size_cone, 0])
+        p2cone = np.array([0, size + size_cone, 0])
         p3 = np.array([0, 0, size])
-        p3cone = np.array([0, 0, size+size_cone])
+        p3cone = np.array([0, 0, size + size_cone])
         self.add_bond(p0, p1, width)
-        self.add_bond(p1, p1cone, 2*width, 'conus')
+        self.add_bond(p1, p1cone, 2 * width, 'conus')
         self.add_bond(p0, p2, width)
         self.add_bond(p2, p2cone, 2 * width, 'conus')
         self.add_bond(p0, p3, width)
@@ -712,7 +725,7 @@ class GuiOpenGL(QOpenGLWidget):
         gl.glNewList(self.object + 8, gl.GL_COMPILE)
         for at in self.main_model.bcp:
             gl.glPushMatrix()
-            gl.glTranslatef(self.scale_factor * at.x, self.scale_factor * at.y, self.scale_factor * at.z)
+            gl.glTranslatef(*(self.scale_factor * at.xyz))
             gl.glColor3f(1, 0, 0)
             mult = self.scale_factor
             if at.isSelected():
@@ -742,9 +755,9 @@ class GuiOpenGL(QOpenGLWidget):
 
         gl.glColor3f(0, 1, 0)
         for i in range(1, len(bond)):
-            pos1 = np.array((bond[i - 1].x, bond[i - 1].y, bond[i - 1].z))
-            pos2 = np.array((bond[i].x, bond[i].y, bond[i].z))
-            self.add_bond(self.scale_factor * pos1, self.scale_factor * pos2, self.scale_factor * 0.03)
+            self.add_bond(self.scale_factor * bond[i - 1].xyz,
+                          self.scale_factor * bond[i].xyz,
+                          self.scale_factor * 0.03)
 
     def add_contour(self, params):
         self.data_contour = params
@@ -926,6 +939,10 @@ class GuiOpenGL(QOpenGLWidget):
     def prepere_scene(self):
         gl.glClearColor(*self.background_color, 1.0)
         gl.glClear(gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT)
+        if self.is_gl_cull_face:
+            gl.glEnable(gl.GL_CULL_FACE)
+        else:
+            gl.glDisable(gl.GL_CULL_FACE)
         gl.glMatrixMode(gl.GL_PROJECTION)
         gl.glLoadIdentity()
         x, y, width, height = gl.glGetDoublev(gl.GL_VIEWPORT)
@@ -1030,7 +1047,6 @@ class GuiOpenGL(QOpenGLWidget):
     def initializeGL(self):
         self.makeCurrent()
         gl.glEnable(gl.GL_BLEND)
-        gl.glEnable(gl.GL_CULL_FACE)
         gl.glBlendFunc(gl.GL_SRC_ALPHA, gl.GL_ONE_MINUS_SRC_ALPHA)
         gl.glEnable(gl.GL_DEPTH_TEST)
         gl.glDepthMask(1)

@@ -11,7 +11,7 @@ def ase_raman_and_ir_script_create(model2, FDFData):
     text += "from ase.vibrations.placzek import PlaczekStatic\n"
     text += "from ase.units import Ry, eV, Ha\n"
 
-    nat = model2.nAtoms()
+    nat = model2.n_atoms()
 
     formula = model2.formula()
 

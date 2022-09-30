@@ -3,6 +3,7 @@
 import os
 from models.atomic_model import TAtomicModel
 from thirdparty.vasp import fermi_energy_from_doscar, atoms_from_POSCAR
+from thirdparty.crystal import atomic_data_from_output
 from utils.fdfdata import TFDFFile
 from utils.siesta import TSIESTA
 from utils import helpers
@@ -49,6 +50,9 @@ class Importer(object):
         if filename.endswith("POSCAR") or filename.endswith("CONTCAR"):
             return "VASPposcar"
 
+        if filename.endswith("outp") or filename.endswith("OUTP"):
+            return "topond_out"
+
         return "unknown"
 
     @staticmethod
@@ -87,10 +91,13 @@ class Importer(object):
                 models = TAtomicModel.atoms_from_xyz(filename, xyzcritic2)
 
             if file_format == "XMolXYZ":
-                models = TAtomicModel.atoms_from_XMOLxyz(filename)
+                models = TAtomicModel.atoms_from_xmol_xyz(filename)
 
             if file_format == "VASPposcar":
                 models = atoms_from_POSCAR(filename)
+
+            if file_format == "topond_out":
+                models = atomic_data_from_output(filename)
         return models, fdf
 
     @staticmethod

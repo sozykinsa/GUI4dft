@@ -159,8 +159,8 @@ def property_from_sub_file(filename, k, prop, count, typen):
     property_value = None
     is_found = False
     if os.path.exists(filename):
-        MyFile = open(filename)
-        str1 = MyFile.readline()
+        my_file = open(filename)
+        str1 = my_file.readline()
         while str1 != '':
             if (str1 != '') and (str1.find("%include") >= 0):
                 new_f = str1.split()[1]
@@ -184,11 +184,11 @@ def property_from_sub_file(filename, k, prop, count, typen):
 
                 k += 1
             if is_found:
-                MyFile.close()
+                my_file.close()
                 return is_found, k-1, property_value
 
-            str1 = MyFile.readline()
-        MyFile.close()
+            str1 = my_file.readline()
+        my_file.close()
     return is_found, k, property_value
 
 

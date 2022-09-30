@@ -3,6 +3,7 @@ import sys
 import os
 import math
 import numpy as np
+from copy import deepcopy
 from utils import helpers
 sys.path.append('.')
 
@@ -65,13 +66,13 @@ def check_cro_file(filename):
         point = 0
         while str1.find("+ Critical point no.") >= 0:
             text = ""
-            while str1.find("Field 0 (f,|grad|,lap):") < 0:
-                str1 = filename.readline()
+            str1 = filename.readline()
+            while not str1.startswith("+ "):
                 if len(str1) > 0:
                     text += str1
+                str1 = filename.readline()
             cps[point][7] = text
             point += 1
-            str1 = filename.readline()
 
         filename.close()
         return box_bohr, box_ang, box_deg, cps
@@ -79,11 +80,50 @@ def check_cro_file(filename):
         return "", "", "", []
 
 
+def create_csv_file_cp(cp_list, model, delimiter: str = ";"):
+    title = ""
+    data = ""
+    for ind in cp_list:
+        title = ""
+        cp = model.bcp[ind]
+        title += "BCP" + delimiter + "atoms" + delimiter + "dist" + delimiter
+        data += str(ind) + delimiter
+        ind1 = cp.getProperty("atom1")
+        ind2 = cp.getProperty("atom2")
+        atom1 = model.atoms[ind1].let + str(ind1 + 1)
+        atom2 = model.atoms[ind2].let + str(ind2 + 1)
+        data += atom1 + "-" + atom2 + delimiter
+
+        dist_line = round(model.atom_atom_distance(ind1, ind2), 4)
+        data += '" ' + str(dist_line) + ' "' + delimiter
+
+        data_list = cp.getProperty("text")
+        if data_list:
+            data_list = data_list.split("\n")
+            i = 0
+
+            while i < len(data_list):
+                if (data_list[i].find("Hessian") < 0) and (len(data_list[i]) > 0):
+                    col_title = helpers.spacedel(data_list[i].split(":")[0])
+                    col_data = data_list[i].split(":")[1].split()
+                    for k in range(len(col_data)):
+                        title += col_title
+                        if len(col_data) > 1:
+                            title += "_" + str(k + 1)
+                        title += delimiter
+                        data += '"' + col_data[k] + '"' + delimiter
+                    i += 1
+                else:
+                    i += 4
+            data += '\n'
+    return title + "\n" + data
+
+
 def model_to_critic_xyz_file(model, cps):
     """Returns data for *.xyz file with CP and BCP."""
     text = ""
 
-    n_atoms = model.nAtoms()
+    n_atoms = model.n_atoms()
     for i in range(0, n_atoms):
         text += model.atoms[i].to_string() + "\n"
 
@@ -138,7 +178,8 @@ def create_cri_file(cp_list, extra_points, is_form_bp, model, text_prop):
     for ind in cp_list:
         cp = model.bcp[ind]
         text += "Bond Critical Point: " + str(ind) + "  :  "
-        ind1, ind2 = model.atoms_of_bond_path(ind)
+        ind1 = cp.getProperty("atom1")
+        ind2 = cp.getProperty("atom2")
         atom1 = model.atoms[ind1].let + str(ind1 + 1)
         atom2 = model.atoms[ind2].let + str(ind2 + 1)
         title = atom1 + "-" + atom2
@@ -205,5 +246,21 @@ def create_cri_file(cp_list, extra_points, is_form_bp, model, text_prop):
     textl += 'POINTPROP lapl "$5"\n'
     textl += "POINT ./POINTS.txt\n"
     lines += "UNLOAD ALL\nEND"
-
     return textl, lines, te, text
+
+
+def critical_path_simplifier(b, cp):
+    bond = deepcopy(cp.getProperty(b))
+    if bond is None:
+        print(b)
+        return
+    i = 2
+    while (i < len(bond)) and (len(bond) > 1):
+        m = (bond[i].x - bond[i - 1].x) * (bond[i - 2].y - bond[i - 1].y) * (bond[i - 2].z - bond[i - 1].z)
+        j = (bond[i].y - bond[i - 1].y) * (bond[i - 2].x - bond[i - 1].x) * (bond[i - 2].z - bond[i - 1].z)
+        k = (bond[i].z - bond[i - 1].z) * (bond[i - 2].x - bond[i - 1].x) * (bond[i - 2].y - bond[i - 1].y)
+        i += 1
+        if (math.fabs(m - j) < 1e-6) and (math.fabs(m - k) < 1e-6):
+            bond.pop(i - 2)
+            i -= 1
+    cp.setProperty(b + "opt", bond)

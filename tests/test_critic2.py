@@ -1,4 +1,5 @@
-from thirdparty.critic2 import check_cro_file, create_critic2_xyz_file, create_cri_file
+from thirdparty.critic2 import check_cro_file, create_critic2_xyz_file, create_cri_file, parse_cp_properties
+from thirdparty.critic2 import create_csv_file_cp
 from utils.importer import Importer
 
 
@@ -30,6 +31,15 @@ def test_atoms_of_bond_path(tests_path):
     atom1, atom2 = model[0].atoms_of_bond_path(2)
     assert atom1 == 1
     assert atom2 == 1
+
+
+def test_create_csv_file_cp(tests_path):
+    f_name = str(tests_path / 'ref_data' / 'h2o-ang-charges' / 'critic2' / "cp-file.xyz")
+    model, fdf = Importer.import_from_file(f_name, fl='all', prop=False, xyzcritic2=True)
+    f_name = str(tests_path / 'ref_data' / 'h2o-ang-charges' / 'critic2' / "siesta-1-cp.cro")
+    parse_cp_properties(f_name, model[0])
+    text = create_csv_file_cp([0, 1], model[0], delimiter=";")
+    assert len(text) > 4
 
 
 def test_check_cro_file(tests_path):

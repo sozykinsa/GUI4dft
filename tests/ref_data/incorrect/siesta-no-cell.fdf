@@ -4,17 +4,12 @@ NumberOfSpecies 2
  1  1  H
  2  8  O
 %endblock ChemicalSpeciesLabel
-LatticeConstant       1.0 Bohr
-%block LatticeVectors
-  37.79452265771286  0.0  0.0
-  0.0  37.79452265771286  0.0
-  0.0  0.0  37.79452265771286
-%endblock LatticeVectors
-AtomicCoordinatesFormat Bohr
+
+AtomicCoordinatesFormat Ang
 %block AtomicCoordinatesAndAtomicSpecies
-    1.32176363    0.00000000    1.46436002 1
-    1.32176363    0.00000000   -1.46436001 1
-    0.24142147    0.00000000    0.00000000 2
+    0.69944719    0.00000000    0.77490595 1
+    0.69944719    0.00000000   -0.77490594 1
+    0.12775474    0.00000000    0.00000000 2
 %endblock AtomicCoordinatesAndAtomicSpecies
 SystemName          H2O
 SystemLabel         siesta
@@ -31,6 +26,7 @@ DM.UseSaveDM      .true.
 NeglNonOverlapInt False
 XC.functional=LDA
 XC.authors=CA
+ZM.UnitsLength = Ang
 WriteCoorXmol     True
 WriteForces .true.
 WriteMullikenPop     1
@@ -40,9 +36,10 @@ MD.MaxCGDispl          0.15 Ang
 MD.MaxForceTol         0.04 eV/Ang
 MD.UseSaveXV           yes
 MD.VariableCell        .false.
-WriteCoorStep True
 %block kgrid_Monkhorst_Pack
   1  0  0   0.0
   0  1  0   0.0
   0  0  16  0.0
 %endblock kgrid_Monkhorst_Pack
+
+WriteCoorStep True

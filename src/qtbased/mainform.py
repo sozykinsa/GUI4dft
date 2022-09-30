@@ -97,6 +97,7 @@ class MainForm(QMainWindow):
         self.ui.actionShowBox.triggered.connect(self.menu_show_box)
         self.ui.actionHideBox.triggered.connect(self.menu_hide_box)
         self.ui.actionAbout.triggered.connect(self.menu_about)
+        self.ui.actionManual.triggered.connect(self.menu_manual)
 
         self.ui.FormModelComboModels.currentIndexChanged.connect(self.model_to_screen)
         self.ui.FormActionsPostTreeSurface.itemSelectionChanged.connect(self.type_of_surface)
@@ -172,6 +173,7 @@ class MainForm(QMainWindow):
         self.ui.FormCreateCriXYZFile.clicked.connect(self.create_critic2_xyz_file)
         self.ui.FormCPdeleteFromList.clicked.connect(self.delete_cp_from_list)
         self.ui.FormCPaddToList.clicked.connect(self.add_cp_to_list)
+        self.ui.export_cp_to_csv.clicked.connect(self.export_cp_to_csv)
 
         self.ui.FormActionsPreButDeleteAtom.clicked.connect(self.atom_delete)
         self.ui.FormActionsPreButModifyAtom.clicked.connect(self.atom_modify)
@@ -198,6 +200,8 @@ class MainForm(QMainWindow):
         self.ui.FormModifyGrowX.clicked.connect(self.model_grow_x)
         self.ui.FormModifyGrowY.clicked.connect(self.model_grow_y)
         self.ui.FormModifyGrowZ.clicked.connect(self.model_grow_z)
+
+        self.ui.FormModifyGoPositive.clicked.connect(self.model_go_to_positive)
 
         self.ui.FormActionsPostButVoronoi.clicked.connect(self.plot_voronoi)
         self.ui.FormActionsPostButOptimizeCellParam.clicked.connect(self.plot_volume_param_energy)
@@ -502,7 +506,7 @@ class MainForm(QMainWindow):
 
     def add_critic2_cro_file(self):
         try:
-            f_name = self.get_file_name_from_open_dialog("All files (*.*)")
+            f_name = self.get_file_name_from_open_dialog("Critic output (*.cro)")
             self.work_dir = os.path.dirname(f_name)
             model = self.models[-1]
             parse_cp_properties(f_name, model)
@@ -563,54 +567,46 @@ class MainForm(QMainWindow):
             self.ui.part2_file.setText(f_name)
 
     def create_model_from_parts(self) -> None:
-        file_name1 = self.ui.part1_file.text()
-        file_name2 = self.ui.part2_file.text()
+        param = 'all'
         if self.ui.FormSettingsOpeningCheckOnlyOptimal.isChecked():
-            models1, fdf_data1 = Importer.import_from_file(file_name1, 'opt', False, False)
-        else:
-            models1, fdf_data1 = Importer.import_from_file(file_name1, 'all', False, False)
-
-        if self.ui.FormSettingsOpeningCheckOnlyOptimal.isChecked():
-            models2, fdf_data2 = Importer.import_from_file(file_name2, 'opt', False, False)
-        else:
-            models2, fdf_data2 = Importer.import_from_file(file_name2, 'all', False, False)
+            param = 'opt'
+        models1, fdf_data1 = Importer.import_from_file(self.ui.part1_file.text(), param, False, False)
+        models2, fdf_data2 = Importer.import_from_file(self.ui.part2_file.text(), param, False, False)
 
         combo_model = TAtomicModel()
         if len(models1) > 0:
-            part1 = models1[-1]
-            cm_old = - part1.centr_mass()
-            part1.move(*cm_old)
-            rot_x = self.ui.FormPart1RotX.value()
-            rot_y = self.ui.FormPart1RotY.value()
-            rot_z = self.ui.FormPart1RotZ.value()
-            part1.rotate(rot_x, rot_y, rot_z)
+            rot_x1 = self.ui.FormPart1RotX.value()
+            rot_y1 = self.ui.FormPart1RotY.value()
+            rot_z1 = self.ui.FormPart1RotZ.value()
+            cm_x_new1 = self.ui.FormPart1CMx.value()
+            cm_y_new1 = self.ui.FormPart1CMy.value()
+            cm_z_new1 = self.ui.FormPart1CMz.value()
 
-            cm_x_new = self.ui.FormPart1CMx.value()
-            cm_y_new = self.ui.FormPart1CMy.value()
-            cm_z_new = self.ui.FormPart1CMz.value()
-            part1.move(cm_x_new, cm_y_new, cm_z_new)
-
+            part1 = self.model_part_prepare(cm_x_new1, cm_y_new1, cm_z_new1, models1, rot_x1, rot_y1, rot_z1)
             combo_model.add_atomic_model(part1)
 
         if len(models2) > 0:
-            part2 = models2[-1]
+            rot_x2 = self.ui.FormPart2RotX.value()
+            rot_y2 = self.ui.FormPart2RotY.value()
+            rot_z2 = self.ui.FormPart2RotZ.value()
+            cm_x_new2 = self.ui.FormPart2CMx.value()
+            cm_y_new2 = self.ui.FormPart2CMy.value()
+            cm_z_new2 = self.ui.FormPart2CMz.value()
 
-            cm_old = - part2.centr_mass()
-            part2.move(*cm_old)
-            rot_x = self.ui.FormPart2RotX.value()
-            rot_y = self.ui.FormPart2RotY.value()
-            rot_z = self.ui.FormPart2RotZ.value()
-            part2.rotate(rot_x, rot_y, rot_z)
-
-            cm_x_new = self.ui.FormPart2CMx.value()
-            cm_y_new = self.ui.FormPart2CMy.value()
-            cm_z_new = self.ui.FormPart2CMz.value()
-            part2.move(cm_x_new, cm_y_new, cm_z_new)
-
+            part2 = self.model_part_prepare(cm_x_new2, cm_y_new2, cm_z_new2, models2, rot_x2, rot_y2, rot_z2)
             combo_model.add_atomic_model(part2)
 
         self.models.append(combo_model)
         self.plot_last_model()
+
+    @staticmethod
+    def model_part_prepare(cm_x_new, cm_y_new, cm_z_new, models, rot_x, rot_y, rot_z):
+        part = models[-1]
+        cm_old = - part.center_mass()
+        part.move(*cm_old)
+        part.rotate(rot_x, rot_y, rot_z)
+        part.move(cm_x_new, cm_y_new, cm_z_new)
+        return part
 
     def add_left_electrode_file(self):
         f_name = self.get_fdf_file_name()
@@ -936,8 +932,8 @@ class MainForm(QMainWindow):
         self.fill_properties_table()
         self.check_volumeric_data(file_name)
 
-        self.ui.PropertyAtomAtomDistanceAt1.setMaximum(self.ui.openGLWidget.main_model.nAtoms())
-        self.ui.PropertyAtomAtomDistanceAt2.setMaximum(self.ui.openGLWidget.main_model.nAtoms())
+        self.ui.PropertyAtomAtomDistanceAt1.setMaximum(self.ui.openGLWidget.main_model.n_atoms())
+        self.ui.PropertyAtomAtomDistanceAt2.setMaximum(self.ui.openGLWidget.main_model.n_atoms())
         self.ui.PropertyAtomAtomDistance.setText("")
 
         if Importer.check_format(file_name) == "SIESTAout":
@@ -1241,6 +1237,10 @@ class MainForm(QMainWindow):
         self.ui.FormSettingsViewCheckShowBonds.setChecked(state_show_bonds)
         self.ui.FormSettingsViewCheckShowBonds.clicked.connect(self.save_state_view_show_bonds)
 
+        state_gl_cull_face = settings.value(SETTINGS_GlCullFace, True, type=bool)
+        self.ui.OpenGL_GL_CULL_FACE.setChecked(state_gl_cull_face)
+        self.ui.OpenGL_GL_CULL_FACE.clicked.connect(self.save_state_gl_cull_face)
+
         self.work_dir = str(settings.value(SETTINGS_Folder, "/home"))
         self.ColorType = str(settings.value(SETTINGS_FormSettingsColorsScale, 'rainbow'))
         self.ui.FormSettingsColorsScale.currentIndexChanged.connect(self.save_state_colors_scale)
@@ -1327,7 +1327,6 @@ class MainForm(QMainWindow):
 
         self.coord_type = str(settings.value(SETTINGS_FormSettingsPreferredCoordinates, 'Cartesian'))
         self.units_type = str(settings.value(SETTINGS_FormSettingsPreferredUnits, 'Ang'))
-
         self.lattice_type = str(settings.value(SETTINGS_FormSettingsPreferredLattice, 'LatticeParameters'))
 
         self.action_on_start = str(settings.value(SETTINGS_FormSettingsActionOnStart, 'Nothing'))
@@ -1352,7 +1351,7 @@ class MainForm(QMainWindow):
 
         self.fill_colors_of_atoms_table()
 
-        if self.ui.openGLWidget.main_model.nAtoms() > 0:
+        if self.ui.openGLWidget.main_model.n_atoms() > 0:
             self.ui.openGLWidget.set_color_of_atoms(self.periodic_table.get_all_colors())
 
     def fill_colors_of_atoms_table(self):
@@ -1375,7 +1374,7 @@ class MainForm(QMainWindow):
         self.ui.openGLWidget.update()
 
     def menu_export(self):  # pragma: no cover
-        if self.ui.openGLWidget.main_model.nAtoms() > 0:
+        if self.ui.openGLWidget.main_model.n_atoms() > 0:
             try:
                 format = "FDF files (*.fdf);;XYZ files (*.xyz);;FireFly input files (*.inp);;VASP POSCAR file (*.POSCAR)"
                 fname = self.get_file_name_from_save_dialog(format)
@@ -1393,7 +1392,8 @@ class MainForm(QMainWindow):
     def export_to_file(model, fname):  # pragma: no cover
         if fname.find("POSCAR") >= 0:
             fname = fname.split(".")[0]
-            model_to_vasp_poscar(model, fname)
+            text = model_to_vasp_poscar(model)
+            helpers.write_text_to_file(fname, text)
         if fname.endswith(".inp"):
             text = atomic_model_to_firefly_inp(model)
             helpers.write_text_to_file(fname, text)
@@ -1409,7 +1409,7 @@ class MainForm(QMainWindow):
             os.execl(sys.executable, sys.executable, *sys.argv)
         self.ui.Form3Dand2DTabs.setCurrentIndex(0)
         if not file_name:
-            file_name = self.get_file_name_from_open_dialog("All files (*.*)")
+            file_name = self.get_file_name_from_open_dialog("All files (*)")
         if os.path.exists(file_name):
             self.filename = file_name
             self.work_dir = os.path.dirname(file_name)
@@ -1457,6 +1457,10 @@ class MainForm(QMainWindow):
         self.ui.openGLWidget.is_view_box = False
         self.ui.openGLWidget.update()
 
+    def menu_manual(self):  # pragma: no cover
+        path = str(Path(__file__).parent.parent.parent / 'doc' / 'gui4dft.pdf')
+        os.system(path)
+
     def menu_about(self):  # pragma: no cover
         about_win = QDialog(self)
         about_win.ui = Ui_about()
@@ -1472,7 +1476,7 @@ class MainForm(QMainWindow):
         self.color_with_property_enabling()
 
     def color_with_property_enabling(self):
-        if self.ui.openGLWidget.main_model.nAtoms() > 0:
+        if self.ui.openGLWidget.main_model.n_atoms() > 0:
             atom = self.ui.openGLWidget.main_model.atoms[0]
             atom_prop_type = QStandardItemModel()
             for key in atom.properties:
@@ -1491,7 +1495,7 @@ class MainForm(QMainWindow):
         self.ui.openGLWidget.update()
 
     def model_rotation(self):
-        if self.ui.openGLWidget.main_model.nAtoms() == 0:
+        if self.ui.openGLWidget.main_model.n_atoms() == 0:
             return
         angle = self.ui.FormModifyRotationAngle.value()
         model = self.ui.openGLWidget.main_model
@@ -1508,8 +1512,19 @@ class MainForm(QMainWindow):
         self.fill_models_list()
         self.model_to_screen(-1)
 
+    def model_go_to_positive(self):
+        if self.ui.openGLWidget.main_model.n_atoms() == 0:
+            return
+        model = self.ui.openGLWidget.main_model
+        # model.go_to_positive_coordinates()
+        model.go_to_positive_coordinates_translate()
+        # model.move_atoms_to_cell()
+        self.models.append(model)
+        self.fill_models_list()
+        self.model_to_screen(-1)
+
     def model_grow_x(self):
-        if self.ui.openGLWidget.main_model.nAtoms() == 0:
+        if self.ui.openGLWidget.main_model.n_atoms() == 0:
             return
         model = self.ui.openGLWidget.main_model
         model = model.grow_x()
@@ -1518,7 +1533,7 @@ class MainForm(QMainWindow):
         self.model_to_screen(-1)
 
     def model_grow_y(self):
-        if self.ui.openGLWidget.main_model.nAtoms() == 0:
+        if self.ui.openGLWidget.main_model.n_atoms() == 0:
             return
         model = self.ui.openGLWidget.main_model
         model = model.grow_y()
@@ -1527,7 +1542,7 @@ class MainForm(QMainWindow):
         self.model_to_screen(-1)
 
     def model_grow_z(self):
-        if self.ui.openGLWidget.main_model.nAtoms() == 0:
+        if self.ui.openGLWidget.main_model.n_atoms() == 0:
             return
         model = self.ui.openGLWidget.main_model
         model = model.grow_z()
@@ -1560,6 +1575,7 @@ class MainForm(QMainWindow):
                                                   view_axes, axescolor, contour_width)
         self.prepare_form_actions_combo_pdos_species()
         self.prepare_form_actions_combo_pdos_indexes()
+        self.ui.AtomsInSelectedFragment.clear()
 
         self.color_with_property_enabling()
 
@@ -1700,7 +1716,7 @@ class MainForm(QMainWindow):
     def get_filter_atom(self):
         atom_index = []
         if self.ui.FormActionsComboPDOSIndexes.currentText() == 'All':
-            atom_index = range(1, self.ui.openGLWidget.main_model.nAtoms() + 1)
+            atom_index = range(1, self.ui.openGLWidget.main_model.n_atoms() + 1)
         if self.ui.FormActionsComboPDOSIndexes.currentText() == 'Selected atom (3D View)':
             atom_index = [self.ui.openGLWidget.main_model.selected_atom + 1]
         if self.ui.FormActionsComboPDOSIndexes.currentText() == 'Selected in list below':
@@ -2251,6 +2267,10 @@ class MainForm(QMainWindow):
         self.save_property(SETTINGS_FormSettingsViewCheckShowBonds, self.ui.FormSettingsViewCheckShowBonds.isChecked())
         self.ui.openGLWidget.set_bonds_visible(self.ui.FormSettingsViewCheckShowBonds.isChecked())
 
+    def save_state_gl_cull_face(self):  # pragma: no cover
+        self.save_property(SETTINGS_GlCullFace, self.ui.OpenGL_GL_CULL_FACE.isChecked())
+        self.ui.openGLWidget.set_gl_cull_face(self.ui.OpenGL_GL_CULL_FACE.isChecked())
+
     def save_state_colors_fixed(self):  # pragma: no cover
         self.save_property(SETTINGS_FormSettingsColorsFixed, self.ui.FormSettingsColorsFixed.isChecked())
 
@@ -2281,6 +2301,14 @@ class MainForm(QMainWindow):
         self.save_property(SETTINGS_FormSettingsPreferredCoordinates,
                            self.ui.FormSettingsPreferredCoordinates.currentText())
         self.coord_type = self.ui.FormSettingsPreferredCoordinates.currentText()
+
+    def save_state_preferred_coordinates_style(self):  # pragma: no cover
+        self.save_property(SETTINGS_FormSettingsPreferredCoordinatesStyle,
+                           self.ui.PreferredCoordinatesTypeSimple.isChecked())
+        if self.ui.PreferredCoordinatesTypeSimple.isChecked():
+            self.ui.FormSettingsPreferredCoordinates.setEnabled(True)
+        else:
+            self.ui.FormSettingsPreferredCoordinates.setEnabled(False)
 
     def save_state_preferred_units(self):  # pragma: no cover
         self.save_property(SETTINGS_FormSettingsPreferredUnits,
@@ -2379,10 +2407,14 @@ class MainForm(QMainWindow):
             bond1 = cp.getProperty("bond1")
             bond2 = cp.getProperty("bond2")
 
-            ind1, ind2 = model.atoms_of_bond_path(selected_cp)
+            # ind1, ind2 = model.atoms_of_bond_path(selected_cp)
+            ind1 = cp.getProperty("atom1")
+            ind2 = cp.getProperty("atom2")
+
             text += atoms[ind1].let + str(ind1 + 1) + "-" + atoms[ind2].let + str(ind2 + 1) + ")\n"
-            text += "Bond critical path: " + str(len(bond1)) + " + " + str(len(bond2)) + " = " \
-                    + str(len(bond1) + len(bond2)) + " points\n"
+            if bond1 is not None and bond2 is not None:
+                text += "Bond critical path: " + str(len(bond1)) + " + " + str(len(bond2)) + " = " \
+                        + str(len(bond1) + len(bond2)) + " points\n"
 
             text += str(model.bcp[selected_cp].getProperty("text"))
 
@@ -2405,7 +2437,6 @@ class MainForm(QMainWindow):
             self.ui.FormSelectedCP_lap.setText("...")
             self.ui.selectedCP_bpLenLine.setText("...")
             self.ui.selectedCP_nuclei.setText("...")
-
         self.ui.criticalPointProp.setText(text)
 
     def set_manual_colors_default(self):
@@ -2417,7 +2448,7 @@ class MainForm(QMainWindow):
 
         self.fill_colors_of_atoms_table()
 
-        if self.ui.openGLWidget.main_model.nAtoms() > 0:
+        if self.ui.openGLWidget.main_model.n_atoms() > 0:
             self.ui.openGLWidget.set_color_of_atoms(self.periodic_table.get_all_colors())
 
     def save_manual_colors(self):
@@ -2676,7 +2707,7 @@ class MainForm(QMainWindow):
 
         self.save_manual_colors()
 
-        if self.ui.openGLWidget.main_model.nAtoms() > 0:
+        if self.ui.openGLWidget.main_model.n_atoms() > 0:
             self.ui.openGLWidget.set_color_of_atoms(self.periodic_table.get_all_colors())
 
     def select_box_color(self):  # pragma: no cover
@@ -2715,6 +2746,22 @@ class MainForm(QMainWindow):
             text = critic2.create_critic2_xyz_file(bcp, bcp_selected, is_with_selected, model)
             helpers.write_text_to_file(fname, text)
 
+    def export_cp_to_csv(self):
+        name = QFileDialog.getSaveFileName(self, 'Save File', self.work_dir, options=QFileDialog.DontUseNativeDialog)
+        fname = name[0]
+        if len(fname) > 0:
+            model = self.models[self.active_model]
+
+            cp_list = []
+            if self.ui.form_critic_all_cp.isChecked():
+                cp_list = range(len(model.bcp))
+            else:
+                for i in range(0, self.ui.FormCPlist.count()):
+                    ind = int(self.ui.FormCPlist.item(i).text())
+                    cp_list.append(ind)
+            text = critic2.create_csv_file_cp(cp_list, model)
+            helpers.write_text_to_file(fname, text)
+
     def create_cri_file(self):  # pragma: no cover
         name = QFileDialog.getSaveFileName(self, 'Save File', self.work_dir, options=QFileDialog.DontUseNativeDialog)
         extra_points = self.ui.FormExtraPoints.value() + 1
@@ -2746,7 +2793,7 @@ class MainForm(QMainWindow):
 
             cp_list = []
             if self.ui.form_critic_all_cp.isChecked():
-                cp_list = range(model.bcp)
+                cp_list = range(len(model.bcp))
             else:
                 for i in range(0, self.ui.FormCPlist.count()):
                     ind = int(self.ui.FormCPlist.item(i).text())
@@ -2971,8 +3018,10 @@ SETTINGS_FormSettingsViewCheckShowAxes = 'view/CheckShowAxes'
 SETTINGS_FormSettingsViewCheckShowBonds = 'view/CheckShowBonds'
 SETTINGS_FormSettingsViewSpinBondWidth = 'view/SpinBondWidth'
 SETTINGS_FormSettingsViewSpinContourWidth = 'view/SpinContourWidth'
+SETTINGS_GlCullFace = 'view/GlCullFace'
 SETTINGS_FormSettingsActionOnStart = 'action/OnStart'
 
+SETTINGS_FormSettingsPreferredCoordinatesStyle = 'model/FormSettingsPreferredCoordinatesStyle'
 SETTINGS_FormSettingsPreferredCoordinates = 'model/FormSettingsPreferredCoordinates'
 SETTINGS_FormSettingsPreferredUnits = 'model/FormSettingsPreferred/units'
 SETTINGS_FormSettingsPreferredLattice = 'model/FormSettingsPreferredLattice'
