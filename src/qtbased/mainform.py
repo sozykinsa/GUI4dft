@@ -1392,7 +1392,8 @@ class MainForm(QMainWindow):
     def export_to_file(model, fname):  # pragma: no cover
         if fname.find("POSCAR") >= 0:
             fname = fname.split(".")[0]
-            model_to_vasp_poscar(model, fname)
+            text = model_to_vasp_poscar(model)
+            helpers.write_text_to_file(fname, text)
         if fname.endswith(".inp"):
             text = atomic_model_to_firefly_inp(model)
             helpers.write_text_to_file(fname, text)
