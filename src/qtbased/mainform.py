@@ -202,6 +202,7 @@ class MainForm(QMainWindow):
         self.ui.FormModifyGrowZ.clicked.connect(self.model_grow_z)
 
         self.ui.FormModifyGoPositive.clicked.connect(self.model_go_to_positive)
+        self.ui.FormModifyGoToCell.clicked.connect(self.model_go_to_cell)
 
         self.ui.FormActionsPostButVoronoi.clicked.connect(self.plot_voronoi)
         self.ui.FormActionsPostButOptimizeCellParam.clicked.connect(self.plot_volume_param_energy)
@@ -1508,17 +1509,24 @@ class MainForm(QMainWindow):
             model.rotate_y(angle)
         if self.ui.FormModifyRotationZ.isChecked():
             model.rotate_z(angle)
-        self.models.append(model)
-        self.fill_models_list()
-        self.model_to_screen(-1)
+        self.add_model_and_show(model)
 
     def model_go_to_positive(self):
         if self.ui.openGLWidget.main_model.n_atoms() == 0:
             return
         model = self.ui.openGLWidget.main_model
-        # model.go_to_positive_coordinates()
         model.go_to_positive_coordinates_translate()
-        # model.move_atoms_to_cell()
+        self.add_model_and_show(model)
+
+    def model_go_to_cell(self):
+        if self.ui.openGLWidget.main_model.n_atoms() == 0:
+            return
+        model = self.ui.openGLWidget.main_model
+        print("model_go_to_cell")
+        model.move_atoms_to_cell()
+        self.add_model_and_show(model)
+
+    def add_model_and_show(self, model):  # pragma: no cover
         self.models.append(model)
         self.fill_models_list()
         self.model_to_screen(-1)
@@ -1528,27 +1536,21 @@ class MainForm(QMainWindow):
             return
         model = self.ui.openGLWidget.main_model
         model = model.grow_x()
-        self.models.append(model)
-        self.fill_models_list()
-        self.model_to_screen(-1)
+        self.add_model_and_show(model)
 
     def model_grow_y(self):
         if self.ui.openGLWidget.main_model.n_atoms() == 0:
             return
         model = self.ui.openGLWidget.main_model
         model = model.grow_y()
-        self.models.append(model)
-        self.fill_models_list()
-        self.model_to_screen(-1)
+        self.add_model_and_show(model)
 
     def model_grow_z(self):
         if self.ui.openGLWidget.main_model.n_atoms() == 0:
             return
         model = self.ui.openGLWidget.main_model
         model = model.grow_z()
-        self.models.append(model)
-        self.fill_models_list()
-        self.model_to_screen(-1)
+        self.add_model_and_show(model)
 
     def plot_model(self, value):
         if len(self.models) < value:

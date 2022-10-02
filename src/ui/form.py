@@ -1905,6 +1905,27 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_41.addWidget(self.groupBox_49)
 
+        self.groupBox_50 = QGroupBox(self.page_12)
+        self.groupBox_50.setObjectName(u"groupBox_50")
+        self.groupBox_50.setMinimumSize(QSize(0, 0))
+        self.horizontalLayout_166 = QHBoxLayout(self.groupBox_50)
+        self.horizontalLayout_166.setObjectName(u"horizontalLayout_166")
+        self.horizontalSpacer_119 = QSpacerItem(106, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_166.addItem(self.horizontalSpacer_119)
+
+        self.FormModifyGoToCell = QPushButton(self.groupBox_50)
+        self.FormModifyGoToCell.setObjectName(u"FormModifyGoToCell")
+
+        self.horizontalLayout_166.addWidget(self.FormModifyGoToCell)
+
+        self.horizontalSpacer_120 = QSpacerItem(106, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_166.addItem(self.horizontalSpacer_120)
+
+
+        self.verticalLayout_41.addWidget(self.groupBox_50)
+
         self.verticalSpacer_8 = QSpacerItem(20, 400, QSizePolicy.Minimum, QSizePolicy.Expanding)
 
         self.verticalLayout_41.addItem(self.verticalSpacer_8)
@@ -6146,6 +6167,8 @@ class Ui_MainWindow(object):
         self.FormModifyGrowZ.setText(QCoreApplication.translate("MainWindow", u"Grow Z", None))
         self.groupBox_49.setTitle(QCoreApplication.translate("MainWindow", u"Go to positive!", None))
         self.FormModifyGoPositive.setText(QCoreApplication.translate("MainWindow", u"Go", None))
+        self.groupBox_50.setTitle(QCoreApplication.translate("MainWindow", u"Go to cell", None))
+        self.FormModifyGoToCell.setText(QCoreApplication.translate("MainWindow", u"Go", None))
         self.toolBox_6.setItemText(self.toolBox_6.indexOf(self.page_12), QCoreApplication.translate("MainWindow", u"Transforms", None))
         self.tabWidget_3.setTabText(self.tabWidget_3.indexOf(self.tab_7), QCoreApplication.translate("MainWindow", u"Modify", None))
         self.FormActionsPreButFDFGenerate.setText(QCoreApplication.translate("MainWindow", u"Generate", None))

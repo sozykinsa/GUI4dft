@@ -1015,18 +1015,18 @@ class TAtomicModel(object):
 
     def move_atoms_to_cell(self):
         a = np.array([self.lat_vector1, self.lat_vector2, self.lat_vector3])
-        ainv = inv(a)
-        self.move_object_to_cell(self.atoms, ainv)
-        self.move_object_to_cell(self.bcp, ainv)
+        a_inv = inv(a)
+        self.move_object_to_cell(self.atoms, a_inv)
+        self.move_object_to_cell(self.bcp, a_inv)
 
-    def move_object_to_cell(self, arr, ainv):
+    def move_object_to_cell(self, arr, a_inv):
         for at in arr:
-            pos = np.array([at.x, at.y, at.z])
+            pos = at.xyz
             b = pos.transpose()
-            total = ainv.dot(b)
-            pos -= math.trunc(total[0]) * self.lat_vector1 + math.trunc(total[1]) * self.lat_vector2 + math.trunc(
-                total[2]) * self.lat_vector3
-            at.x, at.y, at.z = pos[0], pos[1], pos[2]
+            total = a_inv.dot(b)
+            pos -= math.trunc(total[0] + 0.5) * self.lat_vector1 + math.trunc(total[1] + 0.5) * self.lat_vector2 +\
+                   math.trunc(total[2] + 0.5) * self.lat_vector3
+            at.xyz = pos
 
     def neighbors(self, atom, col, charge):
         """Look for number of neighbors of atom "atom" with a charge "charge"."""

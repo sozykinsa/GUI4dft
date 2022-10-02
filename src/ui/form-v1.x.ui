@@ -3479,6 +3479,54 @@
                  </widget>
                 </item>
                 <item>
+                 <widget class="QGroupBox" name="groupBox_50">
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                  <property name="title">
+                   <string>Go to cell</string>
+                  </property>
+                  <layout class="QHBoxLayout" name="horizontalLayout_166">
+                   <item>
+                    <spacer name="horizontalSpacer_119">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>106</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="FormModifyGoToCell">
+                     <property name="text">
+                      <string>Go</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <spacer name="horizontalSpacer_120">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>106</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+                <item>
                  <spacer name="verticalSpacer_8">
                   <property name="orientation">
                    <enum>Qt::Vertical</enum>
@@ -11200,6 +11248,11 @@ p, li { white-space: pre-wrap; }
  </widget>
  <customwidgets>
   <customwidget>
+   <class>GuiOpenGL</class>
+   <extends>QOpenGLWidget</extends>
+   <header>guiopengl.h</header>
+  </customwidget>
+  <customwidget>
    <class>PyqtGraphWidget</class>
    <extends>QWidget</extends>
    <header>pyqtgraphwidget.h</header>
@@ -11210,11 +11263,6 @@ p, li { white-space: pre-wrap; }
    <extends>QWidget</extends>
    <header>pyqtgraphwidgetimage.h</header>
    <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>GuiOpenGL</class>
-   <extends>QOpenGLWidget</extends>
-   <header>guiopengl.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
