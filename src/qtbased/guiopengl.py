@@ -753,6 +753,9 @@ class GuiOpenGL(QOpenGLWidget):
         if not bond:
             return
 
+        if np.linalg.norm(bond[0].xyz - bond[-1].xyz) > 4.0:
+            return
+
         gl.glColor3f(0, 1, 0)
         for i in range(1, len(bond)):
             self.add_bond(self.scale_factor * bond[i - 1].xyz,
