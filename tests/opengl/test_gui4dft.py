@@ -1,8 +1,5 @@
 from copy import deepcopy
 
-import pytest
-from thirdparty.critic2 import parse_cp_properties
-
 
 def test_gui4dft_run(gui4dft_application, h2o_model):
     window = gui4dft_application
@@ -10,36 +7,6 @@ def test_gui4dft_run(gui4dft_application, h2o_model):
     window.models.append(h2o_model)
     window.plot_model(-1)
     assert len(window.ui.openGLWidget.main_model.atoms) == 3
-
-
-def test_create_swnt(gui4dft_application):
-    window = gui4dft_application
-    window.create_swnt()
-    assert len(window.models[-1].atoms) == 112
-
-    window.ui.FormActionsPreRadioSWNTusecell.setChecked(True)
-    window.create_swnt()
-    assert len(window.models[-1].atoms) == 28
-    window.ui.FormActionsPreRadioSWNTuselen.setChecked(True)
-
-    window.ui.FormActionsPreRadioSWNTcap.setChecked(True)
-    window.create_swnt()
-    assert len(window.models[-1].atoms) == 132
-
-    window.ui.FormActionsPreRadioSWNTcap_2.setChecked(True)
-    window.ui.FormActionsPreRadioSWNTusecell.setChecked(True)
-    window.create_swnt()
-    assert len(window.models[-1].atoms) == 96
-
-    window.ui.createSWGNTradio.setChecked(True)
-    window.create_swnt()
-    assert len(window.models[-1].atoms) == 63
-
-
-def test_create_graphene(gui4dft_application):
-    window = gui4dft_application
-    window.create_graphene()
-    assert len(window.models[-1].atoms) == 112
 
 
 def test_plot_voronoi(gui4dft_application):
@@ -174,31 +141,6 @@ def test_cell_param(gui4dft_application, tests_path):
     method = gui4dft_application.ui.FormActionsPostComboCellParam.currentText()
     if method == "Parabola":
         assert gui4dft_application.ui.FormActionsPostLabelCellParamOptimExpr4.text() == "x0=11.891"
-
-
-def test_critic2_section(gui4dft_application, tests_path):
-    f_name = str(tests_path / 'ref_data' / 'h2o-ang-charges' / 'critic2' / "cp-file.xyz")
-    window = gui4dft_application
-    window.ui.FormSettingsViewCheckXYZasCritic2.setChecked(True)
-    window.menu_open(f_name)
-    model = window.models[-1]
-    assert len(model.bcp) == 5
-    assert "field" not in model.bcp[0].properties
-    f_name = str(tests_path / 'ref_data' / 'h2o-ang-charges' / 'critic2' / "siesta-1-cp.cro")
-    parse_cp_properties(f_name, model)
-    assert float(model.bcp[0].properties["field"]) == pytest.approx(1.68288239)
-    window.add_cp_to_list()
-    assert window.ui.FormCPlist.count() == 0
-    window.selected_cp_changed(1)
-    assert window.ui.selectedCP_nuclei.text() == "O3-O3"
-    window.ui.selectedCP.setText("2")
-    window.add_cp_to_list()
-    window.add_cp_to_list()
-    assert window.ui.FormCPlist.item(0).text() == "2"
-    window.ui.FormCPlist.setCurrentRow(0)
-    assert window.ui.FormCPlist.count() == 1
-    window.delete_cp_from_list()
-    assert window.ui.FormCPlist.count() == 0
 
 
 def test_selected_atom_from_form(gui4dft_application):

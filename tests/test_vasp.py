@@ -1,4 +1,4 @@
-from thirdparty.vasp import model_to_vasp_poscar, fermi_energy_from_doscar
+from src_gui4dft.program.vasp import model_to_vasp_poscar, fermi_energy_from_doscar
 
 
 def test_model_to_vasp_poscar(h2o_model):
