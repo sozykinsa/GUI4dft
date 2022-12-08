@@ -1,5 +1,8 @@
-from utils.siesta import TSIESTA
-from utils.helpers import lat_vectors_from_params
+import math
+import numpy as np
+
+from src_gui4dft.program.siesta import TSIESTA
+from core_gui_atomistic.helpers import lat_vectors_from_params
 
 
 def test_lattice_constant(tests_path):
@@ -12,23 +15,25 @@ def test_lattice_constant(tests_path):
 
 def test_siesta_lattice(tests_path):
     f_name = str(tests_path / 'ref_data' / "test_file_01.fdf")
-    lat1, lat2, lat3 = TSIESTA.lattice_vectors(f_name)
-    assert lat1 == [False, False, False]
+    lats = TSIESTA.lattice_vectors(f_name)
+    assert lats is None
 
     a = 1
     b = 2
     c = 3
-    lat1, lat2, lat3 = lat_vectors_from_params(a, b, c, 90, 90, 90)
-    assert lat1 == [1, 0, 0]
+    alpha = math.radians(90)
+    lats = lat_vectors_from_params(a, b, c, alpha, alpha, alpha)
+    assert lats[0][0] == a
+    assert lats[2][2] == c
 
-    lat1, lat2, lat3 = TSIESTA.lattice_parameters_abc_angles(f_name)
-    assert lat1 == [90.0, 0.0, 0.0]
-    assert lat2 == [0.0, 90.0, 0.0]
-    assert lat3 == [0.0, 0.0, 12.2833]
+    lats = TSIESTA.lattice_parameters_abc_angles(f_name)
+    assert np.array_equal(lats[0], np.array([90.0, 0.0, 0.0]))
+    assert np.array_equal(lats[1], np.array([0.0, 90.0, 0.0]))
+    assert np.array_equal(lats[2], np.array([0.0, 0.0, 12.2833]))
 
     f_name = str(tests_path / 'ref_data' / 'incorrect' / "siesta-no-lat_const.fdf")
-    lat1, lat2, lat3 = TSIESTA.lattice_parameters_abc_angles(f_name)
-    assert not lat1[0]
+    lats = TSIESTA.lattice_parameters_abc_angles(f_name)
+    assert lats is None
 
 
 def test_energy_tot(tests_path):

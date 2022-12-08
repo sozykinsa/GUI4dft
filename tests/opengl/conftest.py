@@ -1,6 +1,6 @@
-from qtbased.guiopengl import GuiOpenGL
+from src_gui4dft.qtbased.guiopengl import GuiOpenGL
 
-from qtbased.mainform import MainForm
+from src_gui4dft.qtbased.mainform import MainForm
 from PySide2.QtCore import QCoreApplication, Qt
 
 import pytest

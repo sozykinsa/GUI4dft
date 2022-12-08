@@ -1,8 +1,8 @@
 from pathlib import Path
-from qtbased.pyqtgraphwidget import PyqtGraphWidget
-from qtbased.pyqtgraphwidgetimage import PyqtGraphWidgetImage
-from models.atomic_model import TAtomicModel
-from utils.periodic_table import TPeriodTable
+from src_gui4dft.qtbased.pyqtgraphwidget import PyqtGraphWidget
+from src_gui4dft.qtbased.pyqtgraphwidgetimage import PyqtGraphWidgetImage
+from core_gui_atomistic.atomic_model import AtomicModel
+from core_gui_atomistic.periodic_table import TPeriodTable
 
 
 import pytest
@@ -17,7 +17,19 @@ def tests_path() -> Path:
 def h2o_model() -> Path:
     #         x    y    z   let charge
     atoms = [[0.0, 0.0, 0.0, "O", 8], [-1.2, 0.0, 0.0, "H", 1], [1.2, 0.0, 0.0, "H", 1]]
-    return TAtomicModel(atoms)
+    return AtomicModel(atoms)
+
+
+@pytest.fixture
+def swnt_33() -> Path:
+    #         x    y    z   let charge
+    atoms = [[-0.70056811, 1.92479506, - 0.61920816, "C", 6], [-1.31663736, - 1.56910731, - 0.61920816, "C", 6],
+             [-2.01720547, - 0.35568775, - 0.61920816, "C", 6], [2.01720547, - 0.35568775, - 0.61920816, "C", 6],
+             [1.31663736, - 1.56910731, - 0.61920816, "C", 6], [0.70056811, 1.92479506, - 0.61920816, "C", 6],
+             [-1.31663736, 1.56910731, 0.61920816, "C", 6], [-0.70056811, - 1.92479506, 0.61920816, "C", 6],
+             [-2.01720547, 0.35568775, 0.61920816, "C", 6], [2.01720547, 0.35568775, 0.61920816, "C", 6],
+             [0.70056811, - 1.92479506, 0.61920816, "C", 6], [1.31663736, 1.56910731, 0.61920816, "C", 6]]
+    return AtomicModel(atoms)
 
 
 @pytest.fixture
