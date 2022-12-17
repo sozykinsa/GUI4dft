@@ -182,7 +182,12 @@ class TPeriodTable:
         self.Bonds[1][8] = 1.0
         self.Bonds[5][7] = 1.5
         self.Bonds[6][6] = 1.42
-        self.Bonds[6][8] = 1.42
+        self.Bonds[6][7] = 1.47
+        self.Bonds[6][8] = 1.23
+        self.Bonds[6][14] = 1.86
+        self.Bonds[7][7] = 1.1
+        self.Bonds[8][14] = 1.6
+        self.Bonds[14][14] = 2.35
         self.Bonds[16][16] = 1.9
         self.Bonds[46][46] = 2.5
         self.Bonds[78][78] = 2.5

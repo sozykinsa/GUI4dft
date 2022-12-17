@@ -39,6 +39,9 @@ class AtomicModel(object):
 
         self.selected_atom = -1
 
+    def __getitem__(self, i):
+        return self.atoms[i]
+
     @property
     def lat_vector1(self) -> float:
         return self.lat_vectors[0]
@@ -131,7 +134,14 @@ class AtomicModel(object):
         return molecules
 
     @staticmethod
-    def atoms_from_xyz_structure(number_of_atoms, ani_file, indexes=[0, 1, 2, 3]):
+    def atoms_from_xyz_structure(number_of_atoms: int, ani_file, indexes=[0, 1, 2, 3],
+                                 is_allow_charge_incorrect: bool = False):
+        """Get atoms from xyz file.
+        number_of_atoms - number if data lines
+        ani_file -
+        indexes -
+        is_only_charge_correct - check the charge for correctness
+        """
         if indexes[0] == 0:
             ani_file.readline()
         atoms = []
@@ -145,7 +155,7 @@ class AtomicModel(object):
             d3 = float(s[indexes[3]])
             c = reg.sub('', s[indexes[0]])
             charge = mendeley.get_charge_by_letter(c)
-            if charge > 0:
+            if (charge > 0) or is_allow_charge_incorrect:
                 atoms.append([d1, d2, d3, c, charge])
         new_model = AtomicModel(atoms)
         new_model.set_lat_vectors_default()
@@ -236,9 +246,6 @@ class AtomicModel(object):
 
     def n_bonds(self):
         return len(self.bonds)
-
-    def __getitem__(self, i):
-        return self.atoms[i]
 
     def modify_atoms_types(self, changes):
         for change in changes:

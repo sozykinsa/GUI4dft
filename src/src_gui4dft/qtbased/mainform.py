@@ -2433,7 +2433,8 @@ class MainForm(QMainWindow):
         self.ui.FormActionsPreSpinAtomsCoordZ.setValue(position[2])
         self.ui.FormActionsPreSpinAtomsCoordZ.update()
 
-    def selected_atom_changed(self, selected_atom):
+    def selected_atom_changed(self, selected):
+        selected_atom = selected[0]
         if selected_atom == -1:
             self.history_of_atom_selection = []
         else:
