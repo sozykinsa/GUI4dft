@@ -1167,7 +1167,8 @@ class MainForm(QMainWindow):
 
     def fit_with(self):   # pragma: no cover
         xf, yf, rf = self.models[self.active_model].fit_with_cylinder()
-        self.ui.fit_with_textBrowser.setText("x0 = " + str(xf) + " A\ny0 = " + str(yf) + " A\nR = " + str(rf)) + " A"
+        self.ui.fit_with_textBrowser.setText("x0 = " + str(round(xf, 4)) + " A\ny0 = " +
+                                             str(round(yf, 4)) + " A\nR = " + str(round(rf, 4)) + " A")
 
     def get_colors_list(self, minv, maxv, values, cmap, color_scale):
         n = len(values)

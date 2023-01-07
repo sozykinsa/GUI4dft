@@ -1682,8 +1682,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>100</width>
-                 <height>30</height>
+                 <width>98</width>
+                 <height>28</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -4409,15 +4409,15 @@
            <string notr="true"/>
           </property>
           <property name="currentIndex">
-           <number>0</number>
+           <number>2</number>
           </property>
           <widget class="QWidget" name="page_19">
            <property name="geometry">
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>340</width>
-             <height>627</height>
+             <width>399</width>
+             <height>706</height>
             </rect>
            </property>
            <attribute name="label">
@@ -7635,8 +7635,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>355</width>
-             <height>655</height>
+             <width>399</width>
+             <height>706</height>
             </rect>
            </property>
            <attribute name="label">
@@ -7999,7 +7999,7 @@
                      <property name="minimumSize">
                       <size>
                        <width>0</width>
-                       <height>50</height>
+                       <height>0</height>
                       </size>
                      </property>
                      <property name="maximumSize">
@@ -8049,7 +8049,7 @@
                      <property name="minimumSize">
                       <size>
                        <width>0</width>
-                       <height>50</height>
+                       <height>0</height>
                       </size>
                      </property>
                      <property name="maximumSize">
@@ -8129,6 +8129,9 @@
                        <widget class="QCheckBox" name="optimize_cell_param_shift">
                         <property name="text">
                          <string>Shift</string>
+                        </property>
+                        <property name="checked">
+                         <bool>true</bool>
                         </property>
                        </widget>
                       </item>
@@ -8346,6 +8349,19 @@
                   </layout>
                  </widget>
                 </item>
+                <item>
+                 <spacer name="verticalSpacer_20">
+                  <property name="orientation">
+                   <enum>Qt::Vertical</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>20</width>
+                    <height>40</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
                </layout>
               </widget>
               <widget class="QWidget" name="tab_21">
@@ -8449,7 +8465,7 @@
                    <item>
                     <widget class="QFrame" name="frame_159">
                      <property name="frameShape">
-                      <enum>QFrame::StyledPanel</enum>
+                      <enum>QFrame::NoFrame</enum>
                      </property>
                      <property name="frameShadow">
                       <enum>QFrame::Raised</enum>
@@ -8467,6 +8483,9 @@
                       </item>
                       <item>
                        <widget class="QRadioButton" name="fit_with_sphere">
+                        <property name="enabled">
+                         <bool>false</bool>
+                        </property>
                         <property name="text">
                          <string>sphere</string>
                         </property>
@@ -8477,6 +8496,9 @@
                       </item>
                       <item>
                        <widget class="QRadioButton" name="fit_with_parallelogram">
+                        <property name="enabled">
+                         <bool>false</bool>
+                        </property>
                         <property name="text">
                          <string>parallelogram</string>
                         </property>
@@ -8491,12 +8513,15 @@
                    <item>
                     <widget class="QFrame" name="frame_152">
                      <property name="frameShape">
-                      <enum>QFrame::StyledPanel</enum>
+                      <enum>QFrame::NoFrame</enum>
                      </property>
                      <property name="frameShadow">
                       <enum>QFrame::Raised</enum>
                      </property>
                      <layout class="QHBoxLayout" name="horizontalLayout_175">
+                      <property name="topMargin">
+                       <number>0</number>
+                      </property>
                       <item>
                        <spacer name="horizontalSpacer_121">
                         <property name="orientation">
@@ -11466,8 +11491,8 @@ p, li { white-space: pre-wrap; }
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>79</width>
-         <height>100</height>
+         <width>665</width>
+         <height>765</height>
         </rect>
        </property>
        <attribute name="label">

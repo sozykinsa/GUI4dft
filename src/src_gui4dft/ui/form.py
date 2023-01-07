@@ -938,7 +938,7 @@ class Ui_MainWindow(object):
         self.toolBox.addItem(self.page_17, u"2D")
         self.page_5 = QWidget()
         self.page_5.setObjectName(u"page_5")
-        self.page_5.setGeometry(QRect(0, 0, 100, 30))
+        self.page_5.setGeometry(QRect(0, 0, 98, 28))
         self.toolBox.addItem(self.page_5, u"3D")
         self.page_6 = QWidget()
         self.page_6.setObjectName(u"page_6")
@@ -2391,7 +2391,7 @@ class Ui_MainWindow(object):
         self.toolBox_2.setStyleSheet(u"")
         self.page_19 = QWidget()
         self.page_19.setObjectName(u"page_19")
-        self.page_19.setGeometry(QRect(0, 0, 340, 627))
+        self.page_19.setGeometry(QRect(0, 0, 399, 706))
         self.verticalLayout_6 = QVBoxLayout(self.page_19)
         self.verticalLayout_6.setSpacing(0)
         self.verticalLayout_6.setObjectName(u"verticalLayout_6")
@@ -4087,7 +4087,7 @@ class Ui_MainWindow(object):
         self.toolBox_2.addItem(self.page_2, u"Isosurface and Contours")
         self.page_24 = QWidget()
         self.page_24.setObjectName(u"page_24")
-        self.page_24.setGeometry(QRect(0, 0, 355, 655))
+        self.page_24.setGeometry(QRect(0, 0, 399, 706))
         self.verticalLayout_44 = QVBoxLayout(self.page_24)
         self.verticalLayout_44.setObjectName(u"verticalLayout_44")
         self.tabWidget_6 = QTabWidget(self.page_24)
@@ -4291,7 +4291,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_100.setContentsMargins(0, 0, 0, 0)
         self.frame = QFrame(self.frame_162)
         self.frame.setObjectName(u"frame")
-        self.frame.setMinimumSize(QSize(0, 50))
+        self.frame.setMinimumSize(QSize(0, 0))
         self.frame.setMaximumSize(QSize(16777215, 50))
         self.frame.setFrameShape(QFrame.NoFrame)
         self.frame.setFrameShadow(QFrame.Raised)
@@ -4313,7 +4313,7 @@ class Ui_MainWindow(object):
 
         self.frame_21 = QFrame(self.frame_162)
         self.frame_21.setObjectName(u"frame_21")
-        self.frame_21.setMinimumSize(QSize(0, 50))
+        self.frame_21.setMinimumSize(QSize(0, 0))
         self.frame_21.setMaximumSize(QSize(16777215, 50))
         self.frame_21.setFrameShape(QFrame.NoFrame)
         self.frame_21.setFrameShadow(QFrame.Raised)
@@ -4348,6 +4348,7 @@ class Ui_MainWindow(object):
 
         self.optimize_cell_param_shift = QCheckBox(self.frame_163)
         self.optimize_cell_param_shift.setObjectName(u"optimize_cell_param_shift")
+        self.optimize_cell_param_shift.setChecked(True)
 
         self.horizontalLayout_123.addWidget(self.optimize_cell_param_shift)
 
@@ -4453,6 +4454,10 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_55.addWidget(self.groupBox_53)
 
+        self.verticalSpacer_20 = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+
+        self.verticalLayout_55.addItem(self.verticalSpacer_20)
+
         self.tabWidget_6.addTab(self.tab_17, "")
         self.tab_21 = QWidget()
         self.tab_21.setObjectName(u"tab_21")
@@ -4519,7 +4524,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_103.setObjectName(u"verticalLayout_103")
         self.frame_159 = QFrame(self.groupBox_54)
         self.frame_159.setObjectName(u"frame_159")
-        self.frame_159.setFrameShape(QFrame.StyledPanel)
+        self.frame_159.setFrameShape(QFrame.NoFrame)
         self.frame_159.setFrameShadow(QFrame.Raised)
         self.horizontalLayout_174 = QHBoxLayout(self.frame_159)
         self.horizontalLayout_174.setObjectName(u"horizontalLayout_174")
@@ -4531,12 +4536,14 @@ class Ui_MainWindow(object):
 
         self.fit_with_sphere = QRadioButton(self.frame_159)
         self.fit_with_sphere.setObjectName(u"fit_with_sphere")
+        self.fit_with_sphere.setEnabled(False)
         self.fit_with_sphere.setCheckable(False)
 
         self.horizontalLayout_174.addWidget(self.fit_with_sphere)
 
         self.fit_with_parallelogram = QRadioButton(self.frame_159)
         self.fit_with_parallelogram.setObjectName(u"fit_with_parallelogram")
+        self.fit_with_parallelogram.setEnabled(False)
         self.fit_with_parallelogram.setCheckable(False)
 
         self.horizontalLayout_174.addWidget(self.fit_with_parallelogram)
@@ -4546,10 +4553,11 @@ class Ui_MainWindow(object):
 
         self.frame_152 = QFrame(self.groupBox_54)
         self.frame_152.setObjectName(u"frame_152")
-        self.frame_152.setFrameShape(QFrame.StyledPanel)
+        self.frame_152.setFrameShape(QFrame.NoFrame)
         self.frame_152.setFrameShadow(QFrame.Raised)
         self.horizontalLayout_175 = QHBoxLayout(self.frame_152)
         self.horizontalLayout_175.setObjectName(u"horizontalLayout_175")
+        self.horizontalLayout_175.setContentsMargins(-1, 0, -1, -1)
         self.horizontalSpacer_121 = QSpacerItem(94, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
         self.horizontalLayout_175.addItem(self.horizontalSpacer_121)
@@ -6135,7 +6143,7 @@ class Ui_MainWindow(object):
         self.Form3Dand2DTabs.addItem(self.page_7, u"3D View")
         self.page_8 = QWidget()
         self.page_8.setObjectName(u"page_8")
-        self.page_8.setGeometry(QRect(0, 0, 79, 100))
+        self.page_8.setGeometry(QRect(0, 0, 665, 765))
         self.horizontalLayout = QHBoxLayout(self.page_8)
         self.horizontalLayout.setObjectName(u"horizontalLayout")
         self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
@@ -6196,7 +6204,7 @@ class Ui_MainWindow(object):
         self.toolBox.setCurrentIndex(0)
         self.tabWidget_11.setCurrentIndex(0)
         self.toolBox_6.setCurrentIndex(0)
-        self.toolBox_2.setCurrentIndex(0)
+        self.toolBox_2.setCurrentIndex(2)
         self.tabWidget_5.setCurrentIndex(0)
         self.tabWidget_4.setCurrentIndex(0)
         self.tabWidget_2.setCurrentIndex(0)
