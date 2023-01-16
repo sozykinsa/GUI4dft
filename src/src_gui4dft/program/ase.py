@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import numpy as np
+
 from core_gui_atomistic import helpers
 from core_gui_atomistic.atom import Atom
 from core_gui_atomistic.atomic_model import AtomicModel
@@ -13,6 +15,15 @@ def from_ase_atoms_to_atomic_model(ase_atoms):
     letters = mendeley.get_all_letters()
     for pos, numb in zip(positions, atomic_numbers):
         model.add_atom(Atom([*pos, letters[numb], numb]))
+    cell = ase_atoms.cell
+    model_cell = np.eye(3, dtype=float)
+    # print(cell, cell[0][0], cell[0][1], cell[0][2])
+    if cell[0].size == 3:
+        model_cell[0][0] = cell[0][0]
+        model_cell[1][1] = cell[1][1]
+        model_cell[2][2] = cell[2][2]
+        # print(model_cell)
+        model.lat_vectors = model_cell
     return model
 
 

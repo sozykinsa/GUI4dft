@@ -478,6 +478,9 @@
                 </item>
                 <item>
                  <widget class="QGroupBox" name="groupBox_51">
+                  <property name="enabled">
+                   <bool>false</bool>
+                  </property>
                   <property name="title">
                    <string>Cluster</string>
                   </property>
@@ -705,8 +708,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>380</width>
-                 <height>560</height>
+                 <width>358</width>
+                 <height>584</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -722,7 +725,7 @@
                    <attribute name="title">
                     <string>SWNT</string>
                    </attribute>
-                   <layout class="QVBoxLayout" name="verticalLayout_94">
+                   <layout class="QVBoxLayout" name="verticalLayout_90">
                     <item>
                      <widget class="QGroupBox" name="groupBox_3">
                       <property name="minimumSize">
@@ -741,18 +744,6 @@
                        <string>Type</string>
                       </property>
                       <layout class="QHBoxLayout" name="horizontalLayout_43">
-                       <property name="leftMargin">
-                        <number>0</number>
-                       </property>
-                       <property name="topMargin">
-                        <number>0</number>
-                       </property>
-                       <property name="rightMargin">
-                        <number>0</number>
-                       </property>
-                       <property name="bottomMargin">
-                        <number>0</number>
-                       </property>
                        <item>
                         <widget class="QFrame" name="frame_13">
                          <property name="frameShape">
@@ -762,6 +753,12 @@
                           <enum>QFrame::Raised</enum>
                          </property>
                          <layout class="QVBoxLayout" name="verticalLayout_19">
+                          <property name="leftMargin">
+                           <number>0</number>
+                          </property>
+                          <property name="rightMargin">
+                           <number>0</number>
+                          </property>
                           <item>
                            <widget class="QRadioButton" name="FormActionsPreRadioSWNT">
                             <property name="text">
@@ -820,7 +817,13 @@
                          <property name="frameShadow">
                           <enum>QFrame::Raised</enum>
                          </property>
-                         <layout class="QVBoxLayout" name="verticalLayout_64">
+                         <layout class="QVBoxLayout" name="verticalLayout_94">
+                          <property name="leftMargin">
+                           <number>0</number>
+                          </property>
+                          <property name="rightMargin">
+                           <number>0</number>
+                          </property>
                           <item>
                            <widget class="QGroupBox" name="FormCreateGroupFirstCap">
                             <property name="enabled">
@@ -1032,7 +1035,7 @@
                       <property name="title">
                        <string>Chirality</string>
                       </property>
-                      <layout class="QHBoxLayout" name="horizontalLayout_30">
+                      <layout class="QHBoxLayout" name="horizontalLayout_134">
                        <property name="leftMargin">
                         <number>0</number>
                        </property>
@@ -1113,7 +1116,13 @@
                       <property name="title">
                        <string>Size</string>
                       </property>
-                      <layout class="QHBoxLayout" name="horizontalLayout_134">
+                      <layout class="QHBoxLayout" name="horizontalLayout_30">
+                       <property name="leftMargin">
+                        <number>0</number>
+                       </property>
+                       <property name="rightMargin">
+                        <number>0</number>
+                       </property>
                        <item>
                         <widget class="QFrame" name="frame_97">
                          <property name="frameShape">
@@ -1122,7 +1131,7 @@
                          <property name="frameShadow">
                           <enum>QFrame::Raised</enum>
                          </property>
-                         <layout class="QVBoxLayout" name="verticalLayout_65">
+                         <layout class="QVBoxLayout" name="verticalLayout_88">
                           <item>
                            <widget class="QRadioButton" name="FormActionsPreRadioSWNTuselen">
                             <property name="text">
@@ -1144,14 +1153,14 @@
                         </widget>
                        </item>
                        <item>
-                        <widget class="QFrame" name="frame_12">
+                        <widget class="QFrame" name="frame_140">
                          <property name="frameShape">
-                          <enum>QFrame::NoFrame</enum>
+                          <enum>QFrame::StyledPanel</enum>
                          </property>
                          <property name="frameShadow">
                           <enum>QFrame::Raised</enum>
                          </property>
-                         <layout class="QVBoxLayout" name="verticalLayout_98">
+                         <layout class="QVBoxLayout" name="verticalLayout_65">
                           <item>
                            <widget class="QDoubleSpinBox" name="spin_swnt_len">
                             <property name="minimumSize">
@@ -1223,6 +1232,12 @@
                        <enum>QFrame::Raised</enum>
                       </property>
                       <layout class="QHBoxLayout" name="horizontalLayout_13">
+                       <property name="leftMargin">
+                        <number>0</number>
+                       </property>
+                       <property name="rightMargin">
+                        <number>0</number>
+                       </property>
                        <item>
                         <spacer name="horizontalSpacer_15">
                          <property name="orientation">
@@ -1482,12 +1497,12 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>323</width>
-                 <height>172</height>
+                 <width>371</width>
+                 <height>562</height>
                 </rect>
                </property>
                <attribute name="label">
-                <string>2D</string>
+                <string>2D (surface)</string>
                </attribute>
                <layout class="QVBoxLayout" name="verticalLayout_27">
                 <item>
@@ -1682,13 +1697,490 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>98</width>
-                 <height>28</height>
+                 <width>371</width>
+                 <height>562</height>
                 </rect>
                </property>
                <attribute name="label">
-                <string>3D</string>
+                <string>3D (bulk)</string>
                </attribute>
+               <layout class="QVBoxLayout" name="verticalLayout_87">
+                <item>
+                 <widget class="QFrame" name="frame_115">
+                  <property name="frameShape">
+                   <enum>QFrame::StyledPanel</enum>
+                  </property>
+                  <property name="frameShadow">
+                   <enum>QFrame::Raised</enum>
+                  </property>
+                  <layout class="QHBoxLayout" name="horizontalLayout_142">
+                   <property name="leftMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="topMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="rightMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="bottomMargin">
+                    <number>0</number>
+                   </property>
+                   <item>
+                    <widget class="QLabel" name="label_87">
+                     <property name="text">
+                      <string>name</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QLineEdit" name="crystalstructure_3d_name"/>
+                   </item>
+                   <item>
+                    <spacer name="horizontalSpacer_139">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>203</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QFrame" name="frame_125">
+                  <property name="frameShape">
+                   <enum>QFrame::StyledPanel</enum>
+                  </property>
+                  <property name="frameShadow">
+                   <enum>QFrame::Raised</enum>
+                  </property>
+                  <layout class="QHBoxLayout" name="horizontalLayout_138">
+                   <property name="leftMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="topMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="rightMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="bottomMargin">
+                    <number>0</number>
+                   </property>
+                   <item>
+                    <widget class="QLabel" name="label_93">
+                     <property name="text">
+                      <string>crystalstructure</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QComboBox" name="crystalstructure_3d"/>
+                   </item>
+                   <item>
+                    <spacer name="horizontalSpacer_138">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>346</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QFrame" name="frame_126">
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                  <property name="frameShape">
+                   <enum>QFrame::StyledPanel</enum>
+                  </property>
+                  <property name="frameShadow">
+                   <enum>QFrame::Raised</enum>
+                  </property>
+                  <layout class="QHBoxLayout" name="horizontalLayout_143">
+                   <property name="leftMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="topMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="rightMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="bottomMargin">
+                    <number>0</number>
+                   </property>
+                   <item>
+                    <widget class="QLabel" name="label_107">
+                     <property name="text">
+                      <string>a</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QDoubleSpinBox" name="crystalstructure_3d_a"/>
+                   </item>
+                   <item>
+                    <widget class="QCheckBox" name="crystalstructure_3d_a_dont_use">
+                     <property name="text">
+                      <string>Do not use</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <spacer name="horizontalSpacer_136">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>243</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QFrame" name="frame_135">
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                  <property name="frameShape">
+                   <enum>QFrame::StyledPanel</enum>
+                  </property>
+                  <property name="frameShadow">
+                   <enum>QFrame::Raised</enum>
+                  </property>
+                  <layout class="QHBoxLayout" name="horizontalLayout_156">
+                   <property name="leftMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="topMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="rightMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="bottomMargin">
+                    <number>0</number>
+                   </property>
+                   <item>
+                    <widget class="QLabel" name="label_111">
+                     <property name="text">
+                      <string>b</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QDoubleSpinBox" name="crystalstructure_3d_b"/>
+                   </item>
+                   <item>
+                    <widget class="QCheckBox" name="crystalstructure_3d_b_dont_use">
+                     <property name="text">
+                      <string>Do not use</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <spacer name="horizontalSpacer_137">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>243</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QFrame" name="frame_139">
+                  <property name="frameShape">
+                   <enum>QFrame::StyledPanel</enum>
+                  </property>
+                  <property name="frameShadow">
+                   <enum>QFrame::Raised</enum>
+                  </property>
+                  <layout class="QHBoxLayout" name="horizontalLayout_141">
+                   <property name="leftMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="topMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="rightMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="bottomMargin">
+                    <number>0</number>
+                   </property>
+                   <item>
+                    <widget class="QLabel" name="label_140">
+                     <property name="text">
+                      <string>c</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QDoubleSpinBox" name="crystalstructure_3d_c"/>
+                   </item>
+                   <item>
+                    <widget class="QCheckBox" name="crystalstructure_3d_c_dont_use">
+                     <property name="text">
+                      <string>Do not use</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <spacer name="horizontalSpacer_135">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>156</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QFrame" name="frame_160">
+                  <property name="frameShape">
+                   <enum>QFrame::StyledPanel</enum>
+                  </property>
+                  <property name="frameShadow">
+                   <enum>QFrame::Raised</enum>
+                  </property>
+                  <layout class="QHBoxLayout" name="horizontalLayout_162">
+                   <property name="leftMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="topMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="rightMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="bottomMargin">
+                    <number>0</number>
+                   </property>
+                   <item>
+                    <widget class="QLabel" name="label_142">
+                     <property name="text">
+                      <string>alpha</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QDoubleSpinBox" name="crystalstructure_3d_alpha"/>
+                   </item>
+                   <item>
+                    <widget class="QCheckBox" name="crystalstructure_3d_alpha_dont_use">
+                     <property name="text">
+                      <string>Do not use</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <spacer name="horizontalSpacer_140">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>131</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QFrame" name="frame_136">
+                  <property name="frameShape">
+                   <enum>QFrame::StyledPanel</enum>
+                  </property>
+                  <property name="frameShadow">
+                   <enum>QFrame::Raised</enum>
+                  </property>
+                  <layout class="QHBoxLayout" name="horizontalLayout_176">
+                   <property name="leftMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="topMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="rightMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="bottomMargin">
+                    <number>0</number>
+                   </property>
+                   <item>
+                    <widget class="QLabel" name="label_124">
+                     <property name="text">
+                      <string>covera</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QDoubleSpinBox" name="crystalstructure_3d_covera"/>
+                   </item>
+                   <item>
+                    <widget class="QCheckBox" name="crystalstructure_3d_covera_dont_use">
+                     <property name="text">
+                      <string>Do not use</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <spacer name="horizontalSpacer_141">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>124</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QFrame" name="frame_169">
+                  <property name="frameShape">
+                   <enum>QFrame::StyledPanel</enum>
+                  </property>
+                  <property name="frameShadow">
+                   <enum>QFrame::Raised</enum>
+                  </property>
+                  <layout class="QHBoxLayout" name="horizontalLayout_137">
+                   <property name="leftMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="topMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="rightMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="bottomMargin">
+                    <number>0</number>
+                   </property>
+                   <item>
+                    <widget class="QRadioButton" name="crystalstructure_3d_orthorhombic">
+                     <property name="text">
+                      <string>orthorhombic</string>
+                     </property>
+                     <property name="checked">
+                      <bool>true</bool>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QRadioButton" name="radioButton_2">
+                     <property name="text">
+                      <string>cubic</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QFrame" name="frame_134">
+                  <property name="frameShape">
+                   <enum>QFrame::StyledPanel</enum>
+                  </property>
+                  <property name="frameShadow">
+                   <enum>QFrame::Raised</enum>
+                  </property>
+                  <layout class="QHBoxLayout" name="horizontalLayout_130">
+                   <item>
+                    <spacer name="horizontalSpacer_133">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>106</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="generate_3d_bulk">
+                     <property name="text">
+                      <string>Create</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <spacer name="horizontalSpacer_134">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>106</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="verticalSpacer_28">
+                  <property name="orientation">
+                   <enum>Qt::Vertical</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>20</width>
+                    <height>50</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+               </layout>
               </widget>
               <widget class="QWidget" name="page_6">
                <property name="geometry">
@@ -4251,6 +4743,100 @@
                 </widget>
                </item>
                <item>
+                <widget class="QGroupBox" name="groupBox_55">
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="title">
+                  <string>CRYSTAL *.d12</string>
+                 </property>
+                 <layout class="QHBoxLayout" name="horizontalLayout_129">
+                  <property name="leftMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="topMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="rightMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="bottomMargin">
+                   <number>0</number>
+                  </property>
+                  <item>
+                   <widget class="QPushButton" name="crystal_3d_d12_generate">
+                    <property name="text">
+                     <string>3D</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <spacer name="horizontalSpacer_131">
+                    <property name="orientation">
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>28</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                  <item>
+                   <widget class="QPushButton" name="crystal_2d_d12_generate">
+                    <property name="text">
+                     <string>2D</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <spacer name="horizontalSpacer_132">
+                    <property name="orientation">
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>28</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                  <item>
+                   <widget class="QPushButton" name="crystal_1d_d12_generate">
+                    <property name="text">
+                     <string>1D</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <spacer name="horizontalSpacer_81">
+                    <property name="orientation">
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>40</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                  <item>
+                   <widget class="QPushButton" name="crystal_0d_d12_generate">
+                    <property name="text">
+                     <string>0D</string>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </widget>
+               </item>
+               <item>
                 <widget class="QFrame" name="frame_59">
                  <property name="minimumSize">
                   <size>
@@ -4277,33 +4863,6 @@
                   <property name="bottomMargin">
                    <number>0</number>
                   </property>
-                  <item>
-                   <widget class="QPushButton" name="FormIEd12Generate2D">
-                    <property name="text">
-                     <string>CRYSTAL 2D *.d12</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QPushButton" name="FormIEd12Generate1D">
-                    <property name="text">
-                     <string>CRYSTAL 1D *.d12</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <spacer name="horizontalSpacer_81">
-                    <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>94</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
                  </layout>
                 </widget>
                </item>
@@ -4409,7 +4968,7 @@
            <string notr="true"/>
           </property>
           <property name="currentIndex">
-           <number>2</number>
+           <number>0</number>
           </property>
           <widget class="QWidget" name="page_19">
            <property name="geometry">
@@ -4861,7 +5420,7 @@
                   </property>
                   <layout class="QHBoxLayout" name="horizontalLayout_29">
                    <item>
-                    <widget class="QCheckBox" name="FormActionsCheckBANDSfermyShow_3">
+                    <widget class="QCheckBox" name="dos_efermy_show">
                      <property name="text">
                       <string>Show Fermi level</string>
                      </property>
@@ -4886,7 +5445,7 @@
                   </property>
                   <layout class="QHBoxLayout" name="horizontalLayout_9">
                    <item>
-                    <widget class="QCheckBox" name="FormActionsCheckDOS">
+                    <widget class="QCheckBox" name="plot_two_spins_dos">
                      <property name="text">
                       <string>Plot Up and Down spin</string>
                      </property>
@@ -4906,7 +5465,7 @@
                     </spacer>
                    </item>
                    <item>
-                    <widget class="QCheckBox" name="FormActionsCheckDOS_2">
+                    <widget class="QCheckBox" name="invert_spin_dos">
                      <property name="text">
                       <string>Invert Down</string>
                      </property>
@@ -4959,7 +5518,7 @@
                    <item>
                     <widget class="QPushButton" name="FormActionsButtonAddDOSFile">
                      <property name="text">
-                      <string>Add .out file</string>
+                      <string>Add .out or DOSCAR file</string>
                      </property>
                     </widget>
                    </item>
@@ -6333,8 +6892,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>359</width>
-             <height>668</height>
+             <width>399</width>
+             <height>706</height>
             </rect>
            </property>
            <attribute name="label">

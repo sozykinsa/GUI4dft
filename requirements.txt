@@ -7,3 +7,4 @@ scipy
 matplotlib
 pyqtgraph
 scikit-image
+vasprun-xml

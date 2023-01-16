@@ -50,8 +50,10 @@ from core_gui_atomistic import helpers
 from src_gui4dft.ui.about import Ui_DialogAbout as Ui_about
 from src_gui4dft.ui.form import Ui_MainWindow as Ui_form
 
-from ase.build import molecule
+from ase.build import molecule, bulk
 from ase.cluster.cubic import FaceCenteredCubic
+
+from src_gui4dft.program.vasp import VaspDataFromXml
 
 sys.path.append('')
 
@@ -64,6 +66,8 @@ class MainForm(QMainWindow):
         super().__init__(*args)
         self.ui = Ui_form()
         self.ui.setupUi(self)
+
+        self.program: str = "SIESTA"  # mode of operation fot program
 
         self.models = []
         self.ui.openGLWidget.set_form_elements(self.ui.FormSettingsViewCheckAtomSelection,
@@ -145,13 +149,19 @@ class MainForm(QMainWindow):
         self.ui.FormActionsPreButBiElementGenerate.clicked.connect(self.create_bi_el_nt)
         self.ui.generate_2d_graphene.clicked.connect(self.create_graphene)
         self.ui.generate_2d_bn.clicked.connect(self.create_2d_bn)
+        self.ui.generate_3d_bulk.clicked.connect(self.generate_3d_bulk)
+
+        data = ["sc", "fcc", "bcc", "tetragonal", "bct", "hcp", "rhombohedral", "orthorhombic", "mcl", "diamond"]
+        data.extend(["zincblende", "rocksalt", "cesiumchloride", "fluorite", "wurtzite"])
+        crystalstructure_type = self.q_standard_item_model_init(data)
+        self.ui.crystalstructure_3d.setModel(crystalstructure_type)
 
         # input generation
         self.ui.FDFGenerate.clicked.connect(self.fdf_data_to_form)
         self.ui.POSCARgenerate.clicked.connect(self.poscar_data_to_form)
         self.ui.QEgenerate.clicked.connect(self.qe_data_to_form)
-        self.ui.FormIEd12Generate1D.clicked.connect(self.d12_1D_to_form)
-        self.ui.FormIEd12Generate2D.clicked.connect(self.d12_2D_to_form)
+        self.ui.crystal_1d_d12_generate.clicked.connect(self.d12_1D_to_form)
+        self.ui.crystal_2d_d12_generate.clicked.connect(self.d12_2D_to_form)
 
         self.ui.data_from_form_to_input_file.clicked.connect(self.data_from_form_to_input_file)
         self.ui.model_rotation_x.valueChanged.connect(self.model_orientation_changed)
@@ -382,6 +392,12 @@ class MainForm(QMainWindow):
 
         self.setup_actions()
 
+    def q_standard_item_model_init(self, data: list):
+        model_type = QStandardItemModel()
+        for row in data:
+            model_type.appendRow(QStandardItem(row))
+        return model_type
+
     def setup_actions(self):
         if is_with_figure and os.path.exists(Path(__file__).parent / "images" / 'Open.png'):
             open_action = QAction(QIcon(str(Path(__file__).parent / "images" / 'Open.png')), 'Open', self)
@@ -557,7 +573,7 @@ class MainForm(QMainWindow):
 
     def add_dos_file(self):
         try:
-            fname = self.get_file_name_from_open_dialog("All files (*.*)")
+            fname = self.get_file_name_from_open_dialog("All files (*)")
             self.work_dir = os.path.dirname(fname)
             self.check_dos(fname)
         except Exception as e:
@@ -725,6 +741,8 @@ class MainForm(QMainWindow):
             self.ui.parse_bands.setEnabled(True)
 
     def check_dos(self, f_name: str) -> None:   # pragma: no cover
+        if f_name.endswith('vasprun.xml'):
+            vasp_data = VaspDataFromXml(f_name)
         dos_file, e_fermy = Importer.check_dos_file(f_name)
         if dos_file:
             i = self.ui.FormActionsTabeDOSProperty.rowCount() + 1
@@ -2086,9 +2104,9 @@ class MainForm(QMainWindow):
         self.ui.PyqtGraphWidget.set_xticks(None)
         self.ui.Form3Dand2DTabs.setCurrentIndex(1)
 
-        is_fermi_level_show = self.ui.FormActionsCheckBANDSfermyShow_3.isChecked()
-        is_invert_spin_down = self.ui.FormActionsCheckDOS_2.isChecked()
-        is_spin_down_needed = self.ui.FormActionsCheckDOS.isChecked()
+        is_fermi_level_show = self.ui.dos_efermy_show.isChecked()
+        is_invert_spin_down = self.ui.invert_spin_dos.isChecked()
+        is_spin_down_needed = self.ui.plot_two_spins_dos.isChecked()
 
         path_efermy_list = []
         for index in range(self.ui.FormActionsTabeDOSProperty.rowCount()):
@@ -2725,7 +2743,7 @@ class MainForm(QMainWindow):
 
     def parse_volumeric_data2(self, filename: str = ""):
         try:
-            if filename == "":  # pragma: no cover
+            if not filename:  # pragma: no cover
                 filename = self.get_file_name_from_open_dialog("All files (*.*)")
             if len(filename) > 0:
                 if filename.endswith(".XSF"):
@@ -2832,6 +2850,31 @@ class MainForm(QMainWindow):
         m = self.ui.FormActionsPreLineGraphene_m.value()
         leng = self.ui.FormActionsPreLineGraphene_len.value()
         return leng, m, n
+
+    def generate_3d_bulk(self):
+        """ASE bulk interface"""
+        name = self.ui.crystalstructure_3d_name.text()
+        crystalstructure = self.ui.crystalstructure_3d.currentText()
+        if crystalstructure == "Select":
+            crystalstructure = None
+        a = None if self.ui.crystalstructure_3d_a_dont_use.isChecked() else self.ui.crystalstructure_3d_a.value()
+        b = None if self.ui.crystalstructure_3d_b_dont_use.isChecked() else self.ui.crystalstructure_3d_b.value()
+        c = None if self.ui.crystalstructure_3d_c_dont_use.isChecked() else self.ui.crystalstructure_3d_c.value()
+        alpha = None if self.ui.crystalstructure_3d_alpha_dont_use.isChecked() else \
+            self.ui.crystalstructure_3d_alpha.value()
+        covera = None if self.ui.crystalstructure_3d_covera_dont_use.isChecked() else \
+            self.ui.crystalstructure_3d_covera.value()
+        orthorhombic = self.ui.crystalstructure_3d_orthorhombic.isChecked()
+        try:
+            atoms = bulk(name, crystalstructure=crystalstructure, a=a, b=b, c=c, alpha=alpha, covera=covera, u=None,
+                         orthorhombic=orthorhombic, cubic=not orthorhombic, basis=None)
+        except Exception as e:
+            print(str(e))
+
+        model = ase.from_ase_atoms_to_atomic_model(atoms)
+        self.models.append(model)
+        self.plot_model(-1)
+        self.fill_gui(name)
 
     def get_0d_molecula_list(self):
         from ase.collections import g2

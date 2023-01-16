@@ -118,10 +118,9 @@ class AtomicModel(object):
 
     def move(self, l_x, l_y, l_z):
         """Move model by the vector."""
+        dl = np.array((l_x, l_y, l_z))
         for atom in self.atoms:
-            atom.x += l_x
-            atom.y += l_y
-            atom.z += l_z
+            atom.xyz += dl
 
     @staticmethod
     def atoms_from_xmol_xyz(filename: str):
