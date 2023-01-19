@@ -924,7 +924,7 @@ class MainForm(QMainWindow):
         result = QFileDialog.getSaveFileName(self, 'Save File', self.work_dir, file_mask,
                                              options=QFileDialog.DontUseNativeDialog)
 
-        if len(result[0]) == 0:
+        if result[0] == "":
             return None
 
         file_name = result[0]
@@ -1104,23 +1104,19 @@ class MainForm(QMainWindow):
 
     def fill_bonds(self):
         c1, c2 = self.fill_bonds_charges()
-        bonds = self.ui.openGLWidget.main_model.find_bonds_exact()
         self.ui.FormActionsPosTableBonds.setRowCount(0)
 
-        mean = 0
-        n = 0
+        bonds_ok, bonds_mean, bonds_err = self.ui.openGLWidget.main_model.get_bonds_for_charges(c1, c2)
 
-        for bond in bonds:
-            if ((c1 == 0) or (c2 == 0)) or ((c1 == bond[0]) and (c2 == bond[1])) or (
-                    (c1 == bond[1]) and (c2 == bond[2])):
-                self.ui.FormActionsPosTableBonds.setRowCount(self.ui.FormActionsPosTableBonds.rowCount() + 1)
-                s = str(bond[3]) + str(bond[4]) + "-" + str(bond[5]) + str(bond[6])
-                self.ui.FormActionsPosTableBonds.setItem(n, 0, QTableWidgetItem(s))
-                self.ui.FormActionsPosTableBonds.setItem(n, 1, QTableWidgetItem(str(bond[2])))
-                mean += bond[2]
-                n += 1
-        if n > 0:
-            self.ui.FormActionsPostLabelMeanBond.setText("Mean value: " + str(round(mean / n, 5)))
+        n = 0
+        for bond in bonds_ok:
+            self.ui.FormActionsPosTableBonds.setRowCount(self.ui.FormActionsPosTableBonds.rowCount() + 1)
+            s = str(bond[3]) + str(bond[4]) + "-" + str(bond[5]) + str(bond[6])
+            self.ui.FormActionsPosTableBonds.setItem(n, 0, QTableWidgetItem(s))
+            self.ui.FormActionsPosTableBonds.setItem(n, 1, QTableWidgetItem(str(bond[2])))
+            n += 1
+        bonds_text = "Mean value: " + str(bonds_mean) + " \u00B1 " + str(bonds_err)
+        self.ui.FormActionsPostLabelMeanBond.setText(bonds_text)
 
     def fill_bonds_charges(self):
         bonds_category = self.ui.FormActionsPostComboBonds.currentText()
@@ -1831,7 +1827,7 @@ class MainForm(QMainWindow):
             for i in range(0, len(types_of_atoms)):
                 species.append(str(atoms_list[types_of_atoms[i][0]]))
         if self.ui.FormActionsComboPDOSspecies.currentText() == 'Selected in list below':
-            species = (self.ui.FormActionsPDOSSpecieces.text()).split()
+            species = (self.ui.FormActionsPDOSSpecieces.toPlainText()).split()
         return species
 
     def get_filter_z(self):
@@ -2000,6 +1996,7 @@ class MainForm(QMainWindow):
         labels = []
         for item in selected:
             ind = int(item.text().split(':')[0]) - 1
+            row_title = item.text().split(':')[1]
 
             energy, spin_up, spin_down = self.PDOSdata[ind][0], self.PDOSdata[ind][1], self.PDOSdata[ind][2]
 
@@ -2008,12 +2005,15 @@ class MainForm(QMainWindow):
 
             x.append(energy)
             y.append(spin_up)
-            labels.append(item.text() + "_up")
+            if self.ui.FormActionsCheckPDOS.isChecked():
+                labels.append(row_title + "_up")
+            else:
+                labels.append(row_title)
 
             if self.ui.FormActionsCheckPDOS.isChecked():
                 x.append(energy)
                 y.append(spin_down)
-                labels.append(item.text() + "_down")
+                labels.append(row_title + "_down")
 
         x_title = self.ui.pdos_x_label.text()
         y_title = self.ui.pdos_y_label.text()
@@ -2357,7 +2357,7 @@ class MainForm(QMainWindow):
     def save_state_view_show_atom_number(self):  # pragma: no cover
         self.save_property(SETTINGS_FormSettingsViewCheckShowAtomNumber,
                            self.ui.FormSettingsViewCheckShowAtomNumber.isChecked())
-        self.ui.openGLWidget.set_atoms_numbred(self.ui.FormSettingsViewCheckShowAtomNumber.isChecked())
+        self.ui.openGLWidget.set_atoms_numbered(self.ui.FormSettingsViewCheckShowAtomNumber.isChecked())
 
     def save_state_view_show_box(self):  # pragma: no cover
         self.save_property(SETTINGS_FormSettingsViewCheckShowBox, self.ui.FormSettingsViewCheckShowBox.isChecked())
@@ -2582,7 +2582,8 @@ class MainForm(QMainWindow):
                 file_mask = "FDF files (*.fdf);;VASP POSCAR file (*.POSCAR)"
                 file_mask += ";;Crystal d12 (*.d12)"
                 fname = self.get_file_name_from_save_dialog(file_mask)
-                helpers.write_text_to_file(fname, text)
+                if fname is not None:
+                    helpers.write_text_to_file(fname, text)
         except Exception as e:
             self.show_error(e)
 
@@ -2891,6 +2892,8 @@ class MainForm(QMainWindow):
 
     def generate_0d_molecula(self):
         name = self.ui.molecula_list.currentText()
+        if len(name) == 0:
+            return
         atoms = molecule(name)
         model = ase.from_ase_atoms_to_atomic_model(atoms)
         self.models.append(model)

@@ -508,7 +508,7 @@ class AtomicModel(object):
                 length = round(self.atom_atom_distance(i, j), 4)
                 t1 = int(self.atoms[i].charge)
                 t2 = int(self.atoms[j].charge)
-                if math.fabs(length - self.mendeley.Bonds[t1][t2]) < 0.2 * self.mendeley.Bonds[t1][t2]:
+                if (length > 1e-4) and (length < 1.2 * self.mendeley.Bonds[t1][t2]):
                     self.bonds_per.append([t1, t2, length, self.atoms[i].let, i, self.atoms[j].let, j])
         return self.bonds_per
 
@@ -524,6 +524,20 @@ class AtomicModel(object):
                 if (r > 1e-4) and (r < 1.2 * r_tab):
                     self.bonds.append([i, j])
         return self.bonds
+
+    def get_bonds_for_charges(self, c1, c2):
+        """The bonds of atoms with charges"""
+        bonds = self.find_bonds_exact()
+        bonds_len = []
+        bonds_ok = []
+        for bond in bonds:
+            if ((c1 == 0) or (c2 == 0)) or ((c1 == bond[0]) and (c2 == bond[1])) or (
+                    (c1 == bond[1]) and (c2 == bond[2])):
+                bonds_ok.append(bond)
+                bonds_len.append(bond[2])
+        bonds_mean = round(np.average(bonds_len), 5)
+        bonds_err = round((max(bonds_len) - min(bonds_len)) / 2.0, 5)
+        return bonds_ok, bonds_mean, bonds_err
 
     def delta(self, molecula):
         """ maximum distance from atoms in self to the atoms in the newMolecula"""

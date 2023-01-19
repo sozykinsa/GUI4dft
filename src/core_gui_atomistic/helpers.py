@@ -216,19 +216,19 @@ def utf8_letter(let):
 
 
 def check_format(filename):
-    """check file format"""
+    """Check file format"""
 
-    """check file format"""
-    if filename.endswith(".fdf") or filename.endswith(".FDF"):
+    name = filename.lower()
+    if name.endswith(".fdf"):
         return "SIESTAfdf"
 
-    if (filename.lower()).endswith(".out"):
+    if name.endswith(".out"):
         return "SIESTAout"
 
-    if filename.endswith(".ani") or filename.endswith(".ANI"):
+    if name.endswith(".ani"):
         return "SIESTAANI"
 
-    if (filename.lower()).endswith(".xyz"):
+    if name.endswith(".xyz"):
         f = open(filename)
         f.readline()
         str1 = spacedel(f.readline())
@@ -238,31 +238,28 @@ def check_format(filename):
             return "SiestaXYZ"
         return "unknown"
 
-    if filename.endswith(".STRUCT_OUT"):
+    if name.endswith(".struct_out"):
         return "SIESTASTRUCT_OUT"
 
-    if filename.endswith(".MD_CAR"):
+    if name.endswith(".md_car"):
         return "SIESTAMD_CAR"
 
-    if filename.endswith(".XSF"):
+    if name.endswith(".xsf"):
         return "SIESTAXSF"
 
-    if filename.endswith(".cube"):
+    if name.endswith(".cube"):
         return "GAUSSIAN_cube"
 
-    if filename.endswith("POSCAR") or filename.endswith("CONTCAR"):
+    if name.endswith("poscar") or name.endswith("contcar"):
         return "VASPposcar"
 
-    if filename.endswith("outp") or filename.endswith("OUTP"):
+    if name.endswith("outp"):
         return "topond_out"
 
-    if filename.endswith("outp") or filename.endswith("OUTP"):
-        return "topond_out"
-
-    if filename.endswith("data") or filename.endswith("DATA"):
+    if name.endswith("data"):
         return "project"
 
-    if filename.endswith("cro") or filename.endswith("CRO"):
+    if name.endswith("cro"):
         return "critic_cro"
 
     return "unknown"

@@ -1497,8 +1497,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>371</width>
-                 <height>562</height>
+                 <width>323</width>
+                 <height>172</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -1697,8 +1697,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>371</width>
-                 <height>562</height>
+                 <width>229</width>
+                 <height>327</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -6044,7 +6044,7 @@
                           <item>
                            <widget class="QCheckBox" name="FormActionsComboPDOSL0">
                             <property name="text">
-                             <string>0</string>
+                             <string>0 (s)</string>
                             </property>
                             <property name="checked">
                              <bool>true</bool>
@@ -6054,7 +6054,7 @@
                           <item>
                            <widget class="QCheckBox" name="FormActionsComboPDOSL1">
                             <property name="text">
-                             <string>1</string>
+                             <string>1 (p)</string>
                             </property>
                             <property name="checked">
                              <bool>true</bool>
@@ -6064,7 +6064,7 @@
                           <item>
                            <widget class="QCheckBox" name="FormActionsComboPDOSL2">
                             <property name="text">
-                             <string>2</string>
+                             <string>2 (d)</string>
                             </property>
                             <property name="checked">
                              <bool>true</bool>
@@ -6074,7 +6074,7 @@
                           <item>
                            <widget class="QCheckBox" name="FormActionsComboPDOSL3">
                             <property name="text">
-                             <string>3</string>
+                             <string>3 (f)</string>
                             </property>
                             <property name="checked">
                              <bool>true</bool>
@@ -6102,7 +6102,7 @@
                           <item>
                            <widget class="QCheckBox" name="FormActionsComboPDOSL4">
                             <property name="text">
-                             <string>4</string>
+                             <string>4 (g)</string>
                             </property>
                             <property name="checked">
                              <bool>true</bool>
@@ -6112,7 +6112,7 @@
                           <item>
                            <widget class="QCheckBox" name="FormActionsComboPDOSL5">
                             <property name="text">
-                             <string>5</string>
+                             <string>5 (h)</string>
                             </property>
                             <property name="checked">
                              <bool>true</bool>
@@ -6892,8 +6892,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>399</width>
-             <height>706</height>
+             <width>359</width>
+             <height>668</height>
             </rect>
            </property>
            <attribute name="label">
@@ -8194,8 +8194,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>399</width>
-             <height>706</height>
+             <width>353</width>
+             <height>618</height>
             </rect>
            </property>
            <attribute name="label">
