@@ -5,13 +5,15 @@ from core_gui_atomistic.atomic_model import AtomicModel
 from src_gui4dft.program.vasp import fermi_energy_from_doscar, atoms_from_POSCAR
 from src_gui4dft.utils.fdfdata import TFDFFile
 from src_gui4dft.program.siesta import TSIESTA
+from src_gui4dft.program.firefly import atomic_model_to_firefly_inp
+from src_gui4dft.program.vasp import model_to_vasp_poscar
 from core_gui_atomistic import helpers
 from core_gui_atomistic.gui4dft_project_file import GUI4dftProjectFile
 from src_gui4dft.models.gaussiancube import GaussianCube
 from src_gui4dft.models.xsf import XSF
 
 
-class Importer(object):
+class ImporterExporter(object):
     @staticmethod
     def import_from_file(filename, fl='all', prop=False):
         """import file"""
@@ -58,6 +60,22 @@ class Importer(object):
                 print("Wrong format")
 
         return models, fdf
+
+    @staticmethod
+    def export_to_file(model, f_name):  # pragma: no cover
+        text = ""
+        if f_name.find("POSCAR") >= 0:
+            f_name = f_name.split(".")[0]
+            text = model_to_vasp_poscar(model)
+        if f_name.endswith(".inp"):
+            text = atomic_model_to_firefly_inp(model)
+        if f_name.endswith(".fdf"):
+            text = TSIESTA.toSIESTAfdfdata(model, "Fractional", "Ang", "LatticeVectors")
+        if f_name.endswith(".xyz"):
+            text = TSIESTA.toSIESTAxyzdata(model)
+        if f_name.endswith(".data"):
+            text = GUI4dftProjectFile.project_file_writer(model)
+        helpers.write_text_to_file(f_name, text)
 
     @staticmethod
     def check_dos_file(filename):

@@ -33,15 +33,13 @@ from PySide2.QtWidgets import QTreeWidgetItemIterator
 from src_gui4dft.qtbased.image3dexporter import Image3Dexporter
 
 from src_gui4dft.program.siesta import TSIESTA
-from src_gui4dft.program.firefly import atomic_model_to_firefly_inp
 from src_gui4dft.program.crystal import model_1d_to_d12, model_2d_to_d12
-from src_gui4dft.program.vasp import vasp_dos, model_to_vasp_poscar
+from src_gui4dft.program.vasp import vasp_dos
 from src_gui4dft.program import ase
 
-from src_gui4dft.utils.importer import Importer
+from src_gui4dft.utils.importer_exporter import ImporterExporter
 from src_gui4dft.utils.electronic_prop_reader import read_siesta_bands, dos_from_file
 from core_gui_atomistic.periodic_table import TPeriodTable
-from core_gui_atomistic.gui4dft_project_file import GUI4dftProjectFile
 from src_gui4dft.utils.fdfdata import TFDFFile
 from src_gui4dft.utils.calculators import Calculators as Calculator
 from src_gui4dft.utils.calculators import gaps
@@ -618,8 +616,8 @@ class MainForm(QMainWindow):
         param = 'all'
         if self.ui.FormSettingsOpeningCheckOnlyOptimal.isChecked():
             param = 'opt'
-        models1, fdf_data1 = Importer.import_from_file(self.ui.part1_file.text(), param, False)
-        models2, fdf_data2 = Importer.import_from_file(self.ui.part2_file.text(), param, False)
+        models1, fdf_data1 = ImporterExporter.import_from_file(self.ui.part1_file.text(), param, False)
+        models2, fdf_data2 = ImporterExporter.import_from_file(self.ui.part2_file.text(), param, False)
 
         combo_model = AtomicModel()
         if len(models1) > 0:
@@ -729,13 +727,13 @@ class MainForm(QMainWindow):
         self.ui.FormActionsPostLabelSurfaceNz.setText("")
 
     def check_pdos(self, f_name: str) -> None:   # pragma: no cover
-        pdos_file = Importer.check_pdos_file(f_name)
+        pdos_file = ImporterExporter.check_pdos_file(f_name)
         if pdos_file:
             self.ui.FormActionsLinePDOSfile.setText(pdos_file)
             self.ui.FormActionsButtonPlotPDOS.setEnabled(True)
 
     def check_bands(self, f_name: str) -> None:   # pragma: no cover
-        bands_file = Importer.check_bands_file(f_name)
+        bands_file = ImporterExporter.check_bands_file(f_name)
         if bands_file:
             self.ui.FormActionsLineBANDSfile.setText(bands_file)
             self.ui.parse_bands.setEnabled(True)
@@ -743,7 +741,7 @@ class MainForm(QMainWindow):
     def check_dos(self, f_name: str) -> None:   # pragma: no cover
         if f_name.endswith('vasprun.xml'):
             vasp_data = VaspDataFromXml(f_name)
-        dos_file, e_fermy = Importer.check_dos_file(f_name)
+        dos_file, e_fermy = ImporterExporter.check_dos_file(f_name)
         if dos_file:
             i = self.ui.FormActionsTabeDOSProperty.rowCount() + 1
             self.ui.FormActionsTabeDOSProperty.setRowCount(i)
@@ -837,9 +835,9 @@ class MainForm(QMainWindow):
             scat_file = self.ui.FormActionsPreScatRegion.text()
             righ_file = self.ui.FormActionsPreRightElectrode.text()
 
-            model_left, fdf_left = Importer.import_from_file(left_file)
-            model_scat, fdf_scat = Importer.import_from_file(scat_file)
-            model_righ, fdf_righ = Importer.import_from_file(righ_file)
+            model_left, fdf_left = ImporterExporter.import_from_file(left_file)
+            model_scat, fdf_scat = ImporterExporter.import_from_file(scat_file)
+            model_righ, fdf_righ = ImporterExporter.import_from_file(righ_file)
 
             model_left = model_left[0]
             model_scat = model_scat[0]
@@ -1134,7 +1132,7 @@ class MainForm(QMainWindow):
         volume = TSIESTA.volume(f_name)
         energy = TSIESTA.energy_tot(f_name)
 
-        models, fdf_data = Importer.import_from_file(f_name)
+        models, fdf_data = ImporterExporter.import_from_file(f_name)
         model = models[-1]
         a = np.linalg.norm(model.lat_vector1)
         b = np.linalg.norm(model.lat_vector2)
@@ -1446,27 +1444,11 @@ class MainForm(QMainWindow):
                 if not file_name:
                     return
 
-                self.export_to_file(self.models[self.active_model], file_name)
+                ImporterExporter.export_to_file(self.models[self.active_model], file_name)
                 self.work_dir = os.path.dirname(file_name)
                 self.save_active_folder()
             except Exception as e:
                 self.show_error(e)
-
-    @staticmethod
-    def export_to_file(model, f_name):  # pragma: no cover
-        text = ""
-        if f_name.find("POSCAR") >= 0:
-            f_name = f_name.split(".")[0]
-            text = model_to_vasp_poscar(model)
-        if f_name.endswith(".inp"):
-            text = atomic_model_to_firefly_inp(model)
-        if f_name.endswith(".fdf"):
-            text = TSIESTA.toSIESTAfdfdata(model, "Fractional", "Ang", "LatticeVectors")
-        if f_name.endswith(".xyz"):
-            text = TSIESTA.toSIESTAxyzdata(model)
-        if f_name.endswith(".data"):
-            text = GUI4dftProjectFile.project_file_writer(model)
-        helpers.write_text_to_file(f_name, text)
 
     def menu_open(self, file_name=False):
         if len(self.models) > 0:   # pragma: no cover
@@ -1492,9 +1474,9 @@ class MainForm(QMainWindow):
     def get_atomic_model_and_fdf(self, fname):
         parse_properies = self.ui.FormSettingsParseAtomicProperties.isChecked()
         if self.ui.FormSettingsOpeningCheckOnlyOptimal.isChecked():
-            self.models, self.fdf_data = Importer.import_from_file(fname, 'opt', parse_properies)
+            self.models, self.fdf_data = ImporterExporter.import_from_file(fname, 'opt', parse_properies)
         else:
-            self.models, self.fdf_data = Importer.import_from_file(fname, 'all', parse_properies)
+            self.models, self.fdf_data = ImporterExporter.import_from_file(fname, 'all', parse_properies)
 
     def plot_last_model(self):
         if len(self.models) > 0:

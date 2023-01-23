@@ -6,15 +6,15 @@ from scipy.spatial import Voronoi
 
 
 def VoronoiAnalisis(Molecula, selectedAtom, maxDist):
-        newMolecula = Molecula.grow()
-        newMolecula.move_atoms_to_cell()
-        atoms_to_analise = newMolecula.indexes_of_atoms_in_ball(range(0, len(newMolecula.atoms)), selectedAtom, maxDist)
+        new_model = Molecula.grow()
+        new_model.move_atoms_to_cell()
+        atoms_to_analise = new_model.indexes_of_atoms_in_sphere(range(0, len(new_model.atoms)), selectedAtom, maxDist)
         points = np.empty((len(atoms_to_analise), 3))
         k = 0
         for i in atoms_to_analise:
-            points[k][0] = newMolecula[i].x
-            points[k][1] = newMolecula[i].y
-            points[k][2] = newMolecula[i].z
+            points[k][0] = new_model[i].x
+            points[k][1] = new_model[i].y
+            points[k][2] = new_model[i].z
             k += 1
 
         vor = Voronoi(points)

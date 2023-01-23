@@ -16,6 +16,7 @@ class Atom(object):
         self.fragment1 = False
         self.properties = {}
         self.visible_property = ""
+        self.tag = ""
 
     @property
     def x(self) -> float:

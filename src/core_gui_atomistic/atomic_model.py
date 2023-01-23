@@ -317,7 +317,7 @@ class AtomicModel(object):
         self.rotate_y(betta)
         self.rotate_z(gamma)
 
-    def ProjectionToCylinder(self, atomslist, radius):
+    def projection_to_cylinder(self, atomslist, radius):
         """This method returns projections on cylinder with radius for atom at."""
         row = []
         for at in range(0, len(atomslist)):
@@ -337,7 +337,7 @@ class AtomicModel(object):
                 indexes.append(j)
         return indexes
 
-    def indexes_of_atoms_in_ball(self, ats, atom, r):
+    def indexes_of_atoms_in_sphere(self, ats, atom, r):
         """Indexes of atoms in the ball of radius R with center on atom 'atom'.
         Args:
             ats: list of indexes;
@@ -710,21 +710,21 @@ class AtomicModel(object):
     # Best fit a circle to these points
     def err_cylinder(self, par):
         w, v, r = par[0], par[1], par[2]
-        pts = [np.linalg.norm([x - w, y - v]) - r for x, y in zip(self.X, self.Y)]
+        pts = [np.linalg.norm([x - w, y - v]) - r for x, y in zip(self.x, self.y)]
         return (np.array(pts) ** 2).sum()
 
     def fit_with_cylinder(self):
         positions = self.get_positions()
-        self.X = positions[:, 0]
-        self.Y = positions[:, 1]
+        self.x = positions[:, 0]
+        self.y = positions[:, 1]
 
         # Choose the inital center of fit circle as the CM
-        xm = self.X.mean()
-        ym = self.Y.mean()
+        xm = self.x.mean()
+        ym = self.y.mean()
 
         # Choose the inital radius as the average distance to the CM
         cm = np.array([xm, ym]).reshape(1, 2)
-        rm = cdist(cm, np.array([self.X, self.Y]).T).mean()
+        rm = cdist(cm, np.array([self.x, self.y]).T).mean()
 
         xf, yf, rf = scipy.optimize.fmin(self.err_cylinder, [xm, ym, rm])
         return xf, yf, rf

@@ -32,7 +32,7 @@ def test_twist_z(h2o_model):
     model = h2o_model
     alpha = np.radians(90.0)
     model.twist_z(alpha)
-    assert model.atoms[1].x == pytest.approx(-1.2)
+    assert model.atoms[1].x == pytest.approx(-1.0)
 
 
 def test_get_covalent_radii(h2o_model):
@@ -63,19 +63,19 @@ def test_formula(h2o_model):
 def test_rotations(h2o_model: AtomicModel) -> None:
     model_rot_x = copy(h2o_model)
     model_rot_x.rotate_x(30)
-    assert model_rot_x.atoms[1].x == pytest.approx(-1.2)
+    assert model_rot_x.atoms[1].x == pytest.approx(-1.0)
 
     model_rot_y = copy(h2o_model)
     model_rot_y.rotate_y(30)
-    assert model_rot_y.atoms[1].x == pytest.approx(-1.0392304845413265)
+    assert model_rot_y.atoms[1].x == pytest.approx(-0.8660254037844387)
 
     model_rot_z = copy(h2o_model)
     model_rot_z.rotate_z(30)
-    assert model_rot_z.atoms[1].x == pytest.approx(-0.9000)
+    assert model_rot_z.atoms[1].x == pytest.approx(-0.7500)
 
     model_rot_xyz = copy(h2o_model)
     model_rot_xyz.rotate(20.0, 40.0, 50.0)
-    assert model_rot_xyz.atoms[1].x == pytest.approx(0.24760705711548658)
+    assert model_rot_xyz.atoms[1].x == pytest.approx(0.2063392142629054)
 
 
 def test_add_atom(h2o_model: AtomicModel) -> None:
@@ -117,8 +117,8 @@ def test_move(h2o_model):
 
 def test_atom_atom_distance(h2o_model):
     model = h2o_model
-    assert round(model.atom_atom_distance(0, 1), 4) == 1.2
-    assert round(model.atom_atom_distance(1, 2), 4) == 2.4
+    assert round(model.atom_atom_distance(0, 1), 4) == 1.0
+    assert round(model.atom_atom_distance(1, 2), 4) == 2.0
 
 
 def test_set_lat_vectors(h2o_model):
