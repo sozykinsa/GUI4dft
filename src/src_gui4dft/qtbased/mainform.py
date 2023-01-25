@@ -35,6 +35,7 @@ from src_gui4dft.qtbased.image3dexporter import Image3Dexporter
 from src_gui4dft.program.siesta import TSIESTA
 from src_gui4dft.program.crystal import model_1d_to_d12, model_2d_to_d12
 from src_gui4dft.program.vasp import vasp_dos
+from src_gui4dft.program.vasp import model_to_vasp_poscar
 from src_gui4dft.program import ase
 
 from src_gui4dft.utils.importer_exporter import ImporterExporter
@@ -1225,16 +1226,21 @@ class MainForm(QMainWindow):
 
     @staticmethod
     def get_color(cmap, minv, maxv, value, scale):
+        if minv == maxv:
+            scale == "black"
         if scale == "black":
             return QColor.fromRgb(0, 0, 0, 1).getRgbF()
+        if scale == "Log":
+            if (minv < 0) or (maxv < 0):
+                scale = "Linear"
+            else:
+                if minv < 1e-8:
+                    minv = 1e-8
+                if value < 1e-8:
+                    value = 1e-8
+                return cmap((math.log10(value) - math.log10(minv)) / (math.log10(maxv) - math.log10(minv)))
         if scale == "Linear":
             return cmap((value - minv) / (maxv - minv))
-        if scale == "Log":
-            if minv < 1e-8:
-                minv = 1e-8
-            if value < 1e-8:
-                value = 1e-8
-            return cmap((math.log10(value) - math.log10(minv)) / (math.log10(maxv) - math.log10(minv)))
         return QColor.fromRgb(0, 0, 0, 1).getRgbF()
 
     def get_fdf_file_name(self):  # pragma: no cover

@@ -745,6 +745,7 @@ class GuiOpenGLBase(QOpenGLWidget):
     def get_model(self):
         model = deepcopy(self.main_model)
         model.move(*(-self.coord0))
+        model.translated_atoms_remove()
         return model
 
     def property_precision_changed(self, precision):

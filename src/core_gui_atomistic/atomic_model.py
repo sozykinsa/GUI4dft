@@ -24,8 +24,6 @@ class AtomicModel(object):
         self.bonds = []
         self.bonds_per = []  # for exact calculation in form
 
-        self.tags = []
-
         self.name = ""
         self.lat_vectors = 100 * np.eye(3)
         self.mendeley = TPeriodTable()
@@ -87,7 +85,10 @@ class AtomicModel(object):
         return np.array(self.center_mass())
 
     def get_tags(self):
-        return self.tags
+        tags = []
+        for at in self.atoms:
+            tags.append(at.tag)
+        return tags
 
     def get_cell(self):
         return self.lat_vectors
@@ -211,21 +212,35 @@ class AtomicModel(object):
             self.atoms.pop(ind)
             self.find_bonds_fast()
 
-    def add_atom(self, atom, min_dist=0):
-        """Adds atom to the molecule is minimal distance to other atoms more then minDist."""
+    def add_atom(self, atom, min_dist=0) -> bool:
+        """Adds atom to the molecule is minimal distance to other atoms more then minDist.
+        Return value: True if atom was added
+        """
         dist = 10000
         if min_dist > 0:
             model = AtomicModel(self.atoms)
             model.set_lat_vectors(self.lat_vector1, self.lat_vector2, self.lat_vector3)
             model.add_atom(atom)
             for ind in range(0, len(self.atoms)):
-                r = model.atom_atom_distance(ind, len(model.atoms) - 1)
+                r = model.atom_atom_distance(ind, -1)  # len(model.atoms) - 1)
                 if r < dist:
                     dist = r
 
-        if dist > min_dist:
+        if min_dist < 0:
+            model = AtomicModel(self.atoms)
+            model.add_atom(atom)
+            for ind in range(0, len(self.atoms)):
+                xyz1 = model.atoms[ind].xyz
+                xyz2 = model.atoms[-1].xyz
+                r = np.linalg.norm(xyz1 - xyz2)
+                if r < dist:
+                    dist = r
+
+        if dist > math.fabs(min_dist):
             new_at = deepcopy(atom)
             self.atoms.append(new_at)
+            return True
+        return False
 
     def add_atomic_model(self, atomic_model, min_dist=0):
         for at in atomic_model:
@@ -261,16 +276,25 @@ class AtomicModel(object):
     def n_atoms(self):
         return len(self.atoms)
 
+    def translated_atoms_remove(self):
+        new_atoms = []
+        for atom in self.atoms:
+            if atom.tag != "translated":
+                new_atoms.append(atom)
+        self.atoms = new_atoms
+
     def center_mass(self, charge=0):
         """The method returns the center of mass of the molecule."""
         cxyz = np.zeros(3)
         n = 0
+        tags = self.get_tags()
 
         if charge == 0:
             for j in range(0, len(self.atoms)):
-                m = self.mendeley.Atoms[self.atoms[j].charge].mass
-                cxyz += self.atoms[j].xyz * m
-                n += m
+                if tags[j] != "translated":
+                    m = self.mendeley.Atoms[self.atoms[j].charge].mass
+                    cxyz += self.atoms[j].xyz * m
+                    n += m
         else:
             for j in range(0, len(self.atoms)):
                 if int(self.atoms[j].charge) == int(charge):

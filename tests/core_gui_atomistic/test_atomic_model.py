@@ -22,7 +22,7 @@ def test_atomic_model_quack_as_ase(h2o_model: AtomicModel) -> None:
     assert type(cm) == np.ndarray
     assert cm == pytest.approx(np.array([0.0,  0.0,  0.0]))
     tags = model.get_tags()
-    assert tags == []
+    assert tags == ['', '', '']
     assert model.get_cell()[0] == pytest.approx(model.lat_vector1)
     assert len(model.get_cell()) == 3
     assert model.get_cell().size == 9
