@@ -7,6 +7,7 @@ from src_gui4dft.utils.fdfdata import TFDFFile
 from src_gui4dft.program.siesta import TSIESTA
 from src_gui4dft.program.firefly import atomic_model_to_firefly_inp
 from src_gui4dft.program.vasp import model_to_vasp_poscar
+from src_gui4dft.program.crystal import structure_of_primitive_cell
 from core_gui_atomistic import helpers
 from core_gui_atomistic.gui4dft_project_file import GUI4dftProjectFile
 from src_gui4dft.models.gaussiancube import GaussianCube
@@ -54,6 +55,10 @@ class ImporterExporter(object):
 
             elif file_format == "VASPposcar":
                 models = atoms_from_POSCAR(filename)
+
+            elif file_format == "CRYSTALout":
+                models = structure_of_primitive_cell(filename)
+
             elif file_format == "project":
                 models = GUI4dftProjectFile.project_file_reader(filename)
             else:

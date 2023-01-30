@@ -847,7 +847,6 @@ class GuiOpenGLBase(QOpenGLWidget):
         self.color_of_bonds = bonds_color
         self.color_of_box = box_color
         self.contour_width = contour_width
-        print("self.contour_width: ", self.contour_width)
         self.add_all_elements()
         self.update()
 

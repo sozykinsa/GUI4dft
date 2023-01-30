@@ -217,12 +217,25 @@ def utf8_letter(let):
 
 def check_format(filename):
     """Check file format"""
+    if not os.path.exists(filename):
+        return "unknown"
 
     name = filename.lower()
     if name.endswith(".fdf"):
         return "SIESTAfdf"
 
     if name.endswith(".out"):
+        f = open(filename)
+        str1 = f.readline()
+        while str1:
+            if str1.find("WELCOME TO SIESTA") >= 0:
+                f.close()
+                return "SIESTAout"
+            if str1.find("DIRECT LATTICE VECTORS CARTESIAN COMPONENTS (ANGSTROM)") >= 0:
+                f.close()
+                return "CRYSTALout"
+            str1 = f.readline()
+        f.close()
         return "SIESTAout"
 
     if name.endswith(".ani"):
@@ -232,6 +245,7 @@ def check_format(filename):
         f = open(filename)
         f.readline()
         str1 = spacedel(f.readline())
+        f.close()
         if len(str1.split()) > 4:
             return "XMolXYZ"
         if len(str1.split()) <= 4:
