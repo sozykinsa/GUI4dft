@@ -1,4 +1,11 @@
 from src_gui4dft.utils.importer_exporter import ImporterExporter
+from core_gui_atomistic import helpers
+
+
+def test_check_format(tests_path):
+    assert helpers.check_format(str(tests_path / 'ref_data' / 'swcnt(8,0)' / "siesta1.out")) == "unknown"
+    assert helpers.check_format(str(tests_path / 'ref_data' / 'swcnt(8,0)' / "siesta.out")) == "SIESTAout"
+    assert helpers.check_format(str(tests_path / 'ref_data' / 'h2o-ang' / "siesta.fdf")) == "SIESTAfdf"
 
 
 def test_importer_fdf(tests_path):

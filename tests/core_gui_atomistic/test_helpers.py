@@ -45,8 +45,3 @@ def test_cdev():
     assert helpers.cdev(5, 3) == 1
     assert helpers.cdev(6, 3) == 3
     assert helpers.cdev(3, 6) == 3
-
-
-def test_check_format(tests_path):
-    assert helpers.check_format(str(tests_path / 'ref_data' / 'swcnt(8,0)' / "siesta1.out")) == "unknown"
-    assert helpers.check_format(str(tests_path / 'ref_data' / 'swcnt(8,0)' / "siesta.out")) == "SIESTAout"

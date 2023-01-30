@@ -1667,8 +1667,7 @@ class MainForm(QMainWindow):
         color_map = plt.get_cmap(self.ui.FormSettingsColorsScale.currentText())
         color_scale = self.ui.FormSettingsColorsScaleType.currentText()
         if self.ui.FormSettingsColorsFixed.isChecked():
-            minv = float(self.ui.FormSettingsColorsFixedMin.text())
-            maxv = float(self.ui.FormSettingsColorsFixedMax.text())
+            minv, maxv = self.ui.FormSettingsColorsFixedMin.value, self.ui.FormSettingsColorsFixedMax.value
         else:
             minv, maxv = self.volumeric_data.min, self.volumeric_data.max
         if self.ui.FormActionsPostCheckSurface.isChecked():
@@ -1677,7 +1676,7 @@ class MainForm(QMainWindow):
                 value = float(self.ui.IsosurfaceColorsTable.item(i, 0).text())
                 verts, faces, normals = self.volumeric_data.isosurface(value)
                 transp = float(self.ui.IsosurfaceColorsTable.cellWidget(i, 1).text())
-                if __name__ != 'qtbased.mainform':
+                if __name__ != 'src_gui4dft.qtbased.mainform':
                     color = self.get_color(color_map, minv, maxv, value, color_scale)
                 else:
                     if self.is_scaled_colors_for_surface:
