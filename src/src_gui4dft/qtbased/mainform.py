@@ -643,6 +643,9 @@ class MainForm(QMainWindow):
             part2 = self.model_part_prepare(cm_x_new2, cm_y_new2, cm_z_new2, models2, rot_x2, rot_y2, rot_z2)
             combo_model.add_atomic_model(part2)
 
+        if len(models1) > 0:
+            combo_model.lat_vectors = models1[-1].lat_vectors
+
         self.models.append(combo_model)
         self.plot_last_model()
 

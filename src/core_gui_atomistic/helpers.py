@@ -86,11 +86,35 @@ def list_str_to_int(x):
     return [int(item) for item in x]
 
 
-def getsubs(dir):
+def angle_for_3_points(xyz1, xyz2, xyz3):
+    vec1 = xyz1 - xyz2
+    vec2 = xyz3 - xyz2
+    a = np.dot(vec1, vec2)
+    b = np.linalg.norm(vec1)
+    c = np.linalg.norm(vec2)
+    arg = a / (b * c)
+    if math.fabs(arg) > 1:
+        arg = 1
+    angle = math.acos(arg)
+    return angle
+
+
+def plane_for_3_points(xyz1, xyz2, xyz3):
+    v1 = xyz2 - xyz1
+    v2 = xyz3 - xyz1
+    a = v1[1] * v2[2] - v2[1] * v1[2]
+    b = v2[0] * v1[2] - v1[0] * v2[2]
+    c = v1[0] * v2[1] - v1[1] * v2[0]
+    d = (- a * xyz1[0] - b * xyz1[1] - c * xyz1[2])
+    # print("equation of plane is ", str(a), "x +", str(b), "y +", str(c), "z +", str(d), "= 0.")
+    return [a, b, c, d]
+
+
+def getsubs(directory):
     dirs = []
     subdirs = []
     files = []
-    for dirname, dirnames, filenames in os.walk(dir):
+    for dirname, dirnames, filenames in os.walk(directory):
         dirs.append(dirname)
         for subdirname in dirnames:
             subdirs.append(os.path.join(dirname, subdirname))
