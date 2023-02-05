@@ -33,15 +33,14 @@ from PySide2.QtWidgets import QTreeWidgetItemIterator
 from src_gui4dft.qtbased.image3dexporter import Image3Dexporter
 
 from src_gui4dft.program.siesta import TSIESTA
-from src_gui4dft.program.firefly import atomic_model_to_firefly_inp
 from src_gui4dft.program.crystal import model_1d_to_d12, model_2d_to_d12
-from src_gui4dft.program.vasp import vasp_dos, model_to_vasp_poscar
+from src_gui4dft.program.vasp import vasp_dos
+from src_gui4dft.program.vasp import model_to_vasp_poscar
 from src_gui4dft.program import ase
 
-from src_gui4dft.utils.importer import Importer
+from src_gui4dft.utils.importer_exporter import ImporterExporter
 from src_gui4dft.utils.electronic_prop_reader import read_siesta_bands, dos_from_file
 from core_gui_atomistic.periodic_table import TPeriodTable
-from core_gui_atomistic.gui4dft_project_file import GUI4dftProjectFile
 from src_gui4dft.utils.fdfdata import TFDFFile
 from src_gui4dft.utils.calculators import Calculators as Calculator
 from src_gui4dft.utils.calculators import gaps
@@ -50,8 +49,10 @@ from core_gui_atomistic import helpers
 from src_gui4dft.ui.about import Ui_DialogAbout as Ui_about
 from src_gui4dft.ui.form import Ui_MainWindow as Ui_form
 
-from ase.build import molecule
+from ase.build import molecule, bulk
 from ase.cluster.cubic import FaceCenteredCubic
+
+from src_gui4dft.program.vasp import VaspDataFromXml
 
 sys.path.append('')
 
@@ -64,6 +65,8 @@ class MainForm(QMainWindow):
         super().__init__(*args)
         self.ui = Ui_form()
         self.ui.setupUi(self)
+
+        self.program: str = "SIESTA"  # mode of operation fot program
 
         self.models = []
         self.ui.openGLWidget.set_form_elements(self.ui.FormSettingsViewCheckAtomSelection,
@@ -145,13 +148,19 @@ class MainForm(QMainWindow):
         self.ui.FormActionsPreButBiElementGenerate.clicked.connect(self.create_bi_el_nt)
         self.ui.generate_2d_graphene.clicked.connect(self.create_graphene)
         self.ui.generate_2d_bn.clicked.connect(self.create_2d_bn)
+        self.ui.generate_3d_bulk.clicked.connect(self.generate_3d_bulk)
+
+        data = ["sc", "fcc", "bcc", "tetragonal", "bct", "hcp", "rhombohedral", "orthorhombic", "mcl", "diamond"]
+        data.extend(["zincblende", "rocksalt", "cesiumchloride", "fluorite", "wurtzite"])
+        crystalstructure_type = self.q_standard_item_model_init(data)
+        self.ui.crystalstructure_3d.setModel(crystalstructure_type)
 
         # input generation
         self.ui.FDFGenerate.clicked.connect(self.fdf_data_to_form)
         self.ui.POSCARgenerate.clicked.connect(self.poscar_data_to_form)
         self.ui.QEgenerate.clicked.connect(self.qe_data_to_form)
-        self.ui.FormIEd12Generate1D.clicked.connect(self.d12_1D_to_form)
-        self.ui.FormIEd12Generate2D.clicked.connect(self.d12_2D_to_form)
+        self.ui.crystal_1d_d12_generate.clicked.connect(self.d12_1D_to_form)
+        self.ui.crystal_2d_d12_generate.clicked.connect(self.d12_2D_to_form)
 
         self.ui.data_from_form_to_input_file.clicked.connect(self.data_from_form_to_input_file)
         self.ui.model_rotation_x.valueChanged.connect(self.model_orientation_changed)
@@ -382,6 +391,12 @@ class MainForm(QMainWindow):
 
         self.setup_actions()
 
+    def q_standard_item_model_init(self, data: list):
+        model_type = QStandardItemModel()
+        for row in data:
+            model_type.appendRow(QStandardItem(row))
+        return model_type
+
     def setup_actions(self):
         if is_with_figure and os.path.exists(Path(__file__).parent / "images" / 'Open.png'):
             open_action = QAction(QIcon(str(Path(__file__).parent / "images" / 'Open.png')), 'Open', self)
@@ -557,7 +572,7 @@ class MainForm(QMainWindow):
 
     def add_dos_file(self):
         try:
-            fname = self.get_file_name_from_open_dialog("All files (*.*)")
+            fname = self.get_file_name_from_open_dialog("All files (*)")
             self.work_dir = os.path.dirname(fname)
             self.check_dos(fname)
         except Exception as e:
@@ -602,8 +617,8 @@ class MainForm(QMainWindow):
         param = 'all'
         if self.ui.FormSettingsOpeningCheckOnlyOptimal.isChecked():
             param = 'opt'
-        models1, fdf_data1 = Importer.import_from_file(self.ui.part1_file.text(), param, False)
-        models2, fdf_data2 = Importer.import_from_file(self.ui.part2_file.text(), param, False)
+        models1, fdf_data1 = ImporterExporter.import_from_file(self.ui.part1_file.text(), param, False)
+        models2, fdf_data2 = ImporterExporter.import_from_file(self.ui.part2_file.text(), param, False)
 
         combo_model = AtomicModel()
         if len(models1) > 0:
@@ -627,6 +642,9 @@ class MainForm(QMainWindow):
 
             part2 = self.model_part_prepare(cm_x_new2, cm_y_new2, cm_z_new2, models2, rot_x2, rot_y2, rot_z2)
             combo_model.add_atomic_model(part2)
+
+        if len(models1) > 0:
+            combo_model.lat_vectors = models1[-1].lat_vectors
 
         self.models.append(combo_model)
         self.plot_last_model()
@@ -713,19 +731,21 @@ class MainForm(QMainWindow):
         self.ui.FormActionsPostLabelSurfaceNz.setText("")
 
     def check_pdos(self, f_name: str) -> None:   # pragma: no cover
-        pdos_file = Importer.check_pdos_file(f_name)
+        pdos_file = ImporterExporter.check_pdos_file(f_name)
         if pdos_file:
             self.ui.FormActionsLinePDOSfile.setText(pdos_file)
             self.ui.FormActionsButtonPlotPDOS.setEnabled(True)
 
     def check_bands(self, f_name: str) -> None:   # pragma: no cover
-        bands_file = Importer.check_bands_file(f_name)
+        bands_file = ImporterExporter.check_bands_file(f_name)
         if bands_file:
             self.ui.FormActionsLineBANDSfile.setText(bands_file)
             self.ui.parse_bands.setEnabled(True)
 
     def check_dos(self, f_name: str) -> None:   # pragma: no cover
-        dos_file, e_fermy = Importer.check_dos_file(f_name)
+        if f_name.endswith('vasprun.xml'):
+            vasp_data = VaspDataFromXml(f_name)
+        dos_file, e_fermy = ImporterExporter.check_dos_file(f_name)
         if dos_file:
             i = self.ui.FormActionsTabeDOSProperty.rowCount() + 1
             self.ui.FormActionsTabeDOSProperty.setRowCount(i)
@@ -819,9 +839,9 @@ class MainForm(QMainWindow):
             scat_file = self.ui.FormActionsPreScatRegion.text()
             righ_file = self.ui.FormActionsPreRightElectrode.text()
 
-            model_left, fdf_left = Importer.import_from_file(left_file)
-            model_scat, fdf_scat = Importer.import_from_file(scat_file)
-            model_righ, fdf_righ = Importer.import_from_file(righ_file)
+            model_left, fdf_left = ImporterExporter.import_from_file(left_file)
+            model_scat, fdf_scat = ImporterExporter.import_from_file(scat_file)
+            model_righ, fdf_righ = ImporterExporter.import_from_file(righ_file)
 
             model_left = model_left[0]
             model_scat = model_scat[0]
@@ -906,7 +926,7 @@ class MainForm(QMainWindow):
         result = QFileDialog.getSaveFileName(self, 'Save File', self.work_dir, file_mask,
                                              options=QFileDialog.DontUseNativeDialog)
 
-        if len(result[0]) == 0:
+        if result[0] == "":
             return None
 
         file_name = result[0]
@@ -1086,23 +1106,19 @@ class MainForm(QMainWindow):
 
     def fill_bonds(self):
         c1, c2 = self.fill_bonds_charges()
-        bonds = self.ui.openGLWidget.main_model.find_bonds_exact()
         self.ui.FormActionsPosTableBonds.setRowCount(0)
 
-        mean = 0
-        n = 0
+        bonds_ok, bonds_mean, bonds_err = self.ui.openGLWidget.main_model.get_bonds_for_charges(c1, c2)
 
-        for bond in bonds:
-            if ((c1 == 0) or (c2 == 0)) or ((c1 == bond[0]) and (c2 == bond[1])) or (
-                    (c1 == bond[1]) and (c2 == bond[2])):
-                self.ui.FormActionsPosTableBonds.setRowCount(self.ui.FormActionsPosTableBonds.rowCount() + 1)
-                s = str(bond[3]) + str(bond[4]) + "-" + str(bond[5]) + str(bond[6])
-                self.ui.FormActionsPosTableBonds.setItem(n, 0, QTableWidgetItem(s))
-                self.ui.FormActionsPosTableBonds.setItem(n, 1, QTableWidgetItem(str(bond[2])))
-                mean += bond[2]
-                n += 1
-        if n > 0:
-            self.ui.FormActionsPostLabelMeanBond.setText("Mean value: " + str(round(mean / n, 5)))
+        n = 0
+        for bond in bonds_ok:
+            self.ui.FormActionsPosTableBonds.setRowCount(self.ui.FormActionsPosTableBonds.rowCount() + 1)
+            s = str(bond[3]) + str(bond[4]) + "-" + str(bond[5]) + str(bond[6])
+            self.ui.FormActionsPosTableBonds.setItem(n, 0, QTableWidgetItem(s))
+            self.ui.FormActionsPosTableBonds.setItem(n, 1, QTableWidgetItem(str(bond[2])))
+            n += 1
+        bonds_text = "Mean value: " + str(bonds_mean) + " \u00B1 " + str(bonds_err)
+        self.ui.FormActionsPostLabelMeanBond.setText(bonds_text)
 
     def fill_bonds_charges(self):
         bonds_category = self.ui.FormActionsPostComboBonds.currentText()
@@ -1120,7 +1136,7 @@ class MainForm(QMainWindow):
         volume = TSIESTA.volume(f_name)
         energy = TSIESTA.energy_tot(f_name)
 
-        models, fdf_data = Importer.import_from_file(f_name)
+        models, fdf_data = ImporterExporter.import_from_file(f_name)
         model = models[-1]
         a = np.linalg.norm(model.lat_vector1)
         b = np.linalg.norm(model.lat_vector2)
@@ -1167,7 +1183,8 @@ class MainForm(QMainWindow):
 
     def fit_with(self):   # pragma: no cover
         xf, yf, rf = self.models[self.active_model].fit_with_cylinder()
-        self.ui.fit_with_textBrowser.setText("x0 = " + str(xf) + " A\ny0 = " + str(yf) + " A\nR = " + str(rf)) + " A"
+        self.ui.fit_with_textBrowser.setText("x0 = " + str(round(xf, 4)) + " A\ny0 = " +
+                                             str(round(yf, 4)) + " A\nR = " + str(round(rf, 4)) + " A")
 
     def get_colors_list(self, minv, maxv, values, cmap, color_scale):
         n = len(values)
@@ -1212,16 +1229,21 @@ class MainForm(QMainWindow):
 
     @staticmethod
     def get_color(cmap, minv, maxv, value, scale):
+        if minv == maxv:
+            scale == "black"
         if scale == "black":
             return QColor.fromRgb(0, 0, 0, 1).getRgbF()
+        if scale == "Log":
+            if (minv < 0) or (maxv < 0):
+                scale = "Linear"
+            else:
+                if minv < 1e-8:
+                    minv = 1e-8
+                if value < 1e-8:
+                    value = 1e-8
+                return cmap((math.log10(value) - math.log10(minv)) / (math.log10(maxv) - math.log10(minv)))
         if scale == "Linear":
             return cmap((value - minv) / (maxv - minv))
-        if scale == "Log":
-            if minv < 1e-8:
-                minv = 1e-8
-            if value < 1e-8:
-                value = 1e-8
-            return cmap((math.log10(value) - math.log10(minv)) / (math.log10(maxv) - math.log10(minv)))
         return QColor.fromRgb(0, 0, 0, 1).getRgbF()
 
     def get_fdf_file_name(self):  # pragma: no cover
@@ -1431,27 +1453,11 @@ class MainForm(QMainWindow):
                 if not file_name:
                     return
 
-                self.export_to_file(self.models[self.active_model], file_name)
+                ImporterExporter.export_to_file(self.models[self.active_model], file_name)
                 self.work_dir = os.path.dirname(file_name)
                 self.save_active_folder()
             except Exception as e:
                 self.show_error(e)
-
-    @staticmethod
-    def export_to_file(model, f_name):  # pragma: no cover
-        text = ""
-        if f_name.find("POSCAR") >= 0:
-            f_name = f_name.split(".")[0]
-            text = model_to_vasp_poscar(model)
-        if f_name.endswith(".inp"):
-            text = atomic_model_to_firefly_inp(model)
-        if f_name.endswith(".fdf"):
-            text = TSIESTA.toSIESTAfdfdata(model, "Fractional", "Ang", "LatticeVectors")
-        if f_name.endswith(".xyz"):
-            text = TSIESTA.toSIESTAxyzdata(model)
-        if f_name.endswith(".data"):
-            text = GUI4dftProjectFile.project_file_writer(model)
-        helpers.write_text_to_file(f_name, text)
 
     def menu_open(self, file_name=False):
         if len(self.models) > 0:   # pragma: no cover
@@ -1477,9 +1483,9 @@ class MainForm(QMainWindow):
     def get_atomic_model_and_fdf(self, fname):
         parse_properies = self.ui.FormSettingsParseAtomicProperties.isChecked()
         if self.ui.FormSettingsOpeningCheckOnlyOptimal.isChecked():
-            self.models, self.fdf_data = Importer.import_from_file(fname, 'opt', parse_properies)
+            self.models, self.fdf_data = ImporterExporter.import_from_file(fname, 'opt', parse_properies)
         else:
-            self.models, self.fdf_data = Importer.import_from_file(fname, 'all', parse_properies)
+            self.models, self.fdf_data = ImporterExporter.import_from_file(fname, 'all', parse_properies)
 
     def plot_last_model(self):
         if len(self.models) > 0:
@@ -1664,8 +1670,7 @@ class MainForm(QMainWindow):
         color_map = plt.get_cmap(self.ui.FormSettingsColorsScale.currentText())
         color_scale = self.ui.FormSettingsColorsScaleType.currentText()
         if self.ui.FormSettingsColorsFixed.isChecked():
-            minv = float(self.ui.FormSettingsColorsFixedMin.text())
-            maxv = float(self.ui.FormSettingsColorsFixedMax.text())
+            minv, maxv = self.ui.FormSettingsColorsFixedMin.value, self.ui.FormSettingsColorsFixedMax.value
         else:
             minv, maxv = self.volumeric_data.min, self.volumeric_data.max
         if self.ui.FormActionsPostCheckSurface.isChecked():
@@ -1674,7 +1679,7 @@ class MainForm(QMainWindow):
                 value = float(self.ui.IsosurfaceColorsTable.item(i, 0).text())
                 verts, faces, normals = self.volumeric_data.isosurface(value)
                 transp = float(self.ui.IsosurfaceColorsTable.cellWidget(i, 1).text())
-                if __name__ != 'qtbased.mainform':
+                if __name__ != 'src_gui4dft.qtbased.mainform':
                     color = self.get_color(color_map, minv, maxv, value, color_scale)
                 else:
                     if self.is_scaled_colors_for_surface:
@@ -1812,7 +1817,7 @@ class MainForm(QMainWindow):
             for i in range(0, len(types_of_atoms)):
                 species.append(str(atoms_list[types_of_atoms[i][0]]))
         if self.ui.FormActionsComboPDOSspecies.currentText() == 'Selected in list below':
-            species = (self.ui.FormActionsPDOSSpecieces.text()).split()
+            species = (self.ui.FormActionsPDOSSpecieces.toPlainText()).split()
         return species
 
     def get_filter_z(self):
@@ -1981,6 +1986,7 @@ class MainForm(QMainWindow):
         labels = []
         for item in selected:
             ind = int(item.text().split(':')[0]) - 1
+            row_title = item.text().split(':')[1]
 
             energy, spin_up, spin_down = self.PDOSdata[ind][0], self.PDOSdata[ind][1], self.PDOSdata[ind][2]
 
@@ -1989,12 +1995,15 @@ class MainForm(QMainWindow):
 
             x.append(energy)
             y.append(spin_up)
-            labels.append(item.text() + "_up")
+            if self.ui.FormActionsCheckPDOS.isChecked():
+                labels.append(row_title + "_up")
+            else:
+                labels.append(row_title)
 
             if self.ui.FormActionsCheckPDOS.isChecked():
                 x.append(energy)
                 y.append(spin_down)
-                labels.append(item.text() + "_down")
+                labels.append(row_title + "_down")
 
         x_title = self.ui.pdos_x_label.text()
         y_title = self.ui.pdos_y_label.text()
@@ -2085,9 +2094,9 @@ class MainForm(QMainWindow):
         self.ui.PyqtGraphWidget.set_xticks(None)
         self.ui.Form3Dand2DTabs.setCurrentIndex(1)
 
-        is_fermi_level_show = self.ui.FormActionsCheckBANDSfermyShow_3.isChecked()
-        is_invert_spin_down = self.ui.FormActionsCheckDOS_2.isChecked()
-        is_spin_down_needed = self.ui.FormActionsCheckDOS.isChecked()
+        is_fermi_level_show = self.ui.dos_efermy_show.isChecked()
+        is_invert_spin_down = self.ui.invert_spin_dos.isChecked()
+        is_spin_down_needed = self.ui.plot_two_spins_dos.isChecked()
 
         path_efermy_list = []
         for index in range(self.ui.FormActionsTabeDOSProperty.rowCount()):
@@ -2338,7 +2347,7 @@ class MainForm(QMainWindow):
     def save_state_view_show_atom_number(self):  # pragma: no cover
         self.save_property(SETTINGS_FormSettingsViewCheckShowAtomNumber,
                            self.ui.FormSettingsViewCheckShowAtomNumber.isChecked())
-        self.ui.openGLWidget.set_atoms_numbred(self.ui.FormSettingsViewCheckShowAtomNumber.isChecked())
+        self.ui.openGLWidget.set_atoms_numbered(self.ui.FormSettingsViewCheckShowAtomNumber.isChecked())
 
     def save_state_view_show_box(self):  # pragma: no cover
         self.save_property(SETTINGS_FormSettingsViewCheckShowBox, self.ui.FormSettingsViewCheckShowBox.isChecked())
@@ -2433,7 +2442,8 @@ class MainForm(QMainWindow):
         self.ui.FormActionsPreSpinAtomsCoordZ.setValue(position[2])
         self.ui.FormActionsPreSpinAtomsCoordZ.update()
 
-    def selected_atom_changed(self, selected_atom):
+    def selected_atom_changed(self, selected):
+        selected_atom = selected[0]
         if selected_atom == -1:
             self.history_of_atom_selection = []
         else:
@@ -2562,7 +2572,8 @@ class MainForm(QMainWindow):
                 file_mask = "FDF files (*.fdf);;VASP POSCAR file (*.POSCAR)"
                 file_mask += ";;Crystal d12 (*.d12)"
                 fname = self.get_file_name_from_save_dialog(file_mask)
-                helpers.write_text_to_file(fname, text)
+                if fname is not None:
+                    helpers.write_text_to_file(fname, text)
         except Exception as e:
             self.show_error(e)
 
@@ -2723,7 +2734,7 @@ class MainForm(QMainWindow):
 
     def parse_volumeric_data2(self, filename: str = ""):
         try:
-            if filename == "":  # pragma: no cover
+            if not filename:  # pragma: no cover
                 filename = self.get_file_name_from_open_dialog("All files (*.*)")
             if len(filename) > 0:
                 if filename.endswith(".XSF"):
@@ -2831,6 +2842,31 @@ class MainForm(QMainWindow):
         leng = self.ui.FormActionsPreLineGraphene_len.value()
         return leng, m, n
 
+    def generate_3d_bulk(self):
+        """ASE bulk interface"""
+        name = self.ui.crystalstructure_3d_name.text()
+        crystalstructure = self.ui.crystalstructure_3d.currentText()
+        if crystalstructure == "Select":
+            crystalstructure = None
+        a = None if self.ui.crystalstructure_3d_a_dont_use.isChecked() else self.ui.crystalstructure_3d_a.value()
+        b = None if self.ui.crystalstructure_3d_b_dont_use.isChecked() else self.ui.crystalstructure_3d_b.value()
+        c = None if self.ui.crystalstructure_3d_c_dont_use.isChecked() else self.ui.crystalstructure_3d_c.value()
+        alpha = None if self.ui.crystalstructure_3d_alpha_dont_use.isChecked() else \
+            self.ui.crystalstructure_3d_alpha.value()
+        covera = None if self.ui.crystalstructure_3d_covera_dont_use.isChecked() else \
+            self.ui.crystalstructure_3d_covera.value()
+        orthorhombic = self.ui.crystalstructure_3d_orthorhombic.isChecked()
+        try:
+            atoms = bulk(name, crystalstructure=crystalstructure, a=a, b=b, c=c, alpha=alpha, covera=covera, u=None,
+                         orthorhombic=orthorhombic, cubic=not orthorhombic, basis=None)
+        except Exception as e:
+            print(str(e))
+
+        model = ase.from_ase_atoms_to_atomic_model(atoms)
+        self.models.append(model)
+        self.plot_model(-1)
+        self.fill_gui(name)
+
     def get_0d_molecula_list(self):
         from ase.collections import g2
         molecules = g2.names
@@ -2846,6 +2882,8 @@ class MainForm(QMainWindow):
 
     def generate_0d_molecula(self):
         name = self.ui.molecula_list.currentText()
+        if len(name) == 0:
+            return
         atoms = molecule(name)
         model = ase.from_ase_atoms_to_atomic_model(atoms)
         self.models.append(model)

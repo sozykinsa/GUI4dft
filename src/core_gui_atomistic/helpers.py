@@ -86,11 +86,35 @@ def list_str_to_int(x):
     return [int(item) for item in x]
 
 
-def getsubs(dir):
+def angle_for_3_points(xyz1, xyz2, xyz3):
+    vec1 = xyz1 - xyz2
+    vec2 = xyz3 - xyz2
+    a = np.dot(vec1, vec2)
+    b = np.linalg.norm(vec1)
+    c = np.linalg.norm(vec2)
+    arg = a / (b * c)
+    if math.fabs(arg) > 1:
+        arg = 1
+    angle = math.acos(arg)
+    return angle
+
+
+def plane_for_3_points(xyz1, xyz2, xyz3):
+    v1 = xyz2 - xyz1
+    v2 = xyz3 - xyz1
+    a = v1[1] * v2[2] - v2[1] * v1[2]
+    b = v2[0] * v1[2] - v1[0] * v2[2]
+    c = v1[0] * v2[1] - v1[1] * v2[0]
+    d = (- a * xyz1[0] - b * xyz1[1] - c * xyz1[2])
+    # print("equation of plane is ", str(a), "x +", str(b), "y +", str(c), "z +", str(d), "= 0.")
+    return [a, b, c, d]
+
+
+def getsubs(directory):
     dirs = []
     subdirs = []
     files = []
-    for dirname, dirnames, filenames in os.walk(dir):
+    for dirname, dirnames, filenames in os.walk(directory):
         dirs.append(dirname)
         for subdirname in dirnames:
             subdirs.append(os.path.join(dirname, subdirname))
@@ -216,53 +240,64 @@ def utf8_letter(let):
 
 
 def check_format(filename):
-    """check file format"""
+    """Check file format"""
+    if not os.path.exists(filename):
+        return "unknown"
 
-    """check file format"""
-    if filename.endswith(".fdf") or filename.endswith(".FDF"):
+    name = filename.lower()
+    if name.endswith(".fdf"):
         return "SIESTAfdf"
 
-    if (filename.lower()).endswith(".out"):
+    if name.endswith(".out"):
+        f = open(filename)
+        str1 = f.readline()
+        while str1:
+            if str1.find("WELCOME TO SIESTA") >= 0:
+                f.close()
+                return "SIESTAout"
+            if str1.find("DIRECT LATTICE VECTORS CARTESIAN COMPONENTS (ANGSTROM)") >= 0:
+                f.close()
+                return "CRYSTALout"
+            str1 = f.readline()
+        f.close()
         return "SIESTAout"
 
-    if filename.endswith(".ani") or filename.endswith(".ANI"):
+    if name.endswith(".ani"):
         return "SIESTAANI"
 
-    if (filename.lower()).endswith(".xyz"):
+    if name.endswith(".xyz"):
         f = open(filename)
         f.readline()
         str1 = spacedel(f.readline())
+        f.close()
         if len(str1.split()) > 4:
             return "XMolXYZ"
         if len(str1.split()) <= 4:
             return "SiestaXYZ"
         return "unknown"
 
-    if filename.endswith(".STRUCT_OUT"):
+    if name.endswith(".struct_out"):
         return "SIESTASTRUCT_OUT"
 
-    if filename.endswith(".MD_CAR"):
+    if name.endswith(".md_car"):
         return "SIESTAMD_CAR"
 
-    if filename.endswith(".XSF"):
+    if name.endswith(".xsf"):
         return "SIESTAXSF"
 
-    if filename.endswith(".cube"):
+    if name.endswith(".cube"):
         return "GAUSSIAN_cube"
 
-    if filename.endswith("POSCAR") or filename.endswith("CONTCAR"):
+    if name.endswith("poscar") or name.endswith("contcar"):
         return "VASPposcar"
 
-    if filename.endswith("outp") or filename.endswith("OUTP"):
+    if name.endswith("outp"):
         return "topond_out"
 
-    if filename.endswith("outp") or filename.endswith("OUTP"):
-        return "topond_out"
-
-    if filename.endswith("data") or filename.endswith("DATA"):
+    if name.endswith("data"):
         return "project"
 
-    if filename.endswith("cro") or filename.endswith("CRO"):
+    if name.endswith("cro"):
         return "critic_cro"
 
     return "unknown"

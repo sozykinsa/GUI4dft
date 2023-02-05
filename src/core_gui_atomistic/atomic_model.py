@@ -24,8 +24,6 @@ class AtomicModel(object):
         self.bonds = []
         self.bonds_per = []  # for exact calculation in form
 
-        self.tags = []
-
         self.name = ""
         self.lat_vectors = 100 * np.eye(3)
         self.mendeley = TPeriodTable()
@@ -38,6 +36,9 @@ class AtomicModel(object):
             self.add_atom(atom)
 
         self.selected_atom = -1
+
+    def __getitem__(self, i):
+        return self.atoms[i]
 
     @property
     def lat_vector1(self) -> float:
@@ -84,7 +85,10 @@ class AtomicModel(object):
         return np.array(self.center_mass())
 
     def get_tags(self):
-        return self.tags
+        tags = []
+        for at in self.atoms:
+            tags.append(at.tag)
+        return tags
 
     def get_cell(self):
         return self.lat_vectors
@@ -115,10 +119,9 @@ class AtomicModel(object):
 
     def move(self, l_x, l_y, l_z):
         """Move model by the vector."""
+        dl = np.array((l_x, l_y, l_z))
         for atom in self.atoms:
-            atom.x += l_x
-            atom.y += l_y
-            atom.z += l_z
+            atom.xyz += dl
 
     @staticmethod
     def atoms_from_xmol_xyz(filename: str):
@@ -131,7 +134,14 @@ class AtomicModel(object):
         return molecules
 
     @staticmethod
-    def atoms_from_xyz_structure(number_of_atoms, ani_file, indexes=[0, 1, 2, 3]):
+    def atoms_from_xyz_structure(number_of_atoms: int, ani_file, indexes=[0, 1, 2, 3],
+                                 is_allow_charge_incorrect: bool = False):
+        """Get atoms from xyz file.
+        number_of_atoms - number if data lines
+        ani_file -
+        indexes -
+        is_only_charge_correct - check the charge for correctness
+        """
         if indexes[0] == 0:
             ani_file.readline()
         atoms = []
@@ -145,7 +155,7 @@ class AtomicModel(object):
             d3 = float(s[indexes[3]])
             c = reg.sub('', s[indexes[0]])
             charge = mendeley.get_charge_by_letter(c)
-            if charge > 0:
+            if (charge > 0) or is_allow_charge_incorrect:
                 atoms.append([d1, d2, d3, c, charge])
         new_model = AtomicModel(atoms)
         new_model.set_lat_vectors_default()
@@ -202,21 +212,35 @@ class AtomicModel(object):
             self.atoms.pop(ind)
             self.find_bonds_fast()
 
-    def add_atom(self, atom, min_dist=0):
-        """Adds atom to the molecule is minimal distance to other atoms more then minDist."""
+    def add_atom(self, atom, min_dist=0) -> bool:
+        """Adds atom to the molecule is minimal distance to other atoms more then minDist.
+        Return value: True if atom was added
+        """
         dist = 10000
         if min_dist > 0:
             model = AtomicModel(self.atoms)
             model.set_lat_vectors(self.lat_vector1, self.lat_vector2, self.lat_vector3)
             model.add_atom(atom)
             for ind in range(0, len(self.atoms)):
-                r = model.atom_atom_distance(ind, len(model.atoms) - 1)
+                r = model.atom_atom_distance(ind, -1)  # len(model.atoms) - 1)
                 if r < dist:
                     dist = r
 
-        if dist > min_dist:
+        if min_dist < 0:
+            model = AtomicModel(self.atoms)
+            model.add_atom(atom)
+            for ind in range(0, len(self.atoms)):
+                xyz1 = model.atoms[ind].xyz
+                xyz2 = model.atoms[-1].xyz
+                r = np.linalg.norm(xyz1 - xyz2)
+                if r < dist:
+                    dist = r
+
+        if dist > math.fabs(min_dist):
             new_at = deepcopy(atom)
             self.atoms.append(new_at)
+            return True
+        return False
 
     def add_atomic_model(self, atomic_model, min_dist=0):
         for at in atomic_model:
@@ -237,9 +261,6 @@ class AtomicModel(object):
     def n_bonds(self):
         return len(self.bonds)
 
-    def __getitem__(self, i):
-        return self.atoms[i]
-
     def modify_atoms_types(self, changes):
         for change in changes:
             let = change[1]
@@ -255,16 +276,25 @@ class AtomicModel(object):
     def n_atoms(self):
         return len(self.atoms)
 
+    def translated_atoms_remove(self):
+        new_atoms = []
+        for atom in self.atoms:
+            if atom.tag != "translated":
+                new_atoms.append(atom)
+        self.atoms = new_atoms
+
     def center_mass(self, charge=0):
         """The method returns the center of mass of the molecule."""
         cxyz = np.zeros(3)
         n = 0
+        tags = self.get_tags()
 
         if charge == 0:
             for j in range(0, len(self.atoms)):
-                m = self.mendeley.Atoms[self.atoms[j].charge].mass
-                cxyz += self.atoms[j].xyz * m
-                n += m
+                if tags[j] != "translated":
+                    m = self.mendeley.Atoms[self.atoms[j].charge].mass
+                    cxyz += self.atoms[j].xyz * m
+                    n += m
         else:
             for j in range(0, len(self.atoms)):
                 if int(self.atoms[j].charge) == int(charge):
@@ -311,7 +341,7 @@ class AtomicModel(object):
         self.rotate_y(betta)
         self.rotate_z(gamma)
 
-    def ProjectionToCylinder(self, atomslist, radius):
+    def projection_to_cylinder(self, atomslist, radius):
         """This method returns projections on cylinder with radius for atom at."""
         row = []
         for at in range(0, len(atomslist)):
@@ -331,7 +361,7 @@ class AtomicModel(object):
                 indexes.append(j)
         return indexes
 
-    def indexes_of_atoms_in_ball(self, ats, atom, r):
+    def indexes_of_atoms_in_sphere(self, ats, atom, r):
         """Indexes of atoms in the ball of radius R with center on atom 'atom'.
         Args:
             ats: list of indexes;
@@ -502,7 +532,7 @@ class AtomicModel(object):
                 length = round(self.atom_atom_distance(i, j), 4)
                 t1 = int(self.atoms[i].charge)
                 t2 = int(self.atoms[j].charge)
-                if math.fabs(length - self.mendeley.Bonds[t1][t2]) < 0.2 * self.mendeley.Bonds[t1][t2]:
+                if (length > 1e-4) and (length < 1.2 * self.mendeley.Bonds[t1][t2]):
                     self.bonds_per.append([t1, t2, length, self.atoms[i].let, i, self.atoms[j].let, j])
         return self.bonds_per
 
@@ -518,6 +548,20 @@ class AtomicModel(object):
                 if (r > 1e-4) and (r < 1.2 * r_tab):
                     self.bonds.append([i, j])
         return self.bonds
+
+    def get_bonds_for_charges(self, c1, c2):
+        """The bonds of atoms with charges"""
+        bonds = self.find_bonds_exact()
+        bonds_len = []
+        bonds_ok = []
+        for bond in bonds:
+            if ((c1 == 0) or (c2 == 0)) or ((c1 == bond[0]) and (c2 == bond[1])) or (
+                    (c1 == bond[1]) and (c2 == bond[2])):
+                bonds_ok.append(bond)
+                bonds_len.append(bond[2])
+        bonds_mean = round(np.average(bonds_len), 5)
+        bonds_err = round((max(bonds_len) - min(bonds_len)) / 2.0, 5)
+        return bonds_ok, bonds_mean, bonds_err
 
     def delta(self, molecula):
         """ maximum distance from atoms in self to the atoms in the newMolecula"""
@@ -690,21 +734,21 @@ class AtomicModel(object):
     # Best fit a circle to these points
     def err_cylinder(self, par):
         w, v, r = par[0], par[1], par[2]
-        pts = [np.linalg.norm([x - w, y - v]) - r for x, y in zip(self.X, self.Y)]
+        pts = [np.linalg.norm([x - w, y - v]) - r for x, y in zip(self.x, self.y)]
         return (np.array(pts) ** 2).sum()
 
     def fit_with_cylinder(self):
         positions = self.get_positions()
-        self.X = positions[:, 0]
-        self.Y = positions[:, 1]
+        self.x = positions[:, 0]
+        self.y = positions[:, 1]
 
         # Choose the inital center of fit circle as the CM
-        xm = self.X.mean()
-        ym = self.Y.mean()
+        xm = self.x.mean()
+        ym = self.y.mean()
 
         # Choose the inital radius as the average distance to the CM
         cm = np.array([xm, ym]).reshape(1, 2)
-        rm = cdist(cm, np.array([self.X, self.Y]).T).mean()
+        rm = cdist(cm, np.array([self.x, self.y]).T).mean()
 
         xf, yf, rf = scipy.optimize.fmin(self.err_cylinder, [xm, ym, rm])
         return xf, yf, rf

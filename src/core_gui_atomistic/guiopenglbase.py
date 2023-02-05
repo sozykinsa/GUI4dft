@@ -745,6 +745,7 @@ class GuiOpenGLBase(QOpenGLWidget):
     def get_model(self):
         model = deepcopy(self.main_model)
         model.move(*(-self.coord0))
+        model.translated_atoms_remove()
         return model
 
     def property_precision_changed(self, precision):
@@ -817,7 +818,7 @@ class GuiOpenGLBase(QOpenGLWidget):
         self.orientation_model_changed(self.rotation_angles, self.camera_position, self.scale_factor)
 
     def selected_atom_properties_to_form(self):
-        self.selected_atom_callback(self.selected_atom)
+        self.selected_atom_callback([self.selected_atom])
 
     def selected_atom_changed(self):
         if self.selected_atom >= 0:
@@ -832,7 +833,7 @@ class GuiOpenGLBase(QOpenGLWidget):
 
     def set_structure_parameters(self, atoms_colors, is_view_atoms, is_view_atom_numbers, is_view_box, box_color,
                                  is_view_bonds, bonds_color, bond_width, bonds_by_atoms, is_view_axes, axes_color,
-                                 contour_width):
+                                 contour_width: int = 8):
         self.prop = "charge"
         self.is_view_box = is_view_box
         self.is_view_atoms = is_view_atoms

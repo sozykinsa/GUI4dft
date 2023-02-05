@@ -1,5 +1,4 @@
 # This workflow will install Python dependencies, run tests and lint with a single version of Python
-# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
 
 name: QT-application
 
@@ -21,10 +20,10 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - name: Set up Python 3.8
+      - name: Set up Python 3.9
         uses: actions/setup-python@v2
         with:
-          python-version: 3.8
+          python-version: 3.9
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
@@ -78,10 +77,10 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Set up Python 3.8
+    - name: Set up Python 3.9
       uses: actions/setup-python@v2
       with:
-        python-version: 3.8
+        python-version: 3.9
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
@@ -90,7 +89,7 @@ jobs:
         pip install -r requirements-dev.txt
     - name: Test with pytest
       run: |
-        python -m pytest tests --color=yes --cov=src/core_gui_atomistic --cov=src/src_gui4dft --cov-report=xml --cov-report=term-missing --ignore=tests/opengl
+        python -m pytest tests --color=yes --cov=src/core_gui_atomistic --cov=src/src_gui4dft --cov-report=xml --cov-report=term-missing --ignore=tests/gui4dft_opengl
 
   test-mac:
 
@@ -98,10 +97,10 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Set up Python 3.8
+    - name: Set up Python 3.9
       uses: actions/setup-python@v2
       with:
-        python-version: 3.8
+        python-version: 3.9
     - name: Install dependencies
       run: |
             python -m pip install --upgrade pip
@@ -109,4 +108,4 @@ jobs:
             pip install -r requirements-dev.txt
     - name: Test with pytest
       run: |
-        python -m pytest tests --color=yes --cov=src/core_gui_atomistic --cov=src/src_gui4dft --cov-report=xml --cov-report=term-missing --ignore=tests/opengl
+        python -m pytest tests --color=yes --cov=src/core_gui_atomistic --cov=src/src_gui4dft --cov-report=xml --cov-report=term-missing
