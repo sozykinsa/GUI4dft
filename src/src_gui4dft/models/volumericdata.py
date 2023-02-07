@@ -131,7 +131,7 @@ class VolumericData:
             points.append(row)
         return points
 
-    def toCUBEfile(self, model, fname, x1, x2, y1, y2, z1, z2):
+    def to_cube_text(self, model, x1, x2, y1, y2, z1, z2):
         text = "DATA.cube\n"
         text += "DATA.cube\n"
         mult = 0.52917720859
@@ -144,42 +144,43 @@ class VolumericData:
         multy = mult * self.Ny
         multz = mult * self.Nz
 
-        print("self.LatVect1 ", model.lat_vector1)
-        print("self.LatVect2 ", model.lat_vector2)
-        print("self.LatVect3 ", model.lat_vector3)
-        print("volumeric_data.origin_to_export ", self.origin_to_export)
-        print("add ", x1 * model.lat_vector1 / multx + y1 * model.lat_vector2 / multy + z1 * model.lat_vector3 / multz)
-
         origin = self.origin_to_export + x1 * model.lat_vector1 / multx + y1 * model.lat_vector2 / multy + \
             z1 * model.lat_vector3 / multz
 
-        text += str(model.n_atoms()) + "     " + str(origin[0]) + "    " + str(origin[1]) + "    " + str(origin[2]) + "\n"
-        text += " " + str(n_x) + " "
-        text += " " + str(model.lat_vector1[0] / multx) + "   " + str(model.lat_vector1[1] / multx) + "   " + str(
-            model.lat_vector1[2] / multx) + "\n"
+        text += str(model.n_atoms()) + "     " + str(origin[0]) + "    " + str(origin[1]) + "    " + str(origin[2])
+        text += "\n " + str(n_x) + " "
+        text += " " + str(model.lat_vector1[0] / multx) + "   " + str(model.lat_vector1[1] / multx) + "   " + \
+                str(model.lat_vector1[2] / multx) + "\n"
         text += " " + str(n_y) + " "
-        text += " " + str(model.lat_vector2[0] / multy) + "   " + str(model.lat_vector2[1] / multy) + "   " + str(
-            model.lat_vector2[2] / multy) + "\n"
+        text += " " + str(model.lat_vector2[0] / multy) + "   " + str(model.lat_vector2[1] / multy) + "   " + \
+                str(model.lat_vector2[2] / multy) + "\n"
         text += " " + str(n_z) + " "
-        text += " " + str(model.lat_vector3[0] / multz) + "   " + str(model.lat_vector3[1] / multz) + "   " + str(
-            model.lat_vector3[2] / multz) + "\n"
+        text += " " + str(model.lat_vector3[0] / multz) + "   " + str(model.lat_vector3[1] / multz) + "   " + \
+                str(model.lat_vector3[2] / multz) + "\n"
 
         for atom in model.atoms:
             text += " " + str(atom.charge) + "     0.000000     " + str(atom.x / mult) + "    " + str(
                 atom.y / mult) + "    " + str(atom.z / mult) + "\n"
-
-        orderData = 'C'
+        print("data start")
 
         new_data = self.data3D[x1:x2, y1:y2, z1:z2]
         new_n = new_data.size
-        data3D = np.reshape(new_data, new_n, orderData)
+        data_3d = np.reshape(new_data, new_n, 'C')
+        print("text start: ", data_3d.size)
 
-        for i in range(0, data3D.size):
-            text += str(data3D[i]) + "   "
+        text_ar = np.array2string(data_3d, threshold=data_3d.size)[1:-1]
+        print(len(text_ar))
+
+        #for i in range(0, data_3d.size):
+        #    if i % 1000 == 0:
+        #        print(i, "/", data_3d.size)
+        #    text += str(data_3d[i]) + "   "
+        text += text_ar
+        print("stop")
 
         return text
 
-    def toXSFfile(self, model, fname, x1, x2, y1, y2, z1, z2):
+    def to_xsf_text(self, model, x1, x2, y1, y2, z1, z2):
         text = "ATOMS\n"
         for atom in model.atoms:
             text += " " + str(atom.charge) + "    " + str(atom.x) + "    " + str(atom.y) + "    " + str(atom.z) + "\n"
@@ -199,14 +200,12 @@ class VolumericData:
         text += " " + str(vector2[0]) + "   " + str(vector2[1]) + "   " + str(vector2[2]) + "\n"
         text += " " + str(vector3[0]) + "   " + str(vector3[1]) + "   " + str(vector3[2]) + "\n"
 
-        orderData = 'F'
-
         new_data = self.data3D[x1:x2, y1:y2, z1:z2]
         new_n = new_data.size
-        data3D = np.reshape(new_data, new_n, orderData)
+        data_3d = np.reshape(new_data, new_n, 'F')
 
-        for i in range(0, data3D.size):
-            text += str(data3D[i]) + "   "
+        for i in range(0, data_3d.size):
+            text += str(data_3d[i]) + "   "
 
         text += "\n"
 

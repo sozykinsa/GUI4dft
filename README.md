@@ -33,7 +33,7 @@ v1.2 - Contains some additional features. For example, it allows visualizing the
 
 v1.3 - This version uses pyqtgraph instead of matplotlib and pyside2 instead of PyQt5. The colors of the atoms and covalent radii are taken from the ASE module. The project is covered with tests.
 
-v1.4 - This is the next release in 1.x branch. 
+v1.4 - This is the next release in 1.x branch. Added support for exporting structural data to input files VASP, CRYSTAL, QE.
 
 The master branch contains more or less stable 1.x version functions.
 

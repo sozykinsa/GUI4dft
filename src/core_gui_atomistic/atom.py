@@ -12,8 +12,9 @@ class Atom(object):
         self.xyz = np.array([at_data[0], at_data[1], at_data[2]])
         self.let = at_data[3]
         self.charge = int(at_data[4])
-        self.selected = False
-        self.fragment1 = False
+        self.is_visible: bool = True
+        self.selected: bool = False
+        self.fragment1: bool = False
         self.properties = {}
         self.visible_property = ""
         self.tag = ""

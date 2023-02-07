@@ -4,7 +4,7 @@ try:
     if os.environ["XDG_SESSION_TYPE"] == "wayland":
         os.environ["QT_QPA_PLATFORM"] = "wayland"
 except Exception as e:
-    print(str(e))
+    pass
 import math
 import sys
 from pathlib import Path
@@ -944,45 +944,40 @@ class MainForm(QMainWindow):
                                            options=QFileDialog.DontUseNativeDialog)[0]
 
     def export_volumeric_data_to_xsf(self):
-        try:
-            f_name = self.get_file_name_from_save_dialog("XSF files (*.XSF)")
-            x1 = self.ui.FormVolDataExportX1.value()
-            x2 = self.ui.FormVolDataExportX2.value()
-            y1 = self.ui.FormVolDataExportY1.value()
-            y2 = self.ui.FormVolDataExportY2.value()
-            z1 = self.ui.FormVolDataExportZ1.value()
-            z2 = self.ui.FormVolDataExportZ2.value()
-            self.export_volumeric_data_to_file(f_name, x1, x2, y1, y2, z1, z2)
-        except Exception as e:
-            self.show_error(e)
+        mask = "XSF files (*.XSF)"
+        self.export_volumeric_data_to_file_form_elements(mask)
 
     def export_volumeric_data_to_cube(self):
+        mask = "cube files (*.cube)"
+        self.export_volumeric_data_to_file_form_elements(mask)
+
+    def export_volumeric_data_to_file_form_elements(self, mask):
         try:
-            f_name = self.get_file_name_from_save_dialog("cube files (*.cube)")
+            f_name = self.get_file_name_from_save_dialog(mask)
             x1 = self.ui.FormVolDataExportX1.value()
             x2 = self.ui.FormVolDataExportX2.value()
             y1 = self.ui.FormVolDataExportY1.value()
             y2 = self.ui.FormVolDataExportY2.value()
             z1 = self.ui.FormVolDataExportZ1.value()
             z2 = self.ui.FormVolDataExportZ2.value()
-            self.export_volumeric_data_to_file(f_name, x1, x2, y1, y2, z1, z2)
+            self.volumeric_data_to_file(f_name, self.volumeric_data, x1, x2, y1, y2, z1, z2)
+            self.work_dir = os.path.dirname(f_name)
+            self.save_active_folder()
         except Exception as e:
             self.show_error(e)
-
-    def export_volumeric_data_to_file(self, fname, x1, x2, y1, y2, z1, z2):
-        self.ui.openGLWidget.volumeric_data_to_file(fname, self.volumeric_data, x1, x2, y1, y2, z1, z2)
-        self.work_dir = os.path.dirname(fname)
-        self.save_active_folder()
 
     def volumeric_data_to_file(self, f_name, volumeric_data, x1, x2, y1, y2, z1, z2):
         model = self.ui.openGLWidget.get_model()
-        if f_name.find("XSF") >= 0:
-            f_name = f_name.split(".")[0]
-            text = volumeric_data.toXSFfile(model, f_name, x1, x2, y1, y2, z1, z2)
+        if f_name.find(".XSF") >= 0:
+            #f_name = f_name.split(".")[0]
+            text = volumeric_data.to_xsf_text(model, x1, x2, y1, y2, z1, z2)
+            helpers.write_text_to_file(f_name, text)
 
-        if f_name.find("cube") >= 0:
-            f_name = f_name.split(".")[0]
-            text = volumeric_data.toCUBEfile(model, f_name, x1, x2, y1, y2, z1, z2)
+        if f_name.find(".cube") >= 0:
+            #print(f_name)
+            #f_name = f_name.split(".")[0]
+            #print(f_name)
+            text = volumeric_data.to_cube_text(model, x1, x2, y1, y2, z1, z2)
             helpers.write_text_to_file(f_name, text)
 
     def fill_gui(self, title=""):
