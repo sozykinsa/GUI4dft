@@ -33,7 +33,7 @@ from PySide2.QtWidgets import QTreeWidgetItemIterator
 from src_gui4dft.qtbased.image3dexporter import Image3Dexporter
 
 from src_gui4dft.program.siesta import TSIESTA
-from src_gui4dft.program.crystal import model_1d_to_d12, model_2d_to_d12
+from src_gui4dft.program.crystal import model_0d_to_d12, model_1d_to_d12, model_2d_to_d12, model_3d_to_d12
 from src_gui4dft.program.vasp import vasp_dos
 from src_gui4dft.program.vasp import model_to_vasp_poscar
 from src_gui4dft.program import ase
@@ -159,8 +159,10 @@ class MainForm(QMainWindow):
         self.ui.FDFGenerate.clicked.connect(self.fdf_data_to_form)
         self.ui.POSCARgenerate.clicked.connect(self.poscar_data_to_form)
         self.ui.QEgenerate.clicked.connect(self.qe_data_to_form)
+        self.ui.crystal_0d_d12_generate.clicked.connect(self.d12_0D_to_form)
         self.ui.crystal_1d_d12_generate.clicked.connect(self.d12_1D_to_form)
         self.ui.crystal_2d_d12_generate.clicked.connect(self.d12_2D_to_form)
+        self.ui.crystal_3d_d12_generate.clicked.connect(self.d12_3D_to_form)
 
         self.ui.data_from_form_to_input_file.clicked.connect(self.data_from_form_to_input_file)
         self.ui.model_rotation_x.valueChanged.connect(self.model_orientation_changed)
@@ -2649,6 +2651,17 @@ class MainForm(QMainWindow):
         self.ui.Form3Dand2DTabs.setCurrentIndex(1)
         self.ui.PyqtGraphWidget.plot([x_fig], [y_fig], [None], title, x_title, y_title, True)
 
+    def d12_0D_to_form(self):  # pragma: no cover
+        if len(self.models) == 0:
+            return
+        try:
+            model = self.models[self.active_model]
+            text = model_0d_to_d12(model)
+            if len(text) > 0:
+                self.ui.FormActionsPreTextFDF.setText(text)
+        except Exception as e:
+            self.show_error(e)
+
     def d12_1D_to_form(self):  # pragma: no cover
         if len(self.models) == 0:
             return
@@ -2666,6 +2679,17 @@ class MainForm(QMainWindow):
         try:
             model = self.models[self.active_model]
             text = model_2d_to_d12(model)
+            if len(text) > 0:
+                self.ui.FormActionsPreTextFDF.setText(text)
+        except Exception as e:
+            self.show_error(e)
+
+    def d12_3D_to_form(self):  # pragma: no cover
+        if len(self.models) == 0:
+            return
+        try:
+            model = self.models[self.active_model]
+            text = model_3d_to_d12(model)
             if len(text) > 0:
                 self.ui.FormActionsPreTextFDF.setText(text)
         except Exception as e:
