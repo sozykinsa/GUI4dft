@@ -17,8 +17,6 @@ from core_gui_atomistic.atom import Atom
 from core_gui_atomistic.atomic_model import AtomicModel
 from src_gui4dft.models.capedswcnt import CapedSWNT
 from src_gui4dft.models.bint import BiNT
-from src_gui4dft.models.graphene import Graphene
-from src_gui4dft.models.bn_plane import BNplane
 from src_gui4dft.models.hexagonal_plane import HexagonalPlane, HexagonalPlaneHex
 from src_gui4dft.models.swnt import SWNT
 from src_gui4dft.models.swgnt import SWGNT
@@ -35,6 +33,7 @@ from src_gui4dft.qtbased.image3dexporter import Image3Dexporter
 
 from src_gui4dft.program.siesta import TSIESTA
 from src_gui4dft.program.crystal import model_0d_to_d12, model_1d_to_d12, model_2d_to_d12, model_3d_to_d12
+from src_gui4dft.program.qe import model_to_qe_pw
 from src_gui4dft.program.vasp import vasp_dos
 from src_gui4dft.program.vasp import model_to_vasp_poscar
 from src_gui4dft.program import ase
@@ -2554,7 +2553,12 @@ class MainForm(QMainWindow):
     def qe_data_to_form(self):
         if len(self.models) == 0:
             return
-        print("TODO QE")
+        try:
+            model = self.ui.openGLWidget.get_model()
+            text = model_to_qe_pw(model)
+            self.ui.FormActionsPreTextFDF.setText(text)
+        except Exception:
+            print("There are no atoms in the model")
 
     def poscar_data_to_form(self):
         if len(self.models) == 0:
@@ -2571,7 +2575,7 @@ class MainForm(QMainWindow):
             text = self.ui.FormActionsPreTextFDF.toPlainText()
             if len(text) > 0:
                 file_mask = "FDF files (*.fdf);;VASP POSCAR file (*.POSCAR)"
-                file_mask += ";;Crystal d12 (*.d12)"
+                file_mask += ";;Crystal d12 (*.d12);;PWscf in (*.in)"
                 fname = self.get_file_name_from_save_dialog(file_mask)
                 if fname is not None:
                     helpers.write_text_to_file(fname, text)
