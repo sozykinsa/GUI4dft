@@ -49,7 +49,8 @@ def model_2d_to_d12(model):
     model2.convert_from_cart_to_direct()
     nat = model1.n_atoms()
     text += "1\n"
-    text += str(np.linalg.norm(model1.lat_vector1)) + " " + str(np.linalg.norm(model1.lat_vector2)) + " 90.0\n"
+    text += str(np.linalg.norm(model1.lat_vector1)) + " " + str(np.linalg.norm(model1.lat_vector2))
+    text += " " + str(model.get_angle_gamma()) + "\n"
     text += str(nat) + "\n"
     for i in range(0, nat):
         ch = model1.atoms[i].charge

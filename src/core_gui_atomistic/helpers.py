@@ -258,6 +258,9 @@ def check_format(filename):
             if str1.find("DIRECT LATTICE VECTORS CARTESIAN COMPONENTS (ANGSTROM)") >= 0:
                 f.close()
                 return "CRYSTALout"
+            if str1.find("Program PWSCF v") >= 0:
+                f.close()
+                return "QEPWout"
             str1 = f.readline()
         f.close()
         return "SIESTAout"

@@ -23,6 +23,10 @@ To run the program, type
 
 python3 gui4dft.py
 
+Some operating systems may require additional packages to be installed:
+
+Xubuntu: sudo apt-get install qtbase5-dev
+
 ## Explanations for the versions of the program
 
 v1.0 - The version of the program described in the article https://doi.org/10.1016/j.cpc.2021.107843

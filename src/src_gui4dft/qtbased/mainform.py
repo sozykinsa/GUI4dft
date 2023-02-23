@@ -19,6 +19,7 @@ from src_gui4dft.models.capedswcnt import CapedSWNT
 from src_gui4dft.models.bint import BiNT
 from src_gui4dft.models.graphene import Graphene
 from src_gui4dft.models.bn_plane import BNplane
+from src_gui4dft.models.hexagonal_plane import HexagonalPlane, HexagonalPlaneHex
 from src_gui4dft.models.swnt import SWNT
 from src_gui4dft.models.swgnt import SWGNT
 from src_gui4dft.models.gaussiancube import GaussianCube
@@ -143,11 +144,9 @@ class MainForm(QMainWindow):
         # models generation
         self.ui.get_0d_molecula_list.clicked.connect(self.get_0d_molecula_list)
         self.ui.generate_0d_molecula.clicked.connect(self.generate_0d_molecula)
-        self.ui.generate_0d_cluster.clicked.connect(self.generate_0d_cluster)
         self.ui.but_create_nanotube.clicked.connect(self.create_swnt)
         self.ui.FormActionsPreButBiElementGenerate.clicked.connect(self.create_bi_el_nt)
-        self.ui.generate_2d_graphene.clicked.connect(self.create_graphene)
-        self.ui.generate_2d_bn.clicked.connect(self.create_2d_bn)
+        self.ui.generate_2d_model.clicked.connect(self.create_2d_hexagonal)
         self.ui.generate_3d_bulk.clicked.connect(self.generate_3d_bulk)
 
         data = ["sc", "fcc", "bcc", "tetragonal", "bct", "hcp", "rhombohedral", "orthorhombic", "mcl", "diamond"]
@@ -258,7 +257,6 @@ class MainForm(QMainWindow):
         self.ui.atoms_list_all.setModel(model)
         self.ui.FormAtomsList1.setModel(model)
         self.ui.FormAtomsList2.setModel(model)
-        self.ui.atoms_list_all_cluster.setModel(model)
 
         # sliders
         self.ui.FormActionsPostSliderContourXY.valueChanged.connect(self.set_xsf_z_position)
@@ -352,6 +350,12 @@ class MainForm(QMainWindow):
         color_type_scale.appendRow(QStandardItem("Log"))
         self.ui.FormSettingsColorsScaleType.setModel(color_type_scale)
         self.ui.FormSettingsColorsScaleType.setCurrentText(self.color_type_scale)
+
+        model_2d_types = QStandardItemModel()
+        model_2d_types.appendRow(QStandardItem("Graphene"))
+        model_2d_types.appendRow(QStandardItem("BN"))
+        model_2d_types.appendRow(QStandardItem("BC"))
+        self.ui.model_2d_type.setModel(model_2d_types)
 
         bi_element_type_tube = QStandardItemModel()
         bi_element_type_tube.appendRow(QStandardItem("BN"))
@@ -2550,7 +2554,7 @@ class MainForm(QMainWindow):
     def qe_data_to_form(self):
         if len(self.models) == 0:
             return
-        print("TODO")
+        print("TODO QE")
 
     def poscar_data_to_form(self):
         if len(self.models) == 0:
@@ -2841,19 +2845,32 @@ class MainForm(QMainWindow):
         self.change_color(self.ui.ColorContour, SETTINGS_Color_Of_Contour)
         self.plot_contour()
 
-    def create_graphene(self):
+    def create_2d_hexagonal(self):
         leng, m, n = self.model_2d_parameters()
-        model = Graphene(n, m, leng)
+        model_type = self.ui.model_2d_type.currentText()
+        is_ribbon = self.ui.generate_2d_ribbon.isChecked()
+        ch1 = 6
+        ch2 = 6
+        a = 1.43
+        if model_type == "Graphene":
+            ch1 = 6
+            ch2 = 6
+            a = 1.43
+        if model_type == "BN":
+            ch1 = 5
+            ch2 = 7
+            a = 1.45
+        if model_type == "BC":
+            ch1 = 5
+            ch2 = 6
+            a = 1.4
+        if is_ribbon:
+            model = HexagonalPlane(ch1, ch2, a, n, m, leng)
+        else:
+            model = HexagonalPlaneHex(ch1, ch2, a, n, m)
         self.models.append(model)
         self.plot_model(-1)
-        self.fill_gui("Graphene-model")
-
-    def create_2d_bn(self):
-        leng, m, n = self.model_2d_parameters()
-        model = BNplane(n, m, leng)
-        self.models.append(model)
-        self.plot_model(-1)
-        self.fill_gui("BN-model")
+        self.fill_gui(model_type + "-model")
 
     def model_2d_parameters(self):
         n = self.ui.FormActionsPreLineGraphene_n.value()
@@ -2904,17 +2921,6 @@ class MainForm(QMainWindow):
         if len(name) == 0:
             return
         atoms = molecule(name)
-        model = ase.from_ase_atoms_to_atomic_model(atoms)
-        self.models.append(model)
-        self.plot_model(-1)
-        self.fill_gui(name)
-
-    def generate_0d_cluster(self):
-        name = "Cluster"
-        surfaces = [(1, 0, 0), (1, 1, 0), (1, 1, 1)]
-        layers = [6, 9, 5]
-        lc = 3.61000
-        atoms = FaceCenteredCubic('Cu', surfaces, layers, latticeconstant=lc)
         model = ase.from_ase_atoms_to_atomic_model(atoms)
         self.models.append(model)
         self.plot_model(-1)

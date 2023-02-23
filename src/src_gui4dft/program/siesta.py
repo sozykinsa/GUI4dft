@@ -505,7 +505,8 @@ class TSIESTA:
         chem_spec_info = {}
         chemical_species_label = TSIESTA.get_block_from_siesta_fdf(filename, "ChemicalSpeciesLabel")
         for j in range(0, len(chemical_species_label)):
-            chem_spec_info[(chemical_species_label[j].split())[0]] = (chemical_species_label[j].split())[1:3]
+            row_data = chemical_species_label[j].split()
+            chem_spec_info[row_data[0]] = [int(abs(int(row_data[1]))), row_data[2]]
         return atomic_coordinates_format, number_of_atoms, chem_spec_info, lat, lat_vectors, units
 
     @staticmethod

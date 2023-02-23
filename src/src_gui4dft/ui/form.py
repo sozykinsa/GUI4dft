@@ -291,135 +291,12 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_52.addWidget(self.frame_16)
 
+        self.verticalSpacer_30 = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+
+        self.verticalLayout_52.addItem(self.verticalSpacer_30)
+
 
         self.verticalLayout_86.addWidget(self.groupBox_35)
-
-        self.groupBox_51 = QGroupBox(self.page_3)
-        self.groupBox_51.setObjectName(u"groupBox_51")
-        self.groupBox_51.setEnabled(False)
-        self.verticalLayout_69 = QVBoxLayout(self.groupBox_51)
-        self.verticalLayout_69.setObjectName(u"verticalLayout_69")
-        self.frame_109 = QFrame(self.groupBox_51)
-        self.frame_109.setObjectName(u"frame_109")
-        self.frame_109.setMinimumSize(QSize(0, 0))
-        self.frame_109.setFrameShape(QFrame.StyledPanel)
-        self.frame_109.setFrameShadow(QFrame.Raised)
-        self.horizontalLayout_113 = QHBoxLayout(self.frame_109)
-        self.horizontalLayout_113.setObjectName(u"horizontalLayout_113")
-        self.horizontalLayout_113.setContentsMargins(0, 0, 0, 0)
-        self.frame_110 = QFrame(self.frame_109)
-        self.frame_110.setObjectName(u"frame_110")
-        self.frame_110.setFrameShape(QFrame.StyledPanel)
-        self.frame_110.setFrameShadow(QFrame.Raised)
-        self.verticalLayout_71 = QVBoxLayout(self.frame_110)
-        self.verticalLayout_71.setObjectName(u"verticalLayout_71")
-        self.verticalLayout_71.setContentsMargins(0, 0, 0, 0)
-        self.label_82 = QLabel(self.frame_110)
-        self.label_82.setObjectName(u"label_82")
-
-        self.verticalLayout_71.addWidget(self.label_82)
-
-        self.cluster_lattice_type = QListView(self.frame_110)
-        self.cluster_lattice_type.setObjectName(u"cluster_lattice_type")
-
-        self.verticalLayout_71.addWidget(self.cluster_lattice_type)
-
-
-        self.horizontalLayout_113.addWidget(self.frame_110)
-
-        self.frame_111 = QFrame(self.frame_109)
-        self.frame_111.setObjectName(u"frame_111")
-        self.frame_111.setFrameShape(QFrame.StyledPanel)
-        self.frame_111.setFrameShadow(QFrame.Raised)
-        self.verticalLayout_72 = QVBoxLayout(self.frame_111)
-        self.verticalLayout_72.setObjectName(u"verticalLayout_72")
-        self.verticalLayout_72.setContentsMargins(0, 0, 0, 0)
-        self.label_84 = QLabel(self.frame_111)
-        self.label_84.setObjectName(u"label_84")
-
-        self.verticalLayout_72.addWidget(self.label_84)
-
-        self.cluster_surfaces = QListView(self.frame_111)
-        self.cluster_surfaces.setObjectName(u"cluster_surfaces")
-
-        self.verticalLayout_72.addWidget(self.cluster_surfaces)
-
-
-        self.horizontalLayout_113.addWidget(self.frame_111)
-
-
-        self.verticalLayout_69.addWidget(self.frame_109)
-
-        self.frame_112 = QFrame(self.groupBox_51)
-        self.frame_112.setObjectName(u"frame_112")
-        self.frame_112.setFrameShape(QFrame.StyledPanel)
-        self.frame_112.setFrameShadow(QFrame.Raised)
-        self.horizontalLayout_114 = QHBoxLayout(self.frame_112)
-        self.horizontalLayout_114.setObjectName(u"horizontalLayout_114")
-        self.label_85 = QLabel(self.frame_112)
-        self.label_85.setObjectName(u"label_85")
-
-        self.horizontalLayout_114.addWidget(self.label_85)
-
-        self.atoms_list_all_cluster = QComboBox(self.frame_112)
-        self.atoms_list_all_cluster.setObjectName(u"atoms_list_all_cluster")
-
-        self.horizontalLayout_114.addWidget(self.atoms_list_all_cluster)
-
-        self.horizontalSpacer_123 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
-
-        self.horizontalLayout_114.addItem(self.horizontalSpacer_123)
-
-
-        self.verticalLayout_69.addWidget(self.frame_112)
-
-        self.frame_113 = QFrame(self.groupBox_51)
-        self.frame_113.setObjectName(u"frame_113")
-        self.frame_113.setFrameShape(QFrame.StyledPanel)
-        self.frame_113.setFrameShadow(QFrame.Raised)
-        self.horizontalLayout_115 = QHBoxLayout(self.frame_113)
-        self.horizontalLayout_115.setObjectName(u"horizontalLayout_115")
-        self.label_86 = QLabel(self.frame_113)
-        self.label_86.setObjectName(u"label_86")
-
-        self.horizontalLayout_115.addWidget(self.label_86)
-
-        self.cluster_lattice_constant = QDoubleSpinBox(self.frame_113)
-        self.cluster_lattice_constant.setObjectName(u"cluster_lattice_constant")
-
-        self.horizontalLayout_115.addWidget(self.cluster_lattice_constant)
-
-        self.horizontalSpacer_128 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
-
-        self.horizontalLayout_115.addItem(self.horizontalSpacer_128)
-
-
-        self.verticalLayout_69.addWidget(self.frame_113)
-
-        self.frame_58 = QFrame(self.groupBox_51)
-        self.frame_58.setObjectName(u"frame_58")
-        self.frame_58.setFrameShape(QFrame.StyledPanel)
-        self.frame_58.setFrameShadow(QFrame.Raised)
-        self.horizontalLayout_88 = QHBoxLayout(self.frame_58)
-        self.horizontalLayout_88.setObjectName(u"horizontalLayout_88")
-        self.horizontalSpacer_97 = QSpacerItem(94, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
-
-        self.horizontalLayout_88.addItem(self.horizontalSpacer_97)
-
-        self.generate_0d_cluster = QPushButton(self.frame_58)
-        self.generate_0d_cluster.setObjectName(u"generate_0d_cluster")
-
-        self.horizontalLayout_88.addWidget(self.generate_0d_cluster)
-
-        self.horizontalSpacer_98 = QSpacerItem(94, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
-
-        self.horizontalLayout_88.addItem(self.horizontalSpacer_98)
-
-
-        self.verticalLayout_69.addWidget(self.frame_58)
-
-
-        self.verticalLayout_86.addWidget(self.groupBox_51)
 
         self.toolBox.addItem(self.page_3, u"0D (molecula)")
         self.page_4 = QWidget()
@@ -840,13 +717,18 @@ class Ui_MainWindow(object):
         self.toolBox.addItem(self.page_4, u"1D (nanotubes)")
         self.page_17 = QWidget()
         self.page_17.setObjectName(u"page_17")
-        self.page_17.setGeometry(QRect(0, 0, 323, 172))
+        self.page_17.setGeometry(QRect(0, 0, 371, 562))
         self.verticalLayout_27 = QVBoxLayout(self.page_17)
         self.verticalLayout_27.setObjectName(u"verticalLayout_27")
         self.groupBox_30 = QGroupBox(self.page_17)
         self.groupBox_30.setObjectName(u"groupBox_30")
         self.verticalLayout_11 = QVBoxLayout(self.groupBox_30)
         self.verticalLayout_11.setObjectName(u"verticalLayout_11")
+        self.model_2d_type = QComboBox(self.groupBox_30)
+        self.model_2d_type.setObjectName(u"model_2d_type")
+
+        self.verticalLayout_11.addWidget(self.model_2d_type)
+
         self.frame_81 = QFrame(self.groupBox_30)
         self.frame_81.setObjectName(u"frame_81")
         self.frame_81.setFrameShape(QFrame.NoFrame)
@@ -901,36 +783,35 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_11.addWidget(self.frame_81)
 
-        self.frame_84 = QFrame(self.groupBox_30)
-        self.frame_84.setObjectName(u"frame_84")
-        self.frame_84.setFrameShape(QFrame.NoFrame)
-        self.frame_84.setFrameShadow(QFrame.Raised)
-        self.horizontalLayout_75 = QHBoxLayout(self.frame_84)
-        self.horizontalLayout_75.setObjectName(u"horizontalLayout_75")
+        self.frame_12 = QFrame(self.groupBox_30)
+        self.frame_12.setObjectName(u"frame_12")
+        self.frame_12.setMinimumSize(QSize(0, 0))
+        self.frame_12.setFrameShape(QFrame.StyledPanel)
+        self.frame_12.setFrameShadow(QFrame.Raised)
+        self.horizontalLayout_177 = QHBoxLayout(self.frame_12)
+        self.horizontalLayout_177.setObjectName(u"horizontalLayout_177")
+        self.generate_2d_ribbon = QRadioButton(self.frame_12)
+        self.generate_2d_ribbon.setObjectName(u"generate_2d_ribbon")
+
+        self.horizontalLayout_177.addWidget(self.generate_2d_ribbon)
+
+        self.radioButton_4 = QRadioButton(self.frame_12)
+        self.radioButton_4.setObjectName(u"radioButton_4")
+        self.radioButton_4.setChecked(True)
+
+        self.horizontalLayout_177.addWidget(self.radioButton_4)
+
         self.horizontalSpacer_42 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
-        self.horizontalLayout_75.addItem(self.horizontalSpacer_42)
+        self.horizontalLayout_177.addItem(self.horizontalSpacer_42)
 
-        self.generate_2d_graphene = QPushButton(self.frame_84)
-        self.generate_2d_graphene.setObjectName(u"generate_2d_graphene")
+        self.generate_2d_model = QPushButton(self.frame_12)
+        self.generate_2d_model.setObjectName(u"generate_2d_model")
 
-        self.horizontalLayout_75.addWidget(self.generate_2d_graphene)
-
-        self.horizontalSpacer_43 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
-
-        self.horizontalLayout_75.addItem(self.horizontalSpacer_43)
-
-        self.generate_2d_bn = QPushButton(self.frame_84)
-        self.generate_2d_bn.setObjectName(u"generate_2d_bn")
-
-        self.horizontalLayout_75.addWidget(self.generate_2d_bn)
-
-        self.horizontalSpacer_57 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
-
-        self.horizontalLayout_75.addItem(self.horizontalSpacer_57)
+        self.horizontalLayout_177.addWidget(self.generate_2d_model)
 
 
-        self.verticalLayout_11.addWidget(self.frame_84)
+        self.verticalLayout_11.addWidget(self.frame_12)
 
 
         self.verticalLayout_27.addWidget(self.groupBox_30)
@@ -942,7 +823,7 @@ class Ui_MainWindow(object):
         self.toolBox.addItem(self.page_17, u"2D (surface)")
         self.page_5 = QWidget()
         self.page_5.setObjectName(u"page_5")
-        self.page_5.setGeometry(QRect(0, 0, 229, 327))
+        self.page_5.setGeometry(QRect(0, 0, 371, 562))
         self.verticalLayout_87 = QVBoxLayout(self.page_5)
         self.verticalLayout_87.setObjectName(u"verticalLayout_87")
         self.frame_115 = QFrame(self.page_5)
@@ -1855,7 +1736,7 @@ class Ui_MainWindow(object):
         self.toolBox_6.setSizePolicy(sizePolicy2)
         self.page_29 = QWidget()
         self.page_29.setObjectName(u"page_29")
-        self.page_29.setGeometry(QRect(0, 0, 371, 531))
+        self.page_29.setGeometry(QRect(0, 0, 337, 258))
         self.verticalLayout_26 = QVBoxLayout(self.page_29)
         self.verticalLayout_26.setObjectName(u"verticalLayout_26")
         self.frame_28 = QFrame(self.page_29)
@@ -3671,7 +3552,7 @@ class Ui_MainWindow(object):
         self.toolBox_2.addItem(self.page_19, u"Electronic properties")
         self.page_2 = QWidget()
         self.page_2.setObjectName(u"page_2")
-        self.page_2.setGeometry(QRect(0, 0, 378, 668))
+        self.page_2.setGeometry(QRect(0, 0, 359, 668))
         self.verticalLayout_12 = QVBoxLayout(self.page_2)
         self.verticalLayout_12.setObjectName(u"verticalLayout_12")
         self.tabWidget_2 = QTabWidget(self.page_2)
@@ -6425,7 +6306,7 @@ class Ui_MainWindow(object):
         self.tabWidget_6.setCurrentIndex(0)
         self.tabWidget_8.setCurrentIndex(0)
         self.tabWidget_9.setCurrentIndex(0)
-        self.tabWidget_12.setCurrentIndex(0)
+        self.tabWidget_12.setCurrentIndex(1)
         self.Form3Dand2DTabs.setCurrentIndex(0)
 
 
@@ -6455,12 +6336,6 @@ class Ui_MainWindow(object):
         self.groupBox_35.setTitle(QCoreApplication.translate("MainWindow", u"Molecula", None))
         self.get_0d_molecula_list.setText(QCoreApplication.translate("MainWindow", u"Get available", None))
         self.generate_0d_molecula.setText(QCoreApplication.translate("MainWindow", u"Create", None))
-        self.groupBox_51.setTitle(QCoreApplication.translate("MainWindow", u"Cluster", None))
-        self.label_82.setText(QCoreApplication.translate("MainWindow", u"Lattice", None))
-        self.label_84.setText(QCoreApplication.translate("MainWindow", u"Surfaces", None))
-        self.label_85.setText(QCoreApplication.translate("MainWindow", u"Atom", None))
-        self.label_86.setText(QCoreApplication.translate("MainWindow", u"Lattice constant", None))
-        self.generate_0d_cluster.setText(QCoreApplication.translate("MainWindow", u"Create", None))
         self.toolBox.setItemText(self.toolBox.indexOf(self.page_3), QCoreApplication.translate("MainWindow", u"0D (molecula)", None))
         self.groupBox_3.setTitle(QCoreApplication.translate("MainWindow", u"Type", None))
         self.FormActionsPreRadioSWNT.setText(QCoreApplication.translate("MainWindow", u"SWCNT", None))
@@ -6491,12 +6366,13 @@ class Ui_MainWindow(object):
         self.FormActionsPreButBiElementGenerate.setText(QCoreApplication.translate("MainWindow", u"Create", None))
         self.tabWidget_11.setTabText(self.tabWidget_11.indexOf(self.tab_38), QCoreApplication.translate("MainWindow", u"Bi element", None))
         self.toolBox.setItemText(self.toolBox.indexOf(self.page_4), QCoreApplication.translate("MainWindow", u"1D (nanotubes)", None))
-        self.groupBox_30.setTitle(QCoreApplication.translate("MainWindow", u"Graphene and BN", None))
+        self.groupBox_30.setTitle(QCoreApplication.translate("MainWindow", u"Graphene, BN, BC", None))
         self.label_75.setText(QCoreApplication.translate("MainWindow", u"n:", None))
         self.label_76.setText(QCoreApplication.translate("MainWindow", u"m:", None))
         self.label_77.setText(QCoreApplication.translate("MainWindow", u"length:", None))
-        self.generate_2d_graphene.setText(QCoreApplication.translate("MainWindow", u"Create graphene", None))
-        self.generate_2d_bn.setText(QCoreApplication.translate("MainWindow", u"Create BN", None))
+        self.generate_2d_ribbon.setText(QCoreApplication.translate("MainWindow", u"Ribbon", None))
+        self.radioButton_4.setText(QCoreApplication.translate("MainWindow", u"Hexagonal", None))
+        self.generate_2d_model.setText(QCoreApplication.translate("MainWindow", u"Create", None))
         self.toolBox.setItemText(self.toolBox.indexOf(self.page_17), QCoreApplication.translate("MainWindow", u"2D (surface)", None))
         self.label_87.setText(QCoreApplication.translate("MainWindow", u"name", None))
         self.label_93.setText(QCoreApplication.translate("MainWindow", u"crystalstructure", None))
