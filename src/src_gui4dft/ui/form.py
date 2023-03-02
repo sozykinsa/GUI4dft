@@ -4473,6 +4473,7 @@ class Ui_MainWindow(object):
         self.frame_4.setFrameShadow(QFrame.Raised)
         self.horizontalLayout_10 = QHBoxLayout(self.frame_4)
         self.horizontalLayout_10.setObjectName(u"horizontalLayout_10")
+        self.horizontalLayout_10.setContentsMargins(0, -1, 0, -1)
         self.FormActionsPostComboCellParam = QComboBox(self.frame_4)
         self.FormActionsPostComboCellParam.setObjectName(u"FormActionsPostComboCellParam")
 
@@ -4488,26 +4489,32 @@ class Ui_MainWindow(object):
 
         self.frame_58 = QFrame(self.tab_17)
         self.frame_58.setObjectName(u"frame_58")
-        self.frame_58.setEnabled(False)
+        self.frame_58.setEnabled(True)
         self.frame_58.setMinimumSize(QSize(0, 0))
         self.frame_58.setFrameShape(QFrame.StyledPanel)
         self.frame_58.setFrameShadow(QFrame.Raised)
         self.horizontalLayout_75 = QHBoxLayout(self.frame_58)
         self.horizontalLayout_75.setObjectName(u"horizontalLayout_75")
-        self.horizontalLayout_75.setContentsMargins(-1, 0, -1, 0)
+        self.horizontalLayout_75.setContentsMargins(0, 0, 0, 0)
         self.label_20 = QLabel(self.frame_58)
         self.label_20.setObjectName(u"label_20")
 
         self.horizontalLayout_75.addWidget(self.label_20)
 
-        self.FormActionsPostComboCellParamX_2 = QComboBox(self.frame_58)
-        self.FormActionsPostComboCellParamX_2.setObjectName(u"FormActionsPostComboCellParamX_2")
+        self.cell_energy_units = QComboBox(self.frame_58)
+        self.cell_energy_units.setObjectName(u"cell_energy_units")
 
-        self.horizontalLayout_75.addWidget(self.FormActionsPostComboCellParamX_2)
+        self.horizontalLayout_75.addWidget(self.cell_energy_units)
 
-        self.horizontalSpacer_43 = QSpacerItem(165, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.label_35 = QLabel(self.frame_58)
+        self.label_35.setObjectName(u"label_35")
 
-        self.horizontalLayout_75.addItem(self.horizontalSpacer_43)
+        self.horizontalLayout_75.addWidget(self.label_35)
+
+        self.cell_volume_units = QComboBox(self.frame_58)
+        self.cell_volume_units.setObjectName(u"cell_volume_units")
+
+        self.horizontalLayout_75.addWidget(self.cell_volume_units)
 
 
         self.verticalLayout_55.addWidget(self.frame_58)
@@ -6680,6 +6687,7 @@ class Ui_MainWindow(object):
         self.FormActionsPostButPlotBondsHistogram.setText(QCoreApplication.translate("MainWindow", u"Plot histogram", None))
         self.tabWidget_6.setTabText(self.tabWidget_6.indexOf(self.tab_16), QCoreApplication.translate("MainWindow", u"Bonds", None))
         self.label_20.setText(QCoreApplication.translate("MainWindow", u"Energy units", None))
+        self.label_35.setText(QCoreApplication.translate("MainWindow", u"Volume units", None))
         self.FormActionsPostButAddRowCellParam.setText(QCoreApplication.translate("MainWindow", u"Add Row", None))
         self.FormActionsPostButDeleteRowCellParam.setText(QCoreApplication.translate("MainWindow", u"Delete Selected", None))
         self.cell_params_file_add.setText(QCoreApplication.translate("MainWindow", u"Import", None))

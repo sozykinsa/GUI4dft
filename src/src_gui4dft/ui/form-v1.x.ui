@@ -48,7 +48,7 @@
        <enum>QTabWidget::West</enum>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>3</number>
       </property>
       <property name="elideMode">
        <enum>Qt::ElideNone</enum>
@@ -4836,7 +4836,7 @@
            <string notr="true"/>
           </property>
           <property name="currentIndex">
-           <number>0</number>
+           <number>2</number>
           </property>
           <widget class="QWidget" name="page_19">
            <property name="geometry">
@@ -8073,7 +8073,7 @@
             <item>
              <widget class="QTabWidget" name="tabWidget_6">
               <property name="currentIndex">
-               <number>0</number>
+               <number>1</number>
               </property>
               <widget class="QWidget" name="tab_16">
                <attribute name="title">
@@ -8375,6 +8375,12 @@
                    <enum>QFrame::Raised</enum>
                   </property>
                   <layout class="QHBoxLayout" name="horizontalLayout_10">
+                   <property name="leftMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="rightMargin">
+                    <number>0</number>
+                   </property>
                    <item>
                     <widget class="QComboBox" name="FormActionsPostComboCellParam"/>
                    </item>
@@ -8387,7 +8393,7 @@
                 <item>
                  <widget class="QFrame" name="frame_58">
                   <property name="enabled">
-                   <bool>false</bool>
+                   <bool>true</bool>
                   </property>
                   <property name="minimumSize">
                    <size>
@@ -8402,7 +8408,13 @@
                    <enum>QFrame::Raised</enum>
                   </property>
                   <layout class="QHBoxLayout" name="horizontalLayout_75">
+                   <property name="leftMargin">
+                    <number>0</number>
+                   </property>
                    <property name="topMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="rightMargin">
                     <number>0</number>
                    </property>
                    <property name="bottomMargin">
@@ -8416,20 +8428,17 @@
                     </widget>
                    </item>
                    <item>
-                    <widget class="QComboBox" name="FormActionsPostComboCellParamX_2"/>
+                    <widget class="QComboBox" name="cell_energy_units"/>
                    </item>
                    <item>
-                    <spacer name="horizontalSpacer_43">
-                     <property name="orientation">
-                      <enum>Qt::Horizontal</enum>
+                    <widget class="QLabel" name="label_35">
+                     <property name="text">
+                      <string>Volume units</string>
                      </property>
-                     <property name="sizeHint" stdset="0">
-                      <size>
-                       <width>165</width>
-                       <height>20</height>
-                      </size>
-                     </property>
-                    </spacer>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QComboBox" name="cell_volume_units"/>
                    </item>
                   </layout>
                  </widget>

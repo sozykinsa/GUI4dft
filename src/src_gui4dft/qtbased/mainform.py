@@ -372,13 +372,23 @@ class MainForm(QMainWindow):
         self.ui.FormActionsPostTableCellParam.horizontalHeader().setStyleSheet(self.table_header_stylesheet)
         self.ui.FormActionsPostTableCellParam.verticalHeader().setStyleSheet(self.table_header_stylesheet)
 
-        argsCell = QStandardItemModel()
-        argsCell.appendRow(QStandardItem("V"))
-        argsCell.appendRow(QStandardItem("E"))
-        argsCell.appendRow(QStandardItem("a"))
-        argsCell.appendRow(QStandardItem("b"))
-        argsCell.appendRow(QStandardItem("c"))
-        self.ui.FormActionsPostComboCellParamX.setModel(argsCell)
+        args_cell = QStandardItemModel()
+        args_cell.appendRow(QStandardItem("V"))
+        args_cell.appendRow(QStandardItem("E"))
+        args_cell.appendRow(QStandardItem("a"))
+        args_cell.appendRow(QStandardItem("b"))
+        args_cell.appendRow(QStandardItem("c"))
+        self.ui.FormActionsPostComboCellParamX.setModel(args_cell)
+
+        args_cell = QStandardItemModel()
+        args_cell.appendRow(QStandardItem("Ry"))
+        args_cell.appendRow(QStandardItem("eV"))
+        self.ui.cell_energy_units.setModel(args_cell)
+
+        args_cell = QStandardItemModel()
+        args_cell.appendRow(QStandardItem("au^3"))
+        args_cell.appendRow(QStandardItem("A^3"))
+        self.ui.cell_volume_units.setModel(args_cell)
 
         self.ui.FormActionsTabeDOSProperty.setColumnCount(2)
         self.ui.FormActionsTabeDOSProperty.setHorizontalHeaderLabels(["Path", "EFermy"])
@@ -2167,7 +2177,10 @@ class MainForm(QMainWindow):
         is_shift = self.ui.optimize_cell_param_shift.isChecked()
         method = self.ui.FormActionsPostComboCellParam.currentText()
         xi = self.ui.FormActionsPostComboCellParamX.currentIndex()
-        # LabelX = self.ui.FormActionsPostComboCellParamX.currentText()
+        energy_units = self.ui.cell_energy_units.currentText()  # "Ry" "eV"
+        volume_units = self.ui.cell_volume_units.currentText()  # "au^3"  "A^3"
+        print(method, xi, energy_units, volume_units)
+
         yi = 1
 
         x = []
@@ -2201,19 +2214,29 @@ class MainForm(QMainWindow):
                 image_path = str(Path(__file__).parent / 'images' / 'murnaghan.png')  # path to your image file
                 if len(items) > 4:
                     aprox, xs2, ys2 = Calculator.approx_murnaghan(items)
-                    text0 = "E(V0)=" + str(round(float(aprox[0]), prec))
-                    text1 = "B0=" + str(round(float(aprox[1]), prec))
+                    mult = 160
+                    if (xi == 0) and (energy_units == "Ry"):
+                        mult *= 13.6
+                    if (xi == 0) and (volume_units == "au^3"):
+                        mult /= 0.52917721 ** 3
+                    text0 = "E(V0)=" + str(round(float(aprox[0]), prec)) + " " + energy_units
+                    text1 = "B0=" + str(round(mult * float(aprox[1]), prec)) + " GPa"
                     text2 = "B0'=" + str(round(float(aprox[2]), prec))
-                    text3 = "V0=" + str(round(float(aprox[3]), prec))
+                    text3 = "V0=" + str(round(float(aprox[3]), prec)) + " " + volume_units
 
             elif method == "BirchMurnaghan":
                 image_path = str(Path(__file__).parent / 'images' / 'murnaghanbirch.png')  # path to your image file
                 if len(items) > 4:
                     aprox, xs2, ys2 = Calculator.approx_birch_murnaghan(items)
-                    text0 = "E(V0)=" + str(round(float(aprox[0]), prec))
-                    text1 = "B0=" + str(round(float(aprox[1]), prec))
+                    mult = 160
+                    if (xi == 0) and (energy_units == "Ry"):
+                        mult *= 13.6
+                    if (xi == 0) and (volume_units == "au^3"):
+                        mult /= 0.52917721 ** 3
+                    text0 = "E(V0)=" + str(round(float(aprox[0]), prec)) + " " + energy_units
+                    text1 = "B0=" + str(round(mult * float(aprox[1]), prec)) + " GPa"
                     text2 = "B0'=" + str(round(float(aprox[2]), prec))
-                    text3 = "V0=" + str(round(float(aprox[3]), prec))
+                    text3 = "V0=" + str(round(float(aprox[3]), prec)) + " " + volume_units
 
             else:  # method == "Parabola":
                 image_path = str(Path(__file__).parent / 'images' / 'parabola.png')
