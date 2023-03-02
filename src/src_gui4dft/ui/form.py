@@ -227,6 +227,61 @@ class Ui_MainWindow(object):
         self.verticalLayout.addWidget(self.groupBox_32)
 
         self.tabWidget.addTab(self.FormTabModel, "")
+        self.tab_20 = QWidget()
+        self.tab_20.setObjectName(u"tab_20")
+        self.verticalLayout_21 = QVBoxLayout(self.tab_20)
+        self.verticalLayout_21.setObjectName(u"verticalLayout_21")
+        self.AtomPropertiesText = QTextBrowser(self.tab_20)
+        self.AtomPropertiesText.setObjectName(u"AtomPropertiesText")
+
+        self.verticalLayout_21.addWidget(self.AtomPropertiesText)
+
+        self.groupBox_20 = QGroupBox(self.tab_20)
+        self.groupBox_20.setObjectName(u"groupBox_20")
+        self.groupBox_20.setMinimumSize(QSize(0, 60))
+        self.horizontalLayout_66 = QHBoxLayout(self.groupBox_20)
+        self.horizontalLayout_66.setObjectName(u"horizontalLayout_66")
+        self.PropertyAtomAtomDistanceAt1 = QSpinBox(self.groupBox_20)
+        self.PropertyAtomAtomDistanceAt1.setObjectName(u"PropertyAtomAtomDistanceAt1")
+        self.PropertyAtomAtomDistanceAt1.setMinimumSize(QSize(50, 0))
+        self.PropertyAtomAtomDistanceAt1.setMinimum(1)
+        self.PropertyAtomAtomDistanceAt1.setMaximum(100)
+
+        self.horizontalLayout_66.addWidget(self.PropertyAtomAtomDistanceAt1)
+
+        self.label_56 = QLabel(self.groupBox_20)
+        self.label_56.setObjectName(u"label_56")
+
+        self.horizontalLayout_66.addWidget(self.label_56)
+
+        self.PropertyAtomAtomDistanceAt2 = QSpinBox(self.groupBox_20)
+        self.PropertyAtomAtomDistanceAt2.setObjectName(u"PropertyAtomAtomDistanceAt2")
+        self.PropertyAtomAtomDistanceAt2.setMinimumSize(QSize(50, 0))
+        self.PropertyAtomAtomDistanceAt2.setMinimum(1)
+        self.PropertyAtomAtomDistanceAt2.setValue(2)
+
+        self.horizontalLayout_66.addWidget(self.PropertyAtomAtomDistanceAt2)
+
+        self.label_62 = QLabel(self.groupBox_20)
+        self.label_62.setObjectName(u"label_62")
+
+        self.horizontalLayout_66.addWidget(self.label_62)
+
+        self.PropertyAtomAtomDistance = QLineEdit(self.groupBox_20)
+        self.PropertyAtomAtomDistance.setObjectName(u"PropertyAtomAtomDistance")
+
+        self.horizontalLayout_66.addWidget(self.PropertyAtomAtomDistance)
+
+        self.PropertyAtomAtomDistanceGet = QPushButton(self.groupBox_20)
+        self.PropertyAtomAtomDistanceGet.setObjectName(u"PropertyAtomAtomDistanceGet")
+        self.PropertyAtomAtomDistanceGet.setMaximumSize(QSize(60, 16777215))
+
+        self.horizontalLayout_66.addWidget(self.PropertyAtomAtomDistanceGet)
+
+
+        self.verticalLayout_21.addWidget(self.groupBox_20)
+
+        self.tabWidget.addTab(self.tab_20, "")
         self.FormTabActions = QWidget()
         self.FormTabActions.setObjectName(u"FormTabActions")
         self.verticalLayout_2 = QVBoxLayout(self.FormTabActions)
@@ -717,7 +772,7 @@ class Ui_MainWindow(object):
         self.toolBox.addItem(self.page_4, u"1D (nanotubes)")
         self.page_17 = QWidget()
         self.page_17.setObjectName(u"page_17")
-        self.page_17.setGeometry(QRect(0, 0, 371, 562))
+        self.page_17.setGeometry(QRect(0, 0, 336, 203))
         self.verticalLayout_27 = QVBoxLayout(self.page_17)
         self.verticalLayout_27.setObjectName(u"verticalLayout_27")
         self.groupBox_30 = QGroupBox(self.page_17)
@@ -823,7 +878,7 @@ class Ui_MainWindow(object):
         self.toolBox.addItem(self.page_17, u"2D (surface)")
         self.page_5 = QWidget()
         self.page_5.setObjectName(u"page_5")
-        self.page_5.setGeometry(QRect(0, 0, 371, 562))
+        self.page_5.setGeometry(QRect(0, 0, 229, 327))
         self.verticalLayout_87 = QVBoxLayout(self.page_5)
         self.verticalLayout_87.setObjectName(u"verticalLayout_87")
         self.frame_115 = QFrame(self.page_5)
@@ -4243,7 +4298,7 @@ class Ui_MainWindow(object):
         self.toolBox_2.addItem(self.page_2, u"Isosurface and Contours")
         self.page_24 = QWidget()
         self.page_24.setObjectName(u"page_24")
-        self.page_24.setGeometry(QRect(0, 0, 353, 618))
+        self.page_24.setGeometry(QRect(0, 0, 399, 706))
         self.verticalLayout_44 = QVBoxLayout(self.page_24)
         self.verticalLayout_44.setObjectName(u"verticalLayout_44")
         self.tabWidget_6 = QTabWidget(self.page_24)
@@ -4431,6 +4486,32 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_55.addWidget(self.frame_4)
 
+        self.frame_58 = QFrame(self.tab_17)
+        self.frame_58.setObjectName(u"frame_58")
+        self.frame_58.setEnabled(False)
+        self.frame_58.setMinimumSize(QSize(0, 0))
+        self.frame_58.setFrameShape(QFrame.StyledPanel)
+        self.frame_58.setFrameShadow(QFrame.Raised)
+        self.horizontalLayout_75 = QHBoxLayout(self.frame_58)
+        self.horizontalLayout_75.setObjectName(u"horizontalLayout_75")
+        self.horizontalLayout_75.setContentsMargins(-1, 0, -1, 0)
+        self.label_20 = QLabel(self.frame_58)
+        self.label_20.setObjectName(u"label_20")
+
+        self.horizontalLayout_75.addWidget(self.label_20)
+
+        self.FormActionsPostComboCellParamX_2 = QComboBox(self.frame_58)
+        self.FormActionsPostComboCellParamX_2.setObjectName(u"FormActionsPostComboCellParamX_2")
+
+        self.horizontalLayout_75.addWidget(self.FormActionsPostComboCellParamX_2)
+
+        self.horizontalSpacer_43 = QSpacerItem(165, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_75.addItem(self.horizontalSpacer_43)
+
+
+        self.verticalLayout_55.addWidget(self.frame_58)
+
         self.FormActionsPostTableCellParam = QTableWidget(self.tab_17)
         self.FormActionsPostTableCellParam.setObjectName(u"FormActionsPostTableCellParam")
         self.FormActionsPostTableCellParam.setMinimumSize(QSize(0, 100))
@@ -4476,10 +4557,10 @@ class Ui_MainWindow(object):
         self.horizontalLayout_16 = QHBoxLayout(self.frame_21)
         self.horizontalLayout_16.setObjectName(u"horizontalLayout_16")
         self.horizontalLayout_16.setContentsMargins(0, 0, 0, 0)
-        self.FormActionsPostButPlusDataCellParam = QPushButton(self.frame_21)
-        self.FormActionsPostButPlusDataCellParam.setObjectName(u"FormActionsPostButPlusDataCellParam")
+        self.cell_params_file_add = QPushButton(self.frame_21)
+        self.cell_params_file_add.setObjectName(u"cell_params_file_add")
 
-        self.horizontalLayout_16.addWidget(self.FormActionsPostButPlusDataCellParam)
+        self.horizontalLayout_16.addWidget(self.cell_params_file_add)
 
         self.FormActionsPostButPlusCellParam = QPushButton(self.frame_21)
         self.FormActionsPostButPlusCellParam.setObjectName(u"FormActionsPostButPlusCellParam")
@@ -4615,61 +4696,6 @@ class Ui_MainWindow(object):
         self.verticalLayout_55.addItem(self.verticalSpacer_20)
 
         self.tabWidget_6.addTab(self.tab_17, "")
-        self.tab_21 = QWidget()
-        self.tab_21.setObjectName(u"tab_21")
-        self.verticalLayout_59 = QVBoxLayout(self.tab_21)
-        self.verticalLayout_59.setObjectName(u"verticalLayout_59")
-        self.AtomPropertiesText = QTextBrowser(self.tab_21)
-        self.AtomPropertiesText.setObjectName(u"AtomPropertiesText")
-
-        self.verticalLayout_59.addWidget(self.AtomPropertiesText)
-
-        self.groupBox_20 = QGroupBox(self.tab_21)
-        self.groupBox_20.setObjectName(u"groupBox_20")
-        self.groupBox_20.setMinimumSize(QSize(0, 60))
-        self.horizontalLayout_66 = QHBoxLayout(self.groupBox_20)
-        self.horizontalLayout_66.setObjectName(u"horizontalLayout_66")
-        self.PropertyAtomAtomDistanceAt1 = QSpinBox(self.groupBox_20)
-        self.PropertyAtomAtomDistanceAt1.setObjectName(u"PropertyAtomAtomDistanceAt1")
-        self.PropertyAtomAtomDistanceAt1.setMinimumSize(QSize(50, 0))
-        self.PropertyAtomAtomDistanceAt1.setMinimum(1)
-        self.PropertyAtomAtomDistanceAt1.setMaximum(100)
-
-        self.horizontalLayout_66.addWidget(self.PropertyAtomAtomDistanceAt1)
-
-        self.label_56 = QLabel(self.groupBox_20)
-        self.label_56.setObjectName(u"label_56")
-
-        self.horizontalLayout_66.addWidget(self.label_56)
-
-        self.PropertyAtomAtomDistanceAt2 = QSpinBox(self.groupBox_20)
-        self.PropertyAtomAtomDistanceAt2.setObjectName(u"PropertyAtomAtomDistanceAt2")
-        self.PropertyAtomAtomDistanceAt2.setMinimumSize(QSize(50, 0))
-        self.PropertyAtomAtomDistanceAt2.setMinimum(1)
-        self.PropertyAtomAtomDistanceAt2.setValue(2)
-
-        self.horizontalLayout_66.addWidget(self.PropertyAtomAtomDistanceAt2)
-
-        self.label_62 = QLabel(self.groupBox_20)
-        self.label_62.setObjectName(u"label_62")
-
-        self.horizontalLayout_66.addWidget(self.label_62)
-
-        self.PropertyAtomAtomDistance = QLineEdit(self.groupBox_20)
-        self.PropertyAtomAtomDistance.setObjectName(u"PropertyAtomAtomDistance")
-
-        self.horizontalLayout_66.addWidget(self.PropertyAtomAtomDistance)
-
-        self.PropertyAtomAtomDistanceGet = QPushButton(self.groupBox_20)
-        self.PropertyAtomAtomDistanceGet.setObjectName(u"PropertyAtomAtomDistanceGet")
-        self.PropertyAtomAtomDistanceGet.setMaximumSize(QSize(60, 16777215))
-
-        self.horizontalLayout_66.addWidget(self.PropertyAtomAtomDistanceGet)
-
-
-        self.verticalLayout_59.addWidget(self.groupBox_20)
-
-        self.tabWidget_6.addTab(self.tab_21, "")
         self.tab_50 = QWidget()
         self.tab_50.setObjectName(u"tab_50")
         self.verticalLayout_104 = QVBoxLayout(self.tab_50)
@@ -6333,6 +6359,11 @@ class Ui_MainWindow(object):
         self.label_139.setText(QCoreApplication.translate("MainWindow", u"z", None))
         self.label_136.setText(QCoreApplication.translate("MainWindow", u"Scale", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.FormTabModel), QCoreApplication.translate("MainWindow", u"Model", None))
+        self.groupBox_20.setTitle(QCoreApplication.translate("MainWindow", u"Atom - atom distance", None))
+        self.label_56.setText(QCoreApplication.translate("MainWindow", u"-", None))
+        self.label_62.setText(QCoreApplication.translate("MainWindow", u":", None))
+        self.PropertyAtomAtomDistanceGet.setText(QCoreApplication.translate("MainWindow", u"Get", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_20), QCoreApplication.translate("MainWindow", u"Selection", None))
         self.groupBox_35.setTitle(QCoreApplication.translate("MainWindow", u"Molecula", None))
         self.get_0d_molecula_list.setText(QCoreApplication.translate("MainWindow", u"Get available", None))
         self.generate_0d_molecula.setText(QCoreApplication.translate("MainWindow", u"Create", None))
@@ -6648,9 +6679,10 @@ class Ui_MainWindow(object):
         self.bonds_y_label.setText(QCoreApplication.translate("MainWindow", u"Number of bonds", None))
         self.FormActionsPostButPlotBondsHistogram.setText(QCoreApplication.translate("MainWindow", u"Plot histogram", None))
         self.tabWidget_6.setTabText(self.tabWidget_6.indexOf(self.tab_16), QCoreApplication.translate("MainWindow", u"Bonds", None))
+        self.label_20.setText(QCoreApplication.translate("MainWindow", u"Energy units", None))
         self.FormActionsPostButAddRowCellParam.setText(QCoreApplication.translate("MainWindow", u"Add Row", None))
         self.FormActionsPostButDeleteRowCellParam.setText(QCoreApplication.translate("MainWindow", u"Delete Selected", None))
-        self.FormActionsPostButPlusDataCellParam.setText(QCoreApplication.translate("MainWindow", u"Import", None))
+        self.cell_params_file_add.setText(QCoreApplication.translate("MainWindow", u"Import", None))
         self.FormActionsPostButPlusCellParam.setText(QCoreApplication.translate("MainWindow", u"Add File", None))
         self.optimize_cell_param.setText(QCoreApplication.translate("MainWindow", u"Optimize", None))
         self.optimize_cell_param_shift.setText(QCoreApplication.translate("MainWindow", u"Shift", None))
@@ -6667,11 +6699,6 @@ class Ui_MainWindow(object):
         self.label_130.setText(QCoreApplication.translate("MainWindow", u"Y label", None))
         self.cell_parameter_label_y.setText(QCoreApplication.translate("MainWindow", u"Energy, eV", None))
         self.tabWidget_6.setTabText(self.tabWidget_6.indexOf(self.tab_17), QCoreApplication.translate("MainWindow", u"Cell parameter", None))
-        self.groupBox_20.setTitle(QCoreApplication.translate("MainWindow", u"Atom - atom distance", None))
-        self.label_56.setText(QCoreApplication.translate("MainWindow", u"-", None))
-        self.label_62.setText(QCoreApplication.translate("MainWindow", u":", None))
-        self.PropertyAtomAtomDistanceGet.setText(QCoreApplication.translate("MainWindow", u"Get", None))
-        self.tabWidget_6.setTabText(self.tabWidget_6.indexOf(self.tab_21), QCoreApplication.translate("MainWindow", u"Selection history", None))
         self.groupBox_54.setTitle(QCoreApplication.translate("MainWindow", u"Fit with", None))
         self.fit_with_cylinder.setText(QCoreApplication.translate("MainWindow", u"cylinder", None))
         self.fit_with_sphere.setText(QCoreApplication.translate("MainWindow", u"sphere", None))

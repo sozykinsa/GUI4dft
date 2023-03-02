@@ -108,7 +108,7 @@ def atoms_from_pwout(f_name):
                 1           Si  tau(   1) = (   0.0000000   0.0000000   0.0000000  )
                 2           Si  tau(   2) = (   0.2500000   0.2500000   0.2500000  )
                 """
-            str1 = f.readline()
+            f.readline()
             str1 = f.readline()
             if str1.find("site n.     atom                  positions (alat units)") >= 0:
                 model = AtomicModel()
@@ -117,8 +117,8 @@ def atoms_from_pwout(f_name):
                 while len(str1) > 5:
                     s = str1.split(' ')
                     x = a * float(s[6])
-                    y = b * float(s[7])
-                    z = c * float(s[8])
+                    y = a * float(s[7])
+                    z = a * float(s[8])
                     let = s[1]
                     charge = model.mendeley.get_charge_by_letter(let)
                     model.add_atom(Atom([x, y, z, let, charge]))

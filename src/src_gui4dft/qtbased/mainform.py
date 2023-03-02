@@ -234,7 +234,7 @@ class MainForm(QMainWindow):
         self.ui.FormActionsPostButPlusCellParam.clicked.connect(self.add_cell_param)
         self.ui.FormActionsPostButAddRowCellParam.clicked.connect(self.add_cell_param_row)
         self.ui.FormActionsPostButDeleteRowCellParam.clicked.connect(self.delete_cell_param_row)
-        self.ui.FormActionsPostButPlusDataCellParam.clicked.connect(self.add_data_cell_param)
+        self.ui.cell_params_file_add.clicked.connect(self.add_data_cell_param)
 
         self.ui.FormModifyRotation.clicked.connect(self.model_rotation)
         self.ui.FormModifyGrowX.clicked.connect(self.model_grow_x)
