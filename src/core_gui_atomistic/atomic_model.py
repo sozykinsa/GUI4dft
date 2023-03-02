@@ -671,6 +671,10 @@ class AtomicModel(object):
             text += let + str(len(ind))
         return text
 
+    def move_atoms_to_zero(self):
+        cm = self.center_mass()
+        self.move(*(cm))
+
     def move_atoms_to_cell(self):
         a_inv = inv(self.lat_vectors)
         self.move_object_to_cell(self.atoms, a_inv)

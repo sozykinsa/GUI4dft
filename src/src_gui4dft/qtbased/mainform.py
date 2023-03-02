@@ -50,7 +50,6 @@ from src_gui4dft.ui.about import Ui_DialogAbout as Ui_about
 from src_gui4dft.ui.form import Ui_MainWindow as Ui_form
 
 from ase.build import molecule, bulk
-from ase.cluster.cubic import FaceCenteredCubic
 
 from src_gui4dft.program.vasp import VaspDataFromXml
 
@@ -243,6 +242,7 @@ class MainForm(QMainWindow):
 
         self.ui.FormModifyGoPositive.clicked.connect(self.model_go_to_positive)
         self.ui.FormModifyGoToCell.clicked.connect(self.model_go_to_cell)
+        self.ui.modify_center_to_zero.clicked.connect(self.model_center_to_zero)
 
         self.ui.FormActionsPostButVoronoi.clicked.connect(self.plot_voronoi)
         self.ui.optimize_cell_param.clicked.connect(self.plot_volume_param_energy)
@@ -1615,8 +1615,14 @@ class MainForm(QMainWindow):
         if self.ui.openGLWidget.main_model.n_atoms() == 0:
             return
         model = self.ui.openGLWidget.main_model
-        print("model_go_to_cell")
         model.move_atoms_to_cell()
+        self.add_model_and_show(model)
+
+    def model_center_to_zero(self):
+        if self.ui.openGLWidget.main_model.n_atoms() == 0:
+            return
+        model = self.ui.openGLWidget.main_model
+        model.move_atoms_to_zero()
         self.add_model_and_show(model)
 
     def add_model_and_show(self, model):  # pragma: no cover
