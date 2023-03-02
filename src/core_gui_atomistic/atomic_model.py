@@ -381,7 +381,8 @@ class AtomicModel(object):
 
     def convert_from_direct_to_cart(self):
         for atom in self.atoms:
-            atom.xyz = np.dot(self.lat_vectors, atom.xyz)
+            # atom.xyz = np.dot(self.lat_vectors, atom.xyz)
+            atom.xyz = atom.x * self.lat_vector1 + atom.y * self.lat_vector2 + atom.z * self.lat_vector3
 
     def convert_from_cart_to_direct(self):
         obr = np.linalg.inv(self.lat_vectors).transpose()
@@ -615,26 +616,30 @@ class AtomicModel(object):
         new_model.set_lat_vectors(3 * self.lat_vector1, 3 * self.lat_vector2, 3 * self.lat_vector3)
         return new_model
 
-    def grow_x(self):
-        """Translate model in X direction."""
+    def grow_x(self, n: int = 1):
+        """Translate model in X direction.
+        n: number of translations """
         new_at_list = deepcopy(self.atoms)
-        copy_of_model = AtomicModel(self.atoms)
-        copy_of_model.move(*self.lat_vector1)
-        for atom in copy_of_model.atoms:
-            new_at_list.append(atom)
+        for i in range(n):
+            copy_of_model = AtomicModel(self.atoms)
+            copy_of_model.move(*((1 + i) * self.lat_vector1))
+            for atom in copy_of_model.atoms:
+                new_at_list.append(atom)
         new_model = AtomicModel(new_at_list)
-        new_model.set_lat_vectors(2 * self.lat_vector1, self.lat_vector2, self.lat_vector3)
+        new_model.set_lat_vectors((1 + n) * self.lat_vector1, self.lat_vector2, self.lat_vector3)
         return new_model
 
-    def grow_y(self):
-        """Translate model in Y direction."""
+    def grow_y(self, n: int = 1):
+        """Translate model in Y direction.
+        n: number of translations"""
         new_at_list = deepcopy(self.atoms)
-        copy_of_model = AtomicModel(self.atoms)
-        copy_of_model.move(*self.lat_vector2)
-        for atom in copy_of_model.atoms:
-            new_at_list.append(atom)
+        for i in range(n):
+            copy_of_model = AtomicModel(self.atoms)
+            copy_of_model.move(*((1 + i) * self.lat_vector2))
+            for atom in copy_of_model.atoms:
+                new_at_list.append(atom)
         new_model = AtomicModel(new_at_list)
-        new_model.set_lat_vectors(self.lat_vector1, 2 * self.lat_vector2, self.lat_vector3)
+        new_model.set_lat_vectors(self.lat_vector1, (1 + n) * self.lat_vector2, self.lat_vector3)
         return new_model
 
     def grow_z(self):
@@ -666,6 +671,10 @@ class AtomicModel(object):
             let = self.mendeley.get_let(self.atoms[ind[0]].charge)
             text += let + str(len(ind))
         return text
+
+    def move_atoms_to_zero(self):
+        cm = self.center_mass()
+        self.move(*(cm))
 
     def move_atoms_to_cell(self):
         a_inv = inv(self.lat_vectors)

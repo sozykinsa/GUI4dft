@@ -6,8 +6,27 @@ from core_gui_atomistic.atom import Atom
 from core_gui_atomistic.atomic_model import AtomicModel
 
 
+class HexagonalPlaneHex(AtomicModel):
+    """The HexagonalPlane with hexagonal cell """
+    def __init__(self, ch1: int = 6, ch2: int = 6, a: float = 1.43, n=0, m=0):
+        super().__init__()
+        lets = [self.mendeley.get_let(ch1), self.mendeley.get_let(ch2)]
+        chs = [ch1, ch2]
+        a1 = 0.5 * a * np.array([3, math.sqrt(3), 0])
+        a2 = 0.5 * a * np.array([3, -math.sqrt(3), 0])
+        a3 = 500 * np.array([0.0, 0.0, 1.0])
+        basis = AtomicModel()
+        basis.set_lat_vectors(a1, a2, a3)
+        basis.add_atom(Atom([0.0, 0.0, 0.0, lets[0], chs[0]]))
+        basis.add_atom(Atom([a, 0.0, 0.0, lets[1], chs[1]]))
+        model = basis.grow_x(n)
+        model = model.grow_y(m)
+        self.atoms = model.atoms
+        self.lat_vectors = model.lat_vectors
+
+
 class HexagonalPlane(AtomicModel):
-    """The HexagonalPlane class provides """
+    """The HexagonalPlane  with rectangular cell """
     def __init__(self, ch1: int = 6, ch2: int = 6, a: float = 1.43, n=0, m=0, length=0):
         super().__init__()
 

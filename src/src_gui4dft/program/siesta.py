@@ -104,7 +104,7 @@ class TSIESTA:
 
             while str1 != '':
                 if str1 != '' and ((str1.find(search_str1) >= 0) or (str1.find(search_str2) >= 0)):
-                    str1 = md_siesta_file.readline()
+                    md_siesta_file.readline()
                     for i in range(0, number_of_atoms):
                         data = (helpers.spacedel(md_siesta_file.readline())).split(' ')
                         charge = float(data[1])
@@ -278,11 +278,11 @@ class TSIESTA:
                         str1 = siesta_file.readline()
                     states = (helpers.spacedel(str1.split(":")[1])).split(" ")
                     n_states = len(states)
-                    while str1.find("Valence configuration for pseudopotential generation") < 0:
+                    while str1.find("Valence configuration for ps") < 0:
                         str1 = siesta_file.readline()
                     for i in range(0, n_states):
                         str1 = siesta_file.readline()
-                        pseudo_charges[j] += float(((str1).split("(")[1]).split(")")[0])
+                        pseudo_charges[j] += float((str1.split("(")[1]).split(")")[0])
                 return pseudo_charges
             str1 = siesta_file.readline()
         return pseudo_charges
@@ -505,7 +505,8 @@ class TSIESTA:
         chem_spec_info = {}
         chemical_species_label = TSIESTA.get_block_from_siesta_fdf(filename, "ChemicalSpeciesLabel")
         for j in range(0, len(chemical_species_label)):
-            chem_spec_info[(chemical_species_label[j].split())[0]] = (chemical_species_label[j].split())[1:3]
+            row_data = chemical_species_label[j].split()
+            chem_spec_info[row_data[0]] = [int(abs(int(row_data[1]))), row_data[2]]
         return atomic_coordinates_format, number_of_atoms, chem_spec_info, lat, lat_vectors, units
 
     @staticmethod

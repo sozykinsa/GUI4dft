@@ -6,6 +6,7 @@ def test_check_format(tests_path):
     assert helpers.check_format(str(tests_path / 'ref_data' / 'swcnt(8,0)' / "siesta1.out")) == "unknown"
     assert helpers.check_format(str(tests_path / 'ref_data' / 'swcnt(8,0)' / "siesta.out")) == "SIESTAout"
     assert helpers.check_format(str(tests_path / 'ref_data' / 'h2o-ang' / "siesta.fdf")) == "SIESTAfdf"
+    assert helpers.check_format(str(tests_path / 'ref_data' / 'qe' / 'si-scf' / "pw.out")) == "QEPWout"
 
 
 def test_importer_fdf(tests_path):

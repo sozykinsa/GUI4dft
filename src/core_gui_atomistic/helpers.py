@@ -258,6 +258,9 @@ def check_format(filename):
             if str1.find("DIRECT LATTICE VECTORS CARTESIAN COMPONENTS (ANGSTROM)") >= 0:
                 f.close()
                 return "CRYSTALout"
+            if str1.find("Program PWSCF v") >= 0:
+                f.close()
+                return "QEPWout"
             str1 = f.readline()
         f.close()
         return "SIESTAout"
@@ -288,7 +291,7 @@ def check_format(filename):
     if name.endswith(".cube"):
         return "GAUSSIAN_cube"
 
-    if name.endswith("poscar") or name.endswith("contcar"):
+    if ("poscar" in name) or ("contcar" in name):
         return "VASPposcar"
 
     if name.endswith("outp"):

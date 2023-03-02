@@ -361,6 +361,93 @@
         </item>
        </layout>
       </widget>
+      <widget class="QWidget" name="tab_20">
+       <attribute name="title">
+        <string>Selection</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_21">
+        <item>
+         <widget class="QTextBrowser" name="AtomPropertiesText"/>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="groupBox_20">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>60</height>
+           </size>
+          </property>
+          <property name="title">
+           <string>Atom - atom distance</string>
+          </property>
+          <layout class="QHBoxLayout" name="horizontalLayout_66">
+           <item>
+            <widget class="QSpinBox" name="PropertyAtomAtomDistanceAt1">
+             <property name="minimumSize">
+              <size>
+               <width>50</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="minimum">
+              <number>1</number>
+             </property>
+             <property name="maximum">
+              <number>100</number>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_56">
+             <property name="text">
+              <string>-</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QSpinBox" name="PropertyAtomAtomDistanceAt2">
+             <property name="minimumSize">
+              <size>
+               <width>50</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="minimum">
+              <number>1</number>
+             </property>
+             <property name="value">
+              <number>2</number>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_62">
+             <property name="text">
+              <string>:</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="PropertyAtomAtomDistance"/>
+           </item>
+           <item>
+            <widget class="QPushButton" name="PropertyAtomAtomDistanceGet">
+             <property name="maximumSize">
+              <size>
+               <width>60</width>
+               <height>16777215</height>
+              </size>
+             </property>
+             <property name="text">
+              <string>Get</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+       </layout>
+      </widget>
       <widget class="QWidget" name="FormTabActions">
        <attribute name="title">
         <string>Preprocessing</string>
@@ -473,230 +560,18 @@
                      </layout>
                     </widget>
                    </item>
-                  </layout>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QGroupBox" name="groupBox_51">
-                  <property name="enabled">
-                   <bool>false</bool>
-                  </property>
-                  <property name="title">
-                   <string>Cluster</string>
-                  </property>
-                  <layout class="QVBoxLayout" name="verticalLayout_69">
                    <item>
-                    <widget class="QFrame" name="frame_109">
-                     <property name="minimumSize">
+                    <spacer name="verticalSpacer_30">
+                     <property name="orientation">
+                      <enum>Qt::Vertical</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
                       <size>
-                       <width>0</width>
-                       <height>0</height>
+                       <width>20</width>
+                       <height>40</height>
                       </size>
                      </property>
-                     <property name="frameShape">
-                      <enum>QFrame::StyledPanel</enum>
-                     </property>
-                     <property name="frameShadow">
-                      <enum>QFrame::Raised</enum>
-                     </property>
-                     <layout class="QHBoxLayout" name="horizontalLayout_113">
-                      <property name="leftMargin">
-                       <number>0</number>
-                      </property>
-                      <property name="topMargin">
-                       <number>0</number>
-                      </property>
-                      <property name="rightMargin">
-                       <number>0</number>
-                      </property>
-                      <property name="bottomMargin">
-                       <number>0</number>
-                      </property>
-                      <item>
-                       <widget class="QFrame" name="frame_110">
-                        <property name="frameShape">
-                         <enum>QFrame::StyledPanel</enum>
-                        </property>
-                        <property name="frameShadow">
-                         <enum>QFrame::Raised</enum>
-                        </property>
-                        <layout class="QVBoxLayout" name="verticalLayout_71">
-                         <property name="leftMargin">
-                          <number>0</number>
-                         </property>
-                         <property name="topMargin">
-                          <number>0</number>
-                         </property>
-                         <property name="rightMargin">
-                          <number>0</number>
-                         </property>
-                         <property name="bottomMargin">
-                          <number>0</number>
-                         </property>
-                         <item>
-                          <widget class="QLabel" name="label_82">
-                           <property name="text">
-                            <string>Lattice</string>
-                           </property>
-                          </widget>
-                         </item>
-                         <item>
-                          <widget class="QListView" name="cluster_lattice_type"/>
-                         </item>
-                        </layout>
-                       </widget>
-                      </item>
-                      <item>
-                       <widget class="QFrame" name="frame_111">
-                        <property name="frameShape">
-                         <enum>QFrame::StyledPanel</enum>
-                        </property>
-                        <property name="frameShadow">
-                         <enum>QFrame::Raised</enum>
-                        </property>
-                        <layout class="QVBoxLayout" name="verticalLayout_72">
-                         <property name="leftMargin">
-                          <number>0</number>
-                         </property>
-                         <property name="topMargin">
-                          <number>0</number>
-                         </property>
-                         <property name="rightMargin">
-                          <number>0</number>
-                         </property>
-                         <property name="bottomMargin">
-                          <number>0</number>
-                         </property>
-                         <item>
-                          <widget class="QLabel" name="label_84">
-                           <property name="text">
-                            <string>Surfaces</string>
-                           </property>
-                          </widget>
-                         </item>
-                         <item>
-                          <widget class="QListView" name="cluster_surfaces"/>
-                         </item>
-                        </layout>
-                       </widget>
-                      </item>
-                     </layout>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QFrame" name="frame_112">
-                     <property name="frameShape">
-                      <enum>QFrame::StyledPanel</enum>
-                     </property>
-                     <property name="frameShadow">
-                      <enum>QFrame::Raised</enum>
-                     </property>
-                     <layout class="QHBoxLayout" name="horizontalLayout_114">
-                      <item>
-                       <widget class="QLabel" name="label_85">
-                        <property name="text">
-                         <string>Atom</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item>
-                       <widget class="QComboBox" name="atoms_list_all_cluster"/>
-                      </item>
-                      <item>
-                       <spacer name="horizontalSpacer_123">
-                        <property name="orientation">
-                         <enum>Qt::Horizontal</enum>
-                        </property>
-                        <property name="sizeHint" stdset="0">
-                         <size>
-                          <width>40</width>
-                          <height>20</height>
-                         </size>
-                        </property>
-                       </spacer>
-                      </item>
-                     </layout>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QFrame" name="frame_113">
-                     <property name="frameShape">
-                      <enum>QFrame::StyledPanel</enum>
-                     </property>
-                     <property name="frameShadow">
-                      <enum>QFrame::Raised</enum>
-                     </property>
-                     <layout class="QHBoxLayout" name="horizontalLayout_115">
-                      <item>
-                       <widget class="QLabel" name="label_86">
-                        <property name="text">
-                         <string>Lattice constant</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item>
-                       <widget class="QDoubleSpinBox" name="cluster_lattice_constant"/>
-                      </item>
-                      <item>
-                       <spacer name="horizontalSpacer_128">
-                        <property name="orientation">
-                         <enum>Qt::Horizontal</enum>
-                        </property>
-                        <property name="sizeHint" stdset="0">
-                         <size>
-                          <width>40</width>
-                          <height>20</height>
-                         </size>
-                        </property>
-                       </spacer>
-                      </item>
-                     </layout>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QFrame" name="frame_58">
-                     <property name="frameShape">
-                      <enum>QFrame::StyledPanel</enum>
-                     </property>
-                     <property name="frameShadow">
-                      <enum>QFrame::Raised</enum>
-                     </property>
-                     <layout class="QHBoxLayout" name="horizontalLayout_88">
-                      <item>
-                       <spacer name="horizontalSpacer_97">
-                        <property name="orientation">
-                         <enum>Qt::Horizontal</enum>
-                        </property>
-                        <property name="sizeHint" stdset="0">
-                         <size>
-                          <width>94</width>
-                          <height>20</height>
-                         </size>
-                        </property>
-                       </spacer>
-                      </item>
-                      <item>
-                       <widget class="QPushButton" name="generate_0d_cluster">
-                        <property name="text">
-                         <string>Create</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item>
-                       <spacer name="horizontalSpacer_98">
-                        <property name="orientation">
-                         <enum>Qt::Horizontal</enum>
-                        </property>
-                        <property name="sizeHint" stdset="0">
-                         <size>
-                          <width>94</width>
-                          <height>20</height>
-                         </size>
-                        </property>
-                       </spacer>
-                      </item>
-                     </layout>
-                    </widget>
+                    </spacer>
                    </item>
                   </layout>
                  </widget>
@@ -1497,8 +1372,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>323</width>
-                 <height>172</height>
+                 <width>336</width>
+                 <height>203</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -1508,9 +1383,12 @@
                 <item>
                  <widget class="QGroupBox" name="groupBox_30">
                   <property name="title">
-                   <string>Graphene and BN</string>
+                   <string>Graphene, BN, BC</string>
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_11">
+                   <item>
+                    <widget class="QComboBox" name="model_2d_type"/>
+                   </item>
                    <item>
                     <widget class="QFrame" name="frame_81">
                      <property name="frameShape">
@@ -1610,14 +1488,37 @@
                     </widget>
                    </item>
                    <item>
-                    <widget class="QFrame" name="frame_84">
+                    <widget class="QFrame" name="frame_12">
+                     <property name="minimumSize">
+                      <size>
+                       <width>0</width>
+                       <height>0</height>
+                      </size>
+                     </property>
                      <property name="frameShape">
-                      <enum>QFrame::NoFrame</enum>
+                      <enum>QFrame::StyledPanel</enum>
                      </property>
                      <property name="frameShadow">
                       <enum>QFrame::Raised</enum>
                      </property>
-                     <layout class="QHBoxLayout" name="horizontalLayout_75">
+                     <layout class="QHBoxLayout" name="horizontalLayout_177">
+                      <item>
+                       <widget class="QRadioButton" name="generate_2d_ribbon">
+                        <property name="text">
+                         <string>Ribbon</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QRadioButton" name="radioButton_4">
+                        <property name="text">
+                         <string>Hexagonal</string>
+                        </property>
+                        <property name="checked">
+                         <bool>true</bool>
+                        </property>
+                       </widget>
+                      </item>
                       <item>
                        <spacer name="horizontalSpacer_42">
                         <property name="orientation">
@@ -1632,44 +1533,11 @@
                        </spacer>
                       </item>
                       <item>
-                       <widget class="QPushButton" name="generate_2d_graphene">
+                       <widget class="QPushButton" name="generate_2d_model">
                         <property name="text">
-                         <string>Create graphene</string>
+                         <string>Create</string>
                         </property>
                        </widget>
-                      </item>
-                      <item>
-                       <spacer name="horizontalSpacer_43">
-                        <property name="orientation">
-                         <enum>Qt::Horizontal</enum>
-                        </property>
-                        <property name="sizeHint" stdset="0">
-                         <size>
-                          <width>40</width>
-                          <height>20</height>
-                         </size>
-                        </property>
-                       </spacer>
-                      </item>
-                      <item>
-                       <widget class="QPushButton" name="generate_2d_bn">
-                        <property name="text">
-                         <string>Create BN</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item>
-                       <spacer name="horizontalSpacer_57">
-                        <property name="orientation">
-                         <enum>Qt::Horizontal</enum>
-                        </property>
-                        <property name="sizeHint" stdset="0">
-                         <size>
-                          <width>40</width>
-                          <height>20</height>
-                         </size>
-                        </property>
-                       </spacer>
                       </item>
                      </layout>
                     </widget>
@@ -3307,7 +3175,7 @@
                  <x>0</x>
                  <y>0</y>
                  <width>371</width>
-                 <height>531</height>
+                 <height>593</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -4500,8 +4368,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>339</width>
-                 <height>247</height>
+                 <width>371</width>
+                 <height>593</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -4553,89 +4421,29 @@
                    </size>
                   </property>
                   <property name="title">
-                   <string>Go to positive!</string>
+                   <string>Shift</string>
                   </property>
                   <layout class="QHBoxLayout" name="horizontalLayout_50">
                    <item>
-                    <spacer name="horizontalSpacer_117">
-                     <property name="orientation">
-                      <enum>Qt::Horizontal</enum>
-                     </property>
-                     <property name="sizeHint" stdset="0">
-                      <size>
-                       <width>106</width>
-                       <height>20</height>
-                      </size>
-                     </property>
-                    </spacer>
-                   </item>
-                   <item>
                     <widget class="QPushButton" name="FormModifyGoPositive">
                      <property name="text">
-                      <string>Go</string>
+                      <string>Go to positive!</string>
                      </property>
                     </widget>
-                   </item>
-                   <item>
-                    <spacer name="horizontalSpacer_118">
-                     <property name="orientation">
-                      <enum>Qt::Horizontal</enum>
-                     </property>
-                     <property name="sizeHint" stdset="0">
-                      <size>
-                       <width>106</width>
-                       <height>20</height>
-                      </size>
-                     </property>
-                    </spacer>
-                   </item>
-                  </layout>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QGroupBox" name="groupBox_50">
-                  <property name="minimumSize">
-                   <size>
-                    <width>0</width>
-                    <height>0</height>
-                   </size>
-                  </property>
-                  <property name="title">
-                   <string>Go to cell</string>
-                  </property>
-                  <layout class="QHBoxLayout" name="horizontalLayout_166">
-                   <item>
-                    <spacer name="horizontalSpacer_119">
-                     <property name="orientation">
-                      <enum>Qt::Horizontal</enum>
-                     </property>
-                     <property name="sizeHint" stdset="0">
-                      <size>
-                       <width>106</width>
-                       <height>20</height>
-                      </size>
-                     </property>
-                    </spacer>
                    </item>
                    <item>
                     <widget class="QPushButton" name="FormModifyGoToCell">
                      <property name="text">
-                      <string>Go</string>
+                      <string>Go to cell</string>
                      </property>
                     </widget>
                    </item>
                    <item>
-                    <spacer name="horizontalSpacer_120">
-                     <property name="orientation">
-                      <enum>Qt::Horizontal</enum>
+                    <widget class="QPushButton" name="modify_center_to_zero">
+                     <property name="text">
+                      <string>Center to zero</string>
                      </property>
-                     <property name="sizeHint" stdset="0">
-                      <size>
-                       <width>106</width>
-                       <height>20</height>
-                      </size>
-                     </property>
-                    </spacer>
+                    </widget>
                    </item>
                   </layout>
                  </widget>
@@ -6892,7 +6700,7 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>378</width>
+             <width>359</width>
              <height>668</height>
             </rect>
            </property>
@@ -8194,8 +8002,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>353</width>
-             <height>618</height>
+             <width>399</width>
+             <height>706</height>
             </rect>
            </property>
            <attribute name="label">
@@ -8507,11 +8315,70 @@
                    <enum>QFrame::Raised</enum>
                   </property>
                   <layout class="QHBoxLayout" name="horizontalLayout_10">
+                   <property name="leftMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="rightMargin">
+                    <number>0</number>
+                   </property>
                    <item>
                     <widget class="QComboBox" name="FormActionsPostComboCellParam"/>
                    </item>
                    <item>
                     <widget class="QComboBox" name="FormActionsPostComboCellParamX"/>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QFrame" name="frame_58">
+                  <property name="enabled">
+                   <bool>true</bool>
+                  </property>
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                  <property name="frameShape">
+                   <enum>QFrame::StyledPanel</enum>
+                  </property>
+                  <property name="frameShadow">
+                   <enum>QFrame::Raised</enum>
+                  </property>
+                  <layout class="QHBoxLayout" name="horizontalLayout_75">
+                   <property name="leftMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="topMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="rightMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="bottomMargin">
+                    <number>0</number>
+                   </property>
+                   <item>
+                    <widget class="QLabel" name="label_20">
+                     <property name="text">
+                      <string>Energy units</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QComboBox" name="cell_energy_units"/>
+                   </item>
+                   <item>
+                    <widget class="QLabel" name="label_35">
+                     <property name="text">
+                      <string>Volume units</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QComboBox" name="cell_volume_units"/>
                    </item>
                   </layout>
                  </widget>
@@ -8637,7 +8504,7 @@
                        <number>0</number>
                       </property>
                       <item>
-                       <widget class="QPushButton" name="FormActionsPostButPlusDataCellParam">
+                       <widget class="QPushButton" name="cell_params_file_add">
                         <property name="text">
                          <string>Import</string>
                         </property>
@@ -8920,93 +8787,6 @@
                    </size>
                   </property>
                  </spacer>
-                </item>
-               </layout>
-              </widget>
-              <widget class="QWidget" name="tab_21">
-               <attribute name="title">
-                <string>Selection history</string>
-               </attribute>
-               <layout class="QVBoxLayout" name="verticalLayout_59">
-                <item>
-                 <widget class="QTextBrowser" name="AtomPropertiesText"/>
-                </item>
-                <item>
-                 <widget class="QGroupBox" name="groupBox_20">
-                  <property name="minimumSize">
-                   <size>
-                    <width>0</width>
-                    <height>60</height>
-                   </size>
-                  </property>
-                  <property name="title">
-                   <string>Atom - atom distance</string>
-                  </property>
-                  <layout class="QHBoxLayout" name="horizontalLayout_66">
-                   <item>
-                    <widget class="QSpinBox" name="PropertyAtomAtomDistanceAt1">
-                     <property name="minimumSize">
-                      <size>
-                       <width>50</width>
-                       <height>0</height>
-                      </size>
-                     </property>
-                     <property name="minimum">
-                      <number>1</number>
-                     </property>
-                     <property name="maximum">
-                      <number>100</number>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QLabel" name="label_56">
-                     <property name="text">
-                      <string>-</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QSpinBox" name="PropertyAtomAtomDistanceAt2">
-                     <property name="minimumSize">
-                      <size>
-                       <width>50</width>
-                       <height>0</height>
-                      </size>
-                     </property>
-                     <property name="minimum">
-                      <number>1</number>
-                     </property>
-                     <property name="value">
-                      <number>2</number>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QLabel" name="label_62">
-                     <property name="text">
-                      <string>:</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QLineEdit" name="PropertyAtomAtomDistance"/>
-                   </item>
-                   <item>
-                    <widget class="QPushButton" name="PropertyAtomAtomDistanceGet">
-                     <property name="maximumSize">
-                      <size>
-                       <width>60</width>
-                       <height>16777215</height>
-                      </size>
-                     </property>
-                     <property name="text">
-                      <string>Get</string>
-                     </property>
-                    </widget>
-                   </item>
-                  </layout>
-                 </widget>
                 </item>
                </layout>
               </widget>
@@ -10940,7 +10720,7 @@
             <item>
              <widget class="QTabWidget" name="tabWidget_12">
               <property name="currentIndex">
-               <number>0</number>
+               <number>1</number>
               </property>
               <widget class="QWidget" name="tab_40">
                <attribute name="title">

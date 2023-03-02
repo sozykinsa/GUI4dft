@@ -4,7 +4,7 @@ try:
     if os.environ["XDG_SESSION_TYPE"] == "wayland":
         os.environ["QT_QPA_PLATFORM"] = "wayland"
 except Exception as e:
-    print(str(e))
+    pass
 import math
 import sys
 from pathlib import Path
@@ -17,8 +17,7 @@ from core_gui_atomistic.atom import Atom
 from core_gui_atomistic.atomic_model import AtomicModel
 from src_gui4dft.models.capedswcnt import CapedSWNT
 from src_gui4dft.models.bint import BiNT
-from src_gui4dft.models.graphene import Graphene
-from src_gui4dft.models.bn_plane import BNplane
+from src_gui4dft.models.hexagonal_plane import HexagonalPlane, HexagonalPlaneHex
 from src_gui4dft.models.swnt import SWNT
 from src_gui4dft.models.swgnt import SWGNT
 from src_gui4dft.models.gaussiancube import GaussianCube
@@ -33,7 +32,8 @@ from PySide2.QtWidgets import QTreeWidgetItemIterator
 from src_gui4dft.qtbased.image3dexporter import Image3Dexporter
 
 from src_gui4dft.program.siesta import TSIESTA
-from src_gui4dft.program.crystal import model_1d_to_d12, model_2d_to_d12
+from src_gui4dft.program.crystal import model_0d_to_d12, model_1d_to_d12, model_2d_to_d12, model_3d_to_d12
+from src_gui4dft.program.qe import model_to_qe_pw
 from src_gui4dft.program.vasp import vasp_dos
 from src_gui4dft.program.vasp import model_to_vasp_poscar
 from src_gui4dft.program import ase
@@ -50,7 +50,6 @@ from src_gui4dft.ui.about import Ui_DialogAbout as Ui_about
 from src_gui4dft.ui.form import Ui_MainWindow as Ui_form
 
 from ase.build import molecule, bulk
-from ase.cluster.cubic import FaceCenteredCubic
 
 from src_gui4dft.program.vasp import VaspDataFromXml
 
@@ -143,11 +142,9 @@ class MainForm(QMainWindow):
         # models generation
         self.ui.get_0d_molecula_list.clicked.connect(self.get_0d_molecula_list)
         self.ui.generate_0d_molecula.clicked.connect(self.generate_0d_molecula)
-        self.ui.generate_0d_cluster.clicked.connect(self.generate_0d_cluster)
         self.ui.but_create_nanotube.clicked.connect(self.create_swnt)
         self.ui.FormActionsPreButBiElementGenerate.clicked.connect(self.create_bi_el_nt)
-        self.ui.generate_2d_graphene.clicked.connect(self.create_graphene)
-        self.ui.generate_2d_bn.clicked.connect(self.create_2d_bn)
+        self.ui.generate_2d_model.clicked.connect(self.create_2d_hexagonal)
         self.ui.generate_3d_bulk.clicked.connect(self.generate_3d_bulk)
 
         data = ["sc", "fcc", "bcc", "tetragonal", "bct", "hcp", "rhombohedral", "orthorhombic", "mcl", "diamond"]
@@ -159,8 +156,10 @@ class MainForm(QMainWindow):
         self.ui.FDFGenerate.clicked.connect(self.fdf_data_to_form)
         self.ui.POSCARgenerate.clicked.connect(self.poscar_data_to_form)
         self.ui.QEgenerate.clicked.connect(self.qe_data_to_form)
+        self.ui.crystal_0d_d12_generate.clicked.connect(self.d12_0D_to_form)
         self.ui.crystal_1d_d12_generate.clicked.connect(self.d12_1D_to_form)
         self.ui.crystal_2d_d12_generate.clicked.connect(self.d12_2D_to_form)
+        self.ui.crystal_3d_d12_generate.clicked.connect(self.d12_3D_to_form)
 
         self.ui.data_from_form_to_input_file.clicked.connect(self.data_from_form_to_input_file)
         self.ui.model_rotation_x.valueChanged.connect(self.model_orientation_changed)
@@ -234,7 +233,7 @@ class MainForm(QMainWindow):
         self.ui.FormActionsPostButPlusCellParam.clicked.connect(self.add_cell_param)
         self.ui.FormActionsPostButAddRowCellParam.clicked.connect(self.add_cell_param_row)
         self.ui.FormActionsPostButDeleteRowCellParam.clicked.connect(self.delete_cell_param_row)
-        self.ui.FormActionsPostButPlusDataCellParam.clicked.connect(self.add_data_cell_param)
+        self.ui.cell_params_file_add.clicked.connect(self.add_data_cell_param)
 
         self.ui.FormModifyRotation.clicked.connect(self.model_rotation)
         self.ui.FormModifyGrowX.clicked.connect(self.model_grow_x)
@@ -243,6 +242,7 @@ class MainForm(QMainWindow):
 
         self.ui.FormModifyGoPositive.clicked.connect(self.model_go_to_positive)
         self.ui.FormModifyGoToCell.clicked.connect(self.model_go_to_cell)
+        self.ui.modify_center_to_zero.clicked.connect(self.model_center_to_zero)
 
         self.ui.FormActionsPostButVoronoi.clicked.connect(self.plot_voronoi)
         self.ui.optimize_cell_param.clicked.connect(self.plot_volume_param_energy)
@@ -256,7 +256,6 @@ class MainForm(QMainWindow):
         self.ui.atoms_list_all.setModel(model)
         self.ui.FormAtomsList1.setModel(model)
         self.ui.FormAtomsList2.setModel(model)
-        self.ui.atoms_list_all_cluster.setModel(model)
 
         # sliders
         self.ui.FormActionsPostSliderContourXY.valueChanged.connect(self.set_xsf_z_position)
@@ -351,6 +350,12 @@ class MainForm(QMainWindow):
         self.ui.FormSettingsColorsScaleType.setModel(color_type_scale)
         self.ui.FormSettingsColorsScaleType.setCurrentText(self.color_type_scale)
 
+        model_2d_types = QStandardItemModel()
+        model_2d_types.appendRow(QStandardItem("Graphene"))
+        model_2d_types.appendRow(QStandardItem("BN"))
+        model_2d_types.appendRow(QStandardItem("BC"))
+        self.ui.model_2d_type.setModel(model_2d_types)
+
         bi_element_type_tube = QStandardItemModel()
         bi_element_type_tube.appendRow(QStandardItem("BN"))
         bi_element_type_tube.appendRow(QStandardItem("BC"))
@@ -367,13 +372,23 @@ class MainForm(QMainWindow):
         self.ui.FormActionsPostTableCellParam.horizontalHeader().setStyleSheet(self.table_header_stylesheet)
         self.ui.FormActionsPostTableCellParam.verticalHeader().setStyleSheet(self.table_header_stylesheet)
 
-        argsCell = QStandardItemModel()
-        argsCell.appendRow(QStandardItem("V"))
-        argsCell.appendRow(QStandardItem("E"))
-        argsCell.appendRow(QStandardItem("a"))
-        argsCell.appendRow(QStandardItem("b"))
-        argsCell.appendRow(QStandardItem("c"))
-        self.ui.FormActionsPostComboCellParamX.setModel(argsCell)
+        args_cell = QStandardItemModel()
+        args_cell.appendRow(QStandardItem("V"))
+        args_cell.appendRow(QStandardItem("E"))
+        args_cell.appendRow(QStandardItem("a"))
+        args_cell.appendRow(QStandardItem("b"))
+        args_cell.appendRow(QStandardItem("c"))
+        self.ui.FormActionsPostComboCellParamX.setModel(args_cell)
+
+        args_cell = QStandardItemModel()
+        args_cell.appendRow(QStandardItem("Ry"))
+        args_cell.appendRow(QStandardItem("eV"))
+        self.ui.cell_energy_units.setModel(args_cell)
+
+        args_cell = QStandardItemModel()
+        args_cell.appendRow(QStandardItem("au^3"))
+        args_cell.appendRow(QStandardItem("A^3"))
+        self.ui.cell_volume_units.setModel(args_cell)
 
         self.ui.FormActionsTabeDOSProperty.setColumnCount(2)
         self.ui.FormActionsTabeDOSProperty.setHorizontalHeaderLabels(["Path", "EFermy"])
@@ -944,45 +959,40 @@ class MainForm(QMainWindow):
                                            options=QFileDialog.DontUseNativeDialog)[0]
 
     def export_volumeric_data_to_xsf(self):
-        try:
-            f_name = self.get_file_name_from_save_dialog("XSF files (*.XSF)")
-            x1 = self.ui.FormVolDataExportX1.value()
-            x2 = self.ui.FormVolDataExportX2.value()
-            y1 = self.ui.FormVolDataExportY1.value()
-            y2 = self.ui.FormVolDataExportY2.value()
-            z1 = self.ui.FormVolDataExportZ1.value()
-            z2 = self.ui.FormVolDataExportZ2.value()
-            self.export_volumeric_data_to_file(f_name, x1, x2, y1, y2, z1, z2)
-        except Exception as e:
-            self.show_error(e)
+        mask = "XSF files (*.XSF)"
+        self.export_volumeric_data_to_file_form_elements(mask)
 
     def export_volumeric_data_to_cube(self):
+        mask = "cube files (*.cube)"
+        self.export_volumeric_data_to_file_form_elements(mask)
+
+    def export_volumeric_data_to_file_form_elements(self, mask):
         try:
-            f_name = self.get_file_name_from_save_dialog("cube files (*.cube)")
+            f_name = self.get_file_name_from_save_dialog(mask)
             x1 = self.ui.FormVolDataExportX1.value()
             x2 = self.ui.FormVolDataExportX2.value()
             y1 = self.ui.FormVolDataExportY1.value()
             y2 = self.ui.FormVolDataExportY2.value()
             z1 = self.ui.FormVolDataExportZ1.value()
             z2 = self.ui.FormVolDataExportZ2.value()
-            self.export_volumeric_data_to_file(f_name, x1, x2, y1, y2, z1, z2)
+            self.volumeric_data_to_file(f_name, self.volumeric_data, x1, x2, y1, y2, z1, z2)
+            self.work_dir = os.path.dirname(f_name)
+            self.save_active_folder()
         except Exception as e:
             self.show_error(e)
-
-    def export_volumeric_data_to_file(self, fname, x1, x2, y1, y2, z1, z2):
-        self.ui.openGLWidget.volumeric_data_to_file(fname, self.volumeric_data, x1, x2, y1, y2, z1, z2)
-        self.work_dir = os.path.dirname(fname)
-        self.save_active_folder()
 
     def volumeric_data_to_file(self, f_name, volumeric_data, x1, x2, y1, y2, z1, z2):
         model = self.ui.openGLWidget.get_model()
-        if f_name.find("XSF") >= 0:
-            f_name = f_name.split(".")[0]
-            text = volumeric_data.toXSFfile(model, f_name, x1, x2, y1, y2, z1, z2)
+        if f_name.find(".XSF") >= 0:
+            #f_name = f_name.split(".")[0]
+            text = volumeric_data.to_xsf_text(model, x1, x2, y1, y2, z1, z2)
+            helpers.write_text_to_file(f_name, text)
 
-        if f_name.find("cube") >= 0:
-            f_name = f_name.split(".")[0]
-            text = volumeric_data.toCUBEfile(model, f_name, x1, x2, y1, y2, z1, z2)
+        if f_name.find(".cube") >= 0:
+            #print(f_name)
+            #f_name = f_name.split(".")[0]
+            #print(f_name)
+            text = volumeric_data.to_cube_text(model, x1, x2, y1, y2, z1, z2)
             helpers.write_text_to_file(f_name, text)
 
     def fill_gui(self, title=""):
@@ -1605,8 +1615,14 @@ class MainForm(QMainWindow):
         if self.ui.openGLWidget.main_model.n_atoms() == 0:
             return
         model = self.ui.openGLWidget.main_model
-        print("model_go_to_cell")
         model.move_atoms_to_cell()
+        self.add_model_and_show(model)
+
+    def model_center_to_zero(self):
+        if self.ui.openGLWidget.main_model.n_atoms() == 0:
+            return
+        model = self.ui.openGLWidget.main_model
+        model.move_atoms_to_zero()
         self.add_model_and_show(model)
 
     def add_model_and_show(self, model):  # pragma: no cover
@@ -2167,7 +2183,10 @@ class MainForm(QMainWindow):
         is_shift = self.ui.optimize_cell_param_shift.isChecked()
         method = self.ui.FormActionsPostComboCellParam.currentText()
         xi = self.ui.FormActionsPostComboCellParamX.currentIndex()
-        # LabelX = self.ui.FormActionsPostComboCellParamX.currentText()
+        energy_units = self.ui.cell_energy_units.currentText()  # "Ry" "eV"
+        volume_units = self.ui.cell_volume_units.currentText()  # "au^3"  "A^3"
+        print(method, xi, energy_units, volume_units)
+
         yi = 1
 
         x = []
@@ -2201,19 +2220,29 @@ class MainForm(QMainWindow):
                 image_path = str(Path(__file__).parent / 'images' / 'murnaghan.png')  # path to your image file
                 if len(items) > 4:
                     aprox, xs2, ys2 = Calculator.approx_murnaghan(items)
-                    text0 = "E(V0)=" + str(round(float(aprox[0]), prec))
-                    text1 = "B0=" + str(round(float(aprox[1]), prec))
+                    mult = 160
+                    if (xi == 0) and (energy_units == "Ry"):
+                        mult *= 13.6
+                    if (xi == 0) and (volume_units == "au^3"):
+                        mult /= 0.52917721 ** 3
+                    text0 = "E(V0)=" + str(round(float(aprox[0]), prec)) + " " + energy_units
+                    text1 = "B0=" + str(round(mult * float(aprox[1]), prec)) + " GPa"
                     text2 = "B0'=" + str(round(float(aprox[2]), prec))
-                    text3 = "V0=" + str(round(float(aprox[3]), prec))
+                    text3 = "V0=" + str(round(float(aprox[3]), prec)) + " " + volume_units
 
             elif method == "BirchMurnaghan":
                 image_path = str(Path(__file__).parent / 'images' / 'murnaghanbirch.png')  # path to your image file
                 if len(items) > 4:
                     aprox, xs2, ys2 = Calculator.approx_birch_murnaghan(items)
-                    text0 = "E(V0)=" + str(round(float(aprox[0]), prec))
-                    text1 = "B0=" + str(round(float(aprox[1]), prec))
+                    mult = 160
+                    if (xi == 0) and (energy_units == "Ry"):
+                        mult *= 13.6
+                    if (xi == 0) and (volume_units == "au^3"):
+                        mult /= 0.52917721 ** 3
+                    text0 = "E(V0)=" + str(round(float(aprox[0]), prec)) + " " + energy_units
+                    text1 = "B0=" + str(round(mult * float(aprox[1]), prec)) + " GPa"
                     text2 = "B0'=" + str(round(float(aprox[2]), prec))
-                    text3 = "V0=" + str(round(float(aprox[3]), prec))
+                    text3 = "V0=" + str(round(float(aprox[3]), prec)) + " " + volume_units
 
             else:  # method == "Parabola":
                 image_path = str(Path(__file__).parent / 'images' / 'parabola.png')
@@ -2553,7 +2582,12 @@ class MainForm(QMainWindow):
     def qe_data_to_form(self):
         if len(self.models) == 0:
             return
-        print("TODO")
+        try:
+            model = self.ui.openGLWidget.get_model()
+            text = model_to_qe_pw(model)
+            self.ui.FormActionsPreTextFDF.setText(text)
+        except Exception:
+            print("There are no atoms in the model")
 
     def poscar_data_to_form(self):
         if len(self.models) == 0:
@@ -2570,7 +2604,7 @@ class MainForm(QMainWindow):
             text = self.ui.FormActionsPreTextFDF.toPlainText()
             if len(text) > 0:
                 file_mask = "FDF files (*.fdf);;VASP POSCAR file (*.POSCAR)"
-                file_mask += ";;Crystal d12 (*.d12)"
+                file_mask += ";;Crystal d12 (*.d12);;PWscf in (*.in)"
                 fname = self.get_file_name_from_save_dialog(file_mask)
                 if fname is not None:
                     helpers.write_text_to_file(fname, text)
@@ -2654,6 +2688,17 @@ class MainForm(QMainWindow):
         self.ui.Form3Dand2DTabs.setCurrentIndex(1)
         self.ui.PyqtGraphWidget.plot([x_fig], [y_fig], [None], title, x_title, y_title, True)
 
+    def d12_0D_to_form(self):  # pragma: no cover
+        if len(self.models) == 0:
+            return
+        try:
+            model = self.models[self.active_model]
+            text = model_0d_to_d12(model)
+            if len(text) > 0:
+                self.ui.FormActionsPreTextFDF.setText(text)
+        except Exception as e:
+            self.show_error(e)
+
     def d12_1D_to_form(self):  # pragma: no cover
         if len(self.models) == 0:
             return
@@ -2671,6 +2716,17 @@ class MainForm(QMainWindow):
         try:
             model = self.models[self.active_model]
             text = model_2d_to_d12(model)
+            if len(text) > 0:
+                self.ui.FormActionsPreTextFDF.setText(text)
+        except Exception as e:
+            self.show_error(e)
+
+    def d12_3D_to_form(self):  # pragma: no cover
+        if len(self.models) == 0:
+            return
+        try:
+            model = self.models[self.active_model]
+            text = model_3d_to_d12(model)
             if len(text) > 0:
                 self.ui.FormActionsPreTextFDF.setText(text)
         except Exception as e:
@@ -2822,19 +2878,32 @@ class MainForm(QMainWindow):
         self.change_color(self.ui.ColorContour, SETTINGS_Color_Of_Contour)
         self.plot_contour()
 
-    def create_graphene(self):
+    def create_2d_hexagonal(self):
         leng, m, n = self.model_2d_parameters()
-        model = Graphene(n, m, leng)
+        model_type = self.ui.model_2d_type.currentText()
+        is_ribbon = self.ui.generate_2d_ribbon.isChecked()
+        ch1 = 6
+        ch2 = 6
+        a = 1.43
+        if model_type == "Graphene":
+            ch1 = 6
+            ch2 = 6
+            a = 1.43
+        if model_type == "BN":
+            ch1 = 5
+            ch2 = 7
+            a = 1.45
+        if model_type == "BC":
+            ch1 = 5
+            ch2 = 6
+            a = 1.4
+        if is_ribbon:
+            model = HexagonalPlane(ch1, ch2, a, n, m, leng)
+        else:
+            model = HexagonalPlaneHex(ch1, ch2, a, n, m)
         self.models.append(model)
         self.plot_model(-1)
-        self.fill_gui("Graphene-model")
-
-    def create_2d_bn(self):
-        leng, m, n = self.model_2d_parameters()
-        model = BNplane(n, m, leng)
-        self.models.append(model)
-        self.plot_model(-1)
-        self.fill_gui("BN-model")
+        self.fill_gui(model_type + "-model")
 
     def model_2d_parameters(self):
         n = self.ui.FormActionsPreLineGraphene_n.value()
@@ -2885,17 +2954,6 @@ class MainForm(QMainWindow):
         if len(name) == 0:
             return
         atoms = molecule(name)
-        model = ase.from_ase_atoms_to_atomic_model(atoms)
-        self.models.append(model)
-        self.plot_model(-1)
-        self.fill_gui(name)
-
-    def generate_0d_cluster(self):
-        name = "Cluster"
-        surfaces = [(1, 0, 0), (1, 1, 0), (1, 1, 1)]
-        layers = [6, 9, 5]
-        lc = 3.61000
-        atoms = FaceCenteredCubic('Cu', surfaces, layers, latticeconstant=lc)
         model = ase.from_ase_atoms_to_atomic_model(atoms)
         self.models.append(model)
         self.plot_model(-1)

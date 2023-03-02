@@ -6,6 +6,22 @@ from core_gui_atomistic.atom import Atom
 from core_gui_atomistic.atomic_model import AtomicModel
 
 
+def model_0d_to_d12(model):
+    text = "crystal\n"
+    text += "MOLECULE\n"
+    text += "1\n"
+    model2 = deepcopy(model)
+    nat = model2.n_atoms()
+    text += str(nat) + "\n"
+    for i in range(0, nat):
+        ch = model2.atoms[i].charge
+        x = str(model2.atoms[i].x)
+        y = str(model2.atoms[i].y)
+        z = str(model2.atoms[i].z)
+        text += str(ch) + "   " + x + "   " + y + "   " + z + "\n"
+    return text
+
+
 def model_1d_to_d12(model):
     text = "crystal\n"
     text += "POLYMER\n"
@@ -33,13 +49,36 @@ def model_2d_to_d12(model):
     model2.convert_from_cart_to_direct()
     nat = model1.n_atoms()
     text += "1\n"
-    text += str(np.linalg.norm(model1.lat_vector1)) + " " + str(np.linalg.norm(model1.lat_vector2)) + " 90.0\n"
+    text += str(np.linalg.norm(model1.lat_vector1)) + " " + str(np.linalg.norm(model1.lat_vector2))
+    text += " " + str(model.get_angle_gamma()) + "\n"
     text += str(nat) + "\n"
     for i in range(0, nat):
         ch = model1.atoms[i].charge
         x = str(model2.atoms[i].x)
         y = str(model2.atoms[i].y)
         z = str(model1.atoms[i].z)
+        text += str(ch) + "   " + x + "   " + y + "   " + z + "\n"
+    return text
+
+
+def model_3d_to_d12(model):
+    text = "crystal\n"
+    text += "CRYSTAL\n"
+    text += "0 0 0\n"
+    text += "1\n"
+    model2 = deepcopy(model)
+    model2.convert_from_cart_to_direct()
+
+    text += str(np.linalg.norm(model.lat_vector1)) + '  ' + str(np.linalg.norm(model.lat_vector2)) + '  ' + \
+            str(np.linalg.norm(model.lat_vector3)) + '  ' + str(model.get_angle_alpha()) + '  ' + \
+            str(model.get_angle_beta()) + '  ' + str(model.get_angle_gamma()) + '\n'
+    nat = model2.n_atoms()
+    text += str(nat) + "\n"
+    for i in range(0, nat):
+        ch = model2.atoms[i].charge
+        x = str(model2.atoms[i].x)
+        y = str(model2.atoms[i].y)
+        z = str(model2.atoms[i].z)
         text += str(ch) + "   " + x + "   " + y + "   " + z + "\n"
     return text
 
@@ -55,7 +94,7 @@ def structure_of_primitive_cell(f_name):
             vec2 = np.array(f.readline().split(), dtype=float)
             vec3 = np.array(f.readline().split(), dtype=float)
             for i in range(6):
-                str1 = f.readline()
+                f.readline()
             model = AtomicModel()
             str1 = helpers.spacedel(f.readline())
             while len(str1) > 5:
