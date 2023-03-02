@@ -291,7 +291,7 @@ def check_format(filename):
     if name.endswith(".cube"):
         return "GAUSSIAN_cube"
 
-    if name.endswith("poscar") or name.endswith("contcar"):
+    if ("poscar" in name) or ("contcar" in name):
         return "VASPposcar"
 
     if name.endswith("outp"):

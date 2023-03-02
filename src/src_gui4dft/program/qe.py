@@ -93,7 +93,7 @@ def alats_from_pwout(f_name):
 
 
 def atoms_from_pwout(f_name):
-    print("PW out")
+    # print("PW out")
     models = []
     vectors = vectors_from_pwout(f_name)
     a, b, c, alp, bet, gam = alats_from_pwout(f_name)
@@ -113,7 +113,7 @@ def atoms_from_pwout(f_name):
             if str1.find("site n.     atom                  positions (alat units)") >= 0:
                 model = AtomicModel()
                 str1 = helpers.spacedel(f.readline())
-                print(str1)
+                # print(str1)
                 while len(str1) > 5:
                     s = str1.split(' ')
                     x = a * float(s[6])
