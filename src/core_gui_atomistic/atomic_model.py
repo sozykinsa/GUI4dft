@@ -95,7 +95,7 @@ class AtomicModel(object):
 
     def twist_z(self, alpha):
         cm = self.center_mass()
-        self.move(*(-cm))
+        self.move(-cm)
         z0 = self.minZ()
         z1 = np.linalg.norm(self.lat_vector3)
 
@@ -117,9 +117,8 @@ class AtomicModel(object):
             molecules.append(new_model)
         return molecules
 
-    def move(self, l_x: float, l_y: float, l_z: float) -> None:
+    def move(self, dl: np.ndarray) -> None:
         """Move model by the vector."""
-        dl = np.array((l_x, l_y, l_z))
         for atom in self.atoms:
             atom.xyz += dl
 
@@ -579,13 +578,14 @@ class AtomicModel(object):
                 delta_molecula1 = r1
         return delta_molecula1
 
-    def go_to_positive_array(self, arr, xm, ym, zm):
+    def move_array(self, arr, dr):
         for i in range(len(arr)):
-            arr[i].x -= xm
+            arr[i].xyz -= dr
+
+    def go_to_positive_array(self, arr):
+        for i in range(len(arr)):
             arr[i].x = self.minus0(arr[i].x)
-            arr[i].y -= ym
             arr[i].y = self.minus0(arr[i].y)
-            arr[i].z -= zm
             arr[i].z = self.minus0(arr[i].z)
 
     def go_to_positive_array_translate(self, arr):
@@ -609,7 +609,7 @@ class AtomicModel(object):
                     if abs(i) + abs(j) + abs(k) != 0:
                         vect = i * self.lat_vector1 + j * self.lat_vector2 + k * self.lat_vector3
                         copy_of_model = AtomicModel(self.atoms)
-                        copy_of_model.move(vect[0], vect[1], vect[2])
+                        copy_of_model.move(vect)
                         for atom in copy_of_model.atoms:
                             new_at_list.append(atom)
         new_model = AtomicModel(new_at_list)
@@ -622,7 +622,7 @@ class AtomicModel(object):
         new_at_list = deepcopy(self.atoms)
         for i in range(n):
             copy_of_model = AtomicModel(self.atoms)
-            copy_of_model.move(*((1 + i) * self.lat_vector1))
+            copy_of_model.move(((1 + i) * self.lat_vector1))
             for atom in copy_of_model.atoms:
                 new_at_list.append(atom)
         new_model = AtomicModel(new_at_list)
@@ -635,7 +635,7 @@ class AtomicModel(object):
         new_at_list = deepcopy(self.atoms)
         for i in range(n):
             copy_of_model = AtomicModel(self.atoms)
-            copy_of_model.move(*((1 + i) * self.lat_vector2))
+            copy_of_model.move(((1 + i) * self.lat_vector2))
             for atom in copy_of_model.atoms:
                 new_at_list.append(atom)
         new_model = AtomicModel(new_at_list)
@@ -648,7 +648,7 @@ class AtomicModel(object):
         new_at_list = deepcopy(self.atoms)
         for i in range(n):
             copy_of_model = AtomicModel(self.atoms)
-            copy_of_model.move(*((1 + i) * self.lat_vector3))
+            copy_of_model.move(((1 + i) * self.lat_vector3))
             for atom in copy_of_model.atoms:
                 new_at_list.append(atom)
         new_model = AtomicModel(new_at_list)
@@ -676,7 +676,7 @@ class AtomicModel(object):
 
     def move_atoms_to_zero(self):
         cm = self.center_mass()
-        self.move(*(cm))
+        self.move(cm)
 
     def move_atoms_to_cell(self):
         a_inv = inv(self.lat_vectors)
@@ -686,10 +686,9 @@ class AtomicModel(object):
         self.go_to_positive_array_translate(self.atoms)
 
     def go_to_positive_coordinates(self):
-        xm = self.minX()
-        ym = self.minY()
-        zm = self.minZ()
-        self.go_to_positive_array(self.atoms, xm, ym, zm)
+        d_vec = np.array([self.minX(), self.minY(), self.minZ()])
+        self.move_array(self.atoms, d_vec)
+        self.go_to_positive_array(self.atoms)
 
     def coords_for_export(self, coord_style, units="Ang"):
         data = ""

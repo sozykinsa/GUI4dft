@@ -116,7 +116,7 @@ class GuiOpenGL(GuiOpenGLBase):
         self.selected_atom = -1
         self.main_model = deepcopy(structure)
         self.coord0 = -self.main_model.get_center_of_mass()
-        self.main_model.move(*self.coord0)
+        self.main_model.move(self.coord0)
         self.is_view_box = is_view_box
         self.is_view_atoms = is_view_atoms
         self.is_atomic_numbers_visible = is_view_atom_numbers

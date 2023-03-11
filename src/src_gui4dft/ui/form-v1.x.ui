@@ -4641,7 +4641,11 @@
                        <number>0</number>
                       </property>
                       <item>
-                       <widget class="QDoubleSpinBox" name="x_circular_shift_step"/>
+                       <widget class="QDoubleSpinBox" name="x_circular_shift_step">
+                        <property name="minimum">
+                         <double>-99.989999999999995</double>
+                        </property>
+                       </widget>
                       </item>
                       <item>
                        <widget class="QPushButton" name="x_circular_shift">
@@ -4694,7 +4698,11 @@
                        <number>0</number>
                       </property>
                       <item>
-                       <widget class="QDoubleSpinBox" name="y_circular_shift_step"/>
+                       <widget class="QDoubleSpinBox" name="y_circular_shift_step">
+                        <property name="minimum">
+                         <double>-99.989999999999995</double>
+                        </property>
+                       </widget>
                       </item>
                       <item>
                        <widget class="QPushButton" name="y_circular_shift">
@@ -4747,7 +4755,11 @@
                        <number>0</number>
                       </property>
                       <item>
-                       <widget class="QDoubleSpinBox" name="z_circular_shift_step"/>
+                       <widget class="QDoubleSpinBox" name="z_circular_shift_step">
+                        <property name="minimum">
+                         <double>-99.989999999999995</double>
+                        </property>
+                       </widget>
                       </item>
                       <item>
                        <widget class="QPushButton" name="z_circular_shift">
@@ -5110,8 +5122,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>399</width>
-             <height>706</height>
+             <width>340</width>
+             <height>627</height>
             </rect>
            </property>
            <attribute name="label">
@@ -12031,8 +12043,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>665</width>
-         <height>765</height>
+         <width>98</width>
+         <height>100</height>
         </rect>
        </property>
        <attribute name="label">

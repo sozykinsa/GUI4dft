@@ -2509,6 +2509,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_115.setContentsMargins(0, 0, 0, 0)
         self.x_circular_shift_step = QDoubleSpinBox(self.frame_111)
         self.x_circular_shift_step.setObjectName(u"x_circular_shift_step")
+        self.x_circular_shift_step.setMinimum(-99.989999999999995)
 
         self.horizontalLayout_115.addWidget(self.x_circular_shift_step)
 
@@ -2534,6 +2535,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_165.setContentsMargins(0, 0, 0, 0)
         self.y_circular_shift_step = QDoubleSpinBox(self.frame_113)
         self.y_circular_shift_step.setObjectName(u"y_circular_shift_step")
+        self.y_circular_shift_step.setMinimum(-99.989999999999995)
 
         self.horizontalLayout_165.addWidget(self.y_circular_shift_step)
 
@@ -2559,6 +2561,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_166.setContentsMargins(0, 0, 0, 0)
         self.z_circular_shift_step = QDoubleSpinBox(self.frame_170)
         self.z_circular_shift_step.setObjectName(u"z_circular_shift_step")
+        self.z_circular_shift_step.setMinimum(-99.989999999999995)
 
         self.horizontalLayout_166.addWidget(self.z_circular_shift_step)
 
@@ -2730,7 +2733,7 @@ class Ui_MainWindow(object):
         self.toolBox_2.setStyleSheet(u"")
         self.page_19 = QWidget()
         self.page_19.setObjectName(u"page_19")
-        self.page_19.setGeometry(QRect(0, 0, 399, 706))
+        self.page_19.setGeometry(QRect(0, 0, 340, 627))
         self.verticalLayout_6 = QVBoxLayout(self.page_19)
         self.verticalLayout_6.setSpacing(0)
         self.verticalLayout_6.setObjectName(u"verticalLayout_6")
@@ -6399,7 +6402,7 @@ class Ui_MainWindow(object):
         self.Form3Dand2DTabs.addItem(self.page_7, u"3D View")
         self.page_8 = QWidget()
         self.page_8.setObjectName(u"page_8")
-        self.page_8.setGeometry(QRect(0, 0, 665, 765))
+        self.page_8.setGeometry(QRect(0, 0, 98, 100))
         self.horizontalLayout = QHBoxLayout(self.page_8)
         self.horizontalLayout.setObjectName(u"horizontalLayout")
         self.horizontalLayout.setContentsMargins(0, 0, 0, 0)

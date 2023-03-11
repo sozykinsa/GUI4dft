@@ -244,6 +244,8 @@ class MainForm(QMainWindow):
         self.ui.FormModifyGoToCell.clicked.connect(self.model_go_to_cell)
         self.ui.modify_center_to_zero.clicked.connect(self.model_center_to_zero)
         self.ui.x_circular_shift.clicked.connect(self.model_x_circular_shift)
+        self.ui.y_circular_shift.clicked.connect(self.model_y_circular_shift)
+        self.ui.z_circular_shift.clicked.connect(self.model_z_circular_shift)
 
         self.ui.FormActionsPostButVoronoi.clicked.connect(self.plot_voronoi)
         self.ui.optimize_cell_param.clicked.connect(self.plot_volume_param_energy)
