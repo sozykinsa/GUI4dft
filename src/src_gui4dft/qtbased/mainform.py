@@ -243,6 +243,7 @@ class MainForm(QMainWindow):
         self.ui.FormModifyGoPositive.clicked.connect(self.model_go_to_positive)
         self.ui.FormModifyGoToCell.clicked.connect(self.model_go_to_cell)
         self.ui.modify_center_to_zero.clicked.connect(self.model_center_to_zero)
+        self.ui.x_circular_shift.clicked.connect(self.model_x_circular_shift)
 
         self.ui.FormActionsPostButVoronoi.clicked.connect(self.plot_voronoi)
         self.ui.optimize_cell_param.clicked.connect(self.plot_volume_param_energy)
@@ -1604,6 +1605,33 @@ class MainForm(QMainWindow):
         self.add_model_and_show(model)
         self.model_orientation_to_form()
 
+    def model_x_circular_shift(self):
+        if self.ui.openGLWidget.main_model.n_atoms() == 0:
+            return
+        model = self.models[self.active_model]
+        step = self.ui.x_circular_shift_step.value()
+        model.move(-step, 0, 0)
+        model.go_to_positive_coordinates_translate()
+        self.add_model_and_show(model)
+
+    def model_y_circular_shift(self):
+        if self.ui.openGLWidget.main_model.n_atoms() == 0:
+            return
+        model = self.models[self.active_model]
+        step = self.ui.y_circular_shift_step.value()
+        model.move(0, -step, 0)
+        model.go_to_positive_coordinates_translate()
+        self.add_model_and_show(model)
+
+    def model_z_circular_shift(self):
+        if self.ui.openGLWidget.main_model.n_atoms() == 0:
+            return
+        model = self.models[self.active_model]
+        step = self.ui.z_circular_shift_step.value()
+        model.move(0, 0, -step)
+        model.go_to_positive_coordinates_translate()
+        self.add_model_and_show(model)
+
     def model_go_to_positive(self):
         if self.ui.openGLWidget.main_model.n_atoms() == 0:
             return
@@ -1634,21 +1662,24 @@ class MainForm(QMainWindow):
         if self.ui.openGLWidget.main_model.n_atoms() == 0:
             return
         model = self.ui.openGLWidget.main_model
-        model = model.grow_x()
+        step = self.ui.grow_x_size.value()
+        model = model.grow_x(step)
         self.add_model_and_show(model)
 
     def model_grow_y(self):
         if self.ui.openGLWidget.main_model.n_atoms() == 0:
             return
         model = self.ui.openGLWidget.main_model
-        model = model.grow_y()
+        step = self.ui.grow_x_size.value()
+        model = model.grow_y(step)
         self.add_model_and_show(model)
 
     def model_grow_z(self):
         if self.ui.openGLWidget.main_model.n_atoms() == 0:
             return
         model = self.ui.openGLWidget.main_model
-        model = model.grow_z()
+        step = self.ui.grow_x_size.value()
+        model = model.grow_z(step)
         self.add_model_and_show(model)
 
     def plot_model(self, value):

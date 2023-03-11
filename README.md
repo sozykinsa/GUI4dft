@@ -7,21 +7,17 @@ GUI4dft (Graphical User Interface for support of Density Functional Theory calcu
 ## Install
 GUI4DFT program is written in Python 3 (version >= 3.8). It has some dependences. To install the necessary modules, run in the terminal (command line):
 
-pip3 install pyside2 numpy scipy pyopengl pyqtgraph matplotlib scikit-image ase
-
-or
-
 pip3 install -r ./requirements.txt
-
-These commands are suitable for Ubuntu 22.04, Windows 10, Mas OS Majave. For other distributions and operating systems, the command and set of required packages may differ.
-
-You have to set the variable QT_API:
-
-export QT_API=pyside2 (in linux, or https://www.architectryan.com/2018/08/31/how-to-change-environment-variables-on-windows-10/ in Windows)
 
 To run the program, type
 
 python3 gui4dft.py
+
+## Problems with Install?
+
+You have to set the variable QT_API:
+
+export QT_API=pyside2 (in linux, or https://www.architectryan.com/2018/08/31/how-to-change-environment-variables-on-windows-10/ in Windows)
 
 Some operating systems may require additional packages to be installed:
 

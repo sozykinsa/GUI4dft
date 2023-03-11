@@ -117,7 +117,7 @@ class AtomicModel(object):
             molecules.append(new_model)
         return molecules
 
-    def move(self, l_x, l_y, l_z):
+    def move(self, l_x: float, l_y: float, l_z: float) -> None:
         """Move model by the vector."""
         dl = np.array((l_x, l_y, l_z))
         for atom in self.atoms:
@@ -642,15 +642,17 @@ class AtomicModel(object):
         new_model.set_lat_vectors(self.lat_vector1, (1 + n) * self.lat_vector2, self.lat_vector3)
         return new_model
 
-    def grow_z(self):
-        """Translate model in Z direction."""
+    def grow_z(self, n: int = 1):
+        """Translate model in Z direction.
+        n: number of translations"""
         new_at_list = deepcopy(self.atoms)
-        copy_of_model = AtomicModel(self.atoms)
-        copy_of_model.move(*self.lat_vector3)
-        for atom in copy_of_model.atoms:
-            new_at_list.append(atom)
+        for i in range(n):
+            copy_of_model = AtomicModel(self.atoms)
+            copy_of_model.move(*((1 + i) * self.lat_vector3))
+            for atom in copy_of_model.atoms:
+                new_at_list.append(atom)
         new_model = AtomicModel(new_at_list)
-        new_model.set_lat_vectors(self.lat_vector1, self.lat_vector2, 2 * self.lat_vector3)
+        new_model.set_lat_vectors(self.lat_vector1, self.lat_vector2, (1 + n) * self.lat_vector3)
         return new_model
 
     def types_of_atoms(self):

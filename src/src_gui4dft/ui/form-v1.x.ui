@@ -13,7 +13,7 @@
   <property name="minimumSize">
    <size>
     <width>0</width>
-    <height>200</height>
+    <height>0</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -4387,26 +4387,158 @@
                   <property name="title">
                    <string>Grow model</string>
                   </property>
-                  <layout class="QHBoxLayout" name="horizontalLayout_165">
+                  <layout class="QVBoxLayout" name="verticalLayout_59">
                    <item>
-                    <widget class="QPushButton" name="FormModifyGrowX">
-                     <property name="text">
-                      <string>Grow X</string>
+                    <widget class="QFrame" name="frame_84">
+                     <property name="frameShape">
+                      <enum>QFrame::NoFrame</enum>
                      </property>
+                     <property name="frameShadow">
+                      <enum>QFrame::Raised</enum>
+                     </property>
+                     <layout class="QHBoxLayout" name="horizontalLayout_88">
+                      <property name="leftMargin">
+                       <number>0</number>
+                      </property>
+                      <property name="topMargin">
+                       <number>0</number>
+                      </property>
+                      <property name="rightMargin">
+                       <number>0</number>
+                      </property>
+                      <property name="bottomMargin">
+                       <number>0</number>
+                      </property>
+                      <item>
+                       <widget class="QSpinBox" name="grow_x_size">
+                        <property name="minimum">
+                         <number>1</number>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QPushButton" name="FormModifyGrowX">
+                        <property name="text">
+                         <string>Grow X</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <spacer name="horizontalSpacer_43">
+                        <property name="orientation">
+                         <enum>Qt::Horizontal</enum>
+                        </property>
+                        <property name="sizeHint" stdset="0">
+                         <size>
+                          <width>40</width>
+                          <height>20</height>
+                         </size>
+                        </property>
+                       </spacer>
+                      </item>
+                     </layout>
                     </widget>
                    </item>
                    <item>
-                    <widget class="QPushButton" name="FormModifyGrowY">
-                     <property name="text">
-                      <string>Grow Y</string>
+                    <widget class="QFrame" name="frame_110">
+                     <property name="frameShape">
+                      <enum>QFrame::NoFrame</enum>
                      </property>
+                     <property name="frameShadow">
+                      <enum>QFrame::Raised</enum>
+                     </property>
+                     <layout class="QHBoxLayout" name="horizontalLayout_113">
+                      <property name="leftMargin">
+                       <number>0</number>
+                      </property>
+                      <property name="topMargin">
+                       <number>0</number>
+                      </property>
+                      <property name="rightMargin">
+                       <number>0</number>
+                      </property>
+                      <property name="bottomMargin">
+                       <number>0</number>
+                      </property>
+                      <item>
+                       <widget class="QSpinBox" name="grow_y_size">
+                        <property name="minimum">
+                         <number>1</number>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QPushButton" name="FormModifyGrowZ">
+                        <property name="text">
+                         <string>Grow Z</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <spacer name="horizontalSpacer_57">
+                        <property name="orientation">
+                         <enum>Qt::Horizontal</enum>
+                        </property>
+                        <property name="sizeHint" stdset="0">
+                         <size>
+                          <width>40</width>
+                          <height>20</height>
+                         </size>
+                        </property>
+                       </spacer>
+                      </item>
+                     </layout>
                     </widget>
                    </item>
                    <item>
-                    <widget class="QPushButton" name="FormModifyGrowZ">
-                     <property name="text">
-                      <string>Grow Z</string>
+                    <widget class="QFrame" name="frame_109">
+                     <property name="frameShape">
+                      <enum>QFrame::NoFrame</enum>
                      </property>
+                     <property name="frameShadow">
+                      <enum>QFrame::Raised</enum>
+                     </property>
+                     <layout class="QHBoxLayout" name="horizontalLayout_114">
+                      <property name="leftMargin">
+                       <number>0</number>
+                      </property>
+                      <property name="topMargin">
+                       <number>0</number>
+                      </property>
+                      <property name="rightMargin">
+                       <number>0</number>
+                      </property>
+                      <property name="bottomMargin">
+                       <number>0</number>
+                      </property>
+                      <item>
+                       <widget class="QSpinBox" name="grow_z_size">
+                        <property name="minimum">
+                         <number>1</number>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QPushButton" name="FormModifyGrowY">
+                        <property name="text">
+                         <string>Grow Y</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <spacer name="horizontalSpacer_97">
+                        <property name="orientation">
+                         <enum>Qt::Horizontal</enum>
+                        </property>
+                        <property name="sizeHint" stdset="0">
+                         <size>
+                          <width>40</width>
+                          <height>20</height>
+                         </size>
+                        </property>
+                       </spacer>
+                      </item>
+                     </layout>
                     </widget>
                    </item>
                   </layout>
@@ -4420,29 +4552,224 @@
                     <height>0</height>
                    </size>
                   </property>
+                  <property name="sizeIncrement">
+                   <size>
+                    <width>0</width>
+                    <height>0</height>
+                   </size>
+                  </property>
                   <property name="title">
                    <string>Shift</string>
                   </property>
-                  <layout class="QHBoxLayout" name="horizontalLayout_50">
+                  <layout class="QVBoxLayout" name="verticalLayout_69">
                    <item>
-                    <widget class="QPushButton" name="FormModifyGoPositive">
-                     <property name="text">
-                      <string>Go to positive!</string>
+                    <widget class="QFrame" name="frame_112">
+                     <property name="minimumSize">
+                      <size>
+                       <width>0</width>
+                       <height>0</height>
+                      </size>
                      </property>
+                     <property name="frameShape">
+                      <enum>QFrame::NoFrame</enum>
+                     </property>
+                     <property name="frameShadow">
+                      <enum>QFrame::Raised</enum>
+                     </property>
+                     <layout class="QHBoxLayout" name="horizontalLayout_50">
+                      <property name="leftMargin">
+                       <number>0</number>
+                      </property>
+                      <property name="topMargin">
+                       <number>0</number>
+                      </property>
+                      <property name="rightMargin">
+                       <number>0</number>
+                      </property>
+                      <property name="bottomMargin">
+                       <number>0</number>
+                      </property>
+                      <item>
+                       <widget class="QPushButton" name="FormModifyGoPositive">
+                        <property name="text">
+                         <string>Go to positive!</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QPushButton" name="FormModifyGoToCell">
+                        <property name="text">
+                         <string>Go to cell</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QPushButton" name="modify_center_to_zero">
+                        <property name="text">
+                         <string>Center to zero</string>
+                        </property>
+                       </widget>
+                      </item>
+                     </layout>
                     </widget>
                    </item>
                    <item>
-                    <widget class="QPushButton" name="FormModifyGoToCell">
-                     <property name="text">
-                      <string>Go to cell</string>
+                    <widget class="QFrame" name="frame_111">
+                     <property name="minimumSize">
+                      <size>
+                       <width>0</width>
+                       <height>0</height>
+                      </size>
                      </property>
+                     <property name="frameShape">
+                      <enum>QFrame::NoFrame</enum>
+                     </property>
+                     <property name="frameShadow">
+                      <enum>QFrame::Raised</enum>
+                     </property>
+                     <layout class="QHBoxLayout" name="horizontalLayout_115">
+                      <property name="leftMargin">
+                       <number>0</number>
+                      </property>
+                      <property name="topMargin">
+                       <number>0</number>
+                      </property>
+                      <property name="rightMargin">
+                       <number>0</number>
+                      </property>
+                      <property name="bottomMargin">
+                       <number>0</number>
+                      </property>
+                      <item>
+                       <widget class="QDoubleSpinBox" name="x_circular_shift_step"/>
+                      </item>
+                      <item>
+                       <widget class="QPushButton" name="x_circular_shift">
+                        <property name="text">
+                         <string>x-circular shift</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <spacer name="horizontalSpacer_98">
+                        <property name="orientation">
+                         <enum>Qt::Horizontal</enum>
+                        </property>
+                        <property name="sizeHint" stdset="0">
+                         <size>
+                          <width>157</width>
+                          <height>20</height>
+                         </size>
+                        </property>
+                       </spacer>
+                      </item>
+                     </layout>
                     </widget>
                    </item>
                    <item>
-                    <widget class="QPushButton" name="modify_center_to_zero">
-                     <property name="text">
-                      <string>Center to zero</string>
+                    <widget class="QFrame" name="frame_113">
+                     <property name="minimumSize">
+                      <size>
+                       <width>0</width>
+                       <height>0</height>
+                      </size>
                      </property>
+                     <property name="frameShape">
+                      <enum>QFrame::NoFrame</enum>
+                     </property>
+                     <property name="frameShadow">
+                      <enum>QFrame::Raised</enum>
+                     </property>
+                     <layout class="QHBoxLayout" name="horizontalLayout_165">
+                      <property name="leftMargin">
+                       <number>0</number>
+                      </property>
+                      <property name="topMargin">
+                       <number>0</number>
+                      </property>
+                      <property name="rightMargin">
+                       <number>0</number>
+                      </property>
+                      <property name="bottomMargin">
+                       <number>0</number>
+                      </property>
+                      <item>
+                       <widget class="QDoubleSpinBox" name="y_circular_shift_step"/>
+                      </item>
+                      <item>
+                       <widget class="QPushButton" name="y_circular_shift">
+                        <property name="text">
+                         <string>y-circular shift</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <spacer name="horizontalSpacer_117">
+                        <property name="orientation">
+                         <enum>Qt::Horizontal</enum>
+                        </property>
+                        <property name="sizeHint" stdset="0">
+                         <size>
+                          <width>40</width>
+                          <height>20</height>
+                         </size>
+                        </property>
+                       </spacer>
+                      </item>
+                     </layout>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QFrame" name="frame_170">
+                     <property name="minimumSize">
+                      <size>
+                       <width>0</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="frameShape">
+                      <enum>QFrame::NoFrame</enum>
+                     </property>
+                     <property name="frameShadow">
+                      <enum>QFrame::Raised</enum>
+                     </property>
+                     <layout class="QHBoxLayout" name="horizontalLayout_166">
+                      <property name="leftMargin">
+                       <number>0</number>
+                      </property>
+                      <property name="topMargin">
+                       <number>0</number>
+                      </property>
+                      <property name="rightMargin">
+                       <number>0</number>
+                      </property>
+                      <property name="bottomMargin">
+                       <number>0</number>
+                      </property>
+                      <item>
+                       <widget class="QDoubleSpinBox" name="z_circular_shift_step"/>
+                      </item>
+                      <item>
+                       <widget class="QPushButton" name="z_circular_shift">
+                        <property name="text">
+                         <string>z-circular shift</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <spacer name="horizontalSpacer_118">
+                        <property name="orientation">
+                         <enum>Qt::Horizontal</enum>
+                        </property>
+                        <property name="sizeHint" stdset="0">
+                         <size>
+                          <width>40</width>
+                          <height>20</height>
+                         </size>
+                        </property>
+                       </spacer>
+                      </item>
+                     </layout>
                     </widget>
                    </item>
                   </layout>
@@ -8002,8 +8329,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>399</width>
-             <height>706</height>
+             <width>363</width>
+             <height>649</height>
             </rect>
            </property>
            <attribute name="label">
