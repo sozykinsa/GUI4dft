@@ -192,6 +192,7 @@ class MainForm(QMainWindow):
         self.ui.ColorAxesDialogButton.clicked.connect(self.select_axes_color)
         self.ui.ColorContourDialogButton.clicked.connect(self.select_contour_color)
         self.ui.manual_colors_default.clicked.connect(self.set_manual_colors_default)
+        self.ui.FormBondLenSpinBox.valueChanged.connect(self.bond_len_correct)
 
         self.ui.FormActionsButtonPlotPDOS.clicked.connect(self.plot_pdos)
         self.ui.plot_bands.clicked.connect(self.plot_bands)
@@ -737,8 +738,7 @@ class MainForm(QMainWindow):
         let2 = self.ui.FormAtomsList2.currentIndex()
 
         if not ((let1 == 0) or (let2 == 0)):
-            mendeley = TPeriodTable()
-            bond = mendeley.Bonds[let1][let2]
+            bond = self.periodic_table.Bonds[let1][let2]
         else:
             bond = 0
         self.ui.FormBondLenSpinBox.setValue(bond)
@@ -1612,8 +1612,8 @@ class MainForm(QMainWindow):
             return
         model = self.models[self.active_model]
         step = self.ui.x_circular_shift_step.value()
-        model.move(-step, 0, 0)
-        model.go_to_positive_coordinates_translate()
+        model.move(np.array([-step, 0, 0]))
+        model.go_to_positive_x_array_translate(model.atoms)
         self.add_model_and_show(model)
 
     def model_y_circular_shift(self):
@@ -1621,8 +1621,8 @@ class MainForm(QMainWindow):
             return
         model = self.models[self.active_model]
         step = self.ui.y_circular_shift_step.value()
-        model.move(0, -step, 0)
-        model.go_to_positive_coordinates_translate()
+        model.move(np.array([0, -step, 0]))
+        model.go_to_positive_y_array_translate(model.atoms)
         self.add_model_and_show(model)
 
     def model_z_circular_shift(self):
@@ -1630,8 +1630,8 @@ class MainForm(QMainWindow):
             return
         model = self.models[self.active_model]
         step = self.ui.z_circular_shift_step.value()
-        model.move(0, 0, -step)
-        model.go_to_positive_coordinates_translate()
+        model.move(np.array([0, 0, -step]))
+        model.go_to_positive_z_array_translate(model.atoms)
         self.add_model_and_show(model)
 
     def model_go_to_positive(self):
@@ -2910,6 +2910,19 @@ class MainForm(QMainWindow):
     def select_contour_color(self):  # pragma: no cover
         self.change_color(self.ui.ColorContour, SETTINGS_Color_Of_Contour)
         self.plot_contour()
+
+    def bond_len_correct(self, d):
+        let1 = self.ui.FormAtomsList1.currentText()
+        let2 = self.ui.FormAtomsList2.currentText()
+        ch1 = self.periodic_table.get_charge_by_letter(let1)
+        ch2 = self.periodic_table.get_charge_by_letter(let2)
+        self.periodic_table.Bonds[ch1][ch2] = d
+        self.periodic_table.Bonds[ch2][ch1] = d
+        self.ui.openGLWidget.main_model.set_mendeley(self.periodic_table)
+        self.ui.openGLWidget.main_model.find_bonds_fast()
+        self.ui.openGLWidget.add_all_elements()
+        self.ui.openGLWidget.update()
+        print(let1, "-", let2, ": ", d)
 
     def create_2d_hexagonal(self):
         leng, m, n = self.model_2d_parameters()

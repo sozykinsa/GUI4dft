@@ -19,14 +19,17 @@ import scipy
 
 
 class AtomicModel(object):
-    def __init__(self, new_atoms: list = []):
+    def __init__(self, new_atoms: list = [], mendeley: TPeriodTable = None):
         self.atoms = []
         self.bonds = []
         self.bonds_per = []  # for exact calculation in form
 
         self.name = ""
         self.lat_vectors = 100 * np.eye(3)
-        self.mendeley = TPeriodTable()
+        if mendeley is not None:
+            self.mendeley = mendeley
+        else:
+            self.mendeley = TPeriodTable()
 
         for at in new_atoms:
             if isinstance(at, Atom):
@@ -39,6 +42,9 @@ class AtomicModel(object):
 
     def __getitem__(self, i):
         return self.atoms[i]
+
+    def set_mendeley(self, mendeley):
+        self.mendeley = mendeley
 
     @property
     def lat_vector1(self) -> float:
@@ -588,14 +594,31 @@ class AtomicModel(object):
             arr[i].y = self.minus0(arr[i].y)
             arr[i].z = self.minus0(arr[i].z)
 
-    def go_to_positive_array_translate(self, arr):
+    def go_to_positive_x_array_translate(self, arr):
+        if np.linalg.norm(self.lat_vectors[0]) >= 500:
+            return
         for i in range(len(arr)):
-            if (arr[i].x < 0) and (np.linalg.norm(self.lat_vectors[0]) < 500):
+            if arr[i].x < 0:
                 arr[i].xyz += self.lat_vectors[0]
-            if (arr[i].y < 0) and (np.linalg.norm(self.lat_vectors[1]) < 500):
+
+    def go_to_positive_y_array_translate(self, arr):
+        if np.linalg.norm(self.lat_vectors[1]) >= 500:
+            return
+        for i in range(len(arr)):
+            if arr[i].y < 0:
                 arr[i].xyz += self.lat_vectors[1]
-            if (arr[i].z < 0) and (np.linalg.norm(self.lat_vectors[2]) < 500):
+
+    def go_to_positive_z_array_translate(self, arr):
+        if np.linalg.norm(self.lat_vectors[2]) >= 500:
+            return
+        for i in range(len(arr)):
+            if arr[i].z < 0:
                 arr[i].xyz += self.lat_vectors[2]
+
+    def go_to_positive_array_translate(self, arr):
+        self.go_to_positive_x_array_translate(arr)
+        self.go_to_positive_y_array_translate(arr)
+        self.go_to_positive_z_array_translate(arr)
 
     def minus0(self, fl):
         return 0 if fl < 0 else fl
