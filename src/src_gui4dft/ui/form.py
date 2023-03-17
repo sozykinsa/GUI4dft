@@ -1791,7 +1791,7 @@ class Ui_MainWindow(object):
         self.toolBox_6.setSizePolicy(sizePolicy2)
         self.page_29 = QWidget()
         self.page_29.setObjectName(u"page_29")
-        self.page_29.setGeometry(QRect(0, 0, 337, 258))
+        self.page_29.setGeometry(QRect(0, 0, 371, 593))
         self.verticalLayout_26 = QVBoxLayout(self.page_29)
         self.verticalLayout_26.setObjectName(u"verticalLayout_26")
         self.frame_28 = QFrame(self.page_29)
@@ -2197,7 +2197,7 @@ class Ui_MainWindow(object):
         self.toolBox_6.addItem(self.page_28, u"Fill Space")
         self.page_11 = QWidget()
         self.page_11.setObjectName(u"page_11")
-        self.page_11.setGeometry(QRect(0, 0, 293, 425))
+        self.page_11.setGeometry(QRect(0, 0, 371, 593))
         self.verticalLayout_82 = QVBoxLayout(self.page_11)
         self.verticalLayout_82.setObjectName(u"verticalLayout_82")
         self.groupBox_44 = QGroupBox(self.page_11)
@@ -2374,11 +2374,67 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_82.addWidget(self.groupBox_45)
 
+        self.groupBox_11 = QGroupBox(self.page_11)
+        self.groupBox_11.setObjectName(u"groupBox_11")
+        self.groupBox_11.setMinimumSize(QSize(0, 0))
+        self.verticalLayout_71 = QVBoxLayout(self.groupBox_11)
+        self.verticalLayout_71.setObjectName(u"verticalLayout_71")
+        self.frame_171 = QFrame(self.groupBox_11)
+        self.frame_171.setObjectName(u"frame_171")
+        self.frame_171.setFrameShape(QFrame.StyledPanel)
+        self.frame_171.setFrameShadow(QFrame.Raised)
+        self.horizontalLayout_184 = QHBoxLayout(self.frame_171)
+        self.horizontalLayout_184.setObjectName(u"horizontalLayout_184")
+        self.horizontalLayout_184.setContentsMargins(-1, 0, -1, 0)
+        self.model_move_x = QDoubleSpinBox(self.frame_171)
+        self.model_move_x.setObjectName(u"model_move_x")
+
+        self.horizontalLayout_184.addWidget(self.model_move_x)
+
+        self.model_move_y = QDoubleSpinBox(self.frame_171)
+        self.model_move_y.setObjectName(u"model_move_y")
+
+        self.horizontalLayout_184.addWidget(self.model_move_y)
+
+        self.model_move_z = QDoubleSpinBox(self.frame_171)
+        self.model_move_z.setObjectName(u"model_move_z")
+
+        self.horizontalLayout_184.addWidget(self.model_move_z)
+
+
+        self.verticalLayout_71.addWidget(self.frame_171)
+
+        self.frame_172 = QFrame(self.groupBox_11)
+        self.frame_172.setObjectName(u"frame_172")
+        self.frame_172.setFrameShape(QFrame.StyledPanel)
+        self.frame_172.setFrameShadow(QFrame.Raised)
+        self.horizontalLayout_178 = QHBoxLayout(self.frame_172)
+        self.horizontalLayout_178.setObjectName(u"horizontalLayout_178")
+        self.horizontalLayout_178.setContentsMargins(-1, 0, -1, 0)
+        self.horizontalSpacer_119 = QSpacerItem(94, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_178.addItem(self.horizontalSpacer_119)
+
+        self.model_move_by_vector = QPushButton(self.frame_172)
+        self.model_move_by_vector.setObjectName(u"model_move_by_vector")
+
+        self.horizontalLayout_178.addWidget(self.model_move_by_vector)
+
+        self.horizontalSpacer_120 = QSpacerItem(94, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_178.addItem(self.horizontalSpacer_120)
+
+
+        self.verticalLayout_71.addWidget(self.frame_172)
+
+
+        self.verticalLayout_82.addWidget(self.groupBox_11)
+
         self.verticalSpacer_7 = QSpacerItem(20, 288, QSizePolicy.Minimum, QSizePolicy.Expanding)
 
         self.verticalLayout_82.addItem(self.verticalSpacer_7)
 
-        self.toolBox_6.addItem(self.page_11, u"Rotate model")
+        self.toolBox_6.addItem(self.page_11, u"Rotate or move model")
         self.page_12 = QWidget()
         self.page_12.setObjectName(u"page_12")
         self.page_12.setGeometry(QRect(0, 0, 339, 347))
@@ -2733,7 +2789,7 @@ class Ui_MainWindow(object):
         self.toolBox_2.setStyleSheet(u"")
         self.page_19 = QWidget()
         self.page_19.setObjectName(u"page_19")
-        self.page_19.setGeometry(QRect(0, 0, 399, 706))
+        self.page_19.setGeometry(QRect(0, 0, 340, 627))
         self.verticalLayout_6 = QVBoxLayout(self.page_19)
         self.verticalLayout_6.setSpacing(0)
         self.verticalLayout_6.setObjectName(u"verticalLayout_6")
@@ -5378,6 +5434,7 @@ class Ui_MainWindow(object):
         self.FormBondLenSpinBox = QDoubleSpinBox(self.frame_106)
         self.FormBondLenSpinBox.setObjectName(u"FormBondLenSpinBox")
         self.FormBondLenSpinBox.setReadOnly(False)
+        self.FormBondLenSpinBox.setSingleStep(0.100000000000000)
 
         self.horizontalLayout_110.addWidget(self.FormBondLenSpinBox)
 
@@ -6402,7 +6459,7 @@ class Ui_MainWindow(object):
         self.Form3Dand2DTabs.addItem(self.page_7, u"3D View")
         self.page_8 = QWidget()
         self.page_8.setObjectName(u"page_8")
-        self.page_8.setGeometry(QRect(0, 0, 665, 765))
+        self.page_8.setGeometry(QRect(0, 0, 98, 100))
         self.horizontalLayout = QHBoxLayout(self.page_8)
         self.horizontalLayout.setObjectName(u"horizontalLayout")
         self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
@@ -6640,7 +6697,9 @@ class Ui_MainWindow(object):
         self.groupBox_45.setTitle(QCoreApplication.translate("MainWindow", u" Twist (z-axis)", None))
         self.label_104.setText(QCoreApplication.translate("MainWindow", u"Twist angle in degrees", None))
         self.FormModifyTwist.setText(QCoreApplication.translate("MainWindow", u"Twist", None))
-        self.toolBox_6.setItemText(self.toolBox_6.indexOf(self.page_11), QCoreApplication.translate("MainWindow", u"Rotate model", None))
+        self.groupBox_11.setTitle(QCoreApplication.translate("MainWindow", u"Move", None))
+        self.model_move_by_vector.setText(QCoreApplication.translate("MainWindow", u"Move", None))
+        self.toolBox_6.setItemText(self.toolBox_6.indexOf(self.page_11), QCoreApplication.translate("MainWindow", u"Rotate or move model", None))
         self.groupBox_37.setTitle(QCoreApplication.translate("MainWindow", u"Grow model", None))
         self.FormModifyGrowX.setText(QCoreApplication.translate("MainWindow", u"Grow X", None))
         self.FormModifyGrowZ.setText(QCoreApplication.translate("MainWindow", u"Grow Z", None))

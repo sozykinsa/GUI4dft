@@ -3174,8 +3174,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>337</width>
-                 <height>258</height>
+                 <width>371</width>
+                 <height>593</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -4020,12 +4020,12 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>293</width>
-                 <height>425</height>
+                 <width>371</width>
+                 <height>593</height>
                 </rect>
                </property>
                <attribute name="label">
-                <string>Rotate model</string>
+                <string>Rotate or move model</string>
                </attribute>
                <layout class="QVBoxLayout" name="verticalLayout_82">
                 <item>
@@ -4331,6 +4331,99 @@
                       </item>
                       <item>
                        <spacer name="horizontalSpacer_109">
+                        <property name="orientation">
+                         <enum>Qt::Horizontal</enum>
+                        </property>
+                        <property name="sizeHint" stdset="0">
+                         <size>
+                          <width>94</width>
+                          <height>20</height>
+                         </size>
+                        </property>
+                       </spacer>
+                      </item>
+                     </layout>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QGroupBox" name="groupBox_11">
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                  <property name="title">
+                   <string>Move</string>
+                  </property>
+                  <layout class="QVBoxLayout" name="verticalLayout_71">
+                   <item>
+                    <widget class="QFrame" name="frame_171">
+                     <property name="frameShape">
+                      <enum>QFrame::StyledPanel</enum>
+                     </property>
+                     <property name="frameShadow">
+                      <enum>QFrame::Raised</enum>
+                     </property>
+                     <layout class="QHBoxLayout" name="horizontalLayout_184">
+                      <property name="topMargin">
+                       <number>0</number>
+                      </property>
+                      <property name="bottomMargin">
+                       <number>0</number>
+                      </property>
+                      <item>
+                       <widget class="QDoubleSpinBox" name="model_move_x"/>
+                      </item>
+                      <item>
+                       <widget class="QDoubleSpinBox" name="model_move_y"/>
+                      </item>
+                      <item>
+                       <widget class="QDoubleSpinBox" name="model_move_z"/>
+                      </item>
+                     </layout>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QFrame" name="frame_172">
+                     <property name="frameShape">
+                      <enum>QFrame::StyledPanel</enum>
+                     </property>
+                     <property name="frameShadow">
+                      <enum>QFrame::Raised</enum>
+                     </property>
+                     <layout class="QHBoxLayout" name="horizontalLayout_178">
+                      <property name="topMargin">
+                       <number>0</number>
+                      </property>
+                      <property name="bottomMargin">
+                       <number>0</number>
+                      </property>
+                      <item>
+                       <spacer name="horizontalSpacer_119">
+                        <property name="orientation">
+                         <enum>Qt::Horizontal</enum>
+                        </property>
+                        <property name="sizeHint" stdset="0">
+                         <size>
+                          <width>94</width>
+                          <height>20</height>
+                         </size>
+                        </property>
+                       </spacer>
+                      </item>
+                      <item>
+                       <widget class="QPushButton" name="model_move_by_vector">
+                        <property name="text">
+                         <string>Move</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <spacer name="horizontalSpacer_120">
                         <property name="orientation">
                          <enum>Qt::Horizontal</enum>
                         </property>
@@ -5122,8 +5215,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>399</width>
-             <height>706</height>
+             <width>340</width>
+             <height>627</height>
             </rect>
            </property>
            <attribute name="label">
@@ -12046,8 +12139,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>665</width>
-         <height>765</height>
+         <width>98</width>
+         <height>100</height>
         </rect>
        </property>
        <attribute name="label">

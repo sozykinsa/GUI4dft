@@ -203,6 +203,7 @@ class MainForm(QMainWindow):
         self.ui.PropertyAtomAtomDistanceGet.clicked.connect(self.get_bond)
         self.ui.FormStylesFor2DGraph.clicked.connect(self.set_2d_graph_styles)
         self.ui.FormModifyTwist.clicked.connect(self.twist_model)
+        self.ui.model_move_by_vector.clicked.connect(self.move_model)
         self.ui.fit_with.clicked.connect(self.fit_with)
 
         self.ui.FormSelectPart1File.clicked.connect(self.set_part1_file)
@@ -987,14 +988,10 @@ class MainForm(QMainWindow):
     def volumeric_data_to_file(self, f_name, volumeric_data, x1, x2, y1, y2, z1, z2):
         model = self.ui.openGLWidget.get_model()
         if f_name.find(".XSF") >= 0:
-            #f_name = f_name.split(".")[0]
             text = volumeric_data.to_xsf_text(model, x1, x2, y1, y2, z1, z2)
             helpers.write_text_to_file(f_name, text)
 
         if f_name.find(".cube") >= 0:
-            #print(f_name)
-            #f_name = f_name.split(".")[0]
-            #print(f_name)
             text = volumeric_data.to_cube_text(model, x1, x2, y1, y2, z1, z2)
             helpers.write_text_to_file(f_name, text)
 
@@ -2601,6 +2598,14 @@ class MainForm(QMainWindow):
         angle = math.radians(self.ui.ModifyTwistAngle.value())
         self.models[self.active_model].twist_z(angle)
         self.plot_model(self.active_model)
+
+    def move_model(self):
+        dx = self.ui.model_move_x.value()
+        dy = self.ui.model_move_y.value()
+        dz = self.ui.model_move_z.value()
+        model = self.models[self.active_model]
+        model.move(np.array([dx, dy, dz]))
+        self.add_model_and_show(model)
 
     def fdf_data_to_form(self):
         if len(self.models) == 0:
