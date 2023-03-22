@@ -1372,8 +1372,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>336</width>
-                 <height>203</height>
+                 <width>371</width>
+                 <height>562</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -1501,7 +1501,7 @@
                      <property name="frameShadow">
                       <enum>QFrame::Raised</enum>
                      </property>
-                     <layout class="QHBoxLayout" name="horizontalLayout_177">
+                     <layout class="QVBoxLayout" name="verticalLayout_72">
                       <item>
                        <widget class="QRadioButton" name="generate_2d_ribbon">
                         <property name="text">
@@ -1510,23 +1510,61 @@
                        </widget>
                       </item>
                       <item>
-                       <widget class="QRadioButton" name="radioButton_4">
+                       <widget class="QRadioButton" name="generate_2d_hex1">
                         <property name="text">
-                         <string>Hexagonal</string>
+                         <string>Hexagonal 1</string>
+                        </property>
+                        <property name="checked">
+                         <bool>false</bool>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QRadioButton" name="generate_2d_hex2">
+                        <property name="text">
+                         <string>Hexagonal 2</string>
+                        </property>
+                        <property name="checked">
+                         <bool>false</bool>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QRadioButton" name="generate_2d_hex3">
+                        <property name="text">
+                         <string>Hexagonal 3</string>
                         </property>
                         <property name="checked">
                          <bool>true</bool>
                         </property>
                        </widget>
                       </item>
+                     </layout>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QFrame" name="frame_173">
+                     <property name="frameShape">
+                      <enum>QFrame::NoFrame</enum>
+                     </property>
+                     <property name="frameShadow">
+                      <enum>QFrame::Raised</enum>
+                     </property>
+                     <layout class="QHBoxLayout" name="horizontalLayout_185">
+                      <property name="topMargin">
+                       <number>0</number>
+                      </property>
+                      <property name="bottomMargin">
+                       <number>0</number>
+                      </property>
                       <item>
-                       <spacer name="horizontalSpacer_42">
+                       <spacer name="horizontalSpacer_123">
                         <property name="orientation">
                          <enum>Qt::Horizontal</enum>
                         </property>
                         <property name="sizeHint" stdset="0">
                          <size>
-                          <width>40</width>
+                          <width>95</width>
                           <height>20</height>
                          </size>
                         </property>
@@ -1538,6 +1576,19 @@
                          <string>Create</string>
                         </property>
                        </widget>
+                      </item>
+                      <item>
+                       <spacer name="horizontalSpacer_128">
+                        <property name="orientation">
+                         <enum>Qt::Horizontal</enum>
+                        </property>
+                        <property name="sizeHint" stdset="0">
+                         <size>
+                          <width>95</width>
+                          <height>20</height>
+                         </size>
+                        </property>
+                       </spacer>
                       </item>
                      </layout>
                     </widget>
@@ -3174,8 +3225,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>371</width>
-                 <height>593</height>
+                 <width>337</width>
+                 <height>258</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -4020,8 +4071,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>371</width>
-                 <height>593</height>
+                 <width>293</width>
+                 <height>533</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -5215,8 +5266,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>340</width>
-             <height>627</height>
+             <width>399</width>
+             <height>706</height>
             </rect>
            </property>
            <attribute name="label">
@@ -12139,8 +12190,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>98</width>
-         <height>100</height>
+         <width>665</width>
+         <height>765</height>
         </rect>
        </property>
        <attribute name="label">

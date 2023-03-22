@@ -772,7 +772,7 @@ class Ui_MainWindow(object):
         self.toolBox.addItem(self.page_4, u"1D (nanotubes)")
         self.page_17 = QWidget()
         self.page_17.setObjectName(u"page_17")
-        self.page_17.setGeometry(QRect(0, 0, 336, 203))
+        self.page_17.setGeometry(QRect(0, 0, 371, 562))
         self.verticalLayout_27 = QVBoxLayout(self.page_17)
         self.verticalLayout_27.setObjectName(u"verticalLayout_27")
         self.groupBox_30 = QGroupBox(self.page_17)
@@ -843,30 +843,56 @@ class Ui_MainWindow(object):
         self.frame_12.setMinimumSize(QSize(0, 0))
         self.frame_12.setFrameShape(QFrame.StyledPanel)
         self.frame_12.setFrameShadow(QFrame.Raised)
-        self.horizontalLayout_177 = QHBoxLayout(self.frame_12)
-        self.horizontalLayout_177.setObjectName(u"horizontalLayout_177")
+        self.verticalLayout_72 = QVBoxLayout(self.frame_12)
+        self.verticalLayout_72.setObjectName(u"verticalLayout_72")
         self.generate_2d_ribbon = QRadioButton(self.frame_12)
         self.generate_2d_ribbon.setObjectName(u"generate_2d_ribbon")
 
-        self.horizontalLayout_177.addWidget(self.generate_2d_ribbon)
+        self.verticalLayout_72.addWidget(self.generate_2d_ribbon)
 
-        self.radioButton_4 = QRadioButton(self.frame_12)
-        self.radioButton_4.setObjectName(u"radioButton_4")
-        self.radioButton_4.setChecked(True)
+        self.generate_2d_hex1 = QRadioButton(self.frame_12)
+        self.generate_2d_hex1.setObjectName(u"generate_2d_hex1")
+        self.generate_2d_hex1.setChecked(False)
 
-        self.horizontalLayout_177.addWidget(self.radioButton_4)
+        self.verticalLayout_72.addWidget(self.generate_2d_hex1)
 
-        self.horizontalSpacer_42 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.generate_2d_hex2 = QRadioButton(self.frame_12)
+        self.generate_2d_hex2.setObjectName(u"generate_2d_hex2")
+        self.generate_2d_hex2.setChecked(False)
 
-        self.horizontalLayout_177.addItem(self.horizontalSpacer_42)
+        self.verticalLayout_72.addWidget(self.generate_2d_hex2)
 
-        self.generate_2d_model = QPushButton(self.frame_12)
-        self.generate_2d_model.setObjectName(u"generate_2d_model")
+        self.generate_2d_hex3 = QRadioButton(self.frame_12)
+        self.generate_2d_hex3.setObjectName(u"generate_2d_hex3")
+        self.generate_2d_hex3.setChecked(True)
 
-        self.horizontalLayout_177.addWidget(self.generate_2d_model)
+        self.verticalLayout_72.addWidget(self.generate_2d_hex3)
 
 
         self.verticalLayout_11.addWidget(self.frame_12)
+
+        self.frame_173 = QFrame(self.groupBox_30)
+        self.frame_173.setObjectName(u"frame_173")
+        self.frame_173.setFrameShape(QFrame.NoFrame)
+        self.frame_173.setFrameShadow(QFrame.Raised)
+        self.horizontalLayout_185 = QHBoxLayout(self.frame_173)
+        self.horizontalLayout_185.setObjectName(u"horizontalLayout_185")
+        self.horizontalLayout_185.setContentsMargins(-1, 0, -1, 0)
+        self.horizontalSpacer_123 = QSpacerItem(95, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_185.addItem(self.horizontalSpacer_123)
+
+        self.generate_2d_model = QPushButton(self.frame_173)
+        self.generate_2d_model.setObjectName(u"generate_2d_model")
+
+        self.horizontalLayout_185.addWidget(self.generate_2d_model)
+
+        self.horizontalSpacer_128 = QSpacerItem(95, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_185.addItem(self.horizontalSpacer_128)
+
+
+        self.verticalLayout_11.addWidget(self.frame_173)
 
 
         self.verticalLayout_27.addWidget(self.groupBox_30)
@@ -1791,7 +1817,7 @@ class Ui_MainWindow(object):
         self.toolBox_6.setSizePolicy(sizePolicy2)
         self.page_29 = QWidget()
         self.page_29.setObjectName(u"page_29")
-        self.page_29.setGeometry(QRect(0, 0, 371, 593))
+        self.page_29.setGeometry(QRect(0, 0, 337, 258))
         self.verticalLayout_26 = QVBoxLayout(self.page_29)
         self.verticalLayout_26.setObjectName(u"verticalLayout_26")
         self.frame_28 = QFrame(self.page_29)
@@ -2197,7 +2223,7 @@ class Ui_MainWindow(object):
         self.toolBox_6.addItem(self.page_28, u"Fill Space")
         self.page_11 = QWidget()
         self.page_11.setObjectName(u"page_11")
-        self.page_11.setGeometry(QRect(0, 0, 371, 593))
+        self.page_11.setGeometry(QRect(0, 0, 293, 533))
         self.verticalLayout_82 = QVBoxLayout(self.page_11)
         self.verticalLayout_82.setObjectName(u"verticalLayout_82")
         self.groupBox_44 = QGroupBox(self.page_11)
@@ -2789,7 +2815,7 @@ class Ui_MainWindow(object):
         self.toolBox_2.setStyleSheet(u"")
         self.page_19 = QWidget()
         self.page_19.setObjectName(u"page_19")
-        self.page_19.setGeometry(QRect(0, 0, 340, 627))
+        self.page_19.setGeometry(QRect(0, 0, 399, 706))
         self.verticalLayout_6 = QVBoxLayout(self.page_19)
         self.verticalLayout_6.setSpacing(0)
         self.verticalLayout_6.setObjectName(u"verticalLayout_6")
@@ -6459,7 +6485,7 @@ class Ui_MainWindow(object):
         self.Form3Dand2DTabs.addItem(self.page_7, u"3D View")
         self.page_8 = QWidget()
         self.page_8.setObjectName(u"page_8")
-        self.page_8.setGeometry(QRect(0, 0, 98, 100))
+        self.page_8.setGeometry(QRect(0, 0, 665, 765))
         self.horizontalLayout = QHBoxLayout(self.page_8)
         self.horizontalLayout.setObjectName(u"horizontalLayout")
         self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
@@ -6597,7 +6623,9 @@ class Ui_MainWindow(object):
         self.label_76.setText(QCoreApplication.translate("MainWindow", u"m:", None))
         self.label_77.setText(QCoreApplication.translate("MainWindow", u"length:", None))
         self.generate_2d_ribbon.setText(QCoreApplication.translate("MainWindow", u"Ribbon", None))
-        self.radioButton_4.setText(QCoreApplication.translate("MainWindow", u"Hexagonal", None))
+        self.generate_2d_hex1.setText(QCoreApplication.translate("MainWindow", u"Hexagonal 1", None))
+        self.generate_2d_hex2.setText(QCoreApplication.translate("MainWindow", u"Hexagonal 2", None))
+        self.generate_2d_hex3.setText(QCoreApplication.translate("MainWindow", u"Hexagonal 3", None))
         self.generate_2d_model.setText(QCoreApplication.translate("MainWindow", u"Create", None))
         self.toolBox.setItemText(self.toolBox.indexOf(self.page_17), QCoreApplication.translate("MainWindow", u"2D (surface)", None))
         self.label_87.setText(QCoreApplication.translate("MainWindow", u"name", None))

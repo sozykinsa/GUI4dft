@@ -869,11 +869,11 @@ class MainForm(QMainWindow):
             """ start: parts transformation"""
             left_move_x = self.ui.FormActionsPreMoveLeftElectrodeX.value()
             left_move_y = self.ui.FormActionsPreMoveLeftElectrodeY.value()
-            model_left.move(left_move_x, left_move_y, 0)
+            model_left.move(np.array([left_move_x, left_move_y, 0]))
 
             righ_move_x = self.ui.FormActionsPreMoveRightElectrodeX.value()
             righ_move_y = self.ui.FormActionsPreMoveRightElectrodeY.value()
-            model_righ.move(righ_move_x, righ_move_y, 0)
+            model_righ.move(np.array([righ_move_x, righ_move_y, 0]))
 
             scat_rotationX = self.ui.FormActionsPreSpinScatRotX.value()
             scat_rotationY = self.ui.FormActionsPreSpinScatRotY.value()
@@ -885,7 +885,7 @@ class MainForm(QMainWindow):
 
             scat_move_x = self.ui.FormActionsPreMoveScatX.value()
             scat_move_y = self.ui.FormActionsPreMoveScatY.value()
-            model_scat.move(scat_move_x, scat_move_y, 0)
+            model_scat.move(np.array([scat_move_x, scat_move_y, 0]))
 
             """ end: parts transformation"""
 
@@ -899,10 +899,10 @@ class MainForm(QMainWindow):
 
             model = AtomicModel()
             model.add_atomic_model(model_left)
-            model_scat.move(0, 0, -(left_bord - left_elec_max) + left_dist)
+            model_scat.move(np.array([0, 0, -(left_bord - left_elec_max) + left_dist]))
             model.add_atomic_model(model_scat)
             right_bord = model.maxZ()
-            model_righ.move(0, 0, (right_bord - right_elec_min) + right_dist)
+            model_righ.move(np.array([0, 0, (right_bord - right_elec_min) + right_dist]))
             model.add_atomic_model(model_righ)
 
             self.models.append(model)
@@ -2951,7 +2951,12 @@ class MainForm(QMainWindow):
         if is_ribbon:
             model = HexagonalPlane(ch1, ch2, a, n, m, leng)
         else:
-            model = HexagonalPlaneHex(ch1, ch2, a, n, m)
+            lattice = 1
+            if self.ui.generate_2d_hex2.isChecked():
+                lattice = 2
+            if self.ui.generate_2d_hex3.isChecked():
+                lattice = 3
+            model = HexagonalPlaneHex(ch1, ch2, a, n - 1, m - 1, lattice=lattice)
         self.models.append(model)
         self.plot_model(-1)
         self.fill_gui(model_type + "-model")

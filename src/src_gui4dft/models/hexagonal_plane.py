@@ -8,17 +8,31 @@ from core_gui_atomistic.atomic_model import AtomicModel
 
 class HexagonalPlaneHex(AtomicModel):
     """The HexagonalPlane with hexagonal cell """
-    def __init__(self, ch1: int = 6, ch2: int = 6, a: float = 1.43, n=0, m=0):
+    def __init__(self, ch1: int = 6, ch2: int = 6, a: float = 1.43, n=0, m=0, lattice: int = 3):
         super().__init__()
         lets = [self.mendeley.get_let(ch1), self.mendeley.get_let(ch2)]
         chs = [ch1, ch2]
-        a1 = 0.5 * a * np.array([3, math.sqrt(3), 0])
-        a2 = 0.5 * a * np.array([3, -math.sqrt(3), 0])
+        a1 = a * np.array([1, -math.sqrt(3), 0])
+        a2 = a * np.array([1, math.sqrt(3), 0])
+        atom1 = Atom([0.0, 0.0, 0.0, lets[0], chs[0]])
+        atom2 = Atom([0.0, a, 0.0, lets[1], chs[1]])
+
+        if lattice == 2:
+            a1 = 0.5 * a * np.array([3, math.sqrt(3), 0])
+            a2 = 0.5 * a * np.array([3, -math.sqrt(3), 0])
+            atom1 = Atom([0.0, 0.0, 0.0, lets[0], chs[0]])
+            atom2 = Atom([a, 0.0, 0.0, lets[1], chs[1]])
+        if lattice == 3:
+            a1 = a * np.array([2, 0.0, 0.0])
+            a2 = a * np.array([-1, math.sqrt(3), 0])
+            atom1 = Atom([0.0, 0.0, 0.0, lets[0], chs[0]])
+            atom2 = Atom([0.0, a, 0.0, lets[1], chs[1]])
+
         a3 = 500 * np.array([0.0, 0.0, 1.0])
         basis = AtomicModel()
         basis.set_lat_vectors(a1, a2, a3)
-        basis.add_atom(Atom([0.0, 0.0, 0.0, lets[0], chs[0]]))
-        basis.add_atom(Atom([a, 0.0, 0.0, lets[1], chs[1]]))
+        basis.add_atom(atom1)
+        basis.add_atom(atom2)
         model = basis.grow_x(n)
         model = model.grow_y(m)
         self.atoms = model.atoms
