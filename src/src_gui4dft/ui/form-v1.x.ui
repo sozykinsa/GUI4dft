@@ -48,7 +48,7 @@
        <enum>QTabWidget::West</enum>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>4</number>
       </property>
       <property name="elideMode">
        <enum>Qt::ElideNone</enum>
@@ -1372,8 +1372,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>371</width>
-                 <height>562</height>
+                 <width>323</width>
+                 <height>311</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -3225,8 +3225,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>337</width>
-                 <height>258</height>
+                 <width>371</width>
+                 <height>593</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -4512,8 +4512,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>339</width>
-                 <height>347</height>
+                 <width>371</width>
+                 <height>593</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -4612,9 +4612,9 @@
                        </widget>
                       </item>
                       <item>
-                       <widget class="QPushButton" name="FormModifyGrowZ">
+                       <widget class="QPushButton" name="FormModifyGrowY">
                         <property name="text">
-                         <string>Grow Z</string>
+                         <string>Grow Y</string>
                         </property>
                        </widget>
                       </item>
@@ -4663,9 +4663,9 @@
                        </widget>
                       </item>
                       <item>
-                       <widget class="QPushButton" name="FormModifyGrowY">
+                       <widget class="QPushButton" name="FormModifyGrowZ">
                         <property name="text">
-                         <string>Grow Y</string>
+                         <string>Grow Z</string>
                         </property>
                        </widget>
                       </item>

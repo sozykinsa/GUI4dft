@@ -1669,7 +1669,7 @@ class MainForm(QMainWindow):
         if self.ui.openGLWidget.main_model.n_atoms() == 0:
             return
         model = self.ui.openGLWidget.main_model
-        step = self.ui.grow_x_size.value()
+        step = self.ui.grow_y_size.value()
         model = model.grow_y(step)
         self.add_model_and_show(model)
 
@@ -1677,7 +1677,7 @@ class MainForm(QMainWindow):
         if self.ui.openGLWidget.main_model.n_atoms() == 0:
             return
         model = self.ui.openGLWidget.main_model
-        step = self.ui.grow_x_size.value()
+        step = self.ui.grow_z_size.value()
         model = model.grow_z(step)
         self.add_model_and_show(model)
 

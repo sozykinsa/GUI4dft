@@ -772,7 +772,7 @@ class Ui_MainWindow(object):
         self.toolBox.addItem(self.page_4, u"1D (nanotubes)")
         self.page_17 = QWidget()
         self.page_17.setObjectName(u"page_17")
-        self.page_17.setGeometry(QRect(0, 0, 371, 562))
+        self.page_17.setGeometry(QRect(0, 0, 323, 311))
         self.verticalLayout_27 = QVBoxLayout(self.page_17)
         self.verticalLayout_27.setObjectName(u"verticalLayout_27")
         self.groupBox_30 = QGroupBox(self.page_17)
@@ -1817,7 +1817,7 @@ class Ui_MainWindow(object):
         self.toolBox_6.setSizePolicy(sizePolicy2)
         self.page_29 = QWidget()
         self.page_29.setObjectName(u"page_29")
-        self.page_29.setGeometry(QRect(0, 0, 337, 258))
+        self.page_29.setGeometry(QRect(0, 0, 371, 593))
         self.verticalLayout_26 = QVBoxLayout(self.page_29)
         self.verticalLayout_26.setObjectName(u"verticalLayout_26")
         self.frame_28 = QFrame(self.page_29)
@@ -2463,7 +2463,7 @@ class Ui_MainWindow(object):
         self.toolBox_6.addItem(self.page_11, u"Rotate or move model")
         self.page_12 = QWidget()
         self.page_12.setObjectName(u"page_12")
-        self.page_12.setGeometry(QRect(0, 0, 339, 347))
+        self.page_12.setGeometry(QRect(0, 0, 371, 593))
         self.verticalLayout_41 = QVBoxLayout(self.page_12)
         self.verticalLayout_41.setObjectName(u"verticalLayout_41")
         self.groupBox_37 = QGroupBox(self.page_12)
@@ -2509,10 +2509,10 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_113.addWidget(self.grow_y_size)
 
-        self.FormModifyGrowZ = QPushButton(self.frame_110)
-        self.FormModifyGrowZ.setObjectName(u"FormModifyGrowZ")
+        self.FormModifyGrowY = QPushButton(self.frame_110)
+        self.FormModifyGrowY.setObjectName(u"FormModifyGrowY")
 
-        self.horizontalLayout_113.addWidget(self.FormModifyGrowZ)
+        self.horizontalLayout_113.addWidget(self.FormModifyGrowY)
 
         self.horizontalSpacer_57 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
@@ -2534,10 +2534,10 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_114.addWidget(self.grow_z_size)
 
-        self.FormModifyGrowY = QPushButton(self.frame_109)
-        self.FormModifyGrowY.setObjectName(u"FormModifyGrowY")
+        self.FormModifyGrowZ = QPushButton(self.frame_109)
+        self.FormModifyGrowZ.setObjectName(u"FormModifyGrowZ")
 
-        self.horizontalLayout_114.addWidget(self.FormModifyGrowY)
+        self.horizontalLayout_114.addWidget(self.FormModifyGrowZ)
 
         self.horizontalSpacer_97 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
@@ -6541,7 +6541,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.tabWidget.setCurrentIndex(0)
+        self.tabWidget.setCurrentIndex(4)
         self.tabWidget_3.setCurrentIndex(0)
         self.toolBox.setCurrentIndex(0)
         self.tabWidget_11.setCurrentIndex(0)
@@ -6730,8 +6730,8 @@ class Ui_MainWindow(object):
         self.toolBox_6.setItemText(self.toolBox_6.indexOf(self.page_11), QCoreApplication.translate("MainWindow", u"Rotate or move model", None))
         self.groupBox_37.setTitle(QCoreApplication.translate("MainWindow", u"Grow model", None))
         self.FormModifyGrowX.setText(QCoreApplication.translate("MainWindow", u"Grow X", None))
-        self.FormModifyGrowZ.setText(QCoreApplication.translate("MainWindow", u"Grow Z", None))
         self.FormModifyGrowY.setText(QCoreApplication.translate("MainWindow", u"Grow Y", None))
+        self.FormModifyGrowZ.setText(QCoreApplication.translate("MainWindow", u"Grow Z", None))
         self.groupBox_49.setTitle(QCoreApplication.translate("MainWindow", u"Shift", None))
         self.FormModifyGoPositive.setText(QCoreApplication.translate("MainWindow", u"Go to positive!", None))
         self.FormModifyGoToCell.setText(QCoreApplication.translate("MainWindow", u"Go to cell", None))
