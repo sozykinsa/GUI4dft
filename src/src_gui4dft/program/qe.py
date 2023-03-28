@@ -48,7 +48,7 @@ def vectors_from_pwout(f_name):
                 vectors[1] = b * np.array([a2_tmp[3], a2_tmp[4], a2_tmp[5]], dtype=float)
                 a3_tmp = f.readline().split()
                 vectors[2] = c * np.array([a3_tmp[3], a3_tmp[4], a3_tmp[5]], dtype=float)
-                print(vectors)
+                # print(vectors)
                 f.close()
                 return vectors
         str1 = f.readline()
@@ -134,9 +134,43 @@ def atoms_from_pwout(f_name):
                 vectors[1] = b * np.array([a2_tmp[3], a2_tmp[4], a2_tmp[5]], dtype=float)
                 a3_tmp = f.readline().split()
                 vectors[2] = c * np.array([a3_tmp[3], a3_tmp[4], a3_tmp[5]], dtype=float)
-                # print(vectors)
-                # f.close()
-                # return vectors
+
+        if str1.find("CELL_PARAMETERS (angstrom)") >= 0:
+            """ every vc-relax step
+            CELL_PARAMETERS (angstrom)
+            -2.717604706   0.006737812   2.717537544
+            -0.005129402   2.719272750   2.719145955
+            -2.720314497   2.720374130   0.004028022
+            """
+            # print("CELL_PARAMETERS (angstrom)")
+            a1_tmp = f.readline().split()
+            vectors[0] = np.array([a1_tmp[0], a1_tmp[1], a1_tmp[2]], dtype=float)
+            a2_tmp = f.readline().split()
+            vectors[1] = np.array([a2_tmp[0], a2_tmp[1], a2_tmp[2]], dtype=float)
+            a3_tmp = f.readline().split()
+            vectors[2] = np.array([a3_tmp[0], a3_tmp[1], a3_tmp[2]], dtype=float)
+
+        if str1.find("ATOMIC_POSITIONS (alat)") >= 0:
+            """ every step
+            ATOMIC_POSITIONS (alat)
+            Si       0.002000062   0.003501432  -0.000003750
+            Si       0.251999938   0.253498568   0.250003750
+            """
+            # print("ATOMIC_POSITIONS (alat)")
+            model, str1 = get_positions(f, vectors)
+            model.convert_from_scaled_to_cart(a)
+            models.append(model)
+
+        if str1.find("ATOMIC_POSITIONS (crystal)") >= 0:
+            """ every step
+            ATOMIC_POSITIONS (crystal)
+            Si       0.001450378   0.000614400   0.000038753
+            Si      -0.246450378   0.751385600  -0.250038753
+            """
+            # print("ATOMIC_POSITIONS (crystal)")
+            model, str1 = get_positions(f, vectors)
+            model.convert_from_direct_to_cart()
+            models.append(model)
 
         if str1.find("Cartesian axes") >= 0:
             """ one ! atoms
@@ -146,12 +180,6 @@ def atoms_from_pwout(f_name):
                 1           Si  tau(   1) = (   0.0000000   0.0000000   0.0000000  )
                 2           Si  tau(   2) = (   0.2500000   0.2500000   0.2500000  )
                 """
-
-            """ every step
-            ATOMIC_POSITIONS (alat)
-            Si       0.002000062   0.003501432  -0.000003750
-            Si       0.251999938   0.253498568   0.250003750
-            """
             f.readline()
             str1 = f.readline()
             if str1.find("site n.     atom                  positions (alat units)") >= 0:
@@ -172,6 +200,23 @@ def atoms_from_pwout(f_name):
         str1 = f.readline()
     f.close()
     return models
+
+
+def get_positions(f, vectors):
+    model = AtomicModel()
+    str1 = helpers.spacedel(f.readline())
+    # print(str1)
+    while len(str1.split(' ')) > 3:
+        s = str1.split(' ')
+        x = float(s[1])
+        y = float(s[2])
+        z = float(s[3])
+        let = s[0]
+        charge = model.mendeley.get_charge_by_letter(let)
+        model.add_atom(Atom([x, y, z, let, charge]))
+        str1 = helpers.spacedel(f.readline())
+    model.lat_vectors = vectors
+    return model, str1
 
 
 def model_to_qe_pw(model: AtomicModel):
@@ -195,8 +240,8 @@ def model_to_qe_pw(model: AtomicModel):
         text += str(model.mendeley.get_let(int(types[i][0]))) + " mass  UPF_file_name\n"
     # text += "ATOMIC_POSITIONS {angstrom}\n"
     text += "ATOMIC_POSITIONS {crystal}\n"
-    print("-!!!-->")
-    print(text)
+    # print("-!!!-->")
+    # print(text)
     model1 = deepcopy(model)
     model1.convert_from_cart_to_direct()
     for atom in model1.atoms:

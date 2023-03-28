@@ -31,6 +31,8 @@ class ImporterExporter(object):
 
             elif file_format == "SIESTAout":
                 models = TSIESTA.get_output_data(filename, fl, models, prop)
+                if len(models) == 0:
+                    models = TSIESTA.atoms_from_fdf(filename)
                 fdf.from_out_file(filename)
 
             elif file_format == "SIESTAANI":

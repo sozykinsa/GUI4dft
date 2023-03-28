@@ -12,8 +12,8 @@ class HexagonalPlaneHex(AtomicModel):
         super().__init__()
         lets = [self.mendeley.get_let(ch1), self.mendeley.get_let(ch2)]
         chs = [ch1, ch2]
-        a1 = a * np.array([1, -math.sqrt(3), 0])
-        a2 = a * np.array([1, math.sqrt(3), 0])
+        a1 = 0.5 * a * np.array([math.sqrt(3), 3, 0])
+        a2 = 0.5 * a * np.array([-math.sqrt(3), 3, 0])
         atom1 = Atom([0.0, 0.0, 0.0, lets[0], chs[0]])
         atom2 = Atom([0.0, a, 0.0, lets[1], chs[1]])
 
@@ -22,9 +22,10 @@ class HexagonalPlaneHex(AtomicModel):
             a2 = 0.5 * a * np.array([3, -math.sqrt(3), 0])
             atom1 = Atom([0.0, 0.0, 0.0, lets[0], chs[0]])
             atom2 = Atom([a, 0.0, 0.0, lets[1], chs[1]])
+
         if lattice == 3:
-            a1 = a * np.array([2, 0.0, 0.0])
-            a2 = a * np.array([-1, math.sqrt(3), 0])
+            a1 = a * np.array([math.sqrt(3), 0.0, 0.0])
+            a2 = a * np.array([-0.5 * math.sqrt(3), 1.5, 0])
             atom1 = Atom([0.0, 0.0, 0.0, lets[0], chs[0]])
             atom2 = Atom([0.0, a, 0.0, lets[1], chs[1]])
 

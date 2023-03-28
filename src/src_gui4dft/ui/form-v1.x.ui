@@ -48,7 +48,7 @@
        <enum>QTabWidget::West</enum>
       </property>
       <property name="currentIndex">
-       <number>4</number>
+       <number>0</number>
       </property>
       <property name="elideMode">
        <enum>Qt::ElideNone</enum>
@@ -3225,8 +3225,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>371</width>
-                 <height>593</height>
+                 <width>337</width>
+                 <height>258</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -4512,8 +4512,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>371</width>
-                 <height>593</height>
+                 <width>339</width>
+                 <height>347</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -12190,8 +12190,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>665</width>
-         <height>765</height>
+         <width>98</width>
+         <height>100</height>
         </rect>
        </property>
        <attribute name="label">
