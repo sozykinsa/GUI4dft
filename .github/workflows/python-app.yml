@@ -59,7 +59,8 @@ jobs:
         sudo apt-get install libxkbcommon-x11-0 libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-randr0
         sudo apt-get install libxcb-render-util0 libxcb-xinerama0 libxcb-xfixes0
         sudo apt-get install libglu1-mesa-dev freeglut3-dev mesa-common-dev
-        xvfb-run python -m pytest tests --color=yes --cov=src/core_gui_atomistic --cov=src/src_gui4dft --cov-report=xml --cov-report=term-missing --ignore=tests/gui4dft_opengl
+        #xvfb-run 
+        python -m pytest tests --color=yes --cov=src/core_gui_atomistic --cov=src/src_gui4dft --cov-report=xml --cov-report=term-missing --ignore=tests/gui4dft_opengl
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v1
       with:
