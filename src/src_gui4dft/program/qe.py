@@ -150,6 +150,21 @@ def atoms_from_pwout(f_name):
             a3_tmp = f.readline().split()
             vectors[2] = np.array([a3_tmp[0], a3_tmp[1], a3_tmp[2]], dtype=float)
 
+        if str1.find("CELL_PARAMETERS (alat=") >= 0:
+            """ every vc-relax step
+            CELL_PARAMETERS (alat=  3.62007036)
+            1.004854534  -1.740459107   0.000000000
+            1.004854534   1.740459107   0.000000000
+            0.000000000  -0.000000000   3.321930409
+            """
+            print("CELL_PARAMETERS (alat")
+            a1_tmp = f.readline().split()
+            vectors[0] = a * np.array([a1_tmp[0], a1_tmp[1], a1_tmp[2]], dtype=float)
+            a2_tmp = f.readline().split()
+            vectors[1] = a * np.array([a2_tmp[0], a2_tmp[1], a2_tmp[2]], dtype=float)
+            a3_tmp = f.readline().split()
+            vectors[2] = a * np.array([a3_tmp[0], a3_tmp[1], a3_tmp[2]], dtype=float)
+
         if str1.find("ATOMIC_POSITIONS (alat)") >= 0:
             """ every step
             ATOMIC_POSITIONS (alat)
@@ -215,7 +230,7 @@ def get_positions(f, vectors):
         charge = model.mendeley.get_charge_by_letter(let)
         model.add_atom(Atom([x, y, z, let, charge]))
         str1 = helpers.spacedel(f.readline())
-    model.lat_vectors = vectors
+    model.lat_vectors = deepcopy(vectors)
     return model, str1
 
 
@@ -224,7 +239,7 @@ def model_to_qe_pw(model: AtomicModel):
     text = "&system\n"
     text += "ibrav = 0, \n"
     alat = math.fabs(model.lat_vector1[0])
-    text += "celldm(1) = " + str(alat) + ", \n"
+    text += "celldm(1) = " + str(alat / 0.52917720859) + ", \n"
     text += "nat = " + str(model.n_atoms()) + ", \n"
     text += "ntyp = " + str(len(types)) + ", \n"
     text += "/\n"
