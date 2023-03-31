@@ -1,6 +1,4 @@
 from pathlib import Path
-from src_gui4dft.qtbased.pyqtgraphwidget import PyqtGraphWidget
-from src_gui4dft.qtbased.pyqtgraphwidgetimage import PyqtGraphWidgetImage
 from core_gui_atomistic.atomic_model import AtomicModel
 from core_gui_atomistic.periodic_table import TPeriodTable
 
@@ -35,35 +33,3 @@ def swnt_33() -> Path:
 @pytest.fixture
 def period_table() -> Path:
     return TPeriodTable()
-
-
-@pytest.fixture
-def get_graph_widget(qapp):
-
-    def factory_function():
-        widget = PyqtGraphWidget()
-        widget.show()
-        return widget
-
-    return factory_function
-
-
-@pytest.fixture
-def graph_widget(get_graph_widget):
-    return get_graph_widget()
-
-
-@pytest.fixture
-def get_graph_image_widget(qapp):
-
-    def factory_function():
-        widget = PyqtGraphWidgetImage()
-        widget.show()
-        return widget
-
-    return factory_function
-
-
-@pytest.fixture
-def graph_image_widget(get_graph_image_widget):
-    return get_graph_image_widget()
