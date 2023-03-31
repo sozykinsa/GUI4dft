@@ -1,9 +1,42 @@
 from src_gui4dft.qtbased.guiopengl import GuiOpenGL
-
+from src_gui4dft.qtbased.pyqtgraphwidget import PyqtGraphWidget
+from src_gui4dft.qtbased.pyqtgraphwidgetimage import PyqtGraphWidgetImage
 from src_gui4dft.qtbased.mainform import MainForm
 from PySide2.QtCore import QCoreApplication, Qt
 
 import pytest
+
+
+@pytest.fixture
+def get_graph_widget(qapp):
+
+    def factory_function():
+        widget = PyqtGraphWidget()
+        widget.show()
+        return widget
+
+    return factory_function
+
+
+@pytest.fixture
+def graph_widget(get_graph_widget):
+    return get_graph_widget()
+
+
+@pytest.fixture
+def get_graph_image_widget(qapp):
+
+    def factory_function():
+        widget = PyqtGraphWidgetImage()
+        widget.show()
+        return widget
+
+    return factory_function
+
+
+@pytest.fixture
+def graph_image_widget(get_graph_image_widget):
+    return get_graph_image_widget()
 
 
 @pytest.fixture

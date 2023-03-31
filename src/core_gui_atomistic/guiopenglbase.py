@@ -431,8 +431,8 @@ class GuiOpenGLBase(QOpenGLWidget):
 
         for at in self.main_model.atoms:
             gl.glPushMatrix()
-            gl.glTranslatef(at.x * self.scale_factor, at.y * self.scale_factor, at.z * self.scale_factor)
-            rad = mendeley.Atoms[at.charge].radius/mendeley.Atoms[6].radius * self.scale_factor
+            gl.glTranslatef(*(at.xyz * self.scale_factor))
+            rad = mendeley.Atoms[at.charge].radius / mendeley.Atoms[6].radius * self.scale_factor
 
             color = np.array((0.0, 0.0, 0.0, 1.0))
             rad_scale = 0.3
@@ -744,7 +744,7 @@ class GuiOpenGLBase(QOpenGLWidget):
 
     def get_model(self):
         model = deepcopy(self.main_model)
-        model.move(*(-self.coord0))
+        model.move(-self.coord0)
         model.translated_atoms_remove()
         return model
 
@@ -855,7 +855,7 @@ class GuiOpenGLBase(QOpenGLWidget):
         self.selected_atom = -1
         self.main_model = deepcopy(structure)
         self.coord0 = -self.main_model.get_center_of_mass()
-        self.main_model.move(*self.coord0)
+        self.main_model.move(self.coord0)
         self.active = False
         self.auto_zoom()
         self.main_model.find_bonds_fast()

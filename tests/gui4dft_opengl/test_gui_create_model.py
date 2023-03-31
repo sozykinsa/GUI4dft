@@ -28,4 +28,4 @@ def test_create_swnt(gui4dft_application):
 def test_create_graphene(gui4dft_application):
     window = gui4dft_application
     window.create_2d_hexagonal()
-    assert len(window.models[-1].atoms) == 128
+    assert len(window.models[-1].atoms) == 98

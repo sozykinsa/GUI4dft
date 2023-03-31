@@ -81,7 +81,7 @@ def test_rotations(h2o_model: AtomicModel) -> None:
 def test_add_atom(h2o_model: AtomicModel) -> None:
     model1 = deepcopy(h2o_model)
     model2 = deepcopy(h2o_model)
-    model2.move(0.5, 0.3, 0.4)
+    model2.move(np.array([0.5, 0.3, 0.4]))
     model1.add_atom(model2.atoms[0], 3.1)
     assert len(model1.atoms) == 3
     model1.add_atom(model2.atoms[0], 0.6)
@@ -109,7 +109,7 @@ def test_grow(h2o_model):
 def test_move(h2o_model):
     model = h2o_model
     model_move = deepcopy(h2o_model)
-    model_move.move(1.0, 2.0, 3.0)
+    model_move.move(np.array([1.0, 2.0, 3.0]))
     assert model.atoms[0].x + 1.0 == model_move.atoms[0].x
     assert model.atoms[0].y + 2.0 == model_move.atoms[0].y
     assert model.atoms[0].z + 3.0 == model_move.atoms[0].z

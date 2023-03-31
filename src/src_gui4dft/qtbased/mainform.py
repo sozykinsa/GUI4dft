@@ -192,6 +192,7 @@ class MainForm(QMainWindow):
         self.ui.ColorAxesDialogButton.clicked.connect(self.select_axes_color)
         self.ui.ColorContourDialogButton.clicked.connect(self.select_contour_color)
         self.ui.manual_colors_default.clicked.connect(self.set_manual_colors_default)
+        self.ui.FormBondLenSpinBox.valueChanged.connect(self.bond_len_correct)
 
         self.ui.FormActionsButtonPlotPDOS.clicked.connect(self.plot_pdos)
         self.ui.plot_bands.clicked.connect(self.plot_bands)
@@ -202,6 +203,7 @@ class MainForm(QMainWindow):
         self.ui.PropertyAtomAtomDistanceGet.clicked.connect(self.get_bond)
         self.ui.FormStylesFor2DGraph.clicked.connect(self.set_2d_graph_styles)
         self.ui.FormModifyTwist.clicked.connect(self.twist_model)
+        self.ui.model_move_by_vector.clicked.connect(self.move_model)
         self.ui.fit_with.clicked.connect(self.fit_with)
 
         self.ui.FormSelectPart1File.clicked.connect(self.set_part1_file)
@@ -243,6 +245,9 @@ class MainForm(QMainWindow):
         self.ui.FormModifyGoPositive.clicked.connect(self.model_go_to_positive)
         self.ui.FormModifyGoToCell.clicked.connect(self.model_go_to_cell)
         self.ui.modify_center_to_zero.clicked.connect(self.model_center_to_zero)
+        self.ui.x_circular_shift.clicked.connect(self.model_x_circular_shift)
+        self.ui.y_circular_shift.clicked.connect(self.model_y_circular_shift)
+        self.ui.z_circular_shift.clicked.connect(self.model_z_circular_shift)
 
         self.ui.FormActionsPostButVoronoi.clicked.connect(self.plot_voronoi)
         self.ui.optimize_cell_param.clicked.connect(self.plot_volume_param_energy)
@@ -734,8 +739,7 @@ class MainForm(QMainWindow):
         let2 = self.ui.FormAtomsList2.currentIndex()
 
         if not ((let1 == 0) or (let2 == 0)):
-            mendeley = TPeriodTable()
-            bond = mendeley.Bonds[let1][let2]
+            bond = self.periodic_table.Bonds[let1][let2]
         else:
             bond = 0
         self.ui.FormBondLenSpinBox.setValue(bond)
@@ -865,11 +869,11 @@ class MainForm(QMainWindow):
             """ start: parts transformation"""
             left_move_x = self.ui.FormActionsPreMoveLeftElectrodeX.value()
             left_move_y = self.ui.FormActionsPreMoveLeftElectrodeY.value()
-            model_left.move(left_move_x, left_move_y, 0)
+            model_left.move(np.array([left_move_x, left_move_y, 0]))
 
             righ_move_x = self.ui.FormActionsPreMoveRightElectrodeX.value()
             righ_move_y = self.ui.FormActionsPreMoveRightElectrodeY.value()
-            model_righ.move(righ_move_x, righ_move_y, 0)
+            model_righ.move(np.array([righ_move_x, righ_move_y, 0]))
 
             scat_rotationX = self.ui.FormActionsPreSpinScatRotX.value()
             scat_rotationY = self.ui.FormActionsPreSpinScatRotY.value()
@@ -881,7 +885,7 @@ class MainForm(QMainWindow):
 
             scat_move_x = self.ui.FormActionsPreMoveScatX.value()
             scat_move_y = self.ui.FormActionsPreMoveScatY.value()
-            model_scat.move(scat_move_x, scat_move_y, 0)
+            model_scat.move(np.array([scat_move_x, scat_move_y, 0]))
 
             """ end: parts transformation"""
 
@@ -895,10 +899,10 @@ class MainForm(QMainWindow):
 
             model = AtomicModel()
             model.add_atomic_model(model_left)
-            model_scat.move(0, 0, -(left_bord - left_elec_max) + left_dist)
+            model_scat.move(np.array([0, 0, -(left_bord - left_elec_max) + left_dist]))
             model.add_atomic_model(model_scat)
             right_bord = model.maxZ()
-            model_righ.move(0, 0, (right_bord - right_elec_min) + right_dist)
+            model_righ.move(np.array([0, 0, (right_bord - right_elec_min) + right_dist]))
             model.add_atomic_model(model_righ)
 
             self.models.append(model)
@@ -984,14 +988,10 @@ class MainForm(QMainWindow):
     def volumeric_data_to_file(self, f_name, volumeric_data, x1, x2, y1, y2, z1, z2):
         model = self.ui.openGLWidget.get_model()
         if f_name.find(".XSF") >= 0:
-            #f_name = f_name.split(".")[0]
             text = volumeric_data.to_xsf_text(model, x1, x2, y1, y2, z1, z2)
             helpers.write_text_to_file(f_name, text)
 
         if f_name.find(".cube") >= 0:
-            #print(f_name)
-            #f_name = f_name.split(".")[0]
-            #print(f_name)
             text = volumeric_data.to_cube_text(model, x1, x2, y1, y2, z1, z2)
             helpers.write_text_to_file(f_name, text)
 
@@ -1604,6 +1604,33 @@ class MainForm(QMainWindow):
         self.add_model_and_show(model)
         self.model_orientation_to_form()
 
+    def model_x_circular_shift(self):
+        if self.ui.openGLWidget.main_model.n_atoms() == 0:
+            return
+        model = self.models[self.active_model]
+        step = self.ui.x_circular_shift_step.value()
+        model.move(np.array([-step, 0, 0]))
+        model.go_to_positive_x_array_translate(model.atoms)
+        self.add_model_and_show(model)
+
+    def model_y_circular_shift(self):
+        if self.ui.openGLWidget.main_model.n_atoms() == 0:
+            return
+        model = self.models[self.active_model]
+        step = self.ui.y_circular_shift_step.value()
+        model.move(np.array([0, -step, 0]))
+        model.go_to_positive_y_array_translate(model.atoms)
+        self.add_model_and_show(model)
+
+    def model_z_circular_shift(self):
+        if self.ui.openGLWidget.main_model.n_atoms() == 0:
+            return
+        model = self.models[self.active_model]
+        step = self.ui.z_circular_shift_step.value()
+        model.move(np.array([0, 0, -step]))
+        model.go_to_positive_z_array_translate(model.atoms)
+        self.add_model_and_show(model)
+
     def model_go_to_positive(self):
         if self.ui.openGLWidget.main_model.n_atoms() == 0:
             return
@@ -1634,21 +1661,24 @@ class MainForm(QMainWindow):
         if self.ui.openGLWidget.main_model.n_atoms() == 0:
             return
         model = self.ui.openGLWidget.main_model
-        model = model.grow_x()
+        step = self.ui.grow_x_size.value()
+        model = model.grow_x(step)
         self.add_model_and_show(model)
 
     def model_grow_y(self):
         if self.ui.openGLWidget.main_model.n_atoms() == 0:
             return
         model = self.ui.openGLWidget.main_model
-        model = model.grow_y()
+        step = self.ui.grow_y_size.value()
+        model = model.grow_y(step)
         self.add_model_and_show(model)
 
     def model_grow_z(self):
         if self.ui.openGLWidget.main_model.n_atoms() == 0:
             return
         model = self.ui.openGLWidget.main_model
-        model = model.grow_z()
+        step = self.ui.grow_z_size.value()
+        model = model.grow_z(step)
         self.add_model_and_show(model)
 
     def plot_model(self, value):
@@ -2569,6 +2599,14 @@ class MainForm(QMainWindow):
         self.models[self.active_model].twist_z(angle)
         self.plot_model(self.active_model)
 
+    def move_model(self):
+        dx = self.ui.model_move_x.value()
+        dy = self.ui.model_move_y.value()
+        dz = self.ui.model_move_z.value()
+        model = self.models[self.active_model]
+        model.move(np.array([dx, dy, dz]))
+        self.add_model_and_show(model)
+
     def fdf_data_to_form(self):
         if len(self.models) == 0:
             return
@@ -2878,6 +2916,19 @@ class MainForm(QMainWindow):
         self.change_color(self.ui.ColorContour, SETTINGS_Color_Of_Contour)
         self.plot_contour()
 
+    def bond_len_correct(self, d):
+        let1 = self.ui.FormAtomsList1.currentText()
+        let2 = self.ui.FormAtomsList2.currentText()
+        ch1 = self.periodic_table.get_charge_by_letter(let1)
+        ch2 = self.periodic_table.get_charge_by_letter(let2)
+        self.periodic_table.Bonds[ch1][ch2] = d
+        self.periodic_table.Bonds[ch2][ch1] = d
+        self.ui.openGLWidget.main_model.set_mendeley(self.periodic_table)
+        self.ui.openGLWidget.main_model.find_bonds_fast()
+        self.ui.openGLWidget.add_all_elements()
+        self.ui.openGLWidget.update()
+        print(let1, "-", let2, ": ", d)
+
     def create_2d_hexagonal(self):
         leng, m, n = self.model_2d_parameters()
         model_type = self.ui.model_2d_type.currentText()
@@ -2900,7 +2951,12 @@ class MainForm(QMainWindow):
         if is_ribbon:
             model = HexagonalPlane(ch1, ch2, a, n, m, leng)
         else:
-            model = HexagonalPlaneHex(ch1, ch2, a, n, m)
+            lattice = 1
+            if self.ui.generate_2d_hex2.isChecked():
+                lattice = 2
+            if self.ui.generate_2d_hex3.isChecked():
+                lattice = 3
+            model = HexagonalPlaneHex(ch1, ch2, a, n - 1, m - 1, lattice=lattice)
         self.models.append(model)
         self.plot_model(-1)
         self.fill_gui(model_type + "-model")

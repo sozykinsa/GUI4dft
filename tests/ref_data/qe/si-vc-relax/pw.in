@@ -1,0 +1,35 @@
+&control
+    calculation='vc-relax'
+    restart_mode='from_scratch',
+    prefix='Si'
+    pseudo_dir = '.'
+    outdir='./tmp/'
+    verbosity='high'
+ /                                              
+ &system
+    ibrav = 0,
+    nat = 2, 
+    ntyp = 1,
+    ecutwfc = 20.0,
+ /
+ &electrons
+    conv_thr =  1.d-9
+    mixing_beta = 0.3
+ /
+ &ions
+ ion_dynamics = 'bfgs'
+ /
+ &cell
+ cell_dynamics = 'bfgs'
+ /
+CELL_PARAMETERS { angstrom }
+-2.6988037638089994 0.0 2.6988037638089994
+0.0 2.6988037638089994 2.6988037638089994
+-2.6988037638089994 2.6988037638089994 0.0
+ATOMIC_SPECIES
+ Si  28.086  Si.pbe-n-kjpaw_psl.1.0.0.UPF
+ATOMIC_POSITIONS {crystal}
+Si 0.0 0.0 0.0
+Si -0.245 0.752 -0.25
+K_POINTS {automatic}
+ 8 8 8 1 1 1
