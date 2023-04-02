@@ -338,9 +338,14 @@ class TSIESTA:
     @staticmethod
     def spin_polarized(filename):
         """Returns the SpinPolarized from SIESTA output file."""
-        res = helpers.from_file_property(filename, 'SpinPolarized')
+        res = helpers.from_file_property(filename, 'Spin', prop_type='string')
         if res is None:
-            res = False
+            res = helpers.from_file_property(filename, 'SpinPolarized', prop_type='string')
+            if res is None:
+                res = False
+        else:
+            if res == "non-polarized":
+                res = False
         return res
 
     @staticmethod
@@ -410,13 +415,14 @@ class TSIESTA:
         return data
 
     @staticmethod
-    def toSIESTAfdfdata(model, coord_style, units_type, latt_style='LatticeParameters'):
+    def to_siesta_fdf_data(model, coord_style, units_type, latt_style='LatticeParameters'):
         """Returns data for SIESTA fdf file."""
         data = ""
         periodic_table = TPeriodTable()
         data += 'NumberOfAtoms ' + str(len(model.atoms)) + "\n"
         types = model.types_of_atoms()
         data += 'NumberOfSpecies ' + str(len(types)) + "\n"
+        data += "WriteCoorStep True\n"
         data += '%block ChemicalSpeciesLabel\n'
         for i in range(0, len(types)):
             data += ' ' + str(i + 1) + '  ' + str(types[i][0]) + '  ' +\
@@ -476,7 +482,7 @@ class TSIESTA:
         return data
 
     @staticmethod
-    def toSIESTAxyzdata(model):
+    def to_siesta_xyz_data(model):
         """Returns data for *.xyz file."""
         data = "  "
         nAtoms = model.n_atoms()

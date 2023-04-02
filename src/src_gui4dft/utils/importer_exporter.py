@@ -3,7 +3,7 @@
 import os
 from core_gui_atomistic.atomic_model import AtomicModel
 from src_gui4dft.program.vasp import fermi_energy_from_doscar, atoms_from_POSCAR
-from src_gui4dft.utils.fdfdata import TFDFFile
+from src_gui4dft.program.fdfdata import TFDFFile
 from src_gui4dft.program.siesta import TSIESTA
 from src_gui4dft.program.firefly import atomic_model_to_firefly_inp
 from src_gui4dft.program.vasp import model_to_vasp_poscar
@@ -81,9 +81,9 @@ class ImporterExporter(object):
         if f_name.endswith(".inp"):
             text = atomic_model_to_firefly_inp(model)
         if f_name.endswith(".fdf"):
-            text = TSIESTA.toSIESTAfdfdata(model, "Fractional", "Ang", "LatticeVectors")
+            text = TSIESTA.to_siesta_fdf_data(model, "Fractional", "Ang", "LatticeVectors")
         if f_name.endswith(".xyz"):
-            text = TSIESTA.toSIESTAxyzdata(model)
+            text = TSIESTA.to_siesta_xyz_data(model)
         if f_name.endswith(".data"):
             text = GUI4dftProjectFile.project_file_writer(model)
         helpers.write_text_to_file(f_name, text)

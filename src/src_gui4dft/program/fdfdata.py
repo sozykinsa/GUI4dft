@@ -37,9 +37,9 @@ class TFDFFile:
             if not data[i].lstrip().startswith('#'):
                 if data[i].find("%include") >= 0:
                     new_f = data[i].split()[1]
-                    dirname = os.path.dirname(filename)
-                    print(dirname + "/" + new_f)
-                    self.from_fdf_file(dirname + "/" + new_f)
+                    dir_name = os.path.dirname(filename)
+                    # print(dir_name + "/" + new_f)
+                    self.from_fdf_file(dir_name + "/" + new_f)
                     i += 1
                 elif data[i].find("%block") >= 0:
                     new_block = Block(data[i].split()[1])
@@ -101,7 +101,7 @@ class TFDFFile:
     def get_all_data(self, _structure, coord_type, units_type, latt_type):
         structure = deepcopy(_structure)
 
-        st = TSIESTA.toSIESTAfdfdata(structure, coord_type, units_type, latt_type)
+        st = TSIESTA.to_siesta_fdf_data(structure, coord_type, units_type, latt_type)
 
         for prop in self.properties:
             f = True
@@ -112,6 +112,8 @@ class TFDFFile:
             if prop.lower().find("atomiccoordinatesformat") >= 0:
                 f = False
             if prop.lower().find("latticeconstant") >= 0:
+                f = False
+            if prop.lower().find("writecoorstep") >= 0:
                 f = False
             if f:
                 st += prop
@@ -130,8 +132,8 @@ class TFDFFile:
                 f = False
 
             if f:
-                st += "%block "+block.name+"\n"
+                st += "%block " + block.name + "\n"
                 for row in block.value:
                     st += row
-                st += "%endblock "+block.name+"\n"
+                st += "%endblock " + block.name + "\n"
         return st

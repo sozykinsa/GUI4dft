@@ -41,7 +41,7 @@ from src_gui4dft.program import ase
 from src_gui4dft.utils.importer_exporter import ImporterExporter
 from src_gui4dft.utils.electronic_prop_reader import read_siesta_bands, dos_from_file
 from core_gui_atomistic.periodic_table import TPeriodTable
-from src_gui4dft.utils.fdfdata import TFDFFile
+from src_gui4dft.program.fdfdata import TFDFFile
 from src_gui4dft.utils.calculators import Calculators as Calculator
 from src_gui4dft.utils.calculators import gaps
 from core_gui_atomistic import helpers
