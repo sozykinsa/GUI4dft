@@ -190,6 +190,15 @@ class AtomicModel(object):
         angle = math.acos(ab / (a * b))
         return 180 * angle / math.pi
 
+    def cell_params(self):
+        a = np.linalg.norm(self.lat_vector1)
+        b = np.linalg.norm(self.lat_vector2)
+        c = np.linalg.norm(self.lat_vector3)
+        al = self.get_angle_alpha()
+        bet = self.get_angle_beta()
+        gam = self.get_angle_gamma()
+        return a, b, c, al, bet, gam
+
     def set_lat_vectors(self, v1, v2, v3):
         if (len(v1) == 3) and (len(v2) == 3) and (len(v3) == 3):
             self.lat_vector1 = np.array(v1)
