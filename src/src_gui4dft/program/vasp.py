@@ -156,7 +156,7 @@ def model_to_vasp_poscar(model):
     data += "Direct\n"
 
     model.sort_atoms_by_type()
-    # model.go_to_positive_coordinates()
+    model.go_to_positive_coordinates()
     model.convert_from_cart_to_direct()
     data += model.coords_for_export("FractionalPOSCAR")
     return data
