@@ -125,7 +125,7 @@ def vasp_dos(filename):
         return np.array(spin_up), np.array(spin_down), np.array(energy)
 
 
-def model_to_vasp_poscar(model):
+def model_to_vasp_poscar(model, coord_type="Fractional"):
     """Create file in VASP POSCAR format."""
     data = ""
     data += "model \n"
@@ -153,10 +153,13 @@ def model_to_vasp_poscar(model):
         data += ' ' + str(count)
     data += "\n"
 
-    data += "Direct\n"
-
     model.sort_atoms_by_type()
     model.go_to_positive_coordinates()
-    model.convert_from_cart_to_direct()
-    data += model.coords_for_export("FractionalPOSCAR")
+    if coord_type == "Fractional":
+        model.convert_from_cart_to_direct()
+    if coord_type == "Fractional":
+        data += "Direct\n"
+    if coord_type == "Cartesian":
+        data += "Cartesian\n"
+    data += model.coords_for_export("POSCAR")
     return data

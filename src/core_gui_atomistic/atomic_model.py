@@ -741,7 +741,7 @@ class AtomicModel(object):
                         str1 = ' ' + str(j + 1)
                 data += self.xyz_string(i) + str1 + "\n"
 
-        if coord_style == "FractionalPOSCAR":
+        if coord_style == "POSCAR":
             for i in range(0, len(self.atoms)):
                 data += ' ' + self.xyz_string(i) + "\n"
 

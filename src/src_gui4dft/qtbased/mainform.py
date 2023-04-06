@@ -2635,7 +2635,7 @@ class MainForm(QMainWindow):
             return
         try:
             model = self.ui.openGLWidget.get_model()
-            text = model_to_vasp_poscar(model)
+            text = model_to_vasp_poscar(model, self.coord_type)
             self.ui.FormActionsPreTextFDF.setText(text)
         except Exception:
             print("There are no atoms in the model")
