@@ -154,7 +154,8 @@ def model_to_vasp_poscar(model, coord_type="Fractional"):
     data += "\n"
 
     model.sort_atoms_by_type()
-    model.go_to_positive_coordinates()
+    # model.go_to_positive_coordinates()
+    model.move_atoms_to_center()
     if coord_type == "Fractional":
         model.convert_from_cart_to_direct()
     if coord_type == "Fractional":
