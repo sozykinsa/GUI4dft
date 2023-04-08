@@ -710,6 +710,11 @@ class AtomicModel(object):
         cm = self.center_mass()
         self.move(cm)
 
+    def move_atoms_to_center(self):
+        cm = self.center_mass()
+        cc = 0.5 * (self.lat_vectors[0] + self.lat_vectors[1] + self.lat_vectors[2])
+        self.move(cc - cm)
+
     def move_atoms_to_cell(self):
         a_inv = inv(self.lat_vectors)
         self.move_object_to_cell(self.atoms, a_inv)

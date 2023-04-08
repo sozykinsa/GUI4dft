@@ -48,7 +48,7 @@
        <enum>QTabWidget::West</enum>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>2</number>
       </property>
       <property name="elideMode">
        <enum>Qt::ElideNone</enum>
@@ -4512,8 +4512,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>339</width>
-                 <height>347</height>
+                 <width>371</width>
+                 <height>593</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -4734,16 +4734,16 @@
                        <number>0</number>
                       </property>
                       <item>
-                       <widget class="QPushButton" name="FormModifyGoPositive">
+                       <widget class="QPushButton" name="modify_go_to_positive">
                         <property name="text">
                          <string>Go to positive!</string>
                         </property>
                        </widget>
                       </item>
                       <item>
-                       <widget class="QPushButton" name="FormModifyGoToCell">
+                       <widget class="QPushButton" name="modify_go_to_center">
                         <property name="text">
-                         <string>Go to cell</string>
+                         <string>Go to center</string>
                         </property>
                        </widget>
                       </item>
@@ -4753,6 +4753,56 @@
                          <string>Center to zero</string>
                         </property>
                        </widget>
+                      </item>
+                     </layout>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QFrame" name="frame_177">
+                     <property name="minimumSize">
+                      <size>
+                       <width>0</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="frameShape">
+                      <enum>QFrame::StyledPanel</enum>
+                     </property>
+                     <property name="frameShadow">
+                      <enum>QFrame::Raised</enum>
+                     </property>
+                     <layout class="QHBoxLayout" name="horizontalLayout_188">
+                      <property name="leftMargin">
+                       <number>0</number>
+                      </property>
+                      <property name="topMargin">
+                       <number>0</number>
+                      </property>
+                      <property name="rightMargin">
+                       <number>0</number>
+                      </property>
+                      <property name="bottomMargin">
+                       <number>0</number>
+                      </property>
+                      <item>
+                       <widget class="QPushButton" name="modify_go_to_cell">
+                        <property name="text">
+                         <string>Go to cell</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <spacer name="horizontalSpacer_145">
+                        <property name="orientation">
+                         <enum>Qt::Horizontal</enum>
+                        </property>
+                        <property name="sizeHint" stdset="0">
+                         <size>
+                          <width>220</width>
+                          <height>20</height>
+                         </size>
+                        </property>
+                       </spacer>
                       </item>
                      </layout>
                     </widget>

@@ -245,8 +245,9 @@ class MainForm(QMainWindow):
         self.ui.FormModifyGrowY.clicked.connect(self.model_grow_y)
         self.ui.FormModifyGrowZ.clicked.connect(self.model_grow_z)
 
-        self.ui.FormModifyGoPositive.clicked.connect(self.model_go_to_positive)
-        self.ui.FormModifyGoToCell.clicked.connect(self.model_go_to_cell)
+        self.ui.modify_go_to_positive.clicked.connect(self.model_go_to_positive)
+        self.ui.modify_go_to_cell.clicked.connect(self.model_go_to_cell)
+        self.ui.modify_go_to_center.clicked.connect(self.model_go_to_center)
         self.ui.modify_center_to_zero.clicked.connect(self.model_center_to_zero)
         self.ui.x_circular_shift.clicked.connect(self.model_x_circular_shift)
         self.ui.y_circular_shift.clicked.connect(self.model_y_circular_shift)
@@ -1653,6 +1654,13 @@ class MainForm(QMainWindow):
             return
         model = self.ui.openGLWidget.main_model
         model.move_atoms_to_zero()
+        self.add_model_and_show(model)
+
+    def model_go_to_center(self):
+        if self.ui.openGLWidget.main_model.n_atoms() == 0:
+            return
+        model = self.ui.openGLWidget.main_model
+        model.move_atoms_to_center()
         self.add_model_and_show(model)
 
     def add_model_and_show(self, model):  # pragma: no cover

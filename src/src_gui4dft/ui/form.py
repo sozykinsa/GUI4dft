@@ -2463,7 +2463,7 @@ class Ui_MainWindow(object):
         self.toolBox_6.addItem(self.page_11, u"Rotate or move model")
         self.page_12 = QWidget()
         self.page_12.setObjectName(u"page_12")
-        self.page_12.setGeometry(QRect(0, 0, 339, 347))
+        self.page_12.setGeometry(QRect(0, 0, 371, 593))
         self.verticalLayout_41 = QVBoxLayout(self.page_12)
         self.verticalLayout_41.setObjectName(u"verticalLayout_41")
         self.groupBox_37 = QGroupBox(self.page_12)
@@ -2563,15 +2563,15 @@ class Ui_MainWindow(object):
         self.horizontalLayout_50 = QHBoxLayout(self.frame_112)
         self.horizontalLayout_50.setObjectName(u"horizontalLayout_50")
         self.horizontalLayout_50.setContentsMargins(0, 0, 0, 0)
-        self.FormModifyGoPositive = QPushButton(self.frame_112)
-        self.FormModifyGoPositive.setObjectName(u"FormModifyGoPositive")
+        self.modify_go_to_positive = QPushButton(self.frame_112)
+        self.modify_go_to_positive.setObjectName(u"modify_go_to_positive")
 
-        self.horizontalLayout_50.addWidget(self.FormModifyGoPositive)
+        self.horizontalLayout_50.addWidget(self.modify_go_to_positive)
 
-        self.FormModifyGoToCell = QPushButton(self.frame_112)
-        self.FormModifyGoToCell.setObjectName(u"FormModifyGoToCell")
+        self.modify_go_to_center = QPushButton(self.frame_112)
+        self.modify_go_to_center.setObjectName(u"modify_go_to_center")
 
-        self.horizontalLayout_50.addWidget(self.FormModifyGoToCell)
+        self.horizontalLayout_50.addWidget(self.modify_go_to_center)
 
         self.modify_center_to_zero = QPushButton(self.frame_112)
         self.modify_center_to_zero.setObjectName(u"modify_center_to_zero")
@@ -2580,6 +2580,26 @@ class Ui_MainWindow(object):
 
 
         self.verticalLayout_69.addWidget(self.frame_112)
+
+        self.frame_177 = QFrame(self.groupBox_49)
+        self.frame_177.setObjectName(u"frame_177")
+        self.frame_177.setMinimumSize(QSize(0, 0))
+        self.frame_177.setFrameShape(QFrame.StyledPanel)
+        self.frame_177.setFrameShadow(QFrame.Raised)
+        self.horizontalLayout_188 = QHBoxLayout(self.frame_177)
+        self.horizontalLayout_188.setObjectName(u"horizontalLayout_188")
+        self.horizontalLayout_188.setContentsMargins(0, 0, 0, 0)
+        self.modify_go_to_cell = QPushButton(self.frame_177)
+        self.modify_go_to_cell.setObjectName(u"modify_go_to_cell")
+
+        self.horizontalLayout_188.addWidget(self.modify_go_to_cell)
+
+        self.horizontalSpacer_145 = QSpacerItem(220, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_188.addItem(self.horizontalSpacer_145)
+
+
+        self.verticalLayout_69.addWidget(self.frame_177)
 
         self.frame_111 = QFrame(self.groupBox_49)
         self.frame_111.setObjectName(u"frame_111")
@@ -6634,7 +6654,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.tabWidget.setCurrentIndex(0)
+        self.tabWidget.setCurrentIndex(2)
         self.tabWidget_3.setCurrentIndex(0)
         self.toolBox.setCurrentIndex(0)
         self.tabWidget_11.setCurrentIndex(0)
@@ -6826,9 +6846,10 @@ class Ui_MainWindow(object):
         self.FormModifyGrowY.setText(QCoreApplication.translate("MainWindow", u"Grow Y", None))
         self.FormModifyGrowZ.setText(QCoreApplication.translate("MainWindow", u"Grow Z", None))
         self.groupBox_49.setTitle(QCoreApplication.translate("MainWindow", u"Shift", None))
-        self.FormModifyGoPositive.setText(QCoreApplication.translate("MainWindow", u"Go to positive!", None))
-        self.FormModifyGoToCell.setText(QCoreApplication.translate("MainWindow", u"Go to cell", None))
+        self.modify_go_to_positive.setText(QCoreApplication.translate("MainWindow", u"Go to positive!", None))
+        self.modify_go_to_center.setText(QCoreApplication.translate("MainWindow", u"Go to center", None))
         self.modify_center_to_zero.setText(QCoreApplication.translate("MainWindow", u"Center to zero", None))
+        self.modify_go_to_cell.setText(QCoreApplication.translate("MainWindow", u"Go to cell", None))
         self.x_circular_shift.setText(QCoreApplication.translate("MainWindow", u"x-circular shift", None))
         self.y_circular_shift.setText(QCoreApplication.translate("MainWindow", u"y-circular shift", None))
         self.z_circular_shift.setText(QCoreApplication.translate("MainWindow", u"z-circular shift", None))
