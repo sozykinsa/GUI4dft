@@ -24,6 +24,11 @@ class BiNT(TAtomicModel):
             atom1 = ["B", 5]
             atom2 = ["C", 6]
 
+        if tube_type == "SiC":
+            a = 1.7
+            atom1 = ["Si", 14]
+            atom2 = ["C", 6]
+
         z = 0
 
         df = 180 / n

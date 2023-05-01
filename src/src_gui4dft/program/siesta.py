@@ -201,7 +201,7 @@ class TSIESTA:
     @staticmethod
     def energies(filename):
         """Energy from each step."""
-        return TSIESTA.list_of_values(filename, "siesta: E_KS(eV) =")
+        return np.array(TSIESTA.list_of_values(filename, "siesta: E_KS(eV) ="), dtype=float)
 
     @staticmethod
     def FermiEnergy(filename):

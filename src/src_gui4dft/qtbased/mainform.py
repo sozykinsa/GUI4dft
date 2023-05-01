@@ -368,6 +368,7 @@ class MainForm(QMainWindow):
         bi_element_type_tube = QStandardItemModel()
         bi_element_type_tube.appendRow(QStandardItem("BN"))
         bi_element_type_tube.appendRow(QStandardItem("BC"))
+        bi_element_type_tube.appendRow(QStandardItem("SiC"))
         self.ui.FormNanotypeTypeSelector.setModel(bi_element_type_tube)
         self.ui.FormNanotypeTypeSelector.setCurrentIndex(0)
 
@@ -1028,10 +1029,12 @@ class MainForm(QMainWindow):
     def fill_energies(self, f_name: str) -> None:
         """Plot energies for steps of output."""
         energies = TSIESTA.energies(f_name)
+        energies_min = min(energies)
+        energies -= energies_min
         self.ui.PyqtGraphWidget.set_xticks(None)
 
         x_title = "Step"
-        y_title = "Energy, eV"
+        y_title = "Energy (+" + str(-energies_min) + "), eV"
         title = "Energies"
 
         self.ui.PyqtGraphWidget.clear()

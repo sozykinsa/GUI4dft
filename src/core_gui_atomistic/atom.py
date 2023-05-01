@@ -14,6 +14,7 @@ class Atom(object):
         self.charge = int(at_data[4])
         self.is_visible: bool = True
         self.selected: bool = False
+        self.active: bool = False
         self.fragment1: bool = False
         self.properties = {}
         self.visible_property = ""
