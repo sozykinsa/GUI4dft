@@ -190,6 +190,15 @@ class AtomicModel(object):
         angle = math.acos(ab / (a * b))
         return 180 * angle / math.pi
 
+    def cell_params(self):
+        a = np.linalg.norm(self.lat_vector1)
+        b = np.linalg.norm(self.lat_vector2)
+        c = np.linalg.norm(self.lat_vector3)
+        al = self.get_angle_alpha()
+        bet = self.get_angle_beta()
+        gam = self.get_angle_gamma()
+        return a, b, c, al, bet, gam
+
     def set_lat_vectors(self, v1, v2, v3):
         if (len(v1) == 3) and (len(v2) == 3) and (len(v3) == 3):
             self.lat_vector1 = np.array(v1)
@@ -701,6 +710,11 @@ class AtomicModel(object):
         cm = self.center_mass()
         self.move(cm)
 
+    def move_atoms_to_center(self):
+        cm = self.center_mass()
+        cc = 0.5 * (self.lat_vectors[0] + self.lat_vectors[1] + self.lat_vectors[2])
+        self.move(cc - cm)
+
     def move_atoms_to_cell(self):
         a_inv = inv(self.lat_vectors)
         self.move_object_to_cell(self.atoms, a_inv)
@@ -732,7 +746,7 @@ class AtomicModel(object):
                         str1 = ' ' + str(j + 1)
                 data += self.xyz_string(i) + str1 + "\n"
 
-        if coord_style == "FractionalPOSCAR":
+        if coord_style == "POSCAR":
             for i in range(0, len(self.atoms)):
                 data += ' ' + self.xyz_string(i) + "\n"
 

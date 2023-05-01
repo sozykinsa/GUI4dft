@@ -201,7 +201,7 @@ class TSIESTA:
     @staticmethod
     def energies(filename):
         """Energy from each step."""
-        return TSIESTA.list_of_values(filename, "siesta: E_KS(eV) =")
+        return np.array(TSIESTA.list_of_values(filename, "siesta: E_KS(eV) ="), dtype=float)
 
     @staticmethod
     def FermiEnergy(filename):
@@ -440,10 +440,9 @@ class TSIESTA:
 
         if latt_style == 'LatticeParameters':
             data += '%block LatticeParameters\n'
-            data += '  ' + str(np.linalg.norm(model.lat_vector1) * mult) + '  ' + \
-                    str(np.linalg.norm(model.lat_vector2) * mult) + '  ' + \
-                    str(np.linalg.norm(model.lat_vector3) * mult) + '  ' + str(model.get_angle_alpha()) + '  ' + \
-                    str(model.get_angle_beta()) + '  ' + str(model.get_angle_gamma()) + '\n'
+            a, b, c, al, bet, gam = model.cell_params()
+            data += '  ' + str(a * mult) + '  ' + str(b * mult) + '  ' + str(c * mult) + '  '
+            data += str(al) + '  ' + str(bet) + '  ' + str(gam) + '\n'
             data += '%endblock LatticeParameters\n'
         # or
         if latt_style == 'LatticeVectors':

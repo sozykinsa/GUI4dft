@@ -147,6 +147,9 @@ class MainForm(QMainWindow):
         self.ui.generate_2d_model.clicked.connect(self.create_2d_hexagonal)
         self.ui.generate_3d_bulk.clicked.connect(self.generate_3d_bulk)
 
+        self.ui.get_k_points.clicked.connect(self.get_k_points)
+        self.ui.get_k_path.clicked.connect(self.get_k_path)
+
         data = ["sc", "fcc", "bcc", "tetragonal", "bct", "hcp", "rhombohedral", "orthorhombic", "mcl", "diamond"]
         data.extend(["zincblende", "rocksalt", "cesiumchloride", "fluorite", "wurtzite"])
         crystalstructure_type = self.q_standard_item_model_init(data)
@@ -242,8 +245,9 @@ class MainForm(QMainWindow):
         self.ui.FormModifyGrowY.clicked.connect(self.model_grow_y)
         self.ui.FormModifyGrowZ.clicked.connect(self.model_grow_z)
 
-        self.ui.FormModifyGoPositive.clicked.connect(self.model_go_to_positive)
-        self.ui.FormModifyGoToCell.clicked.connect(self.model_go_to_cell)
+        self.ui.modify_go_to_positive.clicked.connect(self.model_go_to_positive)
+        self.ui.modify_go_to_cell.clicked.connect(self.model_go_to_cell)
+        self.ui.modify_go_to_center.clicked.connect(self.model_go_to_center)
         self.ui.modify_center_to_zero.clicked.connect(self.model_center_to_zero)
         self.ui.x_circular_shift.clicked.connect(self.model_x_circular_shift)
         self.ui.y_circular_shift.clicked.connect(self.model_y_circular_shift)
@@ -364,6 +368,7 @@ class MainForm(QMainWindow):
         bi_element_type_tube = QStandardItemModel()
         bi_element_type_tube.appendRow(QStandardItem("BN"))
         bi_element_type_tube.appendRow(QStandardItem("BC"))
+        bi_element_type_tube.appendRow(QStandardItem("SiC"))
         self.ui.FormNanotypeTypeSelector.setModel(bi_element_type_tube)
         self.ui.FormNanotypeTypeSelector.setCurrentIndex(0)
 
@@ -1024,10 +1029,12 @@ class MainForm(QMainWindow):
     def fill_energies(self, f_name: str) -> None:
         """Plot energies for steps of output."""
         energies = TSIESTA.energies(f_name)
+        energies_min = min(energies)
+        energies -= energies_min
         self.ui.PyqtGraphWidget.set_xticks(None)
 
         x_title = "Step"
-        y_title = "Energy, eV"
+        y_title = "Energy (+" + str(-energies_min) + "), eV"
         title = "Energies"
 
         self.ui.PyqtGraphWidget.clear()
@@ -1650,6 +1657,13 @@ class MainForm(QMainWindow):
             return
         model = self.ui.openGLWidget.main_model
         model.move_atoms_to_zero()
+        self.add_model_and_show(model)
+
+    def model_go_to_center(self):
+        if self.ui.openGLWidget.main_model.n_atoms() == 0:
+            return
+        model = self.ui.openGLWidget.main_model
+        model.move_atoms_to_center()
         self.add_model_and_show(model)
 
     def add_model_and_show(self, model):  # pragma: no cover
@@ -2632,7 +2646,7 @@ class MainForm(QMainWindow):
             return
         try:
             model = self.ui.openGLWidget.get_model()
-            text = model_to_vasp_poscar(model)
+            text = model_to_vasp_poscar(model, self.coord_type)
             self.ui.FormActionsPreTextFDF.setText(text)
         except Exception:
             print("There are no atoms in the model")
@@ -3070,6 +3084,34 @@ class MainForm(QMainWindow):
         self.plot_model(-1)
         self.ui.openGLWidget.add_atoms()
         self.fill_gui("Bi element NT-model")
+
+    def get_k_points(self):
+        from ase.dft.kpoints import get_special_points
+        if len(self.models) == 0:
+            return
+        kpts = get_special_points(cell=self.models[self.active_model].lat_vectors)
+        # print(kpts)
+        txt = ""
+        for point in kpts.items():
+            txt += str(point[0]) + " " + str(point[1]) + "\n"
+        self.ui.k_points_text.setText(txt)
+
+    def get_k_path(self):
+        from ase.geometry import Cell
+        a, b, c, al, bet, gam = self.models[self.active_model].cell_params()
+        cell = Cell.fromcellpar([a, b, c, al, bet, gam])
+        # k_path = cell.bandpath('GXW', npoints=20)
+        k_path = cell.bandpath(npoints=20)
+
+        # print(k_path)
+        # print(k_path.kpts)
+        # print("----")
+        # print(k_path.cartesian_kpts())
+        #BandPath(path='GXW', cell=[3x3], special_points={GKLUWX}, kpts=[20x3])
+        txt = ""
+        for point in k_path.kpts:
+            txt += str(point[0]) + " " + str(point[1]) + " " + str(point[2]) + "\n"
+        self.ui.k_path_text.setText(txt)
 
     def swnt_type1_selected(self):
         self.ui.spin_swnt_index_n.setEnabled(True)

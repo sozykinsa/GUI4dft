@@ -3225,8 +3225,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>337</width>
-                 <height>258</height>
+                 <width>371</width>
+                 <height>593</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -4512,8 +4512,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>339</width>
-                 <height>347</height>
+                 <width>371</width>
+                 <height>593</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -4734,16 +4734,16 @@
                        <number>0</number>
                       </property>
                       <item>
-                       <widget class="QPushButton" name="FormModifyGoPositive">
+                       <widget class="QPushButton" name="modify_go_to_positive">
                         <property name="text">
                          <string>Go to positive!</string>
                         </property>
                        </widget>
                       </item>
                       <item>
-                       <widget class="QPushButton" name="FormModifyGoToCell">
+                       <widget class="QPushButton" name="modify_go_to_center">
                         <property name="text">
-                         <string>Go to cell</string>
+                         <string>Go to center</string>
                         </property>
                        </widget>
                       </item>
@@ -4753,6 +4753,56 @@
                          <string>Center to zero</string>
                         </property>
                        </widget>
+                      </item>
+                     </layout>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QFrame" name="frame_177">
+                     <property name="minimumSize">
+                      <size>
+                       <width>0</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="frameShape">
+                      <enum>QFrame::StyledPanel</enum>
+                     </property>
+                     <property name="frameShadow">
+                      <enum>QFrame::Raised</enum>
+                     </property>
+                     <layout class="QHBoxLayout" name="horizontalLayout_188">
+                      <property name="leftMargin">
+                       <number>0</number>
+                      </property>
+                      <property name="topMargin">
+                       <number>0</number>
+                      </property>
+                      <property name="rightMargin">
+                       <number>0</number>
+                      </property>
+                      <property name="bottomMargin">
+                       <number>0</number>
+                      </property>
+                      <item>
+                       <widget class="QPushButton" name="modify_go_to_cell">
+                        <property name="text">
+                         <string>Go to cell</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <spacer name="horizontalSpacer_145">
+                        <property name="orientation">
+                         <enum>Qt::Horizontal</enum>
+                        </property>
+                        <property name="sizeHint" stdset="0">
+                         <size>
+                          <width>220</width>
+                          <height>20</height>
+                         </size>
+                        </property>
+                       </spacer>
                       </item>
                      </layout>
                     </widget>
@@ -4946,6 +4996,163 @@
                 </item>
                </layout>
               </widget>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+          <widget class="QWidget" name="tab_21">
+           <attribute name="title">
+            <string>K-path</string>
+           </attribute>
+           <layout class="QVBoxLayout" name="verticalLayout_73">
+            <item>
+             <widget class="QFrame" name="frame_175">
+              <property name="frameShape">
+               <enum>QFrame::StyledPanel</enum>
+              </property>
+              <property name="frameShadow">
+               <enum>QFrame::Raised</enum>
+              </property>
+              <layout class="QHBoxLayout" name="horizontalLayout_186">
+               <item>
+                <spacer name="horizontalSpacer_143">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+               <item>
+                <widget class="QPushButton" name="get_k_points">
+                 <property name="text">
+                  <string>Get k-points</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <spacer name="horizontalSpacer_144">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
+             <widget class="QTextBrowser" name="k_points_text">
+              <property name="readOnly">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QFrame" name="frame_176">
+              <property name="frameShape">
+               <enum>QFrame::StyledPanel</enum>
+              </property>
+              <property name="frameShadow">
+               <enum>QFrame::Raised</enum>
+              </property>
+              <layout class="QHBoxLayout" name="horizontalLayout_187">
+               <item>
+                <widget class="QLabel" name="label_36">
+                 <property name="text">
+                  <string>Points</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLineEdit" name="lineEdit">
+                 <property name="text">
+                  <string>G</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLabel" name="label_82">
+                 <property name="text">
+                  <string>    N</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QSpinBox" name="spinBox">
+                 <property name="minimum">
+                  <number>2</number>
+                 </property>
+                 <property name="maximum">
+                  <number>999</number>
+                 </property>
+                 <property name="value">
+                  <number>100</number>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
+             <widget class="QFrame" name="frame_174">
+              <property name="frameShape">
+               <enum>QFrame::StyledPanel</enum>
+              </property>
+              <property name="frameShadow">
+               <enum>QFrame::Raised</enum>
+              </property>
+              <layout class="QHBoxLayout" name="horizontalLayout_177">
+               <item>
+                <spacer name="horizontalSpacer_42">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>117</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+               <item>
+                <widget class="QPushButton" name="get_k_path">
+                 <property name="text">
+                  <string>Get k-path</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <spacer name="horizontalSpacer_142">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>117</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
+             <widget class="QTextBrowser" name="k_path_text">
+              <property name="readOnly">
+               <bool>false</bool>
+              </property>
              </widget>
             </item>
            </layout>
@@ -12190,8 +12397,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>98</width>
-         <height>100</height>
+         <width>665</width>
+         <height>765</height>
         </rect>
        </property>
        <attribute name="label">

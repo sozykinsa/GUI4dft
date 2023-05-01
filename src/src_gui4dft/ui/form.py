@@ -1817,7 +1817,7 @@ class Ui_MainWindow(object):
         self.toolBox_6.setSizePolicy(sizePolicy2)
         self.page_29 = QWidget()
         self.page_29.setObjectName(u"page_29")
-        self.page_29.setGeometry(QRect(0, 0, 337, 258))
+        self.page_29.setGeometry(QRect(0, 0, 371, 593))
         self.verticalLayout_26 = QVBoxLayout(self.page_29)
         self.verticalLayout_26.setObjectName(u"verticalLayout_26")
         self.frame_28 = QFrame(self.page_29)
@@ -2463,7 +2463,7 @@ class Ui_MainWindow(object):
         self.toolBox_6.addItem(self.page_11, u"Rotate or move model")
         self.page_12 = QWidget()
         self.page_12.setObjectName(u"page_12")
-        self.page_12.setGeometry(QRect(0, 0, 339, 347))
+        self.page_12.setGeometry(QRect(0, 0, 371, 593))
         self.verticalLayout_41 = QVBoxLayout(self.page_12)
         self.verticalLayout_41.setObjectName(u"verticalLayout_41")
         self.groupBox_37 = QGroupBox(self.page_12)
@@ -2563,15 +2563,15 @@ class Ui_MainWindow(object):
         self.horizontalLayout_50 = QHBoxLayout(self.frame_112)
         self.horizontalLayout_50.setObjectName(u"horizontalLayout_50")
         self.horizontalLayout_50.setContentsMargins(0, 0, 0, 0)
-        self.FormModifyGoPositive = QPushButton(self.frame_112)
-        self.FormModifyGoPositive.setObjectName(u"FormModifyGoPositive")
+        self.modify_go_to_positive = QPushButton(self.frame_112)
+        self.modify_go_to_positive.setObjectName(u"modify_go_to_positive")
 
-        self.horizontalLayout_50.addWidget(self.FormModifyGoPositive)
+        self.horizontalLayout_50.addWidget(self.modify_go_to_positive)
 
-        self.FormModifyGoToCell = QPushButton(self.frame_112)
-        self.FormModifyGoToCell.setObjectName(u"FormModifyGoToCell")
+        self.modify_go_to_center = QPushButton(self.frame_112)
+        self.modify_go_to_center.setObjectName(u"modify_go_to_center")
 
-        self.horizontalLayout_50.addWidget(self.FormModifyGoToCell)
+        self.horizontalLayout_50.addWidget(self.modify_go_to_center)
 
         self.modify_center_to_zero = QPushButton(self.frame_112)
         self.modify_center_to_zero.setObjectName(u"modify_center_to_zero")
@@ -2580,6 +2580,26 @@ class Ui_MainWindow(object):
 
 
         self.verticalLayout_69.addWidget(self.frame_112)
+
+        self.frame_177 = QFrame(self.groupBox_49)
+        self.frame_177.setObjectName(u"frame_177")
+        self.frame_177.setMinimumSize(QSize(0, 0))
+        self.frame_177.setFrameShape(QFrame.StyledPanel)
+        self.frame_177.setFrameShadow(QFrame.Raised)
+        self.horizontalLayout_188 = QHBoxLayout(self.frame_177)
+        self.horizontalLayout_188.setObjectName(u"horizontalLayout_188")
+        self.horizontalLayout_188.setContentsMargins(0, 0, 0, 0)
+        self.modify_go_to_cell = QPushButton(self.frame_177)
+        self.modify_go_to_cell.setObjectName(u"modify_go_to_cell")
+
+        self.horizontalLayout_188.addWidget(self.modify_go_to_cell)
+
+        self.horizontalSpacer_145 = QSpacerItem(220, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_188.addItem(self.horizontalSpacer_145)
+
+
+        self.verticalLayout_69.addWidget(self.frame_177)
 
         self.frame_111 = QFrame(self.groupBox_49)
         self.frame_111.setObjectName(u"frame_111")
@@ -2671,6 +2691,99 @@ class Ui_MainWindow(object):
         self.verticalLayout_16.addWidget(self.toolBox_6)
 
         self.tabWidget_3.addTab(self.tab_7, "")
+        self.tab_21 = QWidget()
+        self.tab_21.setObjectName(u"tab_21")
+        self.verticalLayout_73 = QVBoxLayout(self.tab_21)
+        self.verticalLayout_73.setObjectName(u"verticalLayout_73")
+        self.frame_175 = QFrame(self.tab_21)
+        self.frame_175.setObjectName(u"frame_175")
+        self.frame_175.setFrameShape(QFrame.StyledPanel)
+        self.frame_175.setFrameShadow(QFrame.Raised)
+        self.horizontalLayout_186 = QHBoxLayout(self.frame_175)
+        self.horizontalLayout_186.setObjectName(u"horizontalLayout_186")
+        self.horizontalSpacer_143 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_186.addItem(self.horizontalSpacer_143)
+
+        self.get_k_points = QPushButton(self.frame_175)
+        self.get_k_points.setObjectName(u"get_k_points")
+
+        self.horizontalLayout_186.addWidget(self.get_k_points)
+
+        self.horizontalSpacer_144 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_186.addItem(self.horizontalSpacer_144)
+
+
+        self.verticalLayout_73.addWidget(self.frame_175)
+
+        self.k_points_text = QTextBrowser(self.tab_21)
+        self.k_points_text.setObjectName(u"k_points_text")
+        self.k_points_text.setReadOnly(False)
+
+        self.verticalLayout_73.addWidget(self.k_points_text)
+
+        self.frame_176 = QFrame(self.tab_21)
+        self.frame_176.setObjectName(u"frame_176")
+        self.frame_176.setFrameShape(QFrame.StyledPanel)
+        self.frame_176.setFrameShadow(QFrame.Raised)
+        self.horizontalLayout_187 = QHBoxLayout(self.frame_176)
+        self.horizontalLayout_187.setObjectName(u"horizontalLayout_187")
+        self.label_36 = QLabel(self.frame_176)
+        self.label_36.setObjectName(u"label_36")
+
+        self.horizontalLayout_187.addWidget(self.label_36)
+
+        self.lineEdit = QLineEdit(self.frame_176)
+        self.lineEdit.setObjectName(u"lineEdit")
+
+        self.horizontalLayout_187.addWidget(self.lineEdit)
+
+        self.label_82 = QLabel(self.frame_176)
+        self.label_82.setObjectName(u"label_82")
+
+        self.horizontalLayout_187.addWidget(self.label_82)
+
+        self.spinBox = QSpinBox(self.frame_176)
+        self.spinBox.setObjectName(u"spinBox")
+        self.spinBox.setMinimum(2)
+        self.spinBox.setMaximum(999)
+        self.spinBox.setValue(100)
+
+        self.horizontalLayout_187.addWidget(self.spinBox)
+
+
+        self.verticalLayout_73.addWidget(self.frame_176)
+
+        self.frame_174 = QFrame(self.tab_21)
+        self.frame_174.setObjectName(u"frame_174")
+        self.frame_174.setFrameShape(QFrame.StyledPanel)
+        self.frame_174.setFrameShadow(QFrame.Raised)
+        self.horizontalLayout_177 = QHBoxLayout(self.frame_174)
+        self.horizontalLayout_177.setObjectName(u"horizontalLayout_177")
+        self.horizontalSpacer_42 = QSpacerItem(117, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_177.addItem(self.horizontalSpacer_42)
+
+        self.get_k_path = QPushButton(self.frame_174)
+        self.get_k_path.setObjectName(u"get_k_path")
+
+        self.horizontalLayout_177.addWidget(self.get_k_path)
+
+        self.horizontalSpacer_142 = QSpacerItem(117, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_177.addItem(self.horizontalSpacer_142)
+
+
+        self.verticalLayout_73.addWidget(self.frame_174)
+
+        self.k_path_text = QTextBrowser(self.tab_21)
+        self.k_path_text.setObjectName(u"k_path_text")
+        self.k_path_text.setReadOnly(False)
+
+        self.verticalLayout_73.addWidget(self.k_path_text)
+
+        self.tabWidget_3.addTab(self.tab_21, "")
         self.tab_24 = QWidget()
         self.tab_24.setObjectName(u"tab_24")
         self.verticalLayout_78 = QVBoxLayout(self.tab_24)
@@ -6485,7 +6598,7 @@ class Ui_MainWindow(object):
         self.Form3Dand2DTabs.addItem(self.page_7, u"3D View")
         self.page_8 = QWidget()
         self.page_8.setObjectName(u"page_8")
-        self.page_8.setGeometry(QRect(0, 0, 98, 100))
+        self.page_8.setGeometry(QRect(0, 0, 665, 765))
         self.horizontalLayout = QHBoxLayout(self.page_8)
         self.horizontalLayout.setObjectName(u"horizontalLayout")
         self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
@@ -6733,14 +6846,21 @@ class Ui_MainWindow(object):
         self.FormModifyGrowY.setText(QCoreApplication.translate("MainWindow", u"Grow Y", None))
         self.FormModifyGrowZ.setText(QCoreApplication.translate("MainWindow", u"Grow Z", None))
         self.groupBox_49.setTitle(QCoreApplication.translate("MainWindow", u"Shift", None))
-        self.FormModifyGoPositive.setText(QCoreApplication.translate("MainWindow", u"Go to positive!", None))
-        self.FormModifyGoToCell.setText(QCoreApplication.translate("MainWindow", u"Go to cell", None))
+        self.modify_go_to_positive.setText(QCoreApplication.translate("MainWindow", u"Go to positive!", None))
+        self.modify_go_to_center.setText(QCoreApplication.translate("MainWindow", u"Go to center", None))
         self.modify_center_to_zero.setText(QCoreApplication.translate("MainWindow", u"Center to zero", None))
+        self.modify_go_to_cell.setText(QCoreApplication.translate("MainWindow", u"Go to cell", None))
         self.x_circular_shift.setText(QCoreApplication.translate("MainWindow", u"x-circular shift", None))
         self.y_circular_shift.setText(QCoreApplication.translate("MainWindow", u"y-circular shift", None))
         self.z_circular_shift.setText(QCoreApplication.translate("MainWindow", u"z-circular shift", None))
         self.toolBox_6.setItemText(self.toolBox_6.indexOf(self.page_12), QCoreApplication.translate("MainWindow", u"Transforms", None))
         self.tabWidget_3.setTabText(self.tabWidget_3.indexOf(self.tab_7), QCoreApplication.translate("MainWindow", u"Modify", None))
+        self.get_k_points.setText(QCoreApplication.translate("MainWindow", u"Get k-points", None))
+        self.label_36.setText(QCoreApplication.translate("MainWindow", u"Points", None))
+        self.lineEdit.setText(QCoreApplication.translate("MainWindow", u"G", None))
+        self.label_82.setText(QCoreApplication.translate("MainWindow", u"    N", None))
+        self.get_k_path.setText(QCoreApplication.translate("MainWindow", u"Get k-path", None))
+        self.tabWidget_3.setTabText(self.tabWidget_3.indexOf(self.tab_21), QCoreApplication.translate("MainWindow", u"K-path", None))
         self.FDFGenerate.setText(QCoreApplication.translate("MainWindow", u"SIESTA *.fdf", None))
         self.POSCARgenerate.setText(QCoreApplication.translate("MainWindow", u"VASP POSCAR", None))
         self.QEgenerate.setText(QCoreApplication.translate("MainWindow", u"QE", None))
