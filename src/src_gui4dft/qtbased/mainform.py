@@ -653,8 +653,9 @@ class MainForm(QMainWindow):
             cm_x_new1 = self.ui.FormPart1CMx.value()
             cm_y_new1 = self.ui.FormPart1CMy.value()
             cm_z_new1 = self.ui.FormPart1CMz.value()
+            cm_new = np.array([cm_x_new1, cm_y_new1, cm_z_new1])
 
-            part1 = self.model_part_prepare(cm_x_new1, cm_y_new1, cm_z_new1, models1, rot_x1, rot_y1, rot_z1)
+            part1 = self.model_part_prepare(cm_new, models1, rot_x1, rot_y1, rot_z1)
             combo_model.add_atomic_model(part1)
 
         if len(models2) > 0:
@@ -664,8 +665,9 @@ class MainForm(QMainWindow):
             cm_x_new2 = self.ui.FormPart2CMx.value()
             cm_y_new2 = self.ui.FormPart2CMy.value()
             cm_z_new2 = self.ui.FormPart2CMz.value()
+            cm_new = np.array([cm_x_new2, cm_y_new2, cm_z_new2])
 
-            part2 = self.model_part_prepare(cm_x_new2, cm_y_new2, cm_z_new2, models2, rot_x2, rot_y2, rot_z2)
+            part2 = self.model_part_prepare(cm_new, models2, rot_x2, rot_y2, rot_z2)
             combo_model.add_atomic_model(part2)
 
         if len(models1) > 0:
@@ -675,12 +677,12 @@ class MainForm(QMainWindow):
         self.plot_last_model()
 
     @staticmethod
-    def model_part_prepare(cm_x_new, cm_y_new, cm_z_new, models, rot_x, rot_y, rot_z):
+    def model_part_prepare(cm_new, models, rot_x, rot_y, rot_z):
         part = models[-1]
         cm_old = - part.center_mass()
-        part.move(*cm_old)
+        part.move(cm_old)
         part.rotate(rot_x, rot_y, rot_z)
-        part.move(cm_x_new, cm_y_new, cm_z_new)
+        part.move(cm_new)
         return part
 
     def add_left_electrode_file(self):
@@ -1999,7 +2001,7 @@ class MainForm(QMainWindow):
             number_m = self.get_filter_m()
             number_z = self.get_filter_z()
             pdos, energy = TSIESTA.calc_pdos(file, atom_index, species, number_l, number_m, number_n, number_z)
-            e_fermi = TSIESTA.FermiEnergy(self.filename)
+            e_fermi = TSIESTA.fermi_energy(self.filename)
             energy -= e_fermi
             labels = [None]
 
@@ -2012,6 +2014,7 @@ class MainForm(QMainWindow):
                 labels = ["spin_up", "spin_down"]
 
             self.ui.PyqtGraphWidget.clear()
+            self.ui.PyqtGraphWidget.enable_auto_range()
 
             x_title = self.ui.pdos_x_label.text()
             y_title = self.ui.pdos_y_label.text()
@@ -2070,6 +2073,7 @@ class MainForm(QMainWindow):
         title = self.ui.pdos_title.text()
 
         self.ui.PyqtGraphWidget.clear()
+        self.ui.PyqtGraphWidget.enable_auto_range()
         self.ui.PyqtGraphWidget.plot(x, y, labels, title, x_title, y_title, True)
 
         if self.ui.FormActionsCheckBANDSfermyShow_2.isChecked():

@@ -97,7 +97,7 @@ class ImporterExporter(object):
         system_label = TSIESTA.system_label(filename)
         file = os.path.dirname(filename) + "/" + str(system_label) + ".DOS"
         if os.path.exists(file):
-            return file, TSIESTA.FermiEnergy(filename)
+            return file, TSIESTA.fermi_energy(filename)
         else:
             return False, 0
 

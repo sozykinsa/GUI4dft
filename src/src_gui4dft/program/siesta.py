@@ -204,10 +204,9 @@ class TSIESTA:
         return np.array(TSIESTA.list_of_values(filename, "siesta: E_KS(eV) ="), dtype=float)
 
     @staticmethod
-    def FermiEnergy(filename):
+    def fermi_energy(filename):
         """ Fermy Energy from SIESTA output file """
         if os.path.exists(filename):
-            energy = 0
             try:
                 energy = float(helpers.from_file_property(filename, 'siesta:         Fermi =', 2, 'float'))
             except Exception:
@@ -361,20 +360,20 @@ class TSIESTA:
         return list_of_val
 
     @staticmethod
-    def get_block_from_siesta_fdf(filename, blockname):
-        """ возвращает содержимое блока входного файла """
+    def get_block_from_siesta_fdf(filename, block_name):
+        """ Returns the contents of the input file block. """
         lines = []
         flag = 0
         f = open(filename)
-        blockname = blockname.lower()
+        block_name = block_name.lower()
         for line in f:
             line1 = line.lower()
-            if (line1.find(blockname) < 0) and (flag == 1):
+            if (line1.find(block_name) < 0) and (flag == 1):
                 lines.append(line)
-            if (line1.find(blockname) >= 0) and (flag == 1):
+            if (line1.find(block_name) >= 0) and (flag == 1):
                 f.close()
                 return lines
-            if (line1.find(blockname) >= 0) and (flag == 0):
+            if (line1.find(block_name) >= 0) and (flag == 0):
                 flag = 1
         return []
 
@@ -483,10 +482,9 @@ class TSIESTA:
     @staticmethod
     def to_siesta_xyz_data(model):
         """Returns data for *.xyz file."""
-        data = "  "
-        nAtoms = model.n_atoms()
-        data += str(nAtoms) + "\n"
-        for i in range(0, nAtoms):
+        n_atoms = model.n_atoms()
+        data = "  " + str(n_atoms) + "\n"
+        for i in range(0, n_atoms):
             data += "\n" + model.atoms[i].let + '       ' + model.xyz_string(i)
         return data
 
