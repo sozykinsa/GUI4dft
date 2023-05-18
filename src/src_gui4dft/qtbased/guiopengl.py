@@ -3,7 +3,7 @@
 from typing import Callable
 
 import OpenGL.GL as gl
-from core_gui_atomistic.guiopenglbase import GuiOpenGLBase
+from core_gui_atomistic_qt.guiopenglbase import GuiOpenGLBase
 from copy import deepcopy
 from core_gui_atomistic.atomic_model import AtomicModel
 from src_gui4dft.utils.voronoi import VoronoiAnalisis
