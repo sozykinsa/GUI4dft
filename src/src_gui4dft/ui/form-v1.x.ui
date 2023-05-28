@@ -3225,8 +3225,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>371</width>
-                 <height>593</height>
+                 <width>337</width>
+                 <height>258</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -4512,8 +4512,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>371</width>
-                 <height>593</height>
+                 <width>339</width>
+                 <height>384</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -5585,10 +5585,18 @@
                     <number>5</number>
                    </property>
                    <item>
-                    <widget class="QDoubleSpinBox" name="spin_bands_xmin"/>
+                    <widget class="QDoubleSpinBox" name="spin_bands_xmin">
+                     <property name="decimals">
+                      <number>3</number>
+                     </property>
+                    </widget>
                    </item>
                    <item>
-                    <widget class="QDoubleSpinBox" name="spin_bands_xmax"/>
+                    <widget class="QDoubleSpinBox" name="spin_bands_xmax">
+                     <property name="decimals">
+                      <number>3</number>
+                     </property>
+                    </widget>
                    </item>
                   </layout>
                  </widget>
@@ -5621,10 +5629,18 @@
                     <number>5</number>
                    </property>
                    <item>
-                    <widget class="QDoubleSpinBox" name="spin_bands_emin"/>
+                    <widget class="QDoubleSpinBox" name="spin_bands_emin">
+                     <property name="decimals">
+                      <number>3</number>
+                     </property>
+                    </widget>
                    </item>
                    <item>
-                    <widget class="QDoubleSpinBox" name="spin_bands_emax"/>
+                    <widget class="QDoubleSpinBox" name="spin_bands_emax">
+                     <property name="decimals">
+                      <number>3</number>
+                     </property>
+                    </widget>
                    </item>
                   </layout>
                  </widget>

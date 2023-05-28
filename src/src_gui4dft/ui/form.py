@@ -12,8 +12,8 @@ from PySide2.QtCore import *
 from PySide2.QtGui import *
 from PySide2.QtWidgets import *
 
-from src_gui4dft.qtbased.pyqtgraphwidget import PyqtGraphWidget
-from src_gui4dft.qtbased.pyqtgraphwidgetimage import PyqtGraphWidgetImage
+from core_gui_atomistic_qt.pyqtgraphwidget import PyqtGraphWidget
+from core_gui_atomistic_qt.pyqtgraphwidgetimage import PyqtGraphWidgetImage
 from src_gui4dft.qtbased.guiopengl import GuiOpenGL
 
 
@@ -1817,7 +1817,7 @@ class Ui_MainWindow(object):
         self.toolBox_6.setSizePolicy(sizePolicy2)
         self.page_29 = QWidget()
         self.page_29.setObjectName(u"page_29")
-        self.page_29.setGeometry(QRect(0, 0, 371, 593))
+        self.page_29.setGeometry(QRect(0, 0, 337, 258))
         self.verticalLayout_26 = QVBoxLayout(self.page_29)
         self.verticalLayout_26.setObjectName(u"verticalLayout_26")
         self.frame_28 = QFrame(self.page_29)
@@ -2463,7 +2463,7 @@ class Ui_MainWindow(object):
         self.toolBox_6.addItem(self.page_11, u"Rotate or move model")
         self.page_12 = QWidget()
         self.page_12.setObjectName(u"page_12")
-        self.page_12.setGeometry(QRect(0, 0, 371, 593))
+        self.page_12.setGeometry(QRect(0, 0, 339, 384))
         self.verticalLayout_41 = QVBoxLayout(self.page_12)
         self.verticalLayout_41.setObjectName(u"verticalLayout_41")
         self.groupBox_37 = QGroupBox(self.page_12)
@@ -2976,11 +2976,13 @@ class Ui_MainWindow(object):
         self.horizontalLayout_19.setContentsMargins(0, 2, -1, 5)
         self.spin_bands_xmin = QDoubleSpinBox(self.groupBox_15)
         self.spin_bands_xmin.setObjectName(u"spin_bands_xmin")
+        self.spin_bands_xmin.setDecimals(3)
 
         self.horizontalLayout_19.addWidget(self.spin_bands_xmin)
 
         self.spin_bands_xmax = QDoubleSpinBox(self.groupBox_15)
         self.spin_bands_xmax.setObjectName(u"spin_bands_xmax")
+        self.spin_bands_xmax.setDecimals(3)
 
         self.horizontalLayout_19.addWidget(self.spin_bands_xmax)
 
@@ -2996,11 +2998,13 @@ class Ui_MainWindow(object):
         self.horizontalLayout_22.setContentsMargins(0, 2, -1, 5)
         self.spin_bands_emin = QDoubleSpinBox(self.groupBox_16)
         self.spin_bands_emin.setObjectName(u"spin_bands_emin")
+        self.spin_bands_emin.setDecimals(3)
 
         self.horizontalLayout_22.addWidget(self.spin_bands_emin)
 
         self.spin_bands_emax = QDoubleSpinBox(self.groupBox_16)
         self.spin_bands_emax.setObjectName(u"spin_bands_emax")
+        self.spin_bands_emax.setDecimals(3)
 
         self.horizontalLayout_22.addWidget(self.spin_bands_emax)
 

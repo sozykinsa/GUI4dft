@@ -1,6 +1,6 @@
 from src_gui4dft.qtbased.guiopengl import GuiOpenGL
-from src_gui4dft.qtbased.pyqtgraphwidget import PyqtGraphWidget
-from src_gui4dft.qtbased.pyqtgraphwidgetimage import PyqtGraphWidgetImage
+from core_gui_atomistic_qt.pyqtgraphwidget import PyqtGraphWidget
+from core_gui_atomistic_qt.pyqtgraphwidgetimage import PyqtGraphWidgetImage
 from src_gui4dft.qtbased.mainform import MainForm
 from PySide2.QtCore import QCoreApplication, Qt
 

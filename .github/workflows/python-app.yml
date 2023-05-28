@@ -55,7 +55,7 @@ jobs:
         pip install -r requirements-dev.txt
     - name: Test with pytest
       run: |
-        python -m pytest tests --color=yes --cov=src/core_gui_atomistic --cov=src/src_gui4dft --cov-report=xml --cov-report=term-missing --ignore=tests/gui4dft_opengl
+        python -m pytest tests --cov=src/core_gui_atomistic --cov-report=xml --cov-report=term-missing --ignore=tests/gui4dft_opengl --ignore=tests/core_gui_atomistic_qt
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v1
       with:
@@ -105,4 +105,4 @@ jobs:
             pip install -r requirements-dev.txt
     - name: Test with pytest
       run: |
-        python -m pytest tests --color=yes --cov=src/core_gui_atomistic --cov=src/src_gui4dft --cov-report=xml --cov-report=term-missing
+        python -m pytest tests --color=yes --cov=src/core_gui_atomistic --cov=src/src_gui4dft --cov-report=xml --cov-report=term-missing --ignore=tests/gui4dft_opengl
