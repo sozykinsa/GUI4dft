@@ -5185,11 +5185,18 @@ class Ui_MainWindow(object):
         self.verticalLayout_8.addWidget(self.toolBox_2)
 
         self.tabWidget.addTab(self.tab, "")
-        self.tab_25 = QWidget()
-        self.tab_25.setObjectName(u"tab_25")
-        self.verticalLayout_64 = QVBoxLayout(self.tab_25)
-        self.verticalLayout_64.setObjectName(u"verticalLayout_64")
-        self.frame_127 = QFrame(self.tab_25)
+        self.tab_23 = QWidget()
+        self.tab_23.setObjectName(u"tab_23")
+        self.verticalLayout_74 = QVBoxLayout(self.tab_23)
+        self.verticalLayout_74.setObjectName(u"verticalLayout_74")
+        self.toolBox_3 = QToolBox(self.tab_23)
+        self.toolBox_3.setObjectName(u"toolBox_3")
+        self.page_9 = QWidget()
+        self.page_9.setObjectName(u"page_9")
+        self.page_9.setGeometry(QRect(0, 0, 399, 737))
+        self.verticalLayout_75 = QVBoxLayout(self.page_9)
+        self.verticalLayout_75.setObjectName(u"verticalLayout_75")
+        self.frame_127 = QFrame(self.page_9)
         self.frame_127.setObjectName(u"frame_127")
         self.frame_127.setFrameShape(QFrame.StyledPanel)
         self.frame_127.setFrameShadow(QFrame.Raised)
@@ -5209,9 +5216,9 @@ class Ui_MainWindow(object):
         self.horizontalLayout_131.addItem(self.horizontalSpacer_85)
 
 
-        self.verticalLayout_64.addWidget(self.frame_127)
+        self.verticalLayout_75.addWidget(self.frame_127)
 
-        self.frame_128 = QFrame(self.tab_25)
+        self.frame_128 = QFrame(self.page_9)
         self.frame_128.setObjectName(u"frame_128")
         self.frame_128.setFrameShape(QFrame.StyledPanel)
         self.frame_128.setFrameShadow(QFrame.Raised)
@@ -5231,9 +5238,9 @@ class Ui_MainWindow(object):
         self.horizontalLayout_132.addItem(self.horizontalSpacer_91)
 
 
-        self.verticalLayout_64.addWidget(self.frame_128)
+        self.verticalLayout_75.addWidget(self.frame_128)
 
-        self.tabWidget_8 = QTabWidget(self.tab_25)
+        self.tabWidget_8 = QTabWidget(self.page_9)
         self.tabWidget_8.setObjectName(u"tabWidget_8")
         self.tab_30 = QWidget()
         self.tab_30.setObjectName(u"tab_30")
@@ -5258,9 +5265,9 @@ class Ui_MainWindow(object):
 
         self.tabWidget_8.addTab(self.tab_31, "")
 
-        self.verticalLayout_64.addWidget(self.tabWidget_8)
+        self.verticalLayout_75.addWidget(self.tabWidget_8)
 
-        self.groupBox_33 = QGroupBox(self.tab_25)
+        self.groupBox_33 = QGroupBox(self.page_9)
         self.groupBox_33.setObjectName(u"groupBox_33")
         self.groupBox_33.setMinimumSize(QSize(0, 0))
         self.verticalLayout_85 = QVBoxLayout(self.groupBox_33)
@@ -5370,9 +5377,74 @@ class Ui_MainWindow(object):
         self.verticalLayout_85.addItem(self.verticalSpacer_26)
 
 
-        self.verticalLayout_64.addWidget(self.groupBox_33)
+        self.verticalLayout_75.addWidget(self.groupBox_33)
 
-        self.tabWidget.addTab(self.tab_25, "")
+        self.toolBox_3.addItem(self.page_9, u"Spectra")
+        self.page_10 = QWidget()
+        self.page_10.setObjectName(u"page_10")
+        self.page_10.setGeometry(QRect(0, 0, 399, 737))
+        self.verticalLayout_64 = QVBoxLayout(self.page_10)
+        self.verticalLayout_64.setObjectName(u"verticalLayout_64")
+        self.toolBox_4 = QToolBox(self.page_10)
+        self.toolBox_4.setObjectName(u"toolBox_4")
+        self.page_13 = QWidget()
+        self.page_13.setObjectName(u"page_13")
+        self.page_13.setGeometry(QRect(0, 0, 377, 591))
+        self.verticalLayout_97 = QVBoxLayout(self.page_13)
+        self.verticalLayout_97.setObjectName(u"verticalLayout_97")
+        self.groupBox_24 = QGroupBox(self.page_13)
+        self.groupBox_24.setObjectName(u"groupBox_24")
+        self.horizontalLayout_189 = QHBoxLayout(self.groupBox_24)
+        self.horizontalLayout_189.setObjectName(u"horizontalLayout_189")
+        self.program_select_siesta = QRadioButton(self.groupBox_24)
+        self.program_select_siesta.setObjectName(u"program_select_siesta")
+        self.program_select_siesta.setChecked(True)
+
+        self.horizontalLayout_189.addWidget(self.program_select_siesta)
+
+        self.program_select_crystal = QRadioButton(self.groupBox_24)
+        self.program_select_crystal.setObjectName(u"program_select_crystal")
+
+        self.horizontalLayout_189.addWidget(self.program_select_crystal)
+
+
+        self.verticalLayout_97.addWidget(self.groupBox_24)
+
+        self.label_84 = QLabel(self.page_13)
+        self.label_84.setObjectName(u"label_84")
+
+        self.verticalLayout_97.addWidget(self.label_84)
+
+        self.tabWidget_7 = QTabWidget(self.page_13)
+        self.tabWidget_7.setObjectName(u"tabWidget_7")
+        self.tab_25 = QWidget()
+        self.tab_25.setObjectName(u"tab_25")
+        self.tabWidget_7.addTab(self.tab_25, "")
+        self.tab_26 = QWidget()
+        self.tab_26.setObjectName(u"tab_26")
+        self.tabWidget_7.addTab(self.tab_26, "")
+
+        self.verticalLayout_97.addWidget(self.tabWidget_7)
+
+        self.toolBox_4.addItem(self.page_13, u"Program")
+        self.page_14 = QWidget()
+        self.page_14.setObjectName(u"page_14")
+        self.page_14.setGeometry(QRect(0, 0, 377, 591))
+        self.toolBox_4.addItem(self.page_14, u"Input file")
+        self.page_15 = QWidget()
+        self.page_15.setObjectName(u"page_15")
+        self.toolBox_4.addItem(self.page_15, u"Single RUN")
+        self.page_16 = QWidget()
+        self.page_16.setObjectName(u"page_16")
+        self.toolBox_4.addItem(self.page_16, u"Multiple RUN")
+
+        self.verticalLayout_64.addWidget(self.toolBox_4)
+
+        self.toolBox_3.addItem(self.page_10, u"run")
+
+        self.verticalLayout_74.addWidget(self.toolBox_3)
+
+        self.tabWidget.addTab(self.tab_23, "")
         self.tab_29 = QWidget()
         self.tab_29.setObjectName(u"tab_29")
         self.verticalLayout_23 = QVBoxLayout(self.tab_29)
@@ -6668,7 +6740,10 @@ class Ui_MainWindow(object):
         self.tabWidget_4.setCurrentIndex(0)
         self.tabWidget_2.setCurrentIndex(0)
         self.tabWidget_6.setCurrentIndex(0)
-        self.tabWidget_8.setCurrentIndex(0)
+        self.toolBox_3.setCurrentIndex(0)
+        self.tabWidget_8.setCurrentIndex(1)
+        self.toolBox_4.setCurrentIndex(1)
+        self.tabWidget_7.setCurrentIndex(0)
         self.tabWidget_9.setCurrentIndex(0)
         self.tabWidget_12.setCurrentIndex(1)
         self.Form3Dand2DTabs.setCurrentIndex(0)
@@ -7076,7 +7151,19 @@ class Ui_MainWindow(object):
         self.form_spectra_mev_radio.setText(QCoreApplication.translate("MainWindow", u"meV", None))
         self.radioButton_8.setText(QCoreApplication.translate("MainWindow", u"cm^-1", None))
         self.FormASERamanAndIRscriptPlot.setText(QCoreApplication.translate("MainWindow", u"Plot Spectra", None))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_25), QCoreApplication.translate("MainWindow", u"Spectra", None))
+        self.toolBox_3.setItemText(self.toolBox_3.indexOf(self.page_9), QCoreApplication.translate("MainWindow", u"Spectra", None))
+        self.groupBox_24.setTitle(QCoreApplication.translate("MainWindow", u"Select program", None))
+        self.program_select_siesta.setText(QCoreApplication.translate("MainWindow", u"SIESTA", None))
+        self.program_select_crystal.setText(QCoreApplication.translate("MainWindow", u"CRYSTAL", None))
+        self.label_84.setText(QCoreApplication.translate("MainWindow", u"Program settings", None))
+        self.tabWidget_7.setTabText(self.tabWidget_7.indexOf(self.tab_25), QCoreApplication.translate("MainWindow", u"SIESTA", None))
+        self.tabWidget_7.setTabText(self.tabWidget_7.indexOf(self.tab_26), QCoreApplication.translate("MainWindow", u"CRYSTAL", None))
+        self.toolBox_4.setItemText(self.toolBox_4.indexOf(self.page_13), QCoreApplication.translate("MainWindow", u"Program", None))
+        self.toolBox_4.setItemText(self.toolBox_4.indexOf(self.page_14), QCoreApplication.translate("MainWindow", u"Input file", None))
+        self.toolBox_4.setItemText(self.toolBox_4.indexOf(self.page_15), QCoreApplication.translate("MainWindow", u"Single RUN", None))
+        self.toolBox_4.setItemText(self.toolBox_4.indexOf(self.page_16), QCoreApplication.translate("MainWindow", u"Multiple RUN", None))
+        self.toolBox_3.setItemText(self.toolBox_3.indexOf(self.page_10), QCoreApplication.translate("MainWindow", u"run", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_23), QCoreApplication.translate("MainWindow", u"Experimental", None))
         self.FormSettingsViewCheckShowAtoms.setText(QCoreApplication.translate("MainWindow", u"Show atoms", None))
         self.FormSettingsViewCheckShowBox.setText(QCoreApplication.translate("MainWindow", u"Show box", None))
         self.FormSettingsViewCheckShowAtomNumber.setText(QCoreApplication.translate("MainWindow", u"Show atom number", None))
