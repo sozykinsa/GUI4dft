@@ -1,3 +1,5 @@
+import numpy as np
+
 from src_gui4dft.utils.importer_exporter import ImporterExporter
 from core_gui_atomistic import helpers
 
@@ -6,7 +8,11 @@ def test_check_format(tests_path):
     assert helpers.check_format(str(tests_path / 'ref_data' / 'swcnt(8,0)' / "siesta1.out")) == "unknown"
     assert helpers.check_format(str(tests_path / 'ref_data' / 'swcnt(8,0)' / "siesta.out")) == "SIESTAout"
     assert helpers.check_format(str(tests_path / 'ref_data' / 'h2o-ang' / "siesta.fdf")) == "SIESTAfdf"
+    assert helpers.check_format(str(tests_path / 'ref_data' / 'vasp' / 'POSCAR')) == "VASPposcar"
     assert helpers.check_format(str(tests_path / 'ref_data' / 'qe' / 'si-scf' / "pw.out")) == "QEPWout"
+    file1 = str(tests_path / 'ref_data' / 'h2o-ang-charges' / 'cube_and_xsf' / "siesta.BADER.cube")
+    assert helpers.check_format(file1) == "GAUSSIAN_cube"
+    assert helpers.check_format(str(tests_path / 'ref_data' / 'wien2k' / 'Fe53C_Si_1.struct')) == "WIENstruct"
 
 
 def test_importer_fdf(tests_path):
@@ -75,6 +81,13 @@ def test_importer_output(tests_path):
     assert atom.get_property("charge Voronoi") == 0.091
     assert atom.get_property("charge Hirshfeld") == 0.12
     assert atom.get_property("charge Mulliken") == -0.134
+
+
+def test_importer_ghost(tests_path):
+    f_name = str(tests_path / 'ref_data' / 'h2o-ang-ghost' / "siesta.out")
+    model, fdf = ImporterExporter.import_from_file(f_name, fl='all', prop=True)
+    assert len(model[0].atoms) == 3
+    assert model[0].get_tags()[2] == -1
 
 
 def test_importer_xyz(tests_path):

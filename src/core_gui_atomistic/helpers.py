@@ -245,6 +245,7 @@ def check_format(filename):
         return "unknown"
 
     name = filename.lower()
+    print(name)
     if name.endswith(".fdf"):
         return "SIESTAfdf"
 
@@ -302,5 +303,8 @@ def check_format(filename):
 
     if name.endswith("cro"):
         return "critic_cro"
+
+    if name.endswith(".struct"):
+        return "WIENstruct"
 
     return "unknown"

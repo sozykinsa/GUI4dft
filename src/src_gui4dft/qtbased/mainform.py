@@ -159,6 +159,7 @@ class MainForm(QMainWindow):
         self.ui.FDFGenerate.clicked.connect(self.fdf_data_to_form)
         self.ui.POSCARgenerate.clicked.connect(self.poscar_data_to_form)
         self.ui.QEgenerate.clicked.connect(self.qe_data_to_form)
+        self.ui.WIENgenerate.clicked.connect(self.wien_struct_data_to_form)
         self.ui.crystal_0d_d12_generate.clicked.connect(self.d12_0D_to_form)
         self.ui.crystal_1d_d12_generate.clicked.connect(self.d12_1D_to_form)
         self.ui.crystal_2d_d12_generate.clicked.connect(self.d12_2D_to_form)
@@ -1042,7 +1043,10 @@ class MainForm(QMainWindow):
         self.ui.PyqtGraphWidget.clear()
         self.ui.PyqtGraphWidget.add_legend()
         self.ui.PyqtGraphWidget.enable_auto_range()
-        self.ui.PyqtGraphWidget.plot([np.arange(0, len(energies))], [energies], [None], title, x_title, y_title)
+        if len(energies) > 1:
+            self.ui.PyqtGraphWidget.plot([np.arange(0, len(energies))], [energies], [None], title, x_title, y_title)
+        else:
+            self.ui.PyqtGraphWidget.add_scatter([0], [0])
 
     def fill_file_name(self, f_name):
         self.ui.Form3Dand2DTabs.setItemText(0, "3D View: " + f_name)
@@ -2634,6 +2638,9 @@ class MainForm(QMainWindow):
             self.ui.FormActionsPreTextFDF.setText(text)
         except Exception:
             print("There are no atoms in the model")
+
+    def wien_struct_data_to_form(self):
+        print("To DO WIEN")
 
     def qe_data_to_form(self):
         if len(self.models) == 0:

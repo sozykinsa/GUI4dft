@@ -43,6 +43,16 @@ class AtomicModel(object):
     def __getitem__(self, i):
         return self.atoms[i]
 
+    def add_atom_with_data(self, xyz: np.ndarray, charge: int, tag: str = "") -> None:
+        """
+        xyz: coords
+        charge: atomic number
+        tag: additional information
+        """
+        let = self.mendeley.get_let(charge)
+        atom = Atom([*xyz, let, charge])
+        self.atoms.append(atom)
+
     def set_mendeley(self, mendeley):
         self.mendeley = mendeley
 
