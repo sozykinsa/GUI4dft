@@ -511,6 +511,7 @@ class TSIESTA:
             row_data = chemical_species_label[j].split()
             tag = "" if int(row_data[1]) > 0 else int(row_data[1])
             chem_spec_info[row_data[0]] = [int(abs(int(row_data[1]))), row_data[2], tag]
+            print(chem_spec_info)
         return atomic_coordinates_format, number_of_atoms, chem_spec_info, lat, lat_vectors, units
 
     @staticmethod
@@ -531,8 +532,10 @@ class TSIESTA:
                     for j in range(0, number_of_atoms):
                         i += 1
                         atom_full = lines[i].split()
-                        at_list.append([float(atom_full[1]), float(atom_full[2]), float(atom_full[3]),
-                                       (chem_spec_info[str(atom_full[0])])[1], (chem_spec_info[str(atom_full[0])])[0]])
+                        xyz = np.array([float(atom_full[1]), float(atom_full[2]), float(atom_full[3])])
+                        charge = chem_spec_info[str(atom_full[0])][0]
+                        tag = chem_spec_info[str(atom_full[0])][2]
+                        all_atoms.add_atom_with_data(xyz, charge, tag)
             if lines[i].find("%block AtomicCoordinatesAndAtomicSpecies") >= 0:
                 is_block_atomic_coordinates = True
                 mult = 1
@@ -541,14 +544,11 @@ class TSIESTA:
                 for j in range(0, number_of_atoms):
                     i += 1
                     atom_full = lines[i].split()
-                    at_list1.append([mult * float(atom_full[0]), mult * float(atom_full[1]), mult * float(atom_full[2]),
-                                    (chem_spec_info[str(atom_full[3])])[1], (chem_spec_info[str(atom_full[3])])[0]])
+                    xyz = np.array([mult * float(atom_full[0]), mult * float(atom_full[1]), mult * float(atom_full[2])])
+                    charge = chem_spec_info[str(atom_full[3])][0]
+                    tag = chem_spec_info[str(atom_full[3])][2]
+                    all_atoms.add_atom_with_data(xyz, charge, tag)
             i += 1
-        if is_block_z_matrix:
-            all_atoms = AtomicModel(at_list)
-        else:
-            if is_block_atomic_coordinates:
-                all_atoms = AtomicModel(at_list1)
         if lat_vectors is None:
             all_atoms.set_lat_vectors_default()
         else:

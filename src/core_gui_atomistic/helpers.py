@@ -9,6 +9,7 @@ def spacedel(row: str) -> str:
     """Removing extra spaces, line breaks."""
     row = row.replace('\n', ' ')
     row = row.replace('\r', ' ')
+    row = row.replace('\t', ' ')
     row = row.strip()
     while row.find('  ') >= 0:
         row = row.replace('  ', ' ')

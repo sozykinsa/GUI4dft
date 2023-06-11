@@ -51,6 +51,7 @@ class AtomicModel(object):
         """
         let = self.mendeley.get_let(charge)
         atom = Atom([*xyz, let, charge])
+        atom.tag = tag
         self.atoms.append(atom)
 
     def set_mendeley(self, mendeley):

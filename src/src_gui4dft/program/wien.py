@@ -81,4 +81,39 @@ def atoms_from_struct(f_name):
     return [model]
 
 
+def model_to_wien_struct(model: AtomicModel):
+    n_atoms = model.n_atoms()
+    text = "Model " + model.formula() + "\n"
+    text += "P" + "{:30}".format(n_atoms) + "\n"
+    text += "MODE OF CALC=RELA unit=bohr\n"
+    a, b, c, al, bet, gam = model.cell_params()
+    text += "{:10.6f}".format(a / 0.52917720859)
+    text += "{:10.6f}".format(b / 0.52917720859)
+    text += "{:10.6f}".format(c / 0.52917720859)
+    text += "{:10.6f}".format(al)
+    text += "{:10.6f}".format(bet)
+    text += "{:10.6f}".format(gam) + "\n"
 
+    model1 = deepcopy(model)
+    model1.convert_from_cart_to_direct()
+    for i in range(n_atoms):
+        """
+        ATOM  -1: X=0.00000000 Y=0.00000000 Z=0.00000000
+                  MULT= 1          ISPLIT= 8
+        Fe         NPT=  781  R0=0.00005000 RMT=    2.0000   Z: 26.0                   
+        LOCAL ROT MATRIX:    1.0000000 0.0000000 0.0000000
+                             0.0000000 1.0000000 0.0000000
+                             0.0000000 0.0000000 1.0000000
+        """
+        atom_text = "ATOM" + "{:4}".format(-i - 1) + ":"
+        atom_text += " X=" + "{:10.8f}".format(model1[i].x)
+        atom_text += " Y=" + "{:10.8f}".format(model1[i].y)
+        atom_text += " Z=" + "{:10.08f}".format(model1[i].z) + "\n"
+        atom_text += "          MULT= 1          ISPLIT= 8\n"
+        atom_text += "{:2}".format(model1[i].let) + "         NPT=  781  R0=0.00005000 RMT=    2.0000   Z:"
+        atom_text += "{:5.1f}".format(1.0 * model1[i].charge) + "\n"
+        atom_text += "LOCAL ROT MATRIX:    1.0000000 0.0000000 0.0000000\n"
+        atom_text += "                     0.0000000 1.0000000 0.0000000\n"
+        atom_text += "                     0.0000000 0.0000000 1.0000000\n"
+        text += atom_text
+    return text

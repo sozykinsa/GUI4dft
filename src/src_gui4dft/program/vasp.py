@@ -65,13 +65,13 @@ def atoms_from_POSCAR(filename):
     if os.path.exists(filename):
         struct_file = open(filename)
         helpers.spacedel(struct_file.readline())
-        latConst = float(helpers.spacedel(struct_file.readline()))
+        lat_const = float(helpers.spacedel(struct_file.readline()))
         lat1 = helpers.spacedel(struct_file.readline()).split()
-        lat1 = np.array(helpers.list_str_to_float(lat1)) * latConst
+        lat1 = np.array(helpers.list_str_to_float(lat1)) * lat_const
         lat2 = helpers.spacedel(struct_file.readline()).split()
-        lat2 = np.array(helpers.list_str_to_float(lat2)) * latConst
+        lat2 = np.array(helpers.list_str_to_float(lat2)) * lat_const
         lat3 = helpers.spacedel(struct_file.readline()).split()
-        lat3 = np.array(helpers.list_str_to_float(lat3)) * latConst
+        lat3 = np.array(helpers.list_str_to_float(lat3)) * lat_const
         SortsOfAtoms = helpers.spacedel(struct_file.readline()).split()
         NumbersOfAtoms = helpers.spacedel(struct_file.readline()).split()
         NumbersOfAtoms = helpers.list_str_to_int(NumbersOfAtoms)

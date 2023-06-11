@@ -34,6 +34,7 @@ from src_gui4dft.qtbased.image3dexporter import Image3Dexporter
 from src_gui4dft.program.siesta import TSIESTA
 from src_gui4dft.program.crystal import model_0d_to_d12, model_1d_to_d12, model_2d_to_d12, model_3d_to_d12
 from src_gui4dft.program.qe import model_to_qe_pw
+from src_gui4dft.program.wien import model_to_wien_struct
 from src_gui4dft.program.vasp import vasp_dos
 from src_gui4dft.program.vasp import model_to_vasp_poscar
 from src_gui4dft.program import ase
@@ -2640,7 +2641,14 @@ class MainForm(QMainWindow):
             print("There are no atoms in the model")
 
     def wien_struct_data_to_form(self):
-        print("To DO WIEN")
+        if len(self.models) == 0:
+            return
+        try:
+            model = self.ui.openGLWidget.get_model()
+            text = model_to_wien_struct(model)
+            self.ui.FormActionsPreTextFDF.setText(text)
+        except Exception:
+            print("There are no atoms in the model")
 
     def qe_data_to_form(self):
         if len(self.models) == 0:
@@ -2667,7 +2675,7 @@ class MainForm(QMainWindow):
             text = self.ui.FormActionsPreTextFDF.toPlainText()
             if len(text) > 0:
                 file_mask = "FDF files (*.fdf);;VASP POSCAR file (*.POSCAR)"
-                file_mask += ";;Crystal d12 (*.d12);;PWscf in (*.in)"
+                file_mask += ";;Crystal d12 (*.d12);;PWscf in (*.in);;WIEN struct (*.struct)"
                 fname = self.get_file_name_from_save_dialog(file_mask)
                 if fname is not None:
                     helpers.write_text_to_file(fname, text)

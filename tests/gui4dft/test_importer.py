@@ -84,10 +84,14 @@ def test_importer_output(tests_path):
 
 
 def test_importer_ghost(tests_path):
+    f_name = str(tests_path / 'ref_data' / 'h2o-ang-ghost' / "siesta.fdf")
+    model, fdf = ImporterExporter.import_from_file(f_name, fl='all', prop=True)
+    assert len(model[0].atoms) == 3
+    assert model[0].get_tags()[1] == -1
     f_name = str(tests_path / 'ref_data' / 'h2o-ang-ghost' / "siesta.out")
     model, fdf = ImporterExporter.import_from_file(f_name, fl='all', prop=True)
     assert len(model[0].atoms) == 3
-    assert model[0].get_tags()[2] == -1
+    assert model[0].get_tags()[1] == -1
 
 
 def test_importer_xyz(tests_path):

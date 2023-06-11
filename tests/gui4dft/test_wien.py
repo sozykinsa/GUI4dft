@@ -9,8 +9,8 @@ def test_n_atoms_from_struct(tests_path):
 def test_alats_from_struct(tests_path):
     f_name = str(tests_path / 'ref_data' / 'wien2k' / 'Fe53C_Si_1.struct')
     alats = alats_from_struct(f_name)
-    assert alats[0] == 16.162604
-    assert alats[3] == 90.000000
+    assert alats[0] == 8.552881668265568
+    assert alats[3] == 1.5707963267948966
 
 
 def test_atoms_from_struct(tests_path):
