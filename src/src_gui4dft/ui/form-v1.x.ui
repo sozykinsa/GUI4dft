@@ -3252,6 +3252,19 @@
                    <item>
                     <widget class="QComboBox" name="atoms_list_all"/>
                    </item>
+                   <item>
+                    <spacer name="horizontalSpacer_149">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>40</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
                   </layout>
                  </widget>
                 </item>
@@ -3282,7 +3295,7 @@
                    <item>
                     <widget class="QRadioButton" name="is_cart_coord">
                      <property name="text">
-                      <string>cartesian</string>
+                      <string>cartesian (A)</string>
                      </property>
                      <property name="checked">
                       <bool>true</bool>
@@ -3290,7 +3303,14 @@
                     </widget>
                    </item>
                    <item>
-                    <widget class="QRadioButton" name="radioButton_4">
+                    <widget class="QRadioButton" name="is_cart_coord_bohr">
+                     <property name="text">
+                      <string>cartesian (Bohr)</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QRadioButton" name="is_direct_coord">
                      <property name="text">
                       <string>direct</string>
                      </property>
@@ -3472,6 +3492,31 @@
                       </size>
                      </property>
                     </spacer>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QFrame" name="frame_182">
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>50</height>
+                   </size>
+                  </property>
+                  <property name="frameShape">
+                   <enum>QFrame::NoFrame</enum>
+                  </property>
+                  <property name="frameShadow">
+                   <enum>QFrame::Raised</enum>
+                  </property>
+                  <layout class="QHBoxLayout" name="horizontalLayout_196">
+                   <item>
+                    <widget class="QLineEdit" name="selected_atom_coords">
+                     <property name="readOnly">
+                      <bool>true</bool>
+                     </property>
+                    </widget>
                    </item>
                   </layout>
                  </widget>

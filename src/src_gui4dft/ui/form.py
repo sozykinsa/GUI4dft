@@ -1836,6 +1836,10 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_191.addWidget(self.atoms_list_all)
 
+        self.horizontalSpacer_149 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_191.addItem(self.horizontalSpacer_149)
+
 
         self.verticalLayout_26.addWidget(self.frame_179)
 
@@ -1853,10 +1857,15 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_192.addWidget(self.is_cart_coord)
 
-        self.radioButton_4 = QRadioButton(self.frame_30)
-        self.radioButton_4.setObjectName(u"radioButton_4")
+        self.is_cart_coord_bohr = QRadioButton(self.frame_30)
+        self.is_cart_coord_bohr.setObjectName(u"is_cart_coord_bohr")
 
-        self.horizontalLayout_192.addWidget(self.radioButton_4)
+        self.horizontalLayout_192.addWidget(self.is_cart_coord_bohr)
+
+        self.is_direct_coord = QRadioButton(self.frame_30)
+        self.is_direct_coord.setObjectName(u"is_direct_coord")
+
+        self.horizontalLayout_192.addWidget(self.is_direct_coord)
 
 
         self.verticalLayout_26.addWidget(self.frame_30)
@@ -1945,6 +1954,22 @@ class Ui_MainWindow(object):
 
 
         self.verticalLayout_26.addWidget(self.frame_28)
+
+        self.frame_182 = QFrame(self.page_29)
+        self.frame_182.setObjectName(u"frame_182")
+        self.frame_182.setMinimumSize(QSize(0, 50))
+        self.frame_182.setFrameShape(QFrame.NoFrame)
+        self.frame_182.setFrameShadow(QFrame.Raised)
+        self.horizontalLayout_196 = QHBoxLayout(self.frame_182)
+        self.horizontalLayout_196.setObjectName(u"horizontalLayout_196")
+        self.selected_atom_coords = QLineEdit(self.frame_182)
+        self.selected_atom_coords.setObjectName(u"selected_atom_coords")
+        self.selected_atom_coords.setReadOnly(True)
+
+        self.horizontalLayout_196.addWidget(self.selected_atom_coords)
+
+
+        self.verticalLayout_26.addWidget(self.frame_182)
 
         self.frame_29 = QFrame(self.page_29)
         self.frame_29.setObjectName(u"frame_29")
@@ -6982,8 +7007,9 @@ class Ui_MainWindow(object):
         self.toolBox.setItemText(self.toolBox.indexOf(self.page_22), QCoreApplication.translate("MainWindow", u"Model with electrodes", None))
         self.tabWidget_3.setTabText(self.tabWidget_3.indexOf(self.tab_5), QCoreApplication.translate("MainWindow", u"Create", None))
         self.label_8.setText(QCoreApplication.translate("MainWindow", u"Element", None))
-        self.is_cart_coord.setText(QCoreApplication.translate("MainWindow", u"cartesian", None))
-        self.radioButton_4.setText(QCoreApplication.translate("MainWindow", u"direct", None))
+        self.is_cart_coord.setText(QCoreApplication.translate("MainWindow", u"cartesian (A)", None))
+        self.is_cart_coord_bohr.setText(QCoreApplication.translate("MainWindow", u"cartesian (Bohr)", None))
+        self.is_direct_coord.setText(QCoreApplication.translate("MainWindow", u"direct", None))
         self.label_24.setText(QCoreApplication.translate("MainWindow", u"X", None))
         self.label_25.setText(QCoreApplication.translate("MainWindow", u"Y", None))
         self.label_26.setText(QCoreApplication.translate("MainWindow", u"Z", None))

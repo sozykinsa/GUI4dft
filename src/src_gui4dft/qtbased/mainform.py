@@ -133,6 +133,10 @@ class MainForm(QMainWindow):
         self.ui.FormActionsPreRadioSWNTcap.toggled.connect(self.swnt_type2_selected)
         self.ui.FormActionsPreRadioSWNTcap_2.toggled.connect(self.swnt_type2_selected)
 
+        self.ui.is_cart_coord.released.connect(self.selected_atom_coord_type_changed)
+        self.ui.is_cart_coord_bohr.released.connect(self.selected_atom_coord_type_changed)
+        self.ui.is_direct_coord.released.connect(self.selected_atom_coord_type_changed)
+
         self.ui.ActivateFragmentSelectionModeCheckBox.toggled.connect(self.activate_fragment_selection_mode)
         self.ui.ActivateFragmentSelectionTransp.valueChanged.connect(self.activate_fragment_selection_mode)
 
@@ -712,7 +716,8 @@ class MainForm(QMainWindow):
         if len(self.models) == 0:
             return
         charge, let, position = self.selected_atom_from_form()
-        self.models[self.active_model].add_atom(Atom((position[0], position[1], position[2], let, charge)))
+        self.models[self.active_model].add_atom_with_data(position, charge)
+        # add_atom(Atom((position[0], position[1], position[2], let, charge)))
         self.model_to_screen(self.active_model)
 
     def atom_delete(self):
@@ -730,18 +735,47 @@ class MainForm(QMainWindow):
         if self.ui.openGLWidget.selected_atom < 0:
             return
         charge, let, position = self.selected_atom_from_form()
-        self.models[self.active_model].atoms[self.ui.openGLWidget.selected_atom] = Atom((position[0], position[1],
-                                                                                        position[2], let, charge))
+        new_atom = Atom((position[0], position[1], position[2], let, charge))
+        self.models[self.active_model].atoms[self.ui.openGLWidget.selected_atom] = new_atom
         self.model_to_screen(self.active_model)
 
+    def selected_atom_coord_type_changed(self):
+        position = self.models[self.active_model].atoms[self.ui.openGLWidget.selected_atom].xyz
+        element = self.models[self.active_model].atoms[self.ui.openGLWidget.selected_atom].charge
+        self.selected_atom_position(element, position)
+
     def selected_atom_from_form(self):
+        coord_type = self.selected_atom_coord_type()
         charge = self.ui.atoms_list_all.currentIndex()
         let = self.ui.atoms_list_all.currentText()
-        x = self.ui.FormActionsPreSpinAtomsCoordX.value()
-        y = self.ui.FormActionsPreSpinAtomsCoordY.value()
-        z = self.ui.FormActionsPreSpinAtomsCoordZ.value()
+        x, y, z = self.selected_atom_xyz_from_form()
         position = np.array((x, y, z), dtype=float)
+        position = self.coords_to_ang(position, coord_type)
         return charge, let, position
+
+    def coords_to_ang(self, position, coord_type):
+        if coord_type == "A":
+            return position
+        if coord_type == "bohr":
+            return position / 0.52917720859
+        lat_vectors = self.models[self.active_model].lat_vectors
+        return position[0] * lat_vectors[0] + position[1] * lat_vectors[1] + position[2] * lat_vectors[2]
+
+    def ang_to_coords(self, position, coord_type):
+        if coord_type == "A":
+            return position
+        if coord_type == "bohr":
+            return position * 0.52917720859
+        obr = np.linalg.inv(self.models[self.active_model].lat_vectors).transpose()
+        return obr.dot(position)
+
+    def selected_atom_coord_type(self):
+        coord_type = "direct"
+        if self.ui.is_cart_coord.isChecked():
+            coord_type = "A"
+        if self.ui.is_cart_coord_bohr.isChecked():
+            coord_type = "bohr"
+        return coord_type
 
     def bond_len_to_screen(self):
         let1 = self.ui.FormAtomsList1.currentIndex()
@@ -2516,6 +2550,9 @@ class MainForm(QMainWindow):
         self.ui.openGLWidget.set_orientation(rotation_angles, camera_position, scale_factor)
 
     def selected_atom_position(self, element, position):
+        coord_type = self.selected_atom_coord_type()
+        position = self.ang_to_coords(position, coord_type)
+        print(coord_type)
         self.ui.atoms_list_all.setCurrentIndex(element)
         self.ui.FormActionsPreSpinAtomsCoordX.setValue(position[0])
         self.ui.FormActionsPreSpinAtomsCoordX.update()
@@ -2523,6 +2560,14 @@ class MainForm(QMainWindow):
         self.ui.FormActionsPreSpinAtomsCoordY.update()
         self.ui.FormActionsPreSpinAtomsCoordZ.setValue(position[2])
         self.ui.FormActionsPreSpinAtomsCoordZ.update()
+        x, y, z = self.selected_atom_xyz_from_form()
+        self.ui.selected_atom_coords.setText("{0:6}    {1:6}    {2:6}".format(x, y, z))
+
+    def selected_atom_xyz_from_form(self):
+        x = self.ui.FormActionsPreSpinAtomsCoordX.value()
+        y = self.ui.FormActionsPreSpinAtomsCoordY.value()
+        z = self.ui.FormActionsPreSpinAtomsCoordZ.value()
+        return x, y, z
 
     def selected_atom_changed(self, selected):
         selected_atom = selected[0]
@@ -3044,6 +3089,7 @@ class MainForm(QMainWindow):
             return
         atoms = molecule(name)
         model = ase.from_ase_atoms_to_atomic_model(atoms)
+        model.set_lat_vectors_default()
         self.models.append(model)
         self.plot_model(-1)
         self.fill_gui(name)

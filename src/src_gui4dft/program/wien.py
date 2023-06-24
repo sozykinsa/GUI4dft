@@ -84,7 +84,7 @@ def atoms_from_struct(f_name):
 def model_to_wien_struct(model: AtomicModel):
     n_atoms = model.n_atoms()
     text = "Model " + model.formula() + "\n"
-    text += "P" + "{:30}".format(n_atoms) + "\n"
+    text += "P" + "{:29}".format(n_atoms) + "\n"
     text += "MODE OF CALC=RELA unit=bohr\n"
     a, b, c, al, bet, gam = model.cell_params()
     text += "{:10.6f}".format(a / 0.52917720859)
@@ -92,7 +92,7 @@ def model_to_wien_struct(model: AtomicModel):
     text += "{:10.6f}".format(c / 0.52917720859)
     text += "{:10.6f}".format(al)
     text += "{:10.6f}".format(bet)
-    text += "{:10.6f}".format(gam) + "\n"
+    text += "{:10.6f}".format(gam) + '\n'
 
     model1 = deepcopy(model)
     model1.convert_from_cart_to_direct()
@@ -116,4 +116,9 @@ def model_to_wien_struct(model: AtomicModel):
         atom_text += "                     0.0000000 1.0000000 0.0000000\n"
         atom_text += "                     0.0000000 0.0000000 1.0000000\n"
         text += atom_text
+    text += "   1      NUMBER OF SYMMETRY OPERATIONS\n"
+    text += " 1 0 0 0.00000000\n"
+    text += " 0 1 0 0.00000000\n"
+    text += " 0 0 1 0.00000000\n"
+    text += "   1\n\n"
     return text
