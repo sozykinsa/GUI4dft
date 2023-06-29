@@ -165,6 +165,7 @@ class MainForm(QMainWindow):
         self.ui.POSCARgenerate.clicked.connect(self.poscar_data_to_form)
         self.ui.QEgenerate.clicked.connect(self.qe_data_to_form)
         self.ui.WIENgenerate.clicked.connect(self.wien_struct_data_to_form)
+        self.ui.cif_generate.clicked.connect(self.cif_data_to_form)
         self.ui.crystal_0d_d12_generate.clicked.connect(self.d12_0D_to_form)
         self.ui.crystal_1d_d12_generate.clicked.connect(self.d12_1D_to_form)
         self.ui.crystal_2d_d12_generate.clicked.connect(self.d12_2D_to_form)
@@ -2164,21 +2165,31 @@ class MainForm(QMainWindow):
     def plot_bands(self):
         file = self.ui.FormActionsLineBANDSfile.text()
         self.ui.Form3Dand2DTabs.setCurrentIndex(1)
-        kmin, kmax = self.ui.spin_bands_xmin.value(), self.ui.spin_bands_xmax.value()
+        kmin, kmax = self.ui.spin_bands_xmin.value(), self.ui.spin_bands_xmax.value() + 1e-6
         emin, emax = self.ui.spin_bands_emin.value(), self.ui.spin_bands_emax.value()
-        is_check_bands_spin = self.ui.FormActionsCheckBANDSspinUp.isChecked()
+        delta = 0.05 * (kmax - kmin)
+        self.ui.PyqtGraphWidget.clear()
+        self.ui.PyqtGraphWidget.set_limits(kmin - delta, kmax + delta, emin, emax)
+        x_title = self.ui.bands_x_label.text()
+        y_title = self.ui.bands_y_label.text()
+        title = self.ui.bands_title.text()
+
         if os.path.exists(file):
-            bands, emaxf, eminf, homo, kmesh, lumo, xticklabels, xticks = read_siesta_bands(file, is_check_bands_spin,
-                                                                                            kmax, kmin)
-            self.ui.PyqtGraphWidget.clear()
-            delta = 0.05 * (kmax - kmin)
-            self.ui.PyqtGraphWidget.set_limits(kmin - delta, kmax + delta, emin, emax)
+            if self.ui.bands_spin_up.isChecked():
+                bands, emaxf, eminf, homo, kmesh, lumo, xticklabels, xticks = read_siesta_bands(file, True, kmax, kmin)
+                self.ui.PyqtGraphWidget.plot([kmesh], bands, [None], title, x_title, y_title, False)
 
-            x_title = self.ui.bands_x_label.text()
-            y_title = self.ui.bands_y_label.text()
-            title = self.ui.bands_title.text()
+            if self.ui.bands_spin_down.isChecked():
+                bands, emaxf, eminf, homo, kmesh, lumo, xticklabels, xticks = read_siesta_bands(file, False, kmax, kmin)
+                self.ui.PyqtGraphWidget.plot([kmesh], bands, [None], title, x_title, y_title, False)
 
-            self.ui.PyqtGraphWidget.plot([kmesh], bands, [None], title, x_title, y_title, False)
+            if self.ui.bands_spin_up_down.isChecked():
+                bands, emaxf, eminf, homo, kmesh, lumo, xticklabels, xticks = read_siesta_bands(file, True, kmax, kmin)
+                self.ui.PyqtGraphWidget.plot([kmesh], bands, [None], title, x_title, y_title, False)
+
+                bands, emaxf, eminf, homo, kmesh, lumo, xticklabels, xticks = read_siesta_bands(file, False, kmax, kmin)
+                self.ui.PyqtGraphWidget.plot([kmesh], bands, [None], title, x_title, y_title, False, _style=Qt.DotLine)
+
             major_tick = []
             for index in range(len(xticks)):
                 self.ui.PyqtGraphWidget.add_line(xticks[index], 90, 2, Qt.DashLine)
@@ -2552,7 +2563,6 @@ class MainForm(QMainWindow):
     def selected_atom_position(self, element, position):
         coord_type = self.selected_atom_coord_type()
         position = self.ang_to_coords(position, coord_type)
-        print(coord_type)
         self.ui.atoms_list_all.setCurrentIndex(element)
         self.ui.FormActionsPreSpinAtomsCoordX.setValue(position[0])
         self.ui.FormActionsPreSpinAtomsCoordX.update()
@@ -2695,6 +2705,16 @@ class MainForm(QMainWindow):
         except Exception:
             print("There are no atoms in the model")
 
+    def cif_data_to_form(self):
+        if len(self.models) == 0:
+            return
+        try:
+            model = self.ui.openGLWidget.get_model()
+            text = model.to_cif(self.filename)
+            self.ui.FormActionsPreTextFDF.setText(text)
+        except Exception:
+            print("There are no atoms in the model")
+
     def qe_data_to_form(self):
         if len(self.models) == 0:
             return
@@ -2720,7 +2740,7 @@ class MainForm(QMainWindow):
             text = self.ui.FormActionsPreTextFDF.toPlainText()
             if len(text) > 0:
                 file_mask = "FDF files (*.fdf);;VASP POSCAR file (*.POSCAR)"
-                file_mask += ";;Crystal d12 (*.d12);;PWscf in (*.in);;WIEN struct (*.struct)"
+                file_mask += ";;Crystal d12 (*.d12);;PWscf in (*.in);;WIEN struct (*.struct);;CIF file (*.cif)"
                 fname = self.get_file_name_from_save_dialog(file_mask)
                 if fname is not None:
                     helpers.write_text_to_file(fname, text)

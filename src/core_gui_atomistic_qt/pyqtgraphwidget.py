@@ -6,6 +6,7 @@
 
 from PySide2.QtWidgets import QWidget, QVBoxLayout
 from PySide2.QtGui import QFont
+from PySide2.QtCore import Qt
 import pyqtgraph as pg  # pip install pyqtgraph
 import numpy as np
 from typing import List
@@ -78,7 +79,8 @@ class PyqtGraphWidget(QWidget):
         self.graphWidget.clear()
 
     def plot(self, x: List[List[float]], y: List[List[float]], labels: List[str],
-             title: str, x_title: str, y_title: str, is_colored=True):
+             title: str, x_title: str, y_title: str, is_colored=True, _style=Qt.SolidLine):
+        # _style: Qt.SolidLine, Qt.DashLine, Qt.DotLine, Qt.DashDotLine, Qt.DashDotDotLine
         self.title = title
         self.x_title = x_title
         self.y_title = y_title
@@ -88,7 +90,8 @@ class PyqtGraphWidget(QWidget):
 
         n_plots = len(y)
         for index in range(n_plots):
-            pen = pg.mkPen(color=self.COLORS[index % len(self.COLORS) if is_colored else 0], width=self.line_width)
+            pen = pg.mkPen(color=self.COLORS[index % len(self.COLORS) if is_colored else 0], width=self.line_width,
+                           style=_style)
             self.graphWidget.plot(x[index % len(x)], y[index], name=labels[index % len(labels)],
                                   pen=pen, font=self.legend_font)
 

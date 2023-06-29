@@ -1817,7 +1817,7 @@ class Ui_MainWindow(object):
         self.toolBox_6.setSizePolicy(sizePolicy2)
         self.page_29 = QWidget()
         self.page_29.setObjectName(u"page_29")
-        self.page_29.setGeometry(QRect(0, 0, 371, 593))
+        self.page_29.setGeometry(QRect(0, 0, 339, 309))
         self.verticalLayout_26 = QVBoxLayout(self.page_29)
         self.verticalLayout_26.setObjectName(u"verticalLayout_26")
         self.frame_179 = QFrame(self.page_29)
@@ -2939,6 +2939,11 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_190.addWidget(self.WIENgenerate)
 
+        self.cif_generate = QPushButton(self.frame_178)
+        self.cif_generate.setObjectName(u"cif_generate")
+
+        self.horizontalLayout_190.addWidget(self.cif_generate)
+
 
         self.verticalLayout_43.addWidget(self.frame_178)
 
@@ -3096,13 +3101,13 @@ class Ui_MainWindow(object):
         self.horizontalLayout_19.setContentsMargins(0, 2, -1, 5)
         self.spin_bands_xmin = QDoubleSpinBox(self.groupBox_15)
         self.spin_bands_xmin.setObjectName(u"spin_bands_xmin")
-        self.spin_bands_xmin.setDecimals(3)
+        self.spin_bands_xmin.setDecimals(6)
 
         self.horizontalLayout_19.addWidget(self.spin_bands_xmin)
 
         self.spin_bands_xmax = QDoubleSpinBox(self.groupBox_15)
         self.spin_bands_xmax.setObjectName(u"spin_bands_xmax")
-        self.spin_bands_xmax.setDecimals(3)
+        self.spin_bands_xmax.setDecimals(6)
 
         self.horizontalLayout_19.addWidget(self.spin_bands_xmax)
 
@@ -3143,17 +3148,29 @@ class Ui_MainWindow(object):
         self.FormActionsGrBoxBANDSspin.setMaximumSize(QSize(16777215, 16777215))
         self.horizontalLayout_31 = QHBoxLayout(self.FormActionsGrBoxBANDSspin)
         self.horizontalLayout_31.setObjectName(u"horizontalLayout_31")
-        self.horizontalLayout_31.setContentsMargins(0, 2, -1, 5)
-        self.FormActionsCheckBANDSspinUp = QRadioButton(self.FormActionsGrBoxBANDSspin)
-        self.FormActionsCheckBANDSspinUp.setObjectName(u"FormActionsCheckBANDSspinUp")
-        self.FormActionsCheckBANDSspinUp.setChecked(True)
+        self.bands_spin_up = QRadioButton(self.FormActionsGrBoxBANDSspin)
+        self.bands_spin_up.setObjectName(u"bands_spin_up")
+        self.bands_spin_up.setChecked(True)
 
-        self.horizontalLayout_31.addWidget(self.FormActionsCheckBANDSspinUp)
+        self.horizontalLayout_31.addWidget(self.bands_spin_up)
 
-        self.FormActionsCheckBANDSspinDown = QRadioButton(self.FormActionsGrBoxBANDSspin)
-        self.FormActionsCheckBANDSspinDown.setObjectName(u"FormActionsCheckBANDSspinDown")
+        self.horizontalSpacer_150 = QSpacerItem(65, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
-        self.horizontalLayout_31.addWidget(self.FormActionsCheckBANDSspinDown)
+        self.horizontalLayout_31.addItem(self.horizontalSpacer_150)
+
+        self.bands_spin_down = QRadioButton(self.FormActionsGrBoxBANDSspin)
+        self.bands_spin_down.setObjectName(u"bands_spin_down")
+
+        self.horizontalLayout_31.addWidget(self.bands_spin_down)
+
+        self.horizontalSpacer_151 = QSpacerItem(65, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_31.addItem(self.horizontalSpacer_151)
+
+        self.bands_spin_up_down = QRadioButton(self.FormActionsGrBoxBANDSspin)
+        self.bands_spin_up_down.setObjectName(u"bands_spin_up_down")
+
+        self.horizontalLayout_31.addWidget(self.bands_spin_up_down)
 
 
         self.verticalLayout_7.addWidget(self.FormActionsGrBoxBANDSspin)
@@ -7069,6 +7086,7 @@ class Ui_MainWindow(object):
         self.POSCARgenerate.setText(QCoreApplication.translate("MainWindow", u"VASP POSCAR", None))
         self.QEgenerate.setText(QCoreApplication.translate("MainWindow", u"QE", None))
         self.WIENgenerate.setText(QCoreApplication.translate("MainWindow", u"WIEN2k struct", None))
+        self.cif_generate.setText(QCoreApplication.translate("MainWindow", u"CIF", None))
         self.groupBox_55.setTitle(QCoreApplication.translate("MainWindow", u"CRYSTAL *.d12", None))
         self.crystal_3d_d12_generate.setText(QCoreApplication.translate("MainWindow", u"3D", None))
         self.crystal_2d_d12_generate.setText(QCoreApplication.translate("MainWindow", u"2D", None))
@@ -7082,8 +7100,9 @@ class Ui_MainWindow(object):
         self.groupBox_16.setTitle(QCoreApplication.translate("MainWindow", u"Energy range", None))
         self.FormActionsCheckBANDSfermyShow.setText(QCoreApplication.translate("MainWindow", u"Show Fermi level", None))
         self.FormActionsGrBoxBANDSspin.setTitle(QCoreApplication.translate("MainWindow", u"Spin", None))
-        self.FormActionsCheckBANDSspinUp.setText(QCoreApplication.translate("MainWindow", u"Up", None))
-        self.FormActionsCheckBANDSspinDown.setText(QCoreApplication.translate("MainWindow", u"Down", None))
+        self.bands_spin_up.setText(QCoreApplication.translate("MainWindow", u"Up", None))
+        self.bands_spin_down.setText(QCoreApplication.translate("MainWindow", u"Down", None))
+        self.bands_spin_up_down.setText(QCoreApplication.translate("MainWindow", u"Up+Down", None))
         self.groupBox_48.setTitle(QCoreApplication.translate("MainWindow", u"Plot", None))
         self.label_120.setText(QCoreApplication.translate("MainWindow", u"Title", None))
         self.bands_title.setText(QCoreApplication.translate("MainWindow", u"Bands", None))

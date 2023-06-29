@@ -4,6 +4,7 @@ import copy
 import math
 import os
 import re
+from datetime import date
 from copy import deepcopy
 
 import numpy as np
@@ -413,6 +414,54 @@ class AtomicModel(object):
         obr = np.linalg.inv(self.lat_vectors).transpose()
         for atom in self.atoms:
             atom.xyz = obr.dot(atom.xyz)
+
+    def to_cif(self, f_name=""):
+        cif_text = "data_GUI4dft_Data\n"
+        a, b, c, al, bet, gam = self.cell_params()
+        cif_text += "_cell_length_a {0:11.5f}\n".format(a)
+        cif_text += "_cell_length_b {0:11.5f}\n".format(b)
+        cif_text += "_cell_length_c {0:11.5f}\n".format(c)
+        cif_text += "_cell_angle_alpha {0:11.6f}\n".format(al)
+        cif_text += "_cell_angle_beta {0:12.6f}\n".format(bet)
+        cif_text += "_cell_angle_gamma {0:11.6f}\n".format(gam)
+        cif_text += "_symmetry_space_group_name_H-M         'P1     '\n"
+        cif_text += "_symmetry_space_group_number    1\n"
+        cif_text += "_refine_date  '" + str(date.today()) + "'\n"
+        cif_text += "_refine_method 'generated from GUI4dft code'\n"
+        cif_text += "_refine_special_details\n;\nStructure converted from\nFile Name "
+        cif_text += f_name + "\n"
+        cif_text += "Title '" + str(self.formula()) + "'\n;\n\n"
+        cif_text += "loop_\n"
+        cif_text += "_symmetry_equiv_pos_as_xyz\n"
+        cif_text += "   +x,+y,+z\n"
+        cif_text += "loop_\n_atom_site_label\n_atom_site_type_symbol\n"
+        cif_text += "_atom_site_fract_x\n_atom_site_fract_y\n_atom_site_fract_z\n"
+
+        new_model = deepcopy(self)
+        new_model.convert_from_cart_to_direct()
+        new_model.sort_atoms_by_type()
+        i = 0
+        let_prev = ""
+        for at in new_model.atoms:
+            let = at.let
+            if let == let_prev:
+                i += 1
+            else:
+                i = 1
+            let_prev = deepcopy(let)
+            cif_text +="{0}{1:03d}\t{2}\t{3:10.8f}\t{4:10.8f}\t{5:10.8f}\n".format(let, i, let, at.x, at.y, at.z)
+
+        """
+        Fe001	Fe	0.00000000	0.00000000	0.00000000
+        Fe002	Fe	0.50000000	0.00000000	0.00000000
+        Fe022	Fe	0.00000000	0.33333333	0.33333333
+        Fe095	Fe	0.41666666	0.83333333	0.83333333
+        Fe096	Fe	0.91666666	0.83333333	0.83333333
+        V0001	V	0.50000000	0.66666667	0.00000000
+        V0012	V	0.25000000	0.83333333	0.83333333 
+        """
+        cif_text += "\n\n\n\n#End data_GUI4dft_Data\n\n\n"
+        return cif_text
 
     def minX(self):
         """Minimum X-coordinate."""
