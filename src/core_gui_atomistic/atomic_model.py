@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 # Python 3
+from typing import List
 import copy
 import math
 import os
@@ -21,7 +22,7 @@ import scipy
 
 class AtomicModel(object):
     def __init__(self, new_atoms: list = [], mendeley: TPeriodTable = None):
-        self.atoms = []
+        self.atoms: List[Atom] = []
         self.bonds = []
         self.bonds_per = []  # for exact calculation in form
 

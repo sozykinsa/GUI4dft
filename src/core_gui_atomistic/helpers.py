@@ -107,7 +107,6 @@ def plane_for_3_points(xyz1, xyz2, xyz3):
     b = v2[0] * v1[2] - v1[0] * v2[2]
     c = v1[0] * v2[1] - v1[1] * v2[0]
     d = (- a * xyz1[0] - b * xyz1[1] - c * xyz1[2])
-    # print("equation of plane is ", str(a), "x +", str(b), "y +", str(c), "z +", str(d), "= 0.")
     return [a, b, c, d]
 
 

@@ -98,8 +98,8 @@ class PyqtGraphWidget(QWidget):
     def add_title(self):
         self.graphWidget.setTitle(self.title, color=self.font_color, size=str(self.font_size_title) + "pt")
 
-    def add_scatter(self, xs, ys):
-        scatter = pg.ScatterPlotItem(size=15, brush=pg.mkBrush(255, 255, 0, 190))
+    def add_scatter(self, xs, ys, color=[255, 255, 0]):
+        scatter = pg.ScatterPlotItem(size=15, brush=pg.mkBrush(*color, 190))
         spots = [{'pos': [xs[i], ys[i]], 'data': 1} for i in range(len(xs))]
         scatter.addPoints(spots)
         self.graphWidget.addItem(scatter)
