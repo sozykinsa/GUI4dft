@@ -758,7 +758,7 @@ class MainForm(QMainWindow):
         if coord_type == "A":
             return position
         if coord_type == "bohr":
-            return position / 0.52917720859
+            return position * 0.52917720859
         lat_vectors = self.models[self.active_model].lat_vectors
         return position[0] * lat_vectors[0] + position[1] * lat_vectors[1] + position[2] * lat_vectors[2]
 
@@ -766,7 +766,7 @@ class MainForm(QMainWindow):
         if coord_type == "A":
             return position
         if coord_type == "bohr":
-            return position * 0.52917720859
+            return position / 0.52917720859
         obr = np.linalg.inv(self.models[self.active_model].lat_vectors).transpose()
         return obr.dot(position)
 
