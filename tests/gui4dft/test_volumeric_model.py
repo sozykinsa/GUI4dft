@@ -11,7 +11,7 @@ def test_volumeric_data_block():
 
 
 def test_cube(tests_path):
-    f_name = str(tests_path / 'ref_data' / 'h2o-ang-charges' / 'cube_and_xsf' / "siesta.BADER.cube")
+    f_name = str(tests_path / 'ref_data' / 'siesta' / 'h2o-ang-charges' / 'cube_and_xsf' / "siesta.BADER.cube")
     model = GaussianCube()
     assert model.type == "TGaussianCube"
     model.parse(f_name)
@@ -22,7 +22,7 @@ def test_cube(tests_path):
 
 
 def test_xsf(tests_path):
-    f_name = str(tests_path / 'ref_data' / 'h2o-ang-charges' / 'cube_and_xsf' / "siesta.XSF")
+    f_name = str(tests_path / 'ref_data' / 'siesta' / 'h2o-ang-charges' / 'cube_and_xsf' / "siesta.XSF")
     model = XSF()
     assert model.type == "TXSF"
     model.parse(f_name)

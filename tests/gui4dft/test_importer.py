@@ -7,36 +7,36 @@ from core_gui_atomistic import helpers
 def test_check_format(tests_path):
     assert helpers.check_format(str(tests_path / 'ref_data' / 'swcnt(8,0)' / "siesta1.out")) == "unknown"
     assert helpers.check_format(str(tests_path / 'ref_data' / 'swcnt(8,0)' / "siesta.out")) == "SIESTAout"
-    assert helpers.check_format(str(tests_path / 'ref_data' / 'h2o-ang' / "siesta.fdf")) == "SIESTAfdf"
+    assert helpers.check_format(str(tests_path / 'ref_data' / 'siesta' / 'h2o-ang' / "siesta.fdf")) == "SIESTAfdf"
     assert helpers.check_format(str(tests_path / 'ref_data' / 'vasp' / 'POSCAR')) == "VASPposcar"
     assert helpers.check_format(str(tests_path / 'ref_data' / 'qe' / 'si-scf' / "pw.out")) == "QEPWout"
-    file1 = str(tests_path / 'ref_data' / 'h2o-ang-charges' / 'cube_and_xsf' / "siesta.BADER.cube")
+    file1 = str(tests_path / 'ref_data' / 'siesta' / 'h2o-ang-charges' / 'cube_and_xsf' / "siesta.BADER.cube")
     assert helpers.check_format(file1) == "GAUSSIAN_cube"
     assert helpers.check_format(str(tests_path / 'ref_data' / 'wien2k' / 'Fe53C_Si_1.struct')) == "WIENstruct"
 
 
 def test_importer_fdf(tests_path):
-    f_name = str(tests_path / 'ref_data' / 'h2o-ang' / "siesta.fdf")
+    f_name = str(tests_path / 'ref_data' / 'siesta' / 'h2o-ang' / "siesta.fdf")
     model, fdf = ImporterExporter.import_from_file(f_name, fl='all', prop=False)
     assert len(model[0].atoms) == 3
 
-    f_name = str(tests_path / 'ref_data' / 'h2o-scaled' / "siesta.fdf")
+    f_name = str(tests_path / 'ref_data' / 'siesta' / 'h2o-scaled' / "siesta.fdf")
     model, fdf = ImporterExporter.import_from_file(f_name, fl='all', prop=False)
     assert len(model[0].atoms) == 3
 
-    f_name = str(tests_path / 'ref_data' / 'h2o-bohr' / "siesta.fdf")
+    f_name = str(tests_path / 'ref_data' / 'siesta' / 'h2o-bohr' / "siesta.fdf")
     model, fdf = ImporterExporter.import_from_file(f_name, fl='all', prop=False)
     assert len(model[0].atoms) == 3
 
-    f_name = str(tests_path / 'ref_data' / 'h2o-bohr' / "siesta-params.fdf")
+    f_name = str(tests_path / 'ref_data' / 'siesta' / 'h2o-bohr' / "siesta-params.fdf")
     model, fdf = ImporterExporter.import_from_file(f_name, fl='all', prop=False)
     assert len(model[0].atoms) == 3
 
-    f_name = str(tests_path / 'ref_data' / 'h2o-bohr' / "siesta-without-cell.fdf")
+    f_name = str(tests_path / 'ref_data' / 'siesta' / 'h2o-bohr' / "siesta-without-cell.fdf")
     model, fdf = ImporterExporter.import_from_file(f_name, fl='all', prop=False)
     assert len(model[0].atoms) == 3
 
-    f_name = str(tests_path / 'ref_data' / 'h2o-zmatrix' / "siesta.fdf")
+    f_name = str(tests_path / 'ref_data' / 'siesta' / 'h2o-zmatrix' / "siesta.fdf")
     model, fdf = ImporterExporter.import_from_file(f_name, fl='all', prop=False)
     assert len(model[0].atoms) == 3
 
@@ -46,7 +46,7 @@ def test_importer_fdf(tests_path):
 
 
 def test_importer_ani(tests_path):
-    f_name = str(tests_path / 'ref_data' / 'h2o-ang' / "siesta.ANI")
+    f_name = str(tests_path / 'ref_data' / 'siesta' / 'h2o-ang' / "siesta.ANI")
     model, fdf = ImporterExporter.import_from_file(f_name, fl='all', prop=False)
     # no file
     assert len(model) == 0
@@ -58,15 +58,15 @@ def test_importer_ani(tests_path):
 
 
 def test_importer_output(tests_path):
-    f_name = str(tests_path / 'ref_data' / 'h2o-ang' / "siesta.out")
+    f_name = str(tests_path / 'ref_data' / 'siesta' / 'h2o-ang' / "siesta.out")
     model, fdf = ImporterExporter.import_from_file(f_name, fl='all', prop=True)
     assert len(model[0].atoms) == 3
 
-    f_name = str(tests_path / 'ref_data' / 'h2o-bohr' / "siesta.out")
+    f_name = str(tests_path / 'ref_data' / 'siesta' / 'h2o-bohr' / "siesta.out")
     model, fdf = ImporterExporter.import_from_file(f_name, fl='all', prop=True)
     assert len(model[0].atoms) == 3
 
-    f_name = str(tests_path / 'ref_data' / 'h2o-zmatrix' / "siesta.out")
+    f_name = str(tests_path / 'ref_data' / 'siesta' / 'h2o-zmatrix' / "siesta.out")
     model, fdf = ImporterExporter.import_from_file(f_name, fl='all', prop=True)
     assert len(model[0].atoms) == 3
 
@@ -74,7 +74,7 @@ def test_importer_output(tests_path):
     model, fdf = ImporterExporter.import_from_file(f_name, fl='all', prop=True)
     assert len(model[0].atoms) == 119
 
-    f_name = str(tests_path / 'ref_data' / 'h2o-ang-charges' / "siesta.out")
+    f_name = str(tests_path / 'ref_data' / 'siesta' / 'h2o-ang-charges' / "siesta.out")
     model, fdf = ImporterExporter.import_from_file(f_name, fl='all', prop=True)
     assert len(model[0].atoms) == 3
     atom = model[-1].atoms[0]
@@ -84,26 +84,26 @@ def test_importer_output(tests_path):
 
 
 def test_importer_ghost(tests_path):
-    f_name = str(tests_path / 'ref_data' / 'h2o-ang-ghost' / "siesta.fdf")
+    f_name = str(tests_path / 'ref_data' / 'siesta' / 'h2o-ang-ghost' / "siesta.fdf")
     model, fdf = ImporterExporter.import_from_file(f_name, fl='all', prop=True)
     assert len(model[0].atoms) == 3
     assert model[0].get_tags()[1] == -1
-    f_name = str(tests_path / 'ref_data' / 'h2o-ang-ghost' / "siesta.out")
+    f_name = str(tests_path / 'ref_data' / 'siesta' / 'h2o-ang-ghost' / "siesta.out")
     model, fdf = ImporterExporter.import_from_file(f_name, fl='all', prop=True)
     assert len(model[0].atoms) == 3
     assert model[0].get_tags()[1] == -1
 
 
 def test_importer_xyz(tests_path):
-    f_name = str(tests_path / 'ref_data' / 'h2o-ang' / "siesta.xyz")
+    f_name = str(tests_path / 'ref_data' / 'siesta' / 'h2o-ang' / "siesta.xyz")
     model, fdf = ImporterExporter.import_from_file(f_name, fl='all', prop=False)
     assert len(model[0].atoms) == 3
 
-    f_name = str(tests_path / 'ref_data' / 'h2o-bohr' / "siesta.xyz")
+    f_name = str(tests_path / 'ref_data' / 'siesta' / 'h2o-bohr' / "siesta.xyz")
     model, fdf = ImporterExporter.import_from_file(f_name, fl='all', prop=False)
     assert len(model[0].atoms) == 3
 
-    f_name = str(tests_path / 'ref_data' / 'h2o-zmatrix' / "siesta.xyz")
+    f_name = str(tests_path / 'ref_data' / 'siesta' / 'h2o-zmatrix' / "siesta.xyz")
     model, fdf = ImporterExporter.import_from_file(f_name, fl='all', prop=False)
     assert len(model[0].atoms) == 3
 
@@ -113,15 +113,15 @@ def test_importer_xyz(tests_path):
 
 
 def test_importer_struct_out(tests_path):
-    f_name = str(tests_path / 'ref_data' / 'h2o-ang' / "siesta.STRUCT_OUT")
+    f_name = str(tests_path / 'ref_data' / 'siesta' / 'h2o-ang' / "siesta.STRUCT_OUT")
     model, fdf = ImporterExporter.import_from_file(f_name, fl='all', prop=False)
     assert len(model[0].atoms) == 3
 
-    f_name = str(tests_path / 'ref_data' / 'h2o-bohr' / "siesta.STRUCT_OUT")
+    f_name = str(tests_path / 'ref_data' / 'siesta' / 'h2o-bohr' / "siesta.STRUCT_OUT")
     model, fdf = ImporterExporter.import_from_file(f_name, fl='all', prop=False)
     assert len(model[0].atoms) == 3
 
-    f_name = str(tests_path / 'ref_data' / 'h2o-zmatrix' / "siesta.STRUCT_OUT")
+    f_name = str(tests_path / 'ref_data' / 'siesta' / 'h2o-zmatrix' / "siesta.STRUCT_OUT")
     model, fdf = ImporterExporter.import_from_file(f_name, fl='all', prop=False)
     assert len(model[0].atoms) == 3
     atom = model[-1].atoms[0]
@@ -135,13 +135,13 @@ def test_importer_md_car(tests_path):
 
 
 def test_importer_cube(tests_path):
-    f_name = str(tests_path / 'ref_data' / 'h2o-ang-charges' / 'cube_and_xsf' / "siesta.BADER.cube")
+    f_name = str(tests_path / 'ref_data' / 'siesta' / 'h2o-ang-charges' / 'cube_and_xsf' / "siesta.BADER.cube")
     model, fdf = ImporterExporter.import_from_file(f_name, fl='all', prop=False)
     assert len(model[0].atoms) == 3
 
 
 def test_importer_xsf(tests_path):
-    f_name = str(tests_path / 'ref_data' / 'h2o-ang-charges' / 'cube_and_xsf' / "siesta.XSF")
+    f_name = str(tests_path / 'ref_data' / 'siesta' / 'h2o-ang-charges' / 'cube_and_xsf' / "siesta.XSF")
     model, fdf = ImporterExporter.import_from_file(f_name, fl='all', prop=False)
     assert len(model[0].atoms) == 3
 

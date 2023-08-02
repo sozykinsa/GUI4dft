@@ -256,7 +256,13 @@ def check_format(filename):
             if str1.find("WELCOME TO SIESTA") >= 0:
                 f.close()
                 return "SIESTAout"
-            if str1.find("DIRECT LATTICE VECTORS CARTESIAN COMPONENTS (ANGSTROM)") >= 0:
+            if str1.find("*                               CRYSTAL14                                     *") >= 0:
+                f.close()
+                return "CRYSTALout"
+            if str1.find("*                               CRYSTAL17                                     *") >= 0:
+                f.close()
+                return "CRYSTALout"
+            if str1.find("*                               CRYSTAL23                                     *") >= 0:
                 f.close()
                 return "CRYSTALout"
             if str1.find("Program PWSCF v") >= 0:
