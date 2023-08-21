@@ -255,7 +255,7 @@ def check_format(filename):
         while str1:
             if str1.find("WELCOME TO SIESTA") >= 0:
                 f.close()
-                return "SIESTAout"
+                return "siesta_out"
             if str1.find("*                               CRYSTAL14                                     *") >= 0:
                 f.close()
                 return "CRYSTALout"
@@ -270,7 +270,7 @@ def check_format(filename):
                 return "QEPWout"
             str1 = f.readline()
         f.close()
-        return "SIESTAout"
+        return "siesta_out"
 
     if name.endswith(".ani"):
         return "SIESTAANI"
@@ -301,6 +301,9 @@ def check_format(filename):
     if ("poscar" in name) or ("contcar" in name):
         return "VASPposcar"
 
+    if "outcar" in name:
+        return "vasp_outcar"
+
     if name.endswith("outp"):
         return "topond_out"
 
@@ -312,5 +315,13 @@ def check_format(filename):
 
     if name.endswith(".struct"):
         return "WIENstruct"
+
+    name = os.path.basename(name)
+
+    if name.startswith("optc"):
+        return "CRYSTALopt_cryst"
+
+    if name.startswith("opta"):
+        return "CRYSTALopt_atom"
 
     return "unknown"

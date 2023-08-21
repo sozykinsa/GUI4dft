@@ -35,8 +35,8 @@ from src_gui4dft.program.siesta import TSIESTA
 from src_gui4dft.program.crystal import model_0d_to_d12, model_1d_to_d12, model_2d_to_d12, model_3d_to_d12
 from src_gui4dft.program.qe import model_to_qe_pw
 from src_gui4dft.program.wien import model_to_wien_struct
-from src_gui4dft.program.vasp import vasp_dos
-from src_gui4dft.program.vasp import model_to_vasp_poscar
+from src_gui4dft.program.vasp import TVASP, vasp_dos, model_to_vasp_poscar
+
 from src_gui4dft.program import ase
 
 from src_gui4dft.utils.importer_exporter import ImporterExporter
@@ -51,8 +51,6 @@ from src_gui4dft.ui.about import Ui_DialogAbout as Ui_about
 from src_gui4dft.ui.form import Ui_MainWindow as Ui_form
 
 from ase.build import molecule, bulk
-
-from src_gui4dft.program.vasp import VaspDataFromXml
 
 sys.path.append('')
 
@@ -544,9 +542,10 @@ class MainForm(QMainWindow):
     def add_cell_param(self):
         """Add cell parameter."""
         try:
-            f_name = self.get_file_name_from_open_dialog("All files (*.*)")
-            if helpers.check_format(f_name) == "SIESTAout":
-                self.fill_cell_info(f_name)
+            f_name = self.get_file_name_from_open_dialog("All files (*)")
+            f_format = helpers.check_format(f_name)
+            if (f_format == "siesta_out") or (f_format == "vasp_outcar"):
+                self.fill_cell_info(f_name, f_format)
             self.plot_volume_param_energy()
         except Exception as e:
             self.show_error(e)
@@ -1054,7 +1053,7 @@ class MainForm(QMainWindow):
         self.ui.PropertyAtomAtomDistanceAt2.setMaximum(self.ui.openGLWidget.main_model.n_atoms())
         self.ui.PropertyAtomAtomDistance.setText("")
 
-        if helpers.check_format(file_name) == "SIESTAout":
+        if helpers.check_format(file_name) == "siesta_out":
             self.check_dos(file_name)
             self.check_pdos(file_name)
             self.check_bands(file_name)
@@ -1191,15 +1190,24 @@ class MainForm(QMainWindow):
             c2 = mendeley.get_charge_by_letter(bonds_category[1])
         return c1, c2
 
-    def fill_cell_info(self, f_name):
-        volume = TSIESTA.volume(f_name)
-        energy = TSIESTA.energy_tot(f_name)
+    def fill_cell_info(self, f_name, sourse="siesta_out"):
+        volume = 0.0
+        energy = 0.0
+        a, b, c = 0.0, 0.0, 0.0
 
-        models, fdf_data = ImporterExporter.import_from_file(f_name)
-        model = models[-1]
-        a = np.linalg.norm(model.lat_vector1)
-        b = np.linalg.norm(model.lat_vector2)
-        c = np.linalg.norm(model.lat_vector3)
+        if sourse == "siesta_out":
+            volume = TSIESTA.volume(f_name)
+            energy = TSIESTA.energy_tot(f_name)
+            models, fdf_data = ImporterExporter.import_from_file(f_name)
+            model = models[-1]
+            a = np.linalg.norm(model.lat_vector1)
+            b = np.linalg.norm(model.lat_vector2)
+            c = np.linalg.norm(model.lat_vector3)
+        if sourse == "vasp_outcar":
+            volume = TVASP.volume(f_name)
+            energy, is_conv, iteration = TVASP.energy_tot(f_name)
+            a, b, c = TVASP.abc(f_name)
+
         self.fill_cell_info_row(energy, volume, a, b, c)
         self.ui.FormActionsPreZSizeFillSpace.setValue(c)
         self.work_dir = os.path.dirname(f_name)
@@ -2927,7 +2935,7 @@ class MainForm(QMainWindow):
     def parse_volumeric_data2(self, filename: str = ""):
         try:
             if not filename:  # pragma: no cover
-                filename = self.get_file_name_from_open_dialog("All files (*.*)")
+                filename = self.get_file_name_from_open_dialog("All files (*)")
             if len(filename) > 0:
                 if filename.endswith(".XSF"):
                     self.volumeric_data2 = XSF()

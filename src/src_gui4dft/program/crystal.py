@@ -83,6 +83,29 @@ def model_3d_to_d12(model):
     return text
 
 
+def structure_opt_step(f_name):
+    models = []
+    f = open(f_name)
+    f.readline()
+    row1 = f.readline().split()
+    row2 = f.readline().split()
+    row3 = f.readline().split()
+    if (len(row1) == 3) and (len(row2) == 3) and (len(row3) == 3):
+        vec1 = np.array(row1, dtype=float)
+        vec2 = np.array(row2, dtype=float)
+        vec3 = np.array(row3, dtype=float)
+        f.readline()
+        row = f.readline().split()
+        while len(row) > 1:
+            row = f.readline().split()
+        number_of_atoms = int(row[0])
+        new_model = AtomicModel.atoms_from_xyz_structure(number_of_atoms, f, [0, 1, 2, 3])
+        new_model.set_lat_vectors(vec1, vec2, vec3)
+        models.append(new_model)
+    f.close()
+    return models
+
+
 def structure_of_primitive_cell(f_name):
     models = []
     f = open(f_name)
