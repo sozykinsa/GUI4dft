@@ -805,8 +805,6 @@ class MainForm(QMainWindow):
             self.ui.parse_bands.setEnabled(True)
 
     def check_dos(self, f_name: str) -> None:   # pragma: no cover
-        if f_name.endswith('vasprun.xml'):
-            vasp_data = VaspDataFromXml(f_name)
         dos_file, e_fermy = ImporterExporter.check_dos_file(f_name)
         if dos_file:
             i = self.ui.FormActionsTabeDOSProperty.rowCount() + 1

@@ -20,7 +20,7 @@ def test_volume(tests_path):
 
 def test_energy_tot(tests_path):
     f_name = str(tests_path / 'ref_data' / 'vasp' / "OUTCAR")
-    e = TVASP.energy_tot(f_name)
+    e, t, b = TVASP.energy_tot(f_name)
     assert e == -4.71040512
 
 
