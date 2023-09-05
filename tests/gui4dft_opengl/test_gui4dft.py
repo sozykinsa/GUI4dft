@@ -29,7 +29,7 @@ def test_menu_open(gui4dft_application, tests_path):
 
 
 def test_xsf_operations(gui4dft_application, tests_path):
-    f_name = str(tests_path / 'ref_data' / 'h2o-ang-charges' / 'cube_and_xsf' / "siesta.XSF")
+    f_name = str(tests_path / 'ref_data' / 'siesta' / 'h2o-ang-charges' / 'cube_and_xsf' / "siesta.XSF")
     window = gui4dft_application
     window.menu_open(f_name)
     assert len(window.models) == 1

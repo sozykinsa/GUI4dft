@@ -90,13 +90,13 @@ def test_get_charges_for_atoms(tests_path):
     mulliken = TSIESTA.get_charges_for_atoms(f_name, "Mulliken")
     assert mulliken[0] == []
 
-    f_name = str(tests_path / 'ref_data' / 'h2o-ang-charges' / "siesta.out")
+    f_name = str(tests_path / 'ref_data' / 'siesta' / 'h2o-ang-charges' / "siesta.out")
     mulliken = TSIESTA.get_charges_for_atoms(f_name, "Mulliken")
     assert mulliken[0] != []
 
 
 def test_coord_type(tests_path):
-    f_name = str(tests_path / 'ref_data' / 'h2o-scaled' / "siesta.fdf")
+    f_name = str(tests_path / 'ref_data' / 'siesta' / 'h2o-scaled' / "siesta.fdf")
     coord_t = TSIESTA.atomic_coordinates_format(f_name)
     assert coord_t == "ScaledCartesian"
 

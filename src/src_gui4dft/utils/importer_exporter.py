@@ -7,8 +7,9 @@ from src_gui4dft.program.fdfdata import TFDFFile
 from src_gui4dft.program.siesta import TSIESTA
 from src_gui4dft.program.firefly import atomic_model_to_firefly_inp
 from src_gui4dft.program.vasp import model_to_vasp_poscar
-from src_gui4dft.program.crystal import structure_of_primitive_cell
+from src_gui4dft.program.crystal import structure_of_primitive_cell, structure_opt_step
 from src_gui4dft.program.qe import atoms_from_pwout
+from src_gui4dft.program.wien import atoms_from_struct
 from core_gui_atomistic import helpers
 from core_gui_atomistic.gui4dft_project_file import GUI4dftProjectFile
 from src_gui4dft.models.gaussiancube import GaussianCube
@@ -29,7 +30,7 @@ class ImporterExporter(object):
                 models = TSIESTA.atoms_from_fdf(filename)
                 fdf.from_fdf_file(filename)
 
-            elif file_format == "SIESTAout":
+            elif file_format == "siesta_out":
                 models = TSIESTA.get_output_data(filename, fl, models, prop)
                 if len(models) == 0:
                     models = TSIESTA.atoms_from_fdf(filename)
@@ -62,8 +63,14 @@ class ImporterExporter(object):
             elif file_format == "CRYSTALout":
                 models = structure_of_primitive_cell(filename)
 
+            elif (file_format == "CRYSTALopt_cryst") or (file_format == "CRYSTALopt_atom"):
+                models = structure_opt_step(filename)
+
             elif file_format == "QEPWout":
                 models = atoms_from_pwout(filename)
+
+            elif file_format == "WIENstruct":
+                models = atoms_from_struct(filename)
 
             elif file_format == "project":
                 models = GUI4dftProjectFile.project_file_reader(filename)

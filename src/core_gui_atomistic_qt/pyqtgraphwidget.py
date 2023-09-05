@@ -6,6 +6,7 @@
 
 from PySide2.QtWidgets import QWidget, QVBoxLayout
 from PySide2.QtGui import QFont
+from PySide2.QtCore import Qt
 import pyqtgraph as pg  # pip install pyqtgraph
 import numpy as np
 from typing import List
@@ -13,14 +14,19 @@ from typing import List
 
 class PyqtGraphWidget(QWidget):
 
-    COLORS = [(0, 0, 0), (255, 0, 0), (0, 255, 0), (0, 0, 255)]
+    COLORS = [(0, 0, 0), (255, 0, 0), (0, 255, 0), (0, 0, 255), (220, 20, 60), (255, 69, 0), (139, 0, 0), (75, 0, 130),
+              (205, 92, 92), (47, 79, 79), (0, 0, 128), (0, 255, 255), (0, 128, 0), (128, 128, 0), (0, 139, 139),
+              (255, 127, 80), (199, 21, 133)]
 
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, user_colors=None):
         QWidget.__init__(self, parent)
         self.graphWidget = pg.PlotWidget()
         vertical_layout = QVBoxLayout()
         vertical_layout.addWidget(self.graphWidget)
         self.setLayout(vertical_layout)
+        self.user_colors = self.COLORS
+        if user_colors is not None:
+            self.user_colors = user_colors
 
         self.line_width = 2
 
@@ -78,7 +84,8 @@ class PyqtGraphWidget(QWidget):
         self.graphWidget.clear()
 
     def plot(self, x: List[List[float]], y: List[List[float]], labels: List[str],
-             title: str, x_title: str, y_title: str, is_colored=True):
+             title: str, x_title: str, y_title: str, is_colored=True, _style=Qt.SolidLine):
+        # _style: Qt.SolidLine, Qt.DashLine, Qt.DotLine, Qt.DashDotLine, Qt.DashDotDotLine
         self.title = title
         self.x_title = x_title
         self.y_title = y_title
@@ -88,15 +95,16 @@ class PyqtGraphWidget(QWidget):
 
         n_plots = len(y)
         for index in range(n_plots):
-            pen = pg.mkPen(color=self.COLORS[index % len(self.COLORS) if is_colored else 0], width=self.line_width)
+            pen = pg.mkPen(color=self.user_colors[index % len(self.user_colors) if is_colored else 0],
+                           width=self.line_width, style=_style)
             self.graphWidget.plot(x[index % len(x)], y[index], name=labels[index % len(labels)],
                                   pen=pen, font=self.legend_font)
 
     def add_title(self):
         self.graphWidget.setTitle(self.title, color=self.font_color, size=str(self.font_size_title) + "pt")
 
-    def add_scatter(self, xs, ys):
-        scatter = pg.ScatterPlotItem(size=15, brush=pg.mkBrush(255, 255, 0, 190))
+    def add_scatter(self, xs, ys, color=[255, 255, 0]):
+        scatter = pg.ScatterPlotItem(size=15, brush=pg.mkBrush(*color, 190))
         spots = [{'pos': [xs[i], ys[i]], 'data': 1} for i in range(len(xs))]
         scatter.addPoints(spots)
         self.graphWidget.addItem(scatter)

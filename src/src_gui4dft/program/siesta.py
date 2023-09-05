@@ -509,7 +509,9 @@ class TSIESTA:
         chemical_species_label = TSIESTA.get_block_from_siesta_fdf(filename, "ChemicalSpeciesLabel")
         for j in range(0, len(chemical_species_label)):
             row_data = chemical_species_label[j].split()
-            chem_spec_info[row_data[0]] = [int(abs(int(row_data[1]))), row_data[2]]
+            tag = "" if int(row_data[1]) > 0 else int(row_data[1])
+            chem_spec_info[row_data[0]] = [int(abs(int(row_data[1]))), row_data[2], tag]
+            print(chem_spec_info)
         return atomic_coordinates_format, number_of_atoms, chem_spec_info, lat, lat_vectors, units
 
     @staticmethod
@@ -530,8 +532,10 @@ class TSIESTA:
                     for j in range(0, number_of_atoms):
                         i += 1
                         atom_full = lines[i].split()
-                        at_list.append([float(atom_full[1]), float(atom_full[2]), float(atom_full[3]),
-                                       (chem_spec_info[str(atom_full[0])])[1], (chem_spec_info[str(atom_full[0])])[0]])
+                        xyz = np.array([float(atom_full[1]), float(atom_full[2]), float(atom_full[3])])
+                        charge = chem_spec_info[str(atom_full[0])][0]
+                        tag = chem_spec_info[str(atom_full[0])][2]
+                        all_atoms.add_atom_with_data(xyz, charge, tag)
             if lines[i].find("%block AtomicCoordinatesAndAtomicSpecies") >= 0:
                 is_block_atomic_coordinates = True
                 mult = 1
@@ -540,14 +544,11 @@ class TSIESTA:
                 for j in range(0, number_of_atoms):
                     i += 1
                     atom_full = lines[i].split()
-                    at_list1.append([mult * float(atom_full[0]), mult * float(atom_full[1]), mult * float(atom_full[2]),
-                                    (chem_spec_info[str(atom_full[3])])[1], (chem_spec_info[str(atom_full[3])])[0]])
+                    xyz = np.array([mult * float(atom_full[0]), mult * float(atom_full[1]), mult * float(atom_full[2])])
+                    charge = chem_spec_info[str(atom_full[3])][0]
+                    tag = chem_spec_info[str(atom_full[3])][2]
+                    all_atoms.add_atom_with_data(xyz, charge, tag)
             i += 1
-        if is_block_z_matrix:
-            all_atoms = AtomicModel(at_list)
-        else:
-            if is_block_atomic_coordinates:
-                all_atoms = AtomicModel(at_list1)
         if lat_vectors is None:
             all_atoms.set_lat_vectors_default()
         else:
@@ -594,21 +595,21 @@ class TSIESTA:
 
             siesta_file = open(filename)
             sl = []
-            isSpesF = 0
+            is_spes_f = 0
             need_to_convert1 = 0
             str1 = siesta_file.readline()
             atoms = []
             while str1 != '':
                 if (str1 != '') and (str1.find("siesta: Atomic coordinates (Bohr) and species") >= 0) and (
-                        isSpesF == 0):
+                        is_spes_f == 0):
                     str1 = siesta_file.readline()
                     while str1.find('siesta') >= 0:
                         str1 = helpers.spacedel(str1)
                         sl.append(int(str.split(str1, ' ')[4]))
                         str1 = siesta_file.readline()
-                    isSpesF = 1
+                    is_spes_f = 1
 
-                if (str1 != '') and (str1.find("outcell: Unit cell vectors (Ang):") >= 0) and (isSpesF == 1):
+                if (str1 != '') and (str1.find("outcell: Unit cell vectors (Ang):") >= 0) and (is_spes_f == 1):
                     lat_vect_1 = siesta_file.readline().split()
                     lat_vect_1 = helpers.list_str_to_float(lat_vect_1)
                     lat_vect_2 = siesta_file.readline().split()
@@ -634,7 +635,7 @@ class TSIESTA:
                 if is_bohr_found:
                     mult = 0.52917720859
 
-                if (str1 != '') and (is_angfound or is_bohr_found or is_fractional_found) and (isSpesF == 1):
+                if (str1 != '') and (is_angfound or is_bohr_found or is_fractional_found) and (is_spes_f == 1):
                     if not is_fractional_found:
                         for j in range(0, 2):
                             siesta_file.readline()
@@ -647,8 +648,8 @@ class TSIESTA:
                         d2 = float(s[1]) * mult
                         d3 = float(s[2]) * mult
                         charge = species_label_charges[sl[len(atoms)]]
-                        c = period_table.get_let(charge)
-                        atoms.append([d1, d2, d3, c, charge])
+                        c = period_table.get_let(np.abs(charge))
+                        atoms.append([d1, d2, d3, c, np.abs(charge)])
                 str1 = siesta_file.readline()
             siesta_file.close()
         return molecules

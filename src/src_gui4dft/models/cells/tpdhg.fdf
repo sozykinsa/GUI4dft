@@ -1,0 +1,63 @@
+SystemName          tpdhg
+SystemLabel         siesta
+NumberOfAtoms 12
+NumberOfSpecies 1
+WriteCoorStep True
+%block ChemicalSpeciesLabel
+ 1  6  C
+%endblock ChemicalSpeciesLabel
+LatticeConstant       1.0 Ang
+%block LatticeVectors
+  4.963356  0.0  0.0
+  0.0  6.972881  0.0
+  0.0  0.0  30.0
+%endblock LatticeVectors
+AtomicCoordinatesFormat NotScaledCartesianAng
+ZM.UnitsLength Ang
+%block Zmatrix
+cartesian
+ 1       -0.81500210   -2.04501479   -0.00529036      1  1  1
+ 1       -0.34460467   -0.71250962   -0.00159145      1  1  1
+ 1        0.41502054   -2.80159656   -0.00318501      1  1  1
+ 1       -2.06656759   -2.74879205   -0.00781415      1  1  1
+ 1        1.64506231   -2.04521871    0.00156326      1  1  1
+ 1        1.17483209   -0.71150251    0.00222533      1  1  1
+ 1       -0.34699655    0.71118469   -0.00140560      1  1  1
+ 1        1.17243953    0.71220854    0.00372804      1  1  1
+ 1       -0.81817462    2.04436349   -0.00054245      1  1  1
+ 1       -2.06968658    2.75016795    0.00014352      1  1  1
+ 1        0.41187756    2.80097471    0.00461285      1  1  1
+ 1        1.64180010    2.04573488    0.00755607      1  1  1
+%endblock Zmatrix
+ZM.UnitsLength Ang
+WriteMullikenPop    1
+PAO.BasisSize  DZP
+MeshCutoff       350.0 Ry
+SpinPolarized True
+MaxSCFIterations       150
+SolutionMethod         diagon
+NetCharge     0.00
+DM.NumberPulay    4
+DM.MixingWeight   0.3
+DM.UseSaveDM      .true.
+NeglNonOverlapInt False
+XC.functional=GGA
+XC.authors=PBE
+ZM.UnitsLength = Ang
+WriteCoorXmol     True
+WriteForces .true.
+WriteMullikenPop     1
+MD.TypeOfRun           cg               # Type of dynamics: Conjugate gradients
+MD.NumCGsteps          320              # number of CG steps
+MD.MaxCGDispl          0.10 Ang
+MD.MaxForceTol         0.04 eV/Ang
+MD.UseSaveXV           yes
+MD.VariableCell        .false.
+%block kgrid_Monkhorst_Pack
+  3  0  0   0.0
+  0  3  0   0.0
+  0  0  1   0.0
+%endblock kgrid_Monkhorst_Pack
+%block ProjectedDensityOfStates
+   -24.00  15.00  0.100  1000  eV
+%endblock ProjectedDensityOfStates

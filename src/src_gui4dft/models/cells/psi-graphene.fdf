@@ -1,0 +1,63 @@
+SystemName          psi-graphene
+SystemLabel         siesta
+NumberOfAtoms 12
+NumberOfSpecies 1
+WriteCoorStep True
+%block ChemicalSpeciesLabel
+ 1  6  C
+%endblock ChemicalSpeciesLabel
+LatticeConstant       1.0 Ang
+%block LatticeVectors
+  6.722742  0.000176  -0.0
+  0.000105  4.849423  0.0
+  -0.0  0.0  30.000455
+%endblock LatticeVectors
+AtomicCoordinatesFormat NotScaledCartesianAng
+ZM.UnitsLength Ang
+%block Zmatrix
+cartesian
+ 1       -1.70269659    1.26328559    0.00000000      1  1  1
+ 1       -0.31625646    0.86545873    0.00000000      1  1  1
+ 1       -0.31570346   -1.67399782    0.00000000      1  1  1
+ 1       -1.70240392   -2.07088990    0.00000000      1  1  1
+ 1       -2.77895852   -1.16162771    0.00000000      1  1  1
+ 1       -2.77947286    0.35375723    0.00000000      1  1  1
+ 1        2.55692254   -1.55943986    0.00000000      1  1  1
+ 1        1.73519866   -0.40418780    0.00000000      1  1  1
+ 1        0.30182573   -0.40413723    0.00000000      1  1  1
+ 1        2.55667768    0.75092415    0.00000000      1  1  1
+ 1        0.50567851    2.02039038    0.00000000      1  1  1
+ 1        1.93891903    2.02048708    0.00000000      1  1  1
+%endblock Zmatrix
+ZM.UnitsLength Ang
+WriteMullikenPop    1
+PAO.BasisSize  DZP
+MeshCutoff       350.0 Ry
+SpinPolarized True
+MaxSCFIterations       150
+SolutionMethod         diagon
+NetCharge     0.00
+DM.NumberPulay    4
+DM.MixingWeight   0.3
+DM.UseSaveDM      .true.
+NeglNonOverlapInt False
+XC.functional=GGA
+XC.authors=PBE
+ZM.UnitsLength = Ang
+WriteCoorXmol     True
+WriteForces .true.
+WriteMullikenPop     1
+MD.TypeOfRun           cg               # Type of dynamics: Conjugate gradients
+MD.NumCGsteps          320              # number of CG steps
+MD.MaxCGDispl          0.10 Ang
+MD.MaxForceTol         0.04 eV/Ang
+MD.UseSaveXV           yes
+MD.VariableCell        .false.
+%block kgrid_Monkhorst_Pack
+  3  0  0   0.0
+  0  3  0   0.0
+  0  0  1   0.0
+%endblock kgrid_Monkhorst_Pack
+%block ProjectedDensityOfStates
+   -24.00  15.00  0.100  1000  eV
+%endblock ProjectedDensityOfStates

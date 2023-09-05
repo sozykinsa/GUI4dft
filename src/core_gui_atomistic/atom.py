@@ -44,6 +44,10 @@ class Atom(object):
     def z(self, value):
         self.xyz[2] = value
 
+    @property
+    def xyz_string(self) -> str:
+        return str(self.xyz[0]) + "   " + str(self.xyz[1]) + "   " + str(self.xyz[2])
+
     def set_selected(self, fl):
         self.selected = fl
 
