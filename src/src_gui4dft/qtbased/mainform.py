@@ -18,6 +18,7 @@ from core_gui_atomistic.atomic_model import AtomicModel
 from src_gui4dft.models.capedswcnt import CapedSWNT
 from src_gui4dft.models.bint import BiNT
 from src_gui4dft.models.hexagonal_plane import HexagonalPlane, HexagonalPlaneHex
+from src_gui4dft.models.meta_graphene import MetaGraphene
 from src_gui4dft.models.swnt import SWNT
 from src_gui4dft.models.swgnt import SWGNT
 from src_gui4dft.models.gaussiancube import GaussianCube
@@ -84,7 +85,7 @@ class MainForm(QMainWindow):
 
         self.shortcut = QShortcut(QKeySequence("Ctrl+D"), self)
         self.shortcut.activated.connect(self.atom_delete)
-        self.active_model: int = -1
+        self.active_model_id: int = -1
         self.perspective_angle: int = 45
 
         self.state_Color_Of_Atoms = None
@@ -148,6 +149,7 @@ class MainForm(QMainWindow):
         self.ui.but_create_nanotube.clicked.connect(self.create_swnt)
         self.ui.FormActionsPreButBiElementGenerate.clicked.connect(self.create_bi_el_nt)
         self.ui.generate_2d_model.clicked.connect(self.create_2d_hexagonal)
+        self.ui.generate_meta_gr_model.clicked.connect(self.create_meta_gr_model)
         self.ui.generate_3d_bulk.clicked.connect(self.generate_3d_bulk)
 
         self.ui.get_k_points.clicked.connect(self.get_k_points)
@@ -257,6 +259,8 @@ class MainForm(QMainWindow):
         self.ui.x_circular_shift.clicked.connect(self.model_x_circular_shift)
         self.ui.y_circular_shift.clicked.connect(self.model_y_circular_shift)
         self.ui.z_circular_shift.clicked.connect(self.model_z_circular_shift)
+        self.ui.model_to_ang.clicked.connect(self.model_to_ang)
+        self.ui.model_to_bohr.clicked.connect(self.model_to_bohr)
 
         self.ui.FormActionsPostButVoronoi.clicked.connect(self.plot_voronoi)
         self.ui.optimize_cell_param.clicked.connect(self.plot_volume_param_energy)
@@ -366,9 +370,17 @@ class MainForm(QMainWindow):
 
         model_2d_types = QStandardItemModel()
         model_2d_types.appendRow(QStandardItem("Graphene"))
-        model_2d_types.appendRow(QStandardItem("BN"))
-        model_2d_types.appendRow(QStandardItem("BC"))
+        model_2d_types.appendRow(QStandardItem("hBN"))
+        model_2d_types.appendRow(QStandardItem("hBC"))
+        model_2d_types.appendRow(QStandardItem("hSiC"))
         self.ui.model_2d_type.setModel(model_2d_types)
+
+        model_meta_gr_type = QStandardItemModel()
+        model_meta_gr_type.appendRow(QStandardItem("irida-graphene"))
+        model_meta_gr_type.appendRow(QStandardItem("psi-graphene"))
+        model_meta_gr_type.appendRow(QStandardItem("biphenylene"))
+        model_meta_gr_type.appendRow(QStandardItem("tpdh-graphene"))
+        self.ui.model_meta_gr_type.setModel(model_meta_gr_type)
 
         bi_element_type_tube = QStandardItemModel()
         bi_element_type_tube.appendRow(QStandardItem("BN"))
@@ -550,6 +562,10 @@ class MainForm(QMainWindow):
         except Exception as e:
             self.show_error(e)
 
+    @property
+    def active_model(self) -> AtomicModel:
+        return self.models[self.active_model_id]
+
     def add_cell_param_row(self):
         i = self.ui.FormActionsPostTableCellParam.rowCount() + 1
         self.ui.FormActionsPostTableCellParam.setRowCount(i)
@@ -716,18 +732,18 @@ class MainForm(QMainWindow):
         if len(self.models) == 0:
             return
         charge, let, position = self.selected_atom_from_form()
-        self.models[self.active_model].add_atom_with_data(position, charge)
+        self.models[self.active_model_id].add_atom_with_data(position, charge)
         # add_atom(Atom((position[0], position[1], position[2], let, charge)))
-        self.model_to_screen(self.active_model)
+        self.model_to_screen(self.active_model_id)
 
     def atom_delete(self):
         if len(self.models) == 0:
             return
         if self.ui.openGLWidget.selected_atom < 0:
             return
-        self.models[self.active_model].delete_atom(self.ui.openGLWidget.selected_atom)
+        self.models[self.active_model_id].delete_atom(self.ui.openGLWidget.selected_atom)
         self.history_of_atom_selection = []
-        self.model_to_screen(self.active_model)
+        self.model_to_screen(self.active_model_id)
 
     def atom_modify(self):
         if len(self.models) == 0:
@@ -736,12 +752,12 @@ class MainForm(QMainWindow):
             return
         charge, let, position = self.selected_atom_from_form()
         new_atom = Atom((position[0], position[1], position[2], let, charge))
-        self.models[self.active_model].atoms[self.ui.openGLWidget.selected_atom] = new_atom
-        self.model_to_screen(self.active_model)
+        self.models[self.active_model_id].atoms[self.ui.openGLWidget.selected_atom] = new_atom
+        self.model_to_screen(self.active_model_id)
 
     def selected_atom_coord_type_changed(self):
-        position = self.models[self.active_model].atoms[self.ui.openGLWidget.selected_atom].xyz
-        element = self.models[self.active_model].atoms[self.ui.openGLWidget.selected_atom].charge
+        position = self.models[self.active_model_id].atoms[self.ui.openGLWidget.selected_atom].xyz
+        element = self.models[self.active_model_id].atoms[self.ui.openGLWidget.selected_atom].charge
         self.selected_atom_position(element, position)
 
     def selected_atom_from_form(self):
@@ -758,7 +774,7 @@ class MainForm(QMainWindow):
             return position
         if coord_type == "bohr":
             return position * 0.52917720859
-        lat_vectors = self.models[self.active_model].lat_vectors
+        lat_vectors = self.models[self.active_model_id].lat_vectors
         return position[0] * lat_vectors[0] + position[1] * lat_vectors[1] + position[2] * lat_vectors[2]
 
     def ang_to_coords(self, position, coord_type):
@@ -766,7 +782,7 @@ class MainForm(QMainWindow):
             return position
         if coord_type == "bohr":
             return position / 0.52917720859
-        obr = np.linalg.inv(self.models[self.active_model].lat_vectors).transpose()
+        obr = np.linalg.inv(self.models[self.active_model_id].lat_vectors).transpose()
         return obr.dot(position)
 
     def selected_atom_coord_type(self):
@@ -1247,7 +1263,7 @@ class MainForm(QMainWindow):
         self.ui.PropertyAtomAtomDistance.setText(str(bond) + " A")
 
     def fit_with(self):   # pragma: no cover
-        xf, yf, rf = self.models[self.active_model].fit_with_cylinder()
+        xf, yf, rf = self.models[self.active_model_id].fit_with_cylinder()
         self.ui.fit_with_textBrowser.setText("x0 = " + str(round(xf, 4)) + " A\ny0 = " +
                                              str(round(yf, 4)) + " A\nR = " + str(round(rf, 4)) + " A")
 
@@ -1518,7 +1534,7 @@ class MainForm(QMainWindow):
                 if not file_name:
                     return
 
-                ImporterExporter.export_to_file(self.models[self.active_model], file_name)
+                ImporterExporter.export_to_file(self.models[self.active_model_id], file_name)
                 self.work_dir = os.path.dirname(file_name)
                 self.save_active_folder()
             except Exception as e:
@@ -1528,7 +1544,8 @@ class MainForm(QMainWindow):
         if len(self.models) > 0:   # pragma: no cover
             self.action_on_start = 'Open'
             self.save_property(SETTINGS_FormSettingsActionOnStart, self.action_on_start)
-            os.execl(sys.executable, sys.executable, *sys.argv)
+            #os.execl(sys.executable, sys.executable, *sys.argv)
+            os.execl(sys.executable, '"' + sys.executable + '"', *sys.argv)
         self.ui.Form3Dand2DTabs.setCurrentIndex(0)
         if not file_name:
             file_name = self.get_file_name_from_open_dialog("All files (*)")
@@ -1662,7 +1679,7 @@ class MainForm(QMainWindow):
     def model_x_circular_shift(self):
         if self.ui.openGLWidget.main_model.n_atoms() == 0:
             return
-        model = self.models[self.active_model]
+        model = self.models[self.active_model_id]
         step = self.ui.x_circular_shift_step.value()
         model.move(np.array([-step, 0, 0]))
         model.go_to_positive_x_array_translate(model.atoms)
@@ -1671,7 +1688,7 @@ class MainForm(QMainWindow):
     def model_y_circular_shift(self):
         if self.ui.openGLWidget.main_model.n_atoms() == 0:
             return
-        model = self.models[self.active_model]
+        model = self.models[self.active_model_id]
         step = self.ui.y_circular_shift_step.value()
         model.move(np.array([0, -step, 0]))
         model.go_to_positive_y_array_translate(model.atoms)
@@ -1680,7 +1697,7 @@ class MainForm(QMainWindow):
     def model_z_circular_shift(self):
         if self.ui.openGLWidget.main_model.n_atoms() == 0:
             return
-        model = self.models[self.active_model]
+        model = self.models[self.active_model_id]
         step = self.ui.z_circular_shift_step.value()
         model.move(np.array([0, 0, -step]))
         model.go_to_positive_z_array_translate(model.atoms)
@@ -1713,6 +1730,20 @@ class MainForm(QMainWindow):
         model = self.ui.openGLWidget.main_model
         model.move_atoms_to_center()
         self.add_model_and_show(model)
+
+    def model_to_ang(self):
+        new_model = deepcopy(self.active_model)
+        new_model.coords_to_ang()
+        self.models.append(new_model)
+        self.active_model_id = -1
+        self.plot_last_model()
+
+    def model_to_bohr(self):
+        new_model = deepcopy(self.active_model)
+        new_model.coords_to_bohr()
+        self.models.append(new_model)
+        self.active_model_id = -1
+        self.plot_last_model()
 
     def add_model_and_show(self, model):  # pragma: no cover
         self.models.append(model)
@@ -1748,7 +1779,7 @@ class MainForm(QMainWindow):
             return
         if len(self.models[value].atoms) == 0:
             return
-        self.active_model = value
+        self.active_model_id = value
         self.ui.Form3Dand2DTabs.setCurrentIndex(0)
         view_atoms = self.ui.FormSettingsViewCheckShowAtoms.isChecked()
         view_atom_numbers = self.ui.FormSettingsViewCheckShowAtomNumber.isChecked()
@@ -1762,7 +1793,7 @@ class MainForm(QMainWindow):
         box_color = self.get_color_from_setting(self.state_Color_Of_Box)
         atoms_color = self.colors_of_atoms()
         contour_width = (self.ui.FormSettingsViewSpinContourWidth.value()) / 1000.0
-        self.ui.openGLWidget.set_atomic_structure(self.models[self.active_model], atoms_color, view_atoms,
+        self.ui.openGLWidget.set_atomic_structure(self.models[self.active_model_id], atoms_color, view_atoms,
                                                   view_atom_numbers, view_box, box_color, view_bonds, bonds_color,
                                                   bond_width, color_of_bonds_by_atoms,
                                                   view_axes, axes_color, contour_width)
@@ -2594,7 +2625,7 @@ class MainForm(QMainWindow):
 
         text = ""
         if selected_atom >= 0:
-            model = self.models[self.active_model]
+            model = self.models[self.active_model_id]
             text += "Selected atom: " + str(selected_atom + 1) + "\n"
             atom = model.atoms[selected_atom]
             text += "Element: " + atom.let + "\n"
@@ -2680,14 +2711,14 @@ class MainForm(QMainWindow):
 
     def twist_model(self):
         angle = math.radians(self.ui.ModifyTwistAngle.value())
-        self.models[self.active_model].twist_z(angle)
-        self.plot_model(self.active_model)
+        self.models[self.active_model_id].twist_z(angle)
+        self.plot_model(self.active_model_id)
 
     def move_model(self):
         dx = self.ui.model_move_x.value()
         dy = self.ui.model_move_y.value()
         dz = self.ui.model_move_z.value()
-        model = self.models[self.active_model]
+        model = self.models[self.active_model_id]
         model.move(np.array([dx, dy, dz]))
         self.add_model_and_show(model)
 
@@ -2757,7 +2788,7 @@ class MainForm(QMainWindow):
         if len(self.models) == 0:
             return
         try:
-            model2 = deepcopy(self.models[self.active_model])
+            model2 = deepcopy(self.models[self.active_model_id])
             text = ase.ase_raman_and_ir_script_create(model2, self.fdf_data)
 
             if len(text) > 0:
@@ -2834,7 +2865,7 @@ class MainForm(QMainWindow):
         if len(self.models) == 0:
             return
         try:
-            model = self.models[self.active_model]
+            model = self.models[self.active_model_id]
             text = model_0d_to_d12(model)
             if len(text) > 0:
                 self.ui.FormActionsPreTextFDF.setText(text)
@@ -2845,7 +2876,7 @@ class MainForm(QMainWindow):
         if len(self.models) == 0:
             return
         try:
-            model = self.models[self.active_model]
+            model = self.models[self.active_model_id]
             text = model_1d_to_d12(model)
             if len(text) > 0:
                 self.ui.FormActionsPreTextFDF.setText(text)
@@ -2856,7 +2887,7 @@ class MainForm(QMainWindow):
         if len(self.models) == 0:
             return
         try:
-            model = self.models[self.active_model]
+            model = self.models[self.active_model_id]
             text = model_2d_to_d12(model)
             if len(text) > 0:
                 self.ui.FormActionsPreTextFDF.setText(text)
@@ -2867,7 +2898,7 @@ class MainForm(QMainWindow):
         if len(self.models) == 0:
             return
         try:
-            model = self.models[self.active_model]
+            model = self.models[self.active_model_id]
             text = model_3d_to_d12(model)
             if len(text) > 0:
                 self.ui.FormActionsPreTextFDF.setText(text)
@@ -3034,7 +3065,9 @@ class MainForm(QMainWindow):
         print(let1, "-", let2, ": ", d)
 
     def create_2d_hexagonal(self):
-        leng, m, n = self.model_2d_parameters()
+        n = self.ui.FormActionsPreLineGraphene_n.value()
+        m = self.ui.FormActionsPreLineGraphene_m.value()
+        leng = self.ui.FormActionsPreLineGraphene_len.value()
         model_type = self.ui.model_2d_type.currentText()
         is_ribbon = self.ui.generate_2d_ribbon.isChecked()
         ch1 = 6
@@ -3044,14 +3077,18 @@ class MainForm(QMainWindow):
             ch1 = 6
             ch2 = 6
             a = 1.43
-        if model_type == "BN":
+        if model_type == "hBN":
             ch1 = 5
             ch2 = 7
             a = 1.45
-        if model_type == "BC":
+        if model_type == "hBC":
             ch1 = 5
             ch2 = 6
             a = 1.4
+        if model_type == "hSiC":
+            ch1 = 14
+            ch2 = 6
+            a = 1.795
         if is_ribbon:
             model = HexagonalPlane(ch1, ch2, a, n, m, leng)
         else:
@@ -3065,11 +3102,14 @@ class MainForm(QMainWindow):
         self.plot_model(-1)
         self.fill_gui(model_type + "-model")
 
-    def model_2d_parameters(self):
-        n = self.ui.FormActionsPreLineGraphene_n.value()
-        m = self.ui.FormActionsPreLineGraphene_m.value()
-        leng = self.ui.FormActionsPreLineGraphene_len.value()
-        return leng, m, n
+    def create_meta_gr_model(self):
+        n = self.ui.meta_gr_n.value()
+        m = self.ui.meta_gr_m.value()
+        model_type = self.ui.model_meta_gr_type.currentText()
+        model = MetaGraphene(model_type, n - 1, m - 1)
+        self.models.append(model)
+        self.plot_model(-1)
+        self.fill_gui(model_type + "-model")
 
     def generate_3d_bulk(self):
         """ASE bulk interface"""
@@ -3180,7 +3220,7 @@ class MainForm(QMainWindow):
         from ase.dft.kpoints import get_special_points
         if len(self.models) == 0:
             return
-        kpts = get_special_points(cell=self.models[self.active_model].lat_vectors)
+        kpts = get_special_points(cell=self.models[self.active_model_id].lat_vectors)
         # print(kpts)
         txt = ""
         for point in kpts.items():
@@ -3189,7 +3229,7 @@ class MainForm(QMainWindow):
 
     def get_k_path(self):
         from ase.geometry import Cell
-        a, b, c, al, bet, gam = self.models[self.active_model].cell_params()
+        a, b, c, al, bet, gam = self.models[self.active_model_id].cell_params()
         cell = Cell.fromcellpar([a, b, c, al, bet, gam])
         # k_path = cell.bandpath('GXW', npoints=20)
         k_path = cell.bandpath(npoints=20)

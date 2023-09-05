@@ -841,6 +841,14 @@ class AtomicModel(object):
             data += ' $END'
         return data
 
+    def coords_to_ang(self):
+        for at in self.atoms:
+            at.xyz /= 0.52917720859
+
+    def coords_to_bohr(self):
+        for at in self.atoms:
+            at.xyz *= 0.52917720859
+
     def xyz_string(self, i, units="Ang"):
         mult = 1.0
         if units == "Bohr":

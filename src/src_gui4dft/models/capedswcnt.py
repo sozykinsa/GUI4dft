@@ -96,7 +96,7 @@ class CapedSWNT(TAtomicModel):
             # zigzag nanotube
             bound = 1.421
             rad_nanotube = 5 * 0.246 * self.n / math.pi
-            z_coord = 0  # z координата
+            z_coord = 0  # z
             tem = 1
             # calculation of atoms
             while z_coord < self.length:
@@ -136,10 +136,10 @@ class CapedSWNT(TAtomicModel):
             alfa = math.acos(1 - bound * bound / (8 * rad_nanotube * rad_nanotube))
             betta = math.acos(1 - bound * bound / (2 * rad_nanotube * rad_nanotube))
 
-            z_coord = 0  # z координата
+            z_coord = 0  # z
             ring_nanotube = 0
             size = 0
-            deltag = betta + alfa
+            # deltag = betta + alfa
 
             while z_coord < self.length:
                 size += 2 * self.m

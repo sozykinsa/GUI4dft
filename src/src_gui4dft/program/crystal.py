@@ -15,10 +15,7 @@ def model_0d_to_d12(model):
     text += str(nat) + "\n"
     for i in range(0, nat):
         ch = model2.atoms[i].charge
-        x = str(model2.atoms[i].x)
-        y = str(model2.atoms[i].y)
-        z = str(model2.atoms[i].z)
-        text += str(ch) + "   " + x + "   " + y + "   " + z + "\n"
+        text += str(ch) + "   " + model2.atoms[i].xyz_string + "\n"
     return text
 
 
@@ -76,10 +73,7 @@ def model_3d_to_d12(model):
     text += str(nat) + "\n"
     for i in range(0, nat):
         ch = model2.atoms[i].charge
-        x = str(model2.atoms[i].x)
-        y = str(model2.atoms[i].y)
-        z = str(model2.atoms[i].z)
-        text += str(ch) + "   " + x + "   " + y + "   " + z + "\n"
+        text += str(ch) + "   " + model2.atoms[i].xyz_string + "\n"
     return text
 
 

@@ -14,14 +14,19 @@ from typing import List
 
 class PyqtGraphWidget(QWidget):
 
-    COLORS = [(0, 0, 0), (255, 0, 0), (0, 255, 0), (0, 0, 255)]
+    COLORS = [(0, 0, 0), (255, 0, 0), (0, 255, 0), (0, 0, 255), (220, 20, 60), (255, 69, 0), (139, 0, 0), (75, 0, 130),
+              (205, 92, 92), (47, 79, 79), (0, 0, 128), (0, 255, 255), (0, 128, 0), (128, 128, 0), (0, 139, 139),
+              (255, 127, 80), (199, 21, 133)]
 
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, user_colors=None):
         QWidget.__init__(self, parent)
         self.graphWidget = pg.PlotWidget()
         vertical_layout = QVBoxLayout()
         vertical_layout.addWidget(self.graphWidget)
         self.setLayout(vertical_layout)
+        self.user_colors = self.COLORS
+        if user_colors is not None:
+            self.user_colors = user_colors
 
         self.line_width = 2
 
@@ -90,8 +95,8 @@ class PyqtGraphWidget(QWidget):
 
         n_plots = len(y)
         for index in range(n_plots):
-            pen = pg.mkPen(color=self.COLORS[index % len(self.COLORS) if is_colored else 0], width=self.line_width,
-                           style=_style)
+            pen = pg.mkPen(color=self.user_colors[index % len(self.user_colors) if is_colored else 0],
+                           width=self.line_width, style=_style)
             self.graphWidget.plot(x[index % len(x)], y[index], name=labels[index % len(labels)],
                                   pen=pen, font=self.legend_font)
 
