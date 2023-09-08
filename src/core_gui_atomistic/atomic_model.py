@@ -420,7 +420,6 @@ class AtomicModel(object):
 
     def convert_from_direct_to_cart(self):
         for atom in self.atoms:
-            # atom.xyz = np.dot(self.lat_vectors, atom.xyz)
             atom.xyz = atom.x * self.lat_vector1 + atom.y * self.lat_vector2 + atom.z * self.lat_vector3
 
     def convert_from_cart_to_direct(self):

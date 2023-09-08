@@ -132,9 +132,8 @@ def vasp_latt_const(filename):
     """Lattice Constant"""
     if os.path.exists(filename):
         MyFile = open(filename)
+        MyFile.readline()
         str1 = MyFile.readline()
-        str1 = MyFile.readline()
-        print(str1)
         n = float(re.findall(r"[0-9,\.,-]+", str1)[0])
         MyFile.close()
     return n

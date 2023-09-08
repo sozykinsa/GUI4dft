@@ -37,6 +37,7 @@ from src_gui4dft.program.crystal import model_0d_to_d12, model_1d_to_d12, model_
 from src_gui4dft.program.qe import model_to_qe_pw
 from src_gui4dft.program.wien import model_to_wien_struct
 from src_gui4dft.program.vasp import TVASP, vasp_dos, model_to_vasp_poscar
+from src_gui4dft.program.dftb import model_to_dftb_d0
 
 from src_gui4dft.program import ase
 
@@ -170,6 +171,7 @@ class MainForm(QMainWindow):
         self.ui.crystal_1d_d12_generate.clicked.connect(self.d12_1D_to_form)
         self.ui.crystal_2d_d12_generate.clicked.connect(self.d12_2D_to_form)
         self.ui.crystal_3d_d12_generate.clicked.connect(self.d12_3D_to_form)
+        self.ui.dftb_0d_generate.clicked.connect(self.dftb_0D_to_form)
 
         self.ui.data_from_form_to_input_file.clicked.connect(self.data_from_form_to_input_file)
         self.ui.model_rotation_x.valueChanged.connect(self.model_orientation_changed)
@@ -2776,8 +2778,8 @@ class MainForm(QMainWindow):
         try:
             text = self.ui.FormActionsPreTextFDF.toPlainText()
             if len(text) > 0:
-                file_mask = "FDF files (*.fdf);;VASP POSCAR file (*.POSCAR)"
-                file_mask += ";;Crystal d12 (*.d12);;PWscf in (*.in);;WIEN struct (*.struct);;CIF file (*.cif)"
+                file_mask = "FDF files (*.fdf);;VASP POSCAR file (*.POSCAR);;Crystal d12 (*.d12)"
+                file_mask += ";;PWscf in (*.in);;WIEN struct (*.struct);;CIF file (*.cif);;DFTB+ (*.gen)"
                 fname = self.get_file_name_from_save_dialog(file_mask)
                 if fname is not None:
                     helpers.write_text_to_file(fname, text)
@@ -2860,6 +2862,17 @@ class MainForm(QMainWindow):
         self.ui.PyqtGraphWidget.clear()
         self.ui.Form3Dand2DTabs.setCurrentIndex(1)
         self.ui.PyqtGraphWidget.plot([x_fig], [y_fig], [None], title, x_title, y_title, True)
+
+    def dftb_0D_to_form(self):
+        if len(self.models) == 0:
+            return
+        try:
+            model = self.models[self.active_model_id]
+            text = model_to_dftb_d0(model)
+            if len(text) > 0:
+                self.ui.FormActionsPreTextFDF.setText(text)
+        except Exception as e:
+            self.show_error(e)
 
     def d12_0D_to_form(self):  # pragma: no cover
         if len(self.models) == 0:

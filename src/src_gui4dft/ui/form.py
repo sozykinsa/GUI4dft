@@ -1901,7 +1901,7 @@ class Ui_MainWindow(object):
         self.toolBox_6.setSizePolicy(sizePolicy2)
         self.page_29 = QWidget()
         self.page_29.setObjectName(u"page_29")
-        self.page_29.setGeometry(QRect(0, 0, 371, 593))
+        self.page_29.setGeometry(QRect(0, 0, 361, 405))
         self.verticalLayout_26 = QVBoxLayout(self.page_29)
         self.verticalLayout_26.setObjectName(u"verticalLayout_26")
         self.groupBox_50 = QGroupBox(self.page_29)
@@ -2640,7 +2640,7 @@ class Ui_MainWindow(object):
         self.toolBox_6.addItem(self.page_11, u"Rotate or move model")
         self.page_12 = QWidget()
         self.page_12.setObjectName(u"page_12")
-        self.page_12.setGeometry(QRect(0, 0, 371, 593))
+        self.page_12.setGeometry(QRect(0, 0, 339, 459))
         self.verticalLayout_41 = QVBoxLayout(self.page_12)
         self.verticalLayout_41.setObjectName(u"verticalLayout_41")
         self.groupBox_37 = QGroupBox(self.page_12)
@@ -3092,6 +3092,38 @@ class Ui_MainWindow(object):
 
 
         self.verticalLayout_78.addWidget(self.frame_161)
+
+        self.groupBox_60 = QGroupBox(self.tab_24)
+        self.groupBox_60.setObjectName(u"groupBox_60")
+        self.groupBox_60.setMinimumSize(QSize(0, 0))
+        self.horizontalLayout_200 = QHBoxLayout(self.groupBox_60)
+        self.horizontalLayout_200.setObjectName(u"horizontalLayout_200")
+        self.horizontalLayout_200.setContentsMargins(0, 0, 0, 0)
+        self.pushButton_4 = QPushButton(self.groupBox_60)
+        self.pushButton_4.setObjectName(u"pushButton_4")
+        self.pushButton_4.setEnabled(False)
+
+        self.horizontalLayout_200.addWidget(self.pushButton_4)
+
+        self.pushButton = QPushButton(self.groupBox_60)
+        self.pushButton.setObjectName(u"pushButton")
+        self.pushButton.setEnabled(False)
+
+        self.horizontalLayout_200.addWidget(self.pushButton)
+
+        self.pushButton_2 = QPushButton(self.groupBox_60)
+        self.pushButton_2.setObjectName(u"pushButton_2")
+        self.pushButton_2.setEnabled(False)
+
+        self.horizontalLayout_200.addWidget(self.pushButton_2)
+
+        self.dftb_0d_generate = QPushButton(self.groupBox_60)
+        self.dftb_0d_generate.setObjectName(u"dftb_0d_generate")
+
+        self.horizontalLayout_200.addWidget(self.dftb_0d_generate)
+
+
+        self.verticalLayout_78.addWidget(self.groupBox_60)
 
         self.FormActionsPreTextFDF = QTextBrowser(self.tab_24)
         self.FormActionsPreTextFDF.setObjectName(u"FormActionsPreTextFDF")
@@ -5657,15 +5689,15 @@ class Ui_MainWindow(object):
         self.toolBox_4.addItem(self.page_13, u"Program")
         self.page_14 = QWidget()
         self.page_14.setObjectName(u"page_14")
-        self.page_14.setGeometry(QRect(0, 0, 85, 85))
+        self.page_14.setGeometry(QRect(0, 0, 98, 28))
         self.toolBox_4.addItem(self.page_14, u"Input file")
         self.page_15 = QWidget()
         self.page_15.setObjectName(u"page_15")
-        self.page_15.setGeometry(QRect(0, 0, 100, 30))
+        self.page_15.setGeometry(QRect(0, 0, 98, 28))
         self.toolBox_4.addItem(self.page_15, u"Single RUN")
         self.page_16 = QWidget()
         self.page_16.setObjectName(u"page_16")
-        self.page_16.setGeometry(QRect(0, 0, 100, 30))
+        self.page_16.setGeometry(QRect(0, 0, 98, 28))
         self.toolBox_4.addItem(self.page_16, u"Multiple RUN")
 
         self.verticalLayout_64.addWidget(self.toolBox_4)
@@ -7193,6 +7225,11 @@ class Ui_MainWindow(object):
         self.crystal_2d_d12_generate.setText(QCoreApplication.translate("MainWindow", u"2D", None))
         self.crystal_1d_d12_generate.setText(QCoreApplication.translate("MainWindow", u"1D", None))
         self.crystal_0d_d12_generate.setText(QCoreApplication.translate("MainWindow", u"0D", None))
+        self.groupBox_60.setTitle(QCoreApplication.translate("MainWindow", u"DFTB+", None))
+        self.pushButton_4.setText(QCoreApplication.translate("MainWindow", u"3D", None))
+        self.pushButton.setText(QCoreApplication.translate("MainWindow", u"2D", None))
+        self.pushButton_2.setText(QCoreApplication.translate("MainWindow", u"1D", None))
+        self.dftb_0d_generate.setText(QCoreApplication.translate("MainWindow", u"0D", None))
         self.data_from_form_to_input_file.setText(QCoreApplication.translate("MainWindow", u"Save", None))
         self.tabWidget_3.setTabText(self.tabWidget_3.indexOf(self.tab_24), QCoreApplication.translate("MainWindow", u"Input file generator", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.FormTabActions), QCoreApplication.translate("MainWindow", u"Preprocessing", None))
