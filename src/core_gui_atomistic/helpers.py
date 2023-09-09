@@ -316,6 +316,9 @@ def check_format(filename):
     if name.endswith(".struct"):
         return "WIENstruct"
 
+    if name.endswith(".gen"):
+        return "DFTBgen"
+
     name = os.path.basename(name)
 
     if name.startswith("optc"):
