@@ -735,7 +735,6 @@ class MainForm(QMainWindow):
             return
         charge, let, position = self.selected_atom_from_form()
         self.models[self.active_model_id].add_atom_with_data(position, charge)
-        # add_atom(Atom((position[0], position[1], position[2], let, charge)))
         self.model_to_screen(self.active_model_id)
 
     def atom_delete(self):
@@ -1114,6 +1113,7 @@ class MainForm(QMainWindow):
         self.ui.FormModelComboModels.setModel(model)
         self.ui.FormModelComboModels.setCurrentIndex(len(self.models) - 1)
         self.ui.FormModelComboModels.currentIndexChanged.connect(self.model_to_screen)
+        self.ui.FormModelComboModels.update()
 
     def fill_atoms_table(self):
         model = self.ui.openGLWidget.get_model().atoms
@@ -1546,8 +1546,14 @@ class MainForm(QMainWindow):
         if len(self.models) > 0:   # pragma: no cover
             self.action_on_start = 'Open'
             self.save_property(SETTINGS_FormSettingsActionOnStart, self.action_on_start)
-            #os.execl(sys.executable, sys.executable, *sys.argv)
-            os.execl(sys.executable, '"' + sys.executable + '"', *sys.argv)
+            print(sys.executable)
+            if os.path.exists(sys.executable):
+                print("good path")
+                os.execl(sys.executable, '"' + sys.executable + '"', *sys.argv)
+            else:
+                print("try to run")
+                os.execl(sys.executable, sys.executable, *sys.argv)
+
         self.ui.Form3Dand2DTabs.setCurrentIndex(0)
         if not file_name:
             file_name = self.get_file_name_from_open_dialog("All files (*)")

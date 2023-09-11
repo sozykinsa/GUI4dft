@@ -115,6 +115,8 @@ class TFDFFile:
                 f = False
             if prop.lower().find("writecoorstep") >= 0:
                 f = False
+            if prop.lower().find("zm.unitslength") >= 0:
+                f = False
             if f:
                 st += prop
 

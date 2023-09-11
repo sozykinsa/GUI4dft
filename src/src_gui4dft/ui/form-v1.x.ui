@@ -3384,8 +3384,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>361</width>
-                 <height>405</height>
+                 <width>371</width>
+                 <height>593</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -3729,8 +3729,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>352</width>
-                 <height>209</height>
+                 <width>371</width>
+                 <height>593</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -4024,8 +4024,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>307</width>
-                 <height>467</height>
+                 <width>371</width>
+                 <height>593</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -4363,8 +4363,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>293</width>
-                 <height>533</height>
+                 <width>371</width>
+                 <height>593</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -4601,7 +4601,7 @@
                    <item>
                     <widget class="QFrame" name="frame_141">
                      <property name="frameShape">
-                      <enum>QFrame::StyledPanel</enum>
+                      <enum>QFrame::NoFrame</enum>
                      </property>
                      <property name="frameShadow">
                       <enum>QFrame::Raised</enum>
@@ -4646,12 +4646,18 @@
                    <item>
                     <widget class="QFrame" name="frame_137">
                      <property name="frameShape">
-                      <enum>QFrame::StyledPanel</enum>
+                      <enum>QFrame::NoFrame</enum>
                      </property>
                      <property name="frameShadow">
                       <enum>QFrame::Raised</enum>
                      </property>
                      <layout class="QHBoxLayout" name="horizontalLayout_152">
+                      <property name="topMargin">
+                       <number>0</number>
+                      </property>
+                      <property name="bottomMargin">
+                       <number>0</number>
+                      </property>
                       <item>
                        <spacer name="horizontalSpacer_108">
                         <property name="orientation">
@@ -4706,7 +4712,7 @@
                    <item>
                     <widget class="QFrame" name="frame_171">
                      <property name="frameShape">
-                      <enum>QFrame::StyledPanel</enum>
+                      <enum>QFrame::NoFrame</enum>
                      </property>
                      <property name="frameShadow">
                       <enum>QFrame::Raised</enum>
@@ -4733,7 +4739,7 @@
                    <item>
                     <widget class="QFrame" name="frame_172">
                      <property name="frameShape">
-                      <enum>QFrame::StyledPanel</enum>
+                      <enum>QFrame::NoFrame</enum>
                      </property>
                      <property name="frameShadow">
                       <enum>QFrame::Raised</enum>
