@@ -112,6 +112,13 @@ class AtomicModel(object):
     def get_cell(self):
         return self.lat_vectors
 
+    def get_atoms_property(self, key):
+        n = self.n_atoms()
+        props = np.zeros(n, dtype=float)
+        for i in range(n):
+            props[i] = self.atoms[i].properties.get(key, 0.0)
+        return props
+
     def twist_z(self, alpha):
         cm = self.center_mass()
         self.move(-cm)

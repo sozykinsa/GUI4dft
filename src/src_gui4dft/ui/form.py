@@ -1901,7 +1901,7 @@ class Ui_MainWindow(object):
         self.toolBox_6.setSizePolicy(sizePolicy2)
         self.page_29 = QWidget()
         self.page_29.setObjectName(u"page_29")
-        self.page_29.setGeometry(QRect(0, 0, 371, 593))
+        self.page_29.setGeometry(QRect(0, 0, 361, 405))
         self.verticalLayout_26 = QVBoxLayout(self.page_29)
         self.verticalLayout_26.setObjectName(u"verticalLayout_26")
         self.groupBox_50 = QGroupBox(self.page_29)
@@ -2077,7 +2077,7 @@ class Ui_MainWindow(object):
         self.toolBox_6.addItem(self.page_29, u"Add or Modify Atom")
         self.page = QWidget()
         self.page.setObjectName(u"page")
-        self.page.setGeometry(QRect(0, 0, 371, 593))
+        self.page.setGeometry(QRect(0, 0, 352, 209))
         self.verticalLayout_36 = QVBoxLayout(self.page)
         self.verticalLayout_36.setObjectName(u"verticalLayout_36")
         self.frame_49 = QFrame(self.page)
@@ -2229,7 +2229,7 @@ class Ui_MainWindow(object):
         self.toolBox_6.addItem(self.page, u"Cell")
         self.page_28 = QWidget()
         self.page_28.setObjectName(u"page_28")
-        self.page_28.setGeometry(QRect(0, 0, 371, 593))
+        self.page_28.setGeometry(QRect(0, 0, 307, 467))
         self.verticalLayout_10 = QVBoxLayout(self.page_28)
         self.verticalLayout_10.setObjectName(u"verticalLayout_10")
         self.label = QLabel(self.page_28)
@@ -2400,7 +2400,7 @@ class Ui_MainWindow(object):
         self.toolBox_6.addItem(self.page_28, u"Fill Space")
         self.page_11 = QWidget()
         self.page_11.setObjectName(u"page_11")
-        self.page_11.setGeometry(QRect(0, 0, 371, 593))
+        self.page_11.setGeometry(QRect(0, 0, 293, 503))
         self.verticalLayout_82 = QVBoxLayout(self.page_11)
         self.verticalLayout_82.setObjectName(u"verticalLayout_82")
         self.groupBox_44 = QGroupBox(self.page_11)
@@ -4198,7 +4198,7 @@ class Ui_MainWindow(object):
         self.toolBox_2.addItem(self.page_19, u"Electronic properties")
         self.page_2 = QWidget()
         self.page_2.setObjectName(u"page_2")
-        self.page_2.setGeometry(QRect(0, 0, 359, 668))
+        self.page_2.setGeometry(QRect(0, 0, 399, 706))
         self.verticalLayout_12 = QVBoxLayout(self.page_2)
         self.verticalLayout_12.setObjectName(u"verticalLayout_12")
         self.tabWidget_2 = QTabWidget(self.page_2)
@@ -4889,7 +4889,7 @@ class Ui_MainWindow(object):
         self.toolBox_2.addItem(self.page_2, u"Isosurface and Contours")
         self.page_24 = QWidget()
         self.page_24.setObjectName(u"page_24")
-        self.page_24.setGeometry(QRect(0, 0, 363, 649))
+        self.page_24.setGeometry(QRect(0, 0, 399, 706))
         self.verticalLayout_44 = QVBoxLayout(self.page_24)
         self.verticalLayout_44.setObjectName(u"verticalLayout_44")
         self.tabWidget_6 = QTabWidget(self.page_24)
@@ -5454,7 +5454,7 @@ class Ui_MainWindow(object):
         self.toolBox_3.setObjectName(u"toolBox_3")
         self.page_9 = QWidget()
         self.page_9.setObjectName(u"page_9")
-        self.page_9.setGeometry(QRect(0, 0, 399, 737))
+        self.page_9.setGeometry(QRect(0, 0, 399, 706))
         self.verticalLayout_75 = QVBoxLayout(self.page_9)
         self.verticalLayout_75.setObjectName(u"verticalLayout_75")
         self.frame_127 = QFrame(self.page_9)
@@ -5641,9 +5641,24 @@ class Ui_MainWindow(object):
         self.verticalLayout_75.addWidget(self.groupBox_33)
 
         self.toolBox_3.addItem(self.page_9, u"Spectra")
+        self.page_18 = QWidget()
+        self.page_18.setObjectName(u"page_18")
+        self.verticalLayout_99 = QVBoxLayout(self.page_18)
+        self.verticalLayout_99.setObjectName(u"verticalLayout_99")
+        self.dipole_calc = QPushButton(self.page_18)
+        self.dipole_calc.setObjectName(u"dipole_calc")
+
+        self.verticalLayout_99.addWidget(self.dipole_calc)
+
+        self.dipole_output = QTextBrowser(self.page_18)
+        self.dipole_output.setObjectName(u"dipole_output")
+
+        self.verticalLayout_99.addWidget(self.dipole_output)
+
+        self.toolBox_3.addItem(self.page_18, u"Dipole")
         self.page_10 = QWidget()
         self.page_10.setObjectName(u"page_10")
-        self.page_10.setGeometry(QRect(0, 0, 107, 231))
+        self.page_10.setGeometry(QRect(0, 0, 399, 737))
         self.verticalLayout_64 = QVBoxLayout(self.page_10)
         self.verticalLayout_64.setObjectName(u"verticalLayout_64")
         self.toolBox_4 = QToolBox(self.page_10)
@@ -5690,15 +5705,15 @@ class Ui_MainWindow(object):
         self.toolBox_4.addItem(self.page_13, u"Program")
         self.page_14 = QWidget()
         self.page_14.setObjectName(u"page_14")
-        self.page_14.setGeometry(QRect(0, 0, 98, 28))
+        self.page_14.setGeometry(QRect(0, 0, 377, 591))
         self.toolBox_4.addItem(self.page_14, u"Input file")
         self.page_15 = QWidget()
         self.page_15.setObjectName(u"page_15")
-        self.page_15.setGeometry(QRect(0, 0, 98, 28))
+        self.page_15.setGeometry(QRect(0, 0, 100, 30))
         self.toolBox_4.addItem(self.page_15, u"Single RUN")
         self.page_16 = QWidget()
         self.page_16.setObjectName(u"page_16")
-        self.page_16.setGeometry(QRect(0, 0, 98, 28))
+        self.page_16.setGeometry(QRect(0, 0, 100, 30))
         self.toolBox_4.addItem(self.page_16, u"Multiple RUN")
 
         self.verticalLayout_64.addWidget(self.toolBox_4)
@@ -5934,7 +5949,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_107.setObjectName(u"verticalLayout_107")
         self.frame_165 = QFrame(self.groupBox_29)
         self.frame_165.setObjectName(u"frame_165")
-        self.frame_165.setFrameShape(QFrame.StyledPanel)
+        self.frame_165.setFrameShape(QFrame.NoFrame)
         self.frame_165.setFrameShadow(QFrame.Raised)
         self.horizontalLayout_179 = QHBoxLayout(self.frame_165)
         self.horizontalLayout_179.setObjectName(u"horizontalLayout_179")
@@ -5971,7 +5986,7 @@ class Ui_MainWindow(object):
         self.frame_164 = QFrame(self.groupBox_29)
         self.frame_164.setObjectName(u"frame_164")
         self.frame_164.setMinimumSize(QSize(0, 0))
-        self.frame_164.setFrameShape(QFrame.StyledPanel)
+        self.frame_164.setFrameShape(QFrame.NoFrame)
         self.frame_164.setFrameShadow(QFrame.Raised)
         self.horizontalLayout_180 = QHBoxLayout(self.frame_164)
         self.horizontalLayout_180.setObjectName(u"horizontalLayout_180")
@@ -5993,6 +6008,31 @@ class Ui_MainWindow(object):
 
 
         self.verticalLayout_107.addWidget(self.frame_164)
+
+        self.frame_119 = QFrame(self.groupBox_29)
+        self.frame_119.setObjectName(u"frame_119")
+        self.frame_119.setFrameShape(QFrame.NoFrame)
+        self.frame_119.setFrameShadow(QFrame.Raised)
+        self.horizontalLayout_122 = QHBoxLayout(self.frame_119)
+        self.horizontalLayout_122.setObjectName(u"horizontalLayout_122")
+        self.horizontalLayout_122.setContentsMargins(-1, 0, -1, 0)
+        self.label_81 = QLabel(self.frame_119)
+        self.label_81.setObjectName(u"label_81")
+
+        self.horizontalLayout_122.addWidget(self.label_81)
+
+        self.property_precision = QSpinBox(self.frame_119)
+        self.property_precision.setObjectName(u"property_precision")
+        self.property_precision.setValue(5)
+
+        self.horizontalLayout_122.addWidget(self.property_precision)
+
+        self.horizontalSpacer_99 = QSpacerItem(182, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_122.addItem(self.horizontalSpacer_99)
+
+
+        self.verticalLayout_107.addWidget(self.frame_119)
 
 
         self.verticalLayout_31.addWidget(self.groupBox_29)
@@ -6035,30 +6075,6 @@ class Ui_MainWindow(object):
 
 
         self.verticalLayout_31.addWidget(self.frame_36)
-
-        self.frame_119 = QFrame(self.tab_32)
-        self.frame_119.setObjectName(u"frame_119")
-        self.frame_119.setFrameShape(QFrame.StyledPanel)
-        self.frame_119.setFrameShadow(QFrame.Raised)
-        self.horizontalLayout_122 = QHBoxLayout(self.frame_119)
-        self.horizontalLayout_122.setObjectName(u"horizontalLayout_122")
-        self.label_81 = QLabel(self.frame_119)
-        self.label_81.setObjectName(u"label_81")
-
-        self.horizontalLayout_122.addWidget(self.label_81)
-
-        self.property_precision = QSpinBox(self.frame_119)
-        self.property_precision.setObjectName(u"property_precision")
-        self.property_precision.setValue(5)
-
-        self.horizontalLayout_122.addWidget(self.property_precision)
-
-        self.horizontalSpacer_99 = QSpacerItem(182, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
-
-        self.horizontalLayout_122.addItem(self.horizontalSpacer_99)
-
-
-        self.verticalLayout_31.addWidget(self.frame_119)
 
         self.verticalSpacer_9 = QSpacerItem(20, 374, QSizePolicy.Minimum, QSizePolicy.Expanding)
 
@@ -6109,10 +6125,11 @@ class Ui_MainWindow(object):
         self.verticalLayout_45.setObjectName(u"verticalLayout_45")
         self.frame_38 = QFrame(self.groupBox_10)
         self.frame_38.setObjectName(u"frame_38")
-        self.frame_38.setFrameShape(QFrame.StyledPanel)
+        self.frame_38.setFrameShape(QFrame.NoFrame)
         self.frame_38.setFrameShadow(QFrame.Raised)
         self.horizontalLayout_20 = QHBoxLayout(self.frame_38)
         self.horizontalLayout_20.setObjectName(u"horizontalLayout_20")
+        self.horizontalLayout_20.setContentsMargins(-1, 0, -1, 0)
         self.label_91 = QLabel(self.frame_38)
         self.label_91.setObjectName(u"label_91")
 
@@ -6134,10 +6151,11 @@ class Ui_MainWindow(object):
 
         self.frame_32 = QFrame(self.groupBox_10)
         self.frame_32.setObjectName(u"frame_32")
-        self.frame_32.setFrameShape(QFrame.StyledPanel)
+        self.frame_32.setFrameShape(QFrame.NoFrame)
         self.frame_32.setFrameShadow(QFrame.Raised)
         self.horizontalLayout_21 = QHBoxLayout(self.frame_32)
         self.horizontalLayout_21.setObjectName(u"horizontalLayout_21")
+        self.horizontalLayout_21.setContentsMargins(-1, 0, -1, 0)
         self.label_34 = QLabel(self.frame_32)
         self.label_34.setObjectName(u"label_34")
 
@@ -6159,10 +6177,11 @@ class Ui_MainWindow(object):
 
         self.frame_33 = QFrame(self.groupBox_10)
         self.frame_33.setObjectName(u"frame_33")
-        self.frame_33.setFrameShape(QFrame.StyledPanel)
+        self.frame_33.setFrameShape(QFrame.NoFrame)
         self.frame_33.setFrameShadow(QFrame.Raised)
         self.horizontalLayout_25 = QHBoxLayout(self.frame_33)
         self.horizontalLayout_25.setObjectName(u"horizontalLayout_25")
+        self.horizontalLayout_25.setContentsMargins(-1, 0, -1, 0)
         self.label_40 = QLabel(self.frame_33)
         self.label_40.setObjectName(u"label_40")
 
@@ -6192,10 +6211,11 @@ class Ui_MainWindow(object):
         self.verticalLayout_76.setObjectName(u"verticalLayout_76")
         self.frame_121 = QFrame(self.groupBox_17)
         self.frame_121.setObjectName(u"frame_121")
-        self.frame_121.setFrameShape(QFrame.StyledPanel)
+        self.frame_121.setFrameShape(QFrame.NoFrame)
         self.frame_121.setFrameShadow(QFrame.Raised)
         self.horizontalLayout_126 = QHBoxLayout(self.frame_121)
         self.horizontalLayout_126.setObjectName(u"horizontalLayout_126")
+        self.horizontalLayout_126.setContentsMargins(-1, 0, -1, 0)
         self.label_28 = QLabel(self.frame_121)
         self.label_28.setObjectName(u"label_28")
 
@@ -6219,7 +6239,7 @@ class Ui_MainWindow(object):
 
         self.frame_120 = QFrame(self.tab_33)
         self.frame_120.setObjectName(u"frame_120")
-        self.frame_120.setFrameShape(QFrame.StyledPanel)
+        self.frame_120.setFrameShape(QFrame.NoFrame)
         self.frame_120.setFrameShadow(QFrame.Raised)
         self.horizontalLayout_34 = QHBoxLayout(self.frame_120)
         self.horizontalLayout_34.setObjectName(u"horizontalLayout_34")
@@ -7436,6 +7456,8 @@ class Ui_MainWindow(object):
         self.radioButton_8.setText(QCoreApplication.translate("MainWindow", u"cm^-1", None))
         self.FormASERamanAndIRscriptPlot.setText(QCoreApplication.translate("MainWindow", u"Plot Spectra", None))
         self.toolBox_3.setItemText(self.toolBox_3.indexOf(self.page_9), QCoreApplication.translate("MainWindow", u"Spectra", None))
+        self.dipole_calc.setText(QCoreApplication.translate("MainWindow", u"calc_dipole", None))
+        self.toolBox_3.setItemText(self.toolBox_3.indexOf(self.page_18), QCoreApplication.translate("MainWindow", u"Dipole", None))
         self.groupBox_24.setTitle(QCoreApplication.translate("MainWindow", u"Select program", None))
         self.program_select_siesta.setText(QCoreApplication.translate("MainWindow", u"SIESTA", None))
         self.program_select_crystal.setText(QCoreApplication.translate("MainWindow", u"CRYSTAL", None))
@@ -7467,11 +7489,11 @@ class Ui_MainWindow(object):
         self.label_132.setText(QCoreApplication.translate("MainWindow", u"Position: X", None))
         self.label_133.setText(QCoreApplication.translate("MainWindow", u", Y", None))
         self.label_90.setText(QCoreApplication.translate("MainWindow", u"Font size", None))
+        self.label_81.setText(QCoreApplication.translate("MainWindow", u"Figures in property", None))
         self.groupBox_34.setTitle(QCoreApplication.translate("MainWindow", u"OpenGl", None))
         self.OpenGL_GL_CULL_FACE.setText(QCoreApplication.translate("MainWindow", u"GL_CULL_FACE", None))
         self.ColorAtomsProperty.setText(QCoreApplication.translate("MainWindow", u"Color atoms with property", None))
         self.show_property_text.setText(QCoreApplication.translate("MainWindow", u"Show property", None))
-        self.label_81.setText(QCoreApplication.translate("MainWindow", u"Figures in property", None))
         self.tabWidget_9.setTabText(self.tabWidget_9.indexOf(self.tab_32), QCoreApplication.translate("MainWindow", u"View 3D", None))
         self.groupBox_9.setTitle(QCoreApplication.translate("MainWindow", u"Colors", None))
         self.label_32.setText(QCoreApplication.translate("MainWindow", u"Font color", None))

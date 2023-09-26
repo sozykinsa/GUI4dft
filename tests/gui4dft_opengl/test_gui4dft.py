@@ -164,3 +164,4 @@ def test_selected_atom_from_form(gui4dft_application):
 def test_simple_calls(gui4dft_application):
     gui4dft_application.save_image_to_file("1.png")
     gui4dft_application.activate_fragment_selection_mode()
+    gui4dft_application.model_rotation()

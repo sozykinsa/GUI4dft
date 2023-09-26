@@ -267,6 +267,8 @@ class MainForm(QMainWindow):
         self.ui.FormActionsPostButVoronoi.clicked.connect(self.plot_voronoi)
         self.ui.optimize_cell_param.clicked.connect(self.plot_volume_param_energy)
 
+        self.ui.dipole_calc.clicked.connect(self.dipole_calc)
+
         model = QStandardItemModel()
         model.appendRow(QStandardItem("select"))
         mendeley = TPeriodTable()
@@ -1673,8 +1675,7 @@ class MainForm(QMainWindow):
         angle = self.ui.FormModifyRotationAngle.value()
         model = self.ui.openGLWidget.main_model
         if self.ui.FormModifyRotationCenter.isChecked():
-            center = model.get_center_of_mass()
-            model.move(center[0], center[1], center[2])
+            model.move(model.get_center_of_mass())
         if self.ui.FormModifyRotationX.isChecked():
             model.rotate_x(angle)
         if self.ui.FormModifyRotationY.isChecked():
@@ -1682,7 +1683,6 @@ class MainForm(QMainWindow):
         if self.ui.FormModifyRotationZ.isChecked():
             model.rotate_z(angle)
         self.add_model_and_show(model)
-        self.model_orientation_to_form()
 
     def model_x_circular_shift(self):
         if self.ui.openGLWidget.main_model.n_atoms() == 0:
@@ -2298,6 +2298,34 @@ class MainForm(QMainWindow):
         if is_fermi_level_show:
             self.ui.PyqtGraphWidget.add_line(0, 90, 2, Qt.DashLine)
         self.ui.PyqtGraphWidget.add_line(0, 0, 2, Qt.SolidLine)
+
+    def dipole_calc(self):
+        if len(self.models) == 0:
+            return
+
+        text = ""
+        model = self.active_model
+        pos = model.get_positions()
+        mulliken = model.get_atoms_property("charge Mulliken")
+        voronoi = model.get_atoms_property("charge Voronoi")
+        hirshfeld = model.get_atoms_property("charge Hirshfeld")
+
+        d = np.zeros(3, dtype=float)
+        for q, r in zip(mulliken, pos):
+            d += q * r
+        text += "Mulliken\nElectric dipole (Debye) = {0:9.5f}  {1:9.5f}  {2:9.5f}".format(*d/0.20822678)
+
+        d = np.zeros(3, dtype=float)
+        for q, r in zip(voronoi, pos):
+            d += q * r
+        text += "\nVoronoi\nElectric dipole (Debye) = {0:9.5f}  {1:9.5f}  {2:9.5f}".format(*d/0.20822678)
+
+        d = np.zeros(3, dtype=float)
+        for q, r in zip(hirshfeld, pos):
+            d += q * r
+        text += "\nHirshfeld\nElectric dipole (Debye) = {0:9.5f}  {1:9.5f}  {2:9.5f}".format(*d/0.20822678)
+
+        self.ui.dipole_output.setText(text)
 
     def plot_voronoi(self):
         self.ui.Form3Dand2DTabs.setCurrentIndex(0)
