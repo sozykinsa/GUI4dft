@@ -119,6 +119,14 @@ class AtomicModel(object):
             props[i] = self.atoms[i].properties.get(key, 0.0)
         return props
 
+    def get_fragment_selected(self):
+        n = self.n_atoms()
+        props = np.zeros(n, dtype=int)
+        for i in range(n):
+            print(self.atoms[i].fragment1)
+            props[i] = self.atoms[i].fragment1
+        return props
+
     def twist_z(self, alpha):
         cm = self.center_mass()
         self.move(-cm)

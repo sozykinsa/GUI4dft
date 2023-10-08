@@ -67,6 +67,7 @@ class MainForm(QMainWindow):
         self.ui.setupUi(self)
 
         self.program: str = "SIESTA"  # mode of operation fot program
+        self.exec: str =sys.executable
 
         self.models = []
         self.ui.openGLWidget.set_form_elements(self.ui.FormSettingsViewCheckAtomSelection,
@@ -137,7 +138,7 @@ class MainForm(QMainWindow):
         self.ui.is_cart_coord_bohr.released.connect(self.selected_atom_coord_type_changed)
         self.ui.is_direct_coord.released.connect(self.selected_atom_coord_type_changed)
 
-        self.ui.ActivateFragmentSelectionModeCheckBox.toggled.connect(self.activate_fragment_selection_mode)
+        self.ui.activate_fragment_selection_mode.toggled.connect(self.activate_fragment_selection_mode)
         self.ui.ActivateFragmentSelectionTransp.valueChanged.connect(self.activate_fragment_selection_mode)
 
         # buttons
@@ -541,7 +542,7 @@ class MainForm(QMainWindow):
         self.ui.toolBar.addSeparator()
 
     def activate_fragment_selection_mode(self):
-        if self.ui.ActivateFragmentSelectionModeCheckBox.isChecked():
+        if self.ui.activate_fragment_selection_mode.isChecked():
             self.ui.openGLWidget.set_selected_fragment_mode(self.ui.AtomsInSelectedFragment,
                                                             self.ui.ActivateFragmentSelectionTransp.value())
             self.ui.changeFragment1StatusByX.setEnabled(True)
@@ -1548,13 +1549,13 @@ class MainForm(QMainWindow):
         if len(self.models) > 0:   # pragma: no cover
             self.action_on_start = 'Open'
             self.save_property(SETTINGS_FormSettingsActionOnStart, self.action_on_start)
-            print(sys.executable)
-            if os.path.exists(sys.executable):
+            print(self.exec)
+            if os.path.exists(self.exec):
                 print("good path")
-                os.execl(sys.executable, '"' + sys.executable + '"', *sys.argv)
+                os.execl(self.exec, '"' + self.exec + '"', *sys.argv)
             else:
                 print("try to run")
-                os.execl(sys.executable, sys.executable, *sys.argv)
+                os.execl(self.exec, self.exec, *sys.argv)
 
         self.ui.Form3Dand2DTabs.setCurrentIndex(0)
         if not file_name:
@@ -2306,26 +2307,33 @@ class MainForm(QMainWindow):
         text = ""
         model = self.active_model
         pos = model.get_positions()
+        fragment1 = self.ui.openGLWidget.main_model.get_fragment_selected()
         mulliken = model.get_atoms_property("charge Mulliken")
         voronoi = model.get_atoms_property("charge Voronoi")
         hirshfeld = model.get_atoms_property("charge Hirshfeld")
 
         d = np.zeros(3, dtype=float)
-        for q, r in zip(mulliken, pos):
-            d += q * r
+        for q, r, f in zip(mulliken, pos, fragment1):
+            d += self.delta_dipole(f, q, r)
         text += "Mulliken\nElectric dipole (Debye) = {0:9.5f}  {1:9.5f}  {2:9.5f}".format(*d/0.20822678)
 
         d = np.zeros(3, dtype=float)
-        for q, r in zip(voronoi, pos):
-            d += q * r
+        for q, r, f in zip(voronoi, pos, fragment1):
+            d += self.delta_dipole(f, q, r)
         text += "\nVoronoi\nElectric dipole (Debye) = {0:9.5f}  {1:9.5f}  {2:9.5f}".format(*d/0.20822678)
 
         d = np.zeros(3, dtype=float)
-        for q, r in zip(hirshfeld, pos):
-            d += q * r
+        for q, r, f in zip(hirshfeld, pos, fragment1):
+            d += self.delta_dipole(f, q, r)
         text += "\nHirshfeld\nElectric dipole (Debye) = {0:9.5f}  {1:9.5f}  {2:9.5f}".format(*d/0.20822678)
 
         self.ui.dipole_output.setText(text)
+
+    def delta_dipole(self, f, q, r):
+        dp = q * r
+        if self.ui.activate_fragment_selection_mode.isChecked():
+            dp *= f
+        return dp
 
     def plot_voronoi(self):
         self.ui.Form3Dand2DTabs.setCurrentIndex(0)
