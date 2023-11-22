@@ -863,28 +863,31 @@ class MainForm(QMainWindow):
     def change_fragment1_status_by_x(self):
         x_min = self.ui.xminborder.value()
         x_max = self.ui.xmaxborder.value()
-        model = self.ui.openGLWidget.get_model()
+        ogl = self.ui.openGLWidget
+        model = ogl.get_model()
         for ind, at in enumerate(model.atoms):
             if (at.x >= x_min) and (at.x <= x_max):
-                self.ui.openGLWidget.main_model.atoms[ind].fragment1 = True
+                ogl.main_model.atoms[ind].fragment1 = not ogl.main_model.atoms[ind].fragment1
         self.fragment1_post_actions()
 
     def change_fragment1_status_by_y(self):
         y_min = self.ui.yminborder.value()
         y_max = self.ui.ymaxborder.value()
-        model = self.ui.openGLWidget.get_model()
+        ogl = self.ui.openGLWidget
+        model = ogl.get_model()
         for ind, at in enumerate(model.atoms):
             if (at.y >= y_min) and (at.y <= y_max):
-                self.ui.openGLWidget.main_model.atoms[ind].fragment1 = True
+                ogl.main_model.atoms[ind].fragment1 = not ogl.main_model.atoms[ind].fragment1
         self.fragment1_post_actions()
 
     def change_fragment1_status_by_z(self):
         z_min = self.ui.zminborder.value()
         z_max = self.ui.zmaxborder.value()
-        model = self.ui.openGLWidget.get_model()
+        ogl = self.ui.openGLWidget
+        model = ogl.get_model()
         for ind, at in enumerate(model.atoms):
             if (at.z >= z_min) and (at.z <= z_max):
-                self.ui.openGLWidget.main_model.atoms[ind].fragment1 = True
+                ogl.main_model.atoms[ind].fragment1 = not ogl.main_model.atoms[ind].fragment1
         self.fragment1_post_actions()
 
     def fragment1_clear(self):
@@ -907,7 +910,8 @@ class MainForm(QMainWindow):
             tree.takeTopLevelItem(i)
             i -= 1
 
-    def color_to_ui(self, color_ui, state_color):
+    @staticmethod
+    def color_to_ui(color_ui, state_color):
         r = state_color.split()[0]
         g = state_color.split()[1]
         b = state_color.split()[2]
@@ -947,7 +951,6 @@ class MainForm(QMainWindow):
             scat_move_x = self.ui.FormActionsPreMoveScatX.value()
             scat_move_y = self.ui.FormActionsPreMoveScatY.value()
             model_scat.move(np.array([scat_move_x, scat_move_y, 0]))
-
             """ end: parts transformation"""
 
             left_elec_max = model_left.maxZ()
@@ -1085,6 +1088,8 @@ class MainForm(QMainWindow):
     def fill_energies(self, f_name: str) -> None:
         """Plot energies for steps of output."""
         energies = TSIESTA.energies(f_name)
+        if len(energies) == 0:
+            return
         energies_min = min(energies)
         energies -= energies_min
         self.ui.PyqtGraphWidget.set_xticks(None)

@@ -71,18 +71,27 @@ class TVASP:
 
     @staticmethod
     def abc(filename):
-        """length of vectors"""
-        prop = "length of vectors"
+        """direct lattice vectors"""
+        prop = "direct lattice vectors"
         a, b, c = 0.0, 0.0, 0.0
         if os.path.exists(filename):
             my_file = open(filename)
             str1 = my_file.readline()
+            model = AtomicModel()
             while str1 != '':
                 if (str1 != '') and (str1.find(prop) >= 0):
                     str1 = my_file.readline()
-                    str1 = str1.replace(prop, ' ')
-                    prop1 = re.findall(r"[0-9,\.,-]+", str1)
-                    a, b, c = float(prop1[0]), float(prop1[1]), float(prop1[2])
+                    row1 = re.findall(r"[0-9,\.,-]+", str1)
+                    str1 = my_file.readline()
+                    row2 = re.findall(r"[0-9,\.,-]+", str1)
+                    str1 = my_file.readline()
+                    row3 = re.findall(r"[0-9,\.,-]+", str1)
+
+                    v1 = np.array((row1[0], row1[1], row1[2]), dtype=float)
+                    v2 = np.array((row2[0], row2[1], row2[2]), dtype=float)
+                    v3 = np.array((row3[0], row3[1], row3[2]), dtype=float)
+                    model.set_lat_vectors(v1, v2, v3)
+                    a, b, c, al, bet, gam = model.cell_params()
                 str1 = my_file.readline()
             my_file.close()
         return a, b, c

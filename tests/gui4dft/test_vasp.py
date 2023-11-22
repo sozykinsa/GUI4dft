@@ -27,4 +27,4 @@ def test_energy_tot(tests_path):
 def test_abc(tests_path):
     f_name = str(tests_path / 'ref_data' / 'vasp' / "OUTCAR")
     a, b, c = TVASP.abc(f_name)
-    assert a == 2.757716447
+    assert abs(a - 2.757716447) < 1e-7
