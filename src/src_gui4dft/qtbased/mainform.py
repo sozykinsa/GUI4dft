@@ -33,10 +33,11 @@ from PySide2.QtWidgets import QTreeWidgetItemIterator
 from src_gui4dft.qtbased.image3dexporter import Image3Dexporter
 
 from src_gui4dft.program.siesta import TSIESTA
-from src_gui4dft.program.crystal import model_0d_to_d12, model_1d_to_d12, model_2d_to_d12, model_3d_to_d12
+import src_gui4dft.program.crystal as CRYSTAL # model_0d_to_d12, model_1d_to_d12, model_2d_to_d12, model_3d_to_d12
 from src_gui4dft.program.qe import model_to_qe_pw
 from src_gui4dft.program.wien import model_to_wien_struct
 from src_gui4dft.program.vasp import TVASP, vasp_dos, model_to_vasp_poscar
+from src_gui4dft.program.dftb import model_to_dftb_d0
 
 from src_gui4dft.program import ase
 
@@ -66,6 +67,7 @@ class MainForm(QMainWindow):
         self.ui.setupUi(self)
 
         self.program: str = "SIESTA"  # mode of operation fot program
+        self.exec: str =sys.executable
 
         self.models = []
         self.ui.openGLWidget.set_form_elements(self.ui.FormSettingsViewCheckAtomSelection,
@@ -136,7 +138,7 @@ class MainForm(QMainWindow):
         self.ui.is_cart_coord_bohr.released.connect(self.selected_atom_coord_type_changed)
         self.ui.is_direct_coord.released.connect(self.selected_atom_coord_type_changed)
 
-        self.ui.ActivateFragmentSelectionModeCheckBox.toggled.connect(self.activate_fragment_selection_mode)
+        self.ui.activate_fragment_selection_mode.toggled.connect(self.activate_fragment_selection_mode)
         self.ui.ActivateFragmentSelectionTransp.valueChanged.connect(self.activate_fragment_selection_mode)
 
         # buttons
@@ -170,6 +172,7 @@ class MainForm(QMainWindow):
         self.ui.crystal_1d_d12_generate.clicked.connect(self.d12_1D_to_form)
         self.ui.crystal_2d_d12_generate.clicked.connect(self.d12_2D_to_form)
         self.ui.crystal_3d_d12_generate.clicked.connect(self.d12_3D_to_form)
+        self.ui.dftb_0d_generate.clicked.connect(self.dftb_0D_to_form)
 
         self.ui.data_from_form_to_input_file.clicked.connect(self.data_from_form_to_input_file)
         self.ui.model_rotation_x.valueChanged.connect(self.model_orientation_changed)
@@ -264,6 +267,8 @@ class MainForm(QMainWindow):
 
         self.ui.FormActionsPostButVoronoi.clicked.connect(self.plot_voronoi)
         self.ui.optimize_cell_param.clicked.connect(self.plot_volume_param_energy)
+
+        self.ui.dipole_calc.clicked.connect(self.dipole_calc)
 
         model = QStandardItemModel()
         model.appendRow(QStandardItem("select"))
@@ -537,7 +542,7 @@ class MainForm(QMainWindow):
         self.ui.toolBar.addSeparator()
 
     def activate_fragment_selection_mode(self):
-        if self.ui.ActivateFragmentSelectionModeCheckBox.isChecked():
+        if self.ui.activate_fragment_selection_mode.isChecked():
             self.ui.openGLWidget.set_selected_fragment_mode(self.ui.AtomsInSelectedFragment,
                                                             self.ui.ActivateFragmentSelectionTransp.value())
             self.ui.changeFragment1StatusByX.setEnabled(True)
@@ -733,7 +738,6 @@ class MainForm(QMainWindow):
             return
         charge, let, position = self.selected_atom_from_form()
         self.models[self.active_model_id].add_atom_with_data(position, charge)
-        # add_atom(Atom((position[0], position[1], position[2], let, charge)))
         self.model_to_screen(self.active_model_id)
 
     def atom_delete(self):
@@ -859,28 +863,31 @@ class MainForm(QMainWindow):
     def change_fragment1_status_by_x(self):
         x_min = self.ui.xminborder.value()
         x_max = self.ui.xmaxborder.value()
-        model = self.ui.openGLWidget.get_model()
+        ogl = self.ui.openGLWidget
+        model = ogl.get_model()
         for ind, at in enumerate(model.atoms):
             if (at.x >= x_min) and (at.x <= x_max):
-                self.ui.openGLWidget.main_model.atoms[ind].fragment1 = True
+                ogl.main_model.atoms[ind].fragment1 = not ogl.main_model.atoms[ind].fragment1
         self.fragment1_post_actions()
 
     def change_fragment1_status_by_y(self):
         y_min = self.ui.yminborder.value()
         y_max = self.ui.ymaxborder.value()
-        model = self.ui.openGLWidget.get_model()
+        ogl = self.ui.openGLWidget
+        model = ogl.get_model()
         for ind, at in enumerate(model.atoms):
             if (at.y >= y_min) and (at.y <= y_max):
-                self.ui.openGLWidget.main_model.atoms[ind].fragment1 = True
+                ogl.main_model.atoms[ind].fragment1 = not ogl.main_model.atoms[ind].fragment1
         self.fragment1_post_actions()
 
     def change_fragment1_status_by_z(self):
         z_min = self.ui.zminborder.value()
         z_max = self.ui.zmaxborder.value()
-        model = self.ui.openGLWidget.get_model()
+        ogl = self.ui.openGLWidget
+        model = ogl.get_model()
         for ind, at in enumerate(model.atoms):
             if (at.z >= z_min) and (at.z <= z_max):
-                self.ui.openGLWidget.main_model.atoms[ind].fragment1 = True
+                ogl.main_model.atoms[ind].fragment1 = not ogl.main_model.atoms[ind].fragment1
         self.fragment1_post_actions()
 
     def fragment1_clear(self):
@@ -903,7 +910,8 @@ class MainForm(QMainWindow):
             tree.takeTopLevelItem(i)
             i -= 1
 
-    def color_to_ui(self, color_ui, state_color):
+    @staticmethod
+    def color_to_ui(color_ui, state_color):
         r = state_color.split()[0]
         g = state_color.split()[1]
         b = state_color.split()[2]
@@ -943,7 +951,6 @@ class MainForm(QMainWindow):
             scat_move_x = self.ui.FormActionsPreMoveScatX.value()
             scat_move_y = self.ui.FormActionsPreMoveScatY.value()
             model_scat.move(np.array([scat_move_x, scat_move_y, 0]))
-
             """ end: parts transformation"""
 
             left_elec_max = model_left.maxZ()
@@ -1072,15 +1079,21 @@ class MainForm(QMainWindow):
             self.check_pdos(file_name)
             self.check_bands(file_name)
             self.fill_cell_info(file_name)
-            self.fill_energies(file_name)
+            energies = TSIESTA.energies(file_name)
+            self.fill_energies(energies)
+
+        if helpers.check_format(file_name) == "CRYSTALout":
+            energies = CRYSTAL.energies(file_name)
+            self.fill_energies(energies)
 
         if helpers.check_format(file_name) == "SIESTAfdf":
             c = np.linalg.norm(self.ui.openGLWidget.main_model.lat_vector3)
             self.ui.FormActionsPreZSizeFillSpace.setValue(c)
 
-    def fill_energies(self, f_name: str) -> None:
+    def fill_energies(self, energies: list[float]) -> None:
         """Plot energies for steps of output."""
-        energies = TSIESTA.energies(f_name)
+        if len(energies) == 0:
+            return
         energies_min = min(energies)
         energies -= energies_min
         self.ui.PyqtGraphWidget.set_xticks(None)
@@ -1112,6 +1125,7 @@ class MainForm(QMainWindow):
         self.ui.FormModelComboModels.setModel(model)
         self.ui.FormModelComboModels.setCurrentIndex(len(self.models) - 1)
         self.ui.FormModelComboModels.currentIndexChanged.connect(self.model_to_screen)
+        self.ui.FormModelComboModels.update()
 
     def fill_atoms_table(self):
         model = self.ui.openGLWidget.get_model().atoms
@@ -1544,8 +1558,14 @@ class MainForm(QMainWindow):
         if len(self.models) > 0:   # pragma: no cover
             self.action_on_start = 'Open'
             self.save_property(SETTINGS_FormSettingsActionOnStart, self.action_on_start)
-            #os.execl(sys.executable, sys.executable, *sys.argv)
-            os.execl(sys.executable, '"' + sys.executable + '"', *sys.argv)
+            print(self.exec)
+            if os.path.exists(self.exec):
+                print("good path")
+                os.execl(self.exec, '"' + self.exec + '"', *sys.argv)
+            else:
+                print("try to run")
+                os.execl(self.exec, self.exec, *sys.argv)
+
         self.ui.Form3Dand2DTabs.setCurrentIndex(0)
         if not file_name:
             file_name = self.get_file_name_from_open_dialog("All files (*)")
@@ -1665,8 +1685,7 @@ class MainForm(QMainWindow):
         angle = self.ui.FormModifyRotationAngle.value()
         model = self.ui.openGLWidget.main_model
         if self.ui.FormModifyRotationCenter.isChecked():
-            center = model.get_center_of_mass()
-            model.move(center[0], center[1], center[2])
+            model.move(model.get_center_of_mass())
         if self.ui.FormModifyRotationX.isChecked():
             model.rotate_x(angle)
         if self.ui.FormModifyRotationY.isChecked():
@@ -1674,7 +1693,6 @@ class MainForm(QMainWindow):
         if self.ui.FormModifyRotationZ.isChecked():
             model.rotate_z(angle)
         self.add_model_and_show(model)
-        self.model_orientation_to_form()
 
     def model_x_circular_shift(self):
         if self.ui.openGLWidget.main_model.n_atoms() == 0:
@@ -2291,6 +2309,41 @@ class MainForm(QMainWindow):
             self.ui.PyqtGraphWidget.add_line(0, 90, 2, Qt.DashLine)
         self.ui.PyqtGraphWidget.add_line(0, 0, 2, Qt.SolidLine)
 
+    def dipole_calc(self):
+        if len(self.models) == 0:
+            return
+
+        text = ""
+        model = self.active_model
+        pos = model.get_positions()
+        fragment1 = self.ui.openGLWidget.main_model.get_fragment_selected()
+        mulliken = model.get_atoms_property("charge Mulliken")
+        voronoi = model.get_atoms_property("charge Voronoi")
+        hirshfeld = model.get_atoms_property("charge Hirshfeld")
+
+        d = np.zeros(3, dtype=float)
+        for q, r, f in zip(mulliken, pos, fragment1):
+            d += self.delta_dipole(f, q, r)
+        text += "Mulliken\nElectric dipole (Debye) = {0:9.5f}  {1:9.5f}  {2:9.5f}".format(*d/0.20822678)
+
+        d = np.zeros(3, dtype=float)
+        for q, r, f in zip(voronoi, pos, fragment1):
+            d += self.delta_dipole(f, q, r)
+        text += "\nVoronoi\nElectric dipole (Debye) = {0:9.5f}  {1:9.5f}  {2:9.5f}".format(*d/0.20822678)
+
+        d = np.zeros(3, dtype=float)
+        for q, r, f in zip(hirshfeld, pos, fragment1):
+            d += self.delta_dipole(f, q, r)
+        text += "\nHirshfeld\nElectric dipole (Debye) = {0:9.5f}  {1:9.5f}  {2:9.5f}".format(*d/0.20822678)
+
+        self.ui.dipole_output.setText(text)
+
+    def delta_dipole(self, f, q, r):
+        dp = q * r
+        if self.ui.activate_fragment_selection_mode.isChecked():
+            dp *= f
+        return dp
+
     def plot_voronoi(self):
         self.ui.Form3Dand2DTabs.setCurrentIndex(0)
         if self.ui.openGLWidget.is_active():
@@ -2776,8 +2829,8 @@ class MainForm(QMainWindow):
         try:
             text = self.ui.FormActionsPreTextFDF.toPlainText()
             if len(text) > 0:
-                file_mask = "FDF files (*.fdf);;VASP POSCAR file (*.POSCAR)"
-                file_mask += ";;Crystal d12 (*.d12);;PWscf in (*.in);;WIEN struct (*.struct);;CIF file (*.cif)"
+                file_mask = "FDF files (*.fdf);;VASP POSCAR file (*.POSCAR);;Crystal d12 (*.d12)"
+                file_mask += ";;PWscf in (*.in);;WIEN struct (*.struct);;CIF file (*.cif);;DFTB+ (*.gen)"
                 fname = self.get_file_name_from_save_dialog(file_mask)
                 if fname is not None:
                     helpers.write_text_to_file(fname, text)
@@ -2861,12 +2914,23 @@ class MainForm(QMainWindow):
         self.ui.Form3Dand2DTabs.setCurrentIndex(1)
         self.ui.PyqtGraphWidget.plot([x_fig], [y_fig], [None], title, x_title, y_title, True)
 
+    def dftb_0D_to_form(self):
+        if len(self.models) == 0:
+            return
+        try:
+            model = self.models[self.active_model_id]
+            text = model_to_dftb_d0(model)
+            if len(text) > 0:
+                self.ui.FormActionsPreTextFDF.setText(text)
+        except Exception as e:
+            self.show_error(e)
+
     def d12_0D_to_form(self):  # pragma: no cover
         if len(self.models) == 0:
             return
         try:
             model = self.models[self.active_model_id]
-            text = model_0d_to_d12(model)
+            text = CRYSTAL.model_0d_to_d12(model)
             if len(text) > 0:
                 self.ui.FormActionsPreTextFDF.setText(text)
         except Exception as e:
@@ -2877,7 +2941,7 @@ class MainForm(QMainWindow):
             return
         try:
             model = self.models[self.active_model_id]
-            text = model_1d_to_d12(model)
+            text = CRYSTAL.model_1d_to_d12(model)
             if len(text) > 0:
                 self.ui.FormActionsPreTextFDF.setText(text)
         except Exception as e:
@@ -2888,7 +2952,7 @@ class MainForm(QMainWindow):
             return
         try:
             model = self.models[self.active_model_id]
-            text = model_2d_to_d12(model)
+            text = CRYSTAL.model_2d_to_d12(model)
             if len(text) > 0:
                 self.ui.FormActionsPreTextFDF.setText(text)
         except Exception as e:
@@ -2899,7 +2963,7 @@ class MainForm(QMainWindow):
             return
         try:
             model = self.models[self.active_model_id]
-            text = model_3d_to_d12(model)
+            text = CRYSTAL.model_3d_to_d12(model)
             if len(text) > 0:
                 self.ui.FormActionsPreTextFDF.setText(text)
         except Exception as e:

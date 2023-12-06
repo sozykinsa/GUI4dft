@@ -15,6 +15,7 @@ def test_check_format(tests_path):
     assert helpers.check_format(str(tests_path / 'ref_data' / 'wien2k' / 'Fe53C_Si_1.struct')) == "WIENstruct"
     assert helpers.check_format(str(tests_path / 'ref_data' / 'crystal' / 'h2o_optim' / 'input.out')) == "CRYSTALout"
     assert helpers.check_format(str(tests_path / 'ref_data' / 'crystal' / 'h2o_optim' / 'opta001')) == "CRYSTALopt_atom"
+    assert helpers.check_format(str(tests_path / 'ref_data' / 'dftb' / 'h2o.gen')) == "DFTBgen"
     file2 = str(tests_path / 'ref_data' / 'crystal' / 'corundum_optim' / 'optc001')
     assert helpers.check_format(file2) == "CRYSTALopt_cryst"
 
@@ -168,3 +169,9 @@ def test_importer_poscar(tests_path):
     f_name = str(tests_path / 'ref_data' / 'vasp' / 'POSCAR')
     model, fdf = ImporterExporter.import_from_file(f_name, fl='all', prop=False)
     assert len(model[0].atoms) == 1
+
+
+def test_importer_gen(tests_path):
+    f_name = str(tests_path / 'ref_data' / 'dftb' / 'h2o.gen')
+    model, fdf = ImporterExporter.import_from_file(f_name, fl='all', prop=False)
+    assert len(model[0].atoms) == 3
