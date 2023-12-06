@@ -20,7 +20,6 @@ class TVASP:
             my_file = open(filename)
             for i in range(0, 7):
                 str1 = my_file.readline()
-                # print str1
             ns = re.findall(r"[0-9,\.,-]+", str1)  # [0]
             n = 0
             for i in range(0, len(ns)):

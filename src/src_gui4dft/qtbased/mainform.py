@@ -33,7 +33,7 @@ from PySide2.QtWidgets import QTreeWidgetItemIterator
 from src_gui4dft.qtbased.image3dexporter import Image3Dexporter
 
 from src_gui4dft.program.siesta import TSIESTA
-from src_gui4dft.program.crystal import model_0d_to_d12, model_1d_to_d12, model_2d_to_d12, model_3d_to_d12
+import src_gui4dft.program.crystal as CRYSTAL # model_0d_to_d12, model_1d_to_d12, model_2d_to_d12, model_3d_to_d12
 from src_gui4dft.program.qe import model_to_qe_pw
 from src_gui4dft.program.wien import model_to_wien_struct
 from src_gui4dft.program.vasp import TVASP, vasp_dos, model_to_vasp_poscar
@@ -1079,15 +1079,19 @@ class MainForm(QMainWindow):
             self.check_pdos(file_name)
             self.check_bands(file_name)
             self.fill_cell_info(file_name)
-            self.fill_energies(file_name)
+            energies = TSIESTA.energies(file_name)
+            self.fill_energies(energies)
+
+        if helpers.check_format(file_name) == "CRYSTALout":
+            energies = CRYSTAL.energies(file_name)
+            self.fill_energies(energies)
 
         if helpers.check_format(file_name) == "SIESTAfdf":
             c = np.linalg.norm(self.ui.openGLWidget.main_model.lat_vector3)
             self.ui.FormActionsPreZSizeFillSpace.setValue(c)
 
-    def fill_energies(self, f_name: str) -> None:
+    def fill_energies(self, energies: list[float]) -> None:
         """Plot energies for steps of output."""
-        energies = TSIESTA.energies(f_name)
         if len(energies) == 0:
             return
         energies_min = min(energies)
@@ -2926,7 +2930,7 @@ class MainForm(QMainWindow):
             return
         try:
             model = self.models[self.active_model_id]
-            text = model_0d_to_d12(model)
+            text = CRYSTAL.model_0d_to_d12(model)
             if len(text) > 0:
                 self.ui.FormActionsPreTextFDF.setText(text)
         except Exception as e:
@@ -2937,7 +2941,7 @@ class MainForm(QMainWindow):
             return
         try:
             model = self.models[self.active_model_id]
-            text = model_1d_to_d12(model)
+            text = CRYSTAL.model_1d_to_d12(model)
             if len(text) > 0:
                 self.ui.FormActionsPreTextFDF.setText(text)
         except Exception as e:
@@ -2948,7 +2952,7 @@ class MainForm(QMainWindow):
             return
         try:
             model = self.models[self.active_model_id]
-            text = model_2d_to_d12(model)
+            text = CRYSTAL.model_2d_to_d12(model)
             if len(text) > 0:
                 self.ui.FormActionsPreTextFDF.setText(text)
         except Exception as e:
@@ -2959,7 +2963,7 @@ class MainForm(QMainWindow):
             return
         try:
             model = self.models[self.active_model_id]
-            text = model_3d_to_d12(model)
+            text = CRYSTAL.model_3d_to_d12(model)
             if len(text) > 0:
                 self.ui.FormActionsPreTextFDF.setText(text)
         except Exception as e:

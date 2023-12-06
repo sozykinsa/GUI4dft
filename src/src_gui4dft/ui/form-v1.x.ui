@@ -2540,7 +2540,7 @@
                  <x>0</x>
                  <y>0</y>
                  <width>337</width>
-                 <height>551</height>
+                 <height>549</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -2926,7 +2926,7 @@
                 <item>
                  <widget class="QFrame" name="frame_143">
                   <property name="frameShape">
-                   <enum>QFrame::StyledPanel</enum>
+                   <enum>QFrame::NoFrame</enum>
                   </property>
                   <property name="frameShadow">
                    <enum>QFrame::Raised</enum>
@@ -3658,8 +3658,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>361</width>
-                 <height>405</height>
+                 <width>371</width>
+                 <height>562</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -4003,8 +4003,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>352</width>
-                 <height>209</height>
+                 <width>371</width>
+                 <height>562</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -4292,6 +4292,11 @@
                  </spacer>
                 </item>
                </layout>
+              </widget>
+              <widget class="QWidget" name="page_9">
+               <attribute name="label">
+                <string>Сhange type of atoms</string>
+               </attribute>
               </widget>
               <widget class="QWidget" name="page_28">
                <property name="geometry">
@@ -8156,8 +8161,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>399</width>
-             <height>675</height>
+             <width>359</width>
+             <height>668</height>
             </rect>
            </property>
            <attribute name="label">
@@ -9454,6 +9459,14 @@
            </layout>
           </widget>
           <widget class="QWidget" name="page_10">
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>0</y>
+             <width>216</width>
+             <height>532</height>
+            </rect>
+           </property>
            <attribute name="label">
             <string>Spectra</string>
            </attribute>
@@ -9804,8 +9817,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>399</width>
-             <height>706</height>
+             <width>363</width>
+             <height>649</height>
             </rect>
            </property>
            <attribute name="label">

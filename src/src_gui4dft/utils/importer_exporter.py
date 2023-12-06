@@ -11,6 +11,7 @@ from src_gui4dft.program.crystal import structure_of_primitive_cell, structure_o
 from src_gui4dft.program.qe import atoms_from_pwout
 from src_gui4dft.program.wien import atoms_from_struct
 from src_gui4dft.program.dftb import atoms_from_gen
+from src_gui4dft.program.lammps import atoms_trajectory_step
 from core_gui_atomistic import helpers
 from core_gui_atomistic.gui4dft_project_file import GUI4dftProjectFile
 from src_gui4dft.models.gaussiancube import GaussianCube
@@ -75,6 +76,9 @@ class ImporterExporter(object):
 
             elif file_format == "DFTBgen":
                 models = atoms_from_gen(filename)
+
+            elif file_format == "LammpsTrj":
+                models = atoms_trajectory_step(filename)
 
             elif file_format == "project":
                 models = GUI4dftProjectFile.project_file_reader(filename)

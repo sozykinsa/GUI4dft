@@ -141,3 +141,8 @@ def structure_of_primitive_cell(f_name):
         str1 = f.readline()
     f.close()
     return models
+
+
+def energies(filename):
+    """Energy from each step."""
+    return np.array(helpers.list_of_values(filename, "TOTAL ENERGY(HF)(AU)(   3)"), dtype=float) * 27.2113961317875

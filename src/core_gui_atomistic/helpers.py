@@ -165,6 +165,19 @@ def from_file_property(filename: str, prop: str, count: int = 1, prop_type: str 
         return None
 
 
+def list_of_values(filename, prop):
+    """Return all float values of prop from filename."""
+    list_of_val = []
+    if os.path.exists(filename):
+        f = open(filename)
+        for st in f:
+            if st.find(prop) >= 0:
+                list_of_val.append(float(re.findall(r"[0-9,\.,-]+", st.replace(prop, ""))[0]))
+        f.close()
+    return list_of_val
+
+
+
 def write_text_to_file(f_name, text):  # pragma: no cover
     if len(f_name) > 0:
         with open(f_name, 'w') as f:
@@ -286,7 +299,7 @@ def check_format(filename):
             return "SiestaXYZ"
         return "unknown"
 
-    if name.endswith(".struct_out"):
+    if name.endswith(".struct_out") or name.endswith(".struct_next_iter"):
         return "SIESTASTRUCT_OUT"
 
     if name.endswith(".md_car"):
@@ -318,6 +331,9 @@ def check_format(filename):
 
     if name.endswith(".gen"):
         return "DFTBgen"
+
+    if name.endswith(".lammpstrj"):
+        return "LammpsTrj"
 
     name = os.path.basename(name)
 

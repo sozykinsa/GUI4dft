@@ -201,7 +201,7 @@ class TSIESTA:
     @staticmethod
     def energies(filename):
         """Energy from each step."""
-        return np.array(TSIESTA.list_of_values(filename, "siesta: E_KS(eV) ="), dtype=float)
+        return np.array(helpers.list_of_values(filename, "siesta: E_KS(eV) ="), dtype=float)
 
     @staticmethod
     def fermi_energy(filename):
@@ -346,18 +346,6 @@ class TSIESTA:
             if res == "non-polarized":
                 res = False
         return res
-
-    @staticmethod
-    def list_of_values(filename, prop):
-        """Return all float values of prop from filename."""
-        list_of_val = []
-        if os.path.exists(filename):
-            f = open(filename)
-            for st in f:
-                if st.find(prop) >= 0:
-                    list_of_val.append(float(re.findall(r"[0-9,\.,-]+", st)[0]))
-            f.close()
-        return list_of_val
 
     @staticmethod
     def get_block_from_siesta_fdf(filename, block_name):
