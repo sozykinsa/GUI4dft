@@ -4,9 +4,9 @@
 # ------------------------------------------------------
 # https://www.pythonguis.com/tutorials/pyside-plotting-pyqtgraph/
 
-from PySide2.QtWidgets import QWidget, QVBoxLayout
-from PySide2.QtGui import QFont
-from PySide2.QtCore import Qt
+from qtpy.QtWidgets import QWidget, QVBoxLayout
+from qtpy.QtGui import QFont
+from qtpy.QtCore import Qt
 import pyqtgraph as pg  # pip install pyqtgraph
 import numpy as np
 from typing import List

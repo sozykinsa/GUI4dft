@@ -4,9 +4,9 @@ from typing import Callable
 import OpenGL.GL as gl
 import OpenGL.GLU as glu
 from qtpy.QtWidgets import QOpenGLWidget
-from PySide2.QtCore import QEvent
-from PySide2.QtCore import Qt
-from PySide2.QtGui import QColor, QPainter, QFont
+from qtpy.QtCore import QEvent
+from qtpy.QtCore import Qt
+from qtpy.QtGui import QColor, QPainter, QFont
 from copy import deepcopy
 from core_gui_atomistic.periodic_table import TPeriodTable
 from core_gui_atomistic.atom import Atom
