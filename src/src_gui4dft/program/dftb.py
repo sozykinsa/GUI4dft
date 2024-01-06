@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
-import re
-import math
 import os
 from copy import deepcopy
-from core_gui_atomistic.periodic_table import TPeriodTable
+
 import numpy as np
-from core_gui_atomistic import helpers
-from core_gui_atomistic.atomic_model import AtomicModel
+
+from core_atomistic.atomic_model import AtomicModel
+from core_atomistic.periodic_table import TPeriodTable
+from core_atomistic import helpers
 
 
 def model_to_dftb_d0(model: AtomicModel):

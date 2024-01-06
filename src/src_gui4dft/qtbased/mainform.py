@@ -13,8 +13,19 @@ from operator import itemgetter
 import matplotlib.pyplot as plt
 import numpy as np
 
-from core_gui_atomistic.atom import Atom
-from core_gui_atomistic.atomic_model import AtomicModel
+from qtpy.QtCore import QLocale, QSettings, Qt, QSize
+from qtpy.QtGui import QColor, QIcon, QImage, QKeySequence, QPixmap, QStandardItem, QStandardItemModel
+from qtpy.QtWidgets import QAction, QDialog, QFileDialog, QMessageBox, QColorDialog
+from qtpy.QtWidgets import QDoubleSpinBox, QMainWindow, QShortcut, QTableWidgetItem, QTreeWidgetItem
+from qtpy.QtWidgets import QTreeWidgetItemIterator
+
+from ase.build import molecule, bulk
+
+from core_atomistic.atom import Atom
+from core_atomistic.atomic_model import AtomicModel
+from core_atomistic.periodic_table import TPeriodTable
+from core_atomistic import helpers
+
 from src_gui4dft.models.capedswcnt import CapedSWNT
 from src_gui4dft.models.bint import BiNT
 from src_gui4dft.models.hexagonal_plane import HexagonalPlane, HexagonalPlaneHex
@@ -24,35 +35,21 @@ from src_gui4dft.models.swgnt import SWGNT
 from src_gui4dft.models.gaussiancube import GaussianCube
 from src_gui4dft.models.volumericdata import VolumericData
 from src_gui4dft.models.xsf import XSF
-
-from PySide2.QtCore import QLocale, QSettings, Qt, QSize
-from PySide2.QtGui import QColor, QIcon, QImage, QKeySequence, QPixmap, QStandardItem, QStandardItemModel
-from PySide2.QtWidgets import QAction, QDialog, QFileDialog, QMessageBox, QColorDialog
-from PySide2.QtWidgets import QDoubleSpinBox, QMainWindow, QShortcut, QTableWidgetItem, QTreeWidgetItem
-from PySide2.QtWidgets import QTreeWidgetItemIterator
 from src_gui4dft.qtbased.image3dexporter import Image3Dexporter
-
 from src_gui4dft.program.siesta import TSIESTA
-import src_gui4dft.program.crystal as CRYSTAL # model_0d_to_d12, model_1d_to_d12, model_2d_to_d12, model_3d_to_d12
+import src_gui4dft.program.crystal as CRYSTAL  # model_0d_to_d12, model_1d_to_d12, model_2d_to_d12, model_3d_to_d12
 from src_gui4dft.program.qe import model_to_qe_pw
 from src_gui4dft.program.wien import model_to_wien_struct
 from src_gui4dft.program.vasp import TVASP, vasp_dos, model_to_vasp_poscar
 from src_gui4dft.program.dftb import model_to_dftb_d0
-
 from src_gui4dft.program import ase
-
 from src_gui4dft.utils.importer_exporter import ImporterExporter
 from src_gui4dft.utils.electronic_prop_reader import read_siesta_bands, dos_from_file
-from core_gui_atomistic.periodic_table import TPeriodTable
 from src_gui4dft.program.fdfdata import TFDFFile
 from src_gui4dft.utils.calculators import Calculators as Calculator
 from src_gui4dft.utils.calculators import gaps
-from core_gui_atomistic import helpers
-
 from src_gui4dft.ui.about import Ui_DialogAbout as Ui_about
 from src_gui4dft.ui.form import Ui_MainWindow as Ui_form
-
-from ase.build import molecule, bulk
 
 sys.path.append('')
 
@@ -3257,7 +3254,7 @@ class MainForm(QMainWindow):
             model = CapedSWNT(n, m, leng, cells, tube_type, dist1, angle1, dist2, angle2)
 
         if tube_type == 3:
-            model = SWGNT(n, m, leng, cells)
+            model = SWGNT(n, m, leng)
 
         self.models.append(model)
         self.plot_model(-1)

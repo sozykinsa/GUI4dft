@@ -11,9 +11,9 @@ from scipy.optimize import leastsq
 from scipy.spatial import ConvexHull
 from scipy.spatial import Voronoi
 
-from core_gui_atomistic import helpers
-from core_gui_atomistic.atom import Atom
-from core_gui_atomistic.atomic_model import AtomicModel
+from core_atomistic.atom import Atom
+from core_atomistic.atomic_model import AtomicModel
+from core_atomistic import helpers
 
 
 def gaps(bands, emaxf, eminf, homo, lumo) -> Tuple[float, float]:

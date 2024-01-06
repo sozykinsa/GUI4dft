@@ -2,12 +2,14 @@
 
 from copy import deepcopy
 import os
-from core_gui_atomistic.atomic_model import AtomicModel as TAtomicModel
+import math
+import numpy as np
+from core_atomistic.atomic_model import AtomicModel as TAtomicModel
+from core_atomistic.periodic_table import TPeriodTable
 from src_gui4dft.models.volumericdatablock import VolumericDataBlock
 from src_gui4dft.models.volumericdata import VolumericData
-from core_gui_atomistic.periodic_table import TPeriodTable
-import numpy as np
-import math
+
+
 
 
 class GaussianCube(VolumericData):

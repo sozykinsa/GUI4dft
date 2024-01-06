@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from PySide2.QtWidgets import QMainWindow
-from PySide2.QtCore import QSize
+from qtpy.QtWidgets import QMainWindow
+from qtpy.QtCore import QSize
 from src_gui4dft.ui.image3D import Ui_MainWindow as Ui_image3D
 
 

@@ -1,7 +1,7 @@
 import numpy as np
 
+from core_atomistic import helpers
 from src_gui4dft.utils.importer_exporter import ImporterExporter
-from core_gui_atomistic import helpers
 
 
 def test_check_format(tests_path):

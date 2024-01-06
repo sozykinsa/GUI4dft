@@ -1,6 +1,6 @@
 import numpy as np
 
-from core_gui_atomistic import helpers
+from core_atomistic import helpers
 
 
 def test_helpers_spacedel():

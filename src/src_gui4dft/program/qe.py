@@ -2,9 +2,9 @@
 import math
 from copy import deepcopy
 import numpy as np
-from core_gui_atomistic import helpers
-from core_gui_atomistic.atom import Atom
-from core_gui_atomistic.atomic_model import AtomicModel
+from core_atomistic import helpers
+from core_atomistic.atom import Atom
+from core_atomistic.atomic_model import AtomicModel
 
 
 def vectors_from_pwout(f_name):

@@ -2,7 +2,7 @@
 
 import os
 from copy import deepcopy
-from core_gui_atomistic.helpers import text_between_lines
+from core_atomistic.helpers import text_between_lines
 from src_gui4dft.program.siesta import TSIESTA
 
 

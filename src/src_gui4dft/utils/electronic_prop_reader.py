@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-from core_gui_atomistic import helpers
-import numpy as np
 import os
+import numpy as np
+from core_atomistic import helpers
 
 
 def dos_from_file(filename, n=2, n_lines=0):

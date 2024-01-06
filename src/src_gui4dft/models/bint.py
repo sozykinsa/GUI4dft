@@ -2,8 +2,8 @@
 
 import math
 
-from core_gui_atomistic.atom import Atom
-from core_gui_atomistic.atomic_model import AtomicModel as TAtomicModel
+from core_atomistic.atom import Atom
+from core_atomistic.atomic_model import AtomicModel as TAtomicModel
 
 
 class BiNT(TAtomicModel):

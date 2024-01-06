@@ -8,8 +8,8 @@ from qtpy.QtCore import QEvent
 from qtpy.QtCore import Qt
 from qtpy.QtGui import QColor, QPainter, QFont
 from copy import deepcopy
-from core_gui_atomistic.periodic_table import TPeriodTable
-from core_gui_atomistic.atom import Atom
+from core_atomistic.periodic_table import TPeriodTable
+from core_atomistic.atom import Atom
 import math
 import numpy as np
 

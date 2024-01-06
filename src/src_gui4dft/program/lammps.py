@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import numpy as np
-from core_gui_atomistic.atomic_model import AtomicModel
+from core_atomistic.atomic_model import AtomicModel
 
 
 def atoms_trajectory_step(f_name):

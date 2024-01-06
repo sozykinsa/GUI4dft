@@ -1,8 +1,7 @@
 import math
 import numpy as np
-
+from core_atomistic.helpers import lat_vectors_from_params
 from src_gui4dft.program.siesta import TSIESTA
-from core_gui_atomistic.helpers import lat_vectors_from_params
 
 
 def test_lattice_constant(tests_path):

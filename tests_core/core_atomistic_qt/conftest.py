@@ -1,5 +1,6 @@
-from core_gui_atomistic_qt.pyqtgraphwidget import PyqtGraphWidget
-from core_gui_atomistic_qt.pyqtgraphwidgetimage import PyqtGraphWidgetImage
+from core_atomistic_qt.pyqtgraphwidget import PyqtGraphWidget
+from core_atomistic_qt.pyqtgraphwidgetimage import PyqtGraphWidgetImage
+from qtpy.QtWidgets import QApplication
 
 import pytest
 
@@ -13,6 +14,18 @@ def get_graph_widget(qapp):
         return widget
 
     return factory_function
+
+
+@pytest.fixture
+def qsapp(qapp_session) -> QApplication:
+    yield qapp_session
+    qapp_session.processEvents()
+    qapp_session.closeAllWindows()
+
+
+@pytest.fixture(scope='session')
+def qapp_session(qapp):
+    return qapp
 
 
 @pytest.fixture

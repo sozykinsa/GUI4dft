@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # Python 3
 
-from core_gui_atomistic.atomic_model import AtomicModel
+from core_atomistic.atomic_model import AtomicModel
 
 
 def atomic_model_to_firefly_inp(model: AtomicModel) -> str:

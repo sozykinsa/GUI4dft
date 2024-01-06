@@ -1,15 +1,14 @@
 # -*- coding: utf-8 -*-
 import os
 import re
+import xml.etree.ElementTree as ET
 
 import numpy as np
 
-from core_gui_atomistic import helpers
-import xml.etree.ElementTree as ET
-from core_gui_atomistic.periodic_table import TPeriodTable
-from core_gui_atomistic.atom import Atom
-from core_gui_atomistic.atomic_model import AtomicModel
-from core_gui_atomistic.helpers import clear_fdf_lines, text_between_lines
+from core_atomistic.atom import Atom
+from core_atomistic.atomic_model import AtomicModel
+from core_atomistic.periodic_table import TPeriodTable
+from core_atomistic import helpers
 
 
 class TSIESTA:
@@ -504,7 +503,7 @@ class TSIESTA:
 
     @staticmethod
     def atoms_from_fdf_text(atomic_coordinates_format, number_of_atoms, chem_spec_info, lat, lat_vectors, lines, units):
-        lines = clear_fdf_lines(lines)
+        lines = helpers.clear_fdf_lines(lines)
         all_atoms = AtomicModel()
         at_list = []
         at_list1 = []
@@ -758,7 +757,7 @@ class TSIESTA:
         coord_format, n_atoms, chem_spec_info, lat, lat_vectors, units = TSIESTA.atoms_from_fdf_prepare(filename)
         line1 = "Dump of input data file"
         line2 = "End of input data file"
-        lines = text_between_lines(filename, line1, line2)
+        lines = helpers.text_between_lines(filename, line1, line2)
         return [TSIESTA.atoms_from_fdf_text(coord_format, n_atoms, chem_spec_info, lat, lat_vectors, lines, units)]
 
     @staticmethod

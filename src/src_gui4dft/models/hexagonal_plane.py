@@ -2,8 +2,8 @@
 
 import math
 import numpy as np
-from core_gui_atomistic.atom import Atom
-from core_gui_atomistic.atomic_model import AtomicModel
+from core_atomistic.atom import Atom
+from core_atomistic.atomic_model import AtomicModel
 
 
 class HexagonalPlaneHex(AtomicModel):

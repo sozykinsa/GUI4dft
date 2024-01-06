@@ -3,11 +3,10 @@ import os
 import numpy as np
 import re
 
-from core_gui_atomistic import helpers
-from core_gui_atomistic.atom import Atom
-from core_gui_atomistic.atomic_model import AtomicModel
-
-from core_gui_atomistic.periodic_table import TPeriodTable
+from core_atomistic import helpers
+from core_atomistic.atom import Atom
+from core_atomistic.atomic_model import AtomicModel
+from core_atomistic.periodic_table import TPeriodTable
 from src_gui4dft.utils.electronic_prop_reader import dos_from_file
 
 

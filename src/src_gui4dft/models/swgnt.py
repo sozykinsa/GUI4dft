@@ -2,17 +2,17 @@
 
 import math
 
-from core_gui_atomistic.atom import Atom
-from core_gui_atomistic.atomic_model import AtomicModel
+from core_atomistic.atom import Atom
+from core_atomistic.atomic_model import AtomicModel
 
 
 class SWGNT(AtomicModel):
     """The SWGNT class provides """
-    def __init__(self, n, m, length: float = 0, n_cell: int = 1):
+    def __init__(self, n, m, length: float = 0):
         super().__init__()
         a: float = 2.9
 
-        t = math.sqrt(1.0 * n * n+1.0 * n * m+1.0 * m * m)
+        t = math.sqrt(1.0 * n * n + 1.0 * n * m + 1.0 * m * m)
         a11 = (2.0 * n+m) / (2.0 * t)
 
         if length < 1e-3:

@@ -1,9 +1,9 @@
 import os
 import numpy as np
-from core_gui_atomistic.atomic_model import AtomicModel
+from core_atomistic.atomic_model import AtomicModel
 
 
-class GUI4dftProjectFile(object):
+class ProjectFile(object):
 
     @staticmethod
     def project_file_writer(model):

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from core_gui_atomistic import helpers
+from core_atomistic import helpers
 import numpy as np
 
 

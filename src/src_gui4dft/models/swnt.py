@@ -3,7 +3,7 @@
 import math
 import numpy as np
 
-from core_gui_atomistic import helpers
+from core_atomistic import helpers
 from src_gui4dft.models.graphene import Graphene
 
 

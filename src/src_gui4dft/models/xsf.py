@@ -2,12 +2,14 @@
 
 from copy import deepcopy
 import os
-from core_gui_atomistic.atomic_model import AtomicModel as TAtomicModel
+import numpy as np
+
+from core_atomistic.atomic_model import AtomicModel as TAtomicModel
+from core_atomistic.periodic_table import TPeriodTable
+from core_atomistic import helpers
+
 from src_gui4dft.models.volumericdatablock import VolumericDataBlock
 from src_gui4dft.models.volumericdata import VolumericData
-from core_gui_atomistic.periodic_table import TPeriodTable
-from core_gui_atomistic import helpers
-import numpy as np
 
 
 class XSF(VolumericData):

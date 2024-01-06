@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 
 import os
-from core_gui_atomistic.atomic_model import AtomicModel
+from core_atomistic.atomic_model import AtomicModel
+from core_atomistic import helpers
+from core_atomistic.project_file import ProjectFile
 from src_gui4dft.program.vasp import fermi_energy_from_doscar, atoms_from_POSCAR
 from src_gui4dft.program.fdfdata import TFDFFile
 from src_gui4dft.program.siesta import TSIESTA
@@ -12,8 +14,6 @@ from src_gui4dft.program.qe import atoms_from_pwout
 from src_gui4dft.program.wien import atoms_from_struct
 from src_gui4dft.program.dftb import atoms_from_gen
 from src_gui4dft.program.lammps import atoms_trajectory_step
-from core_gui_atomistic import helpers
-from core_gui_atomistic.gui4dft_project_file import GUI4dftProjectFile
 from src_gui4dft.models.gaussiancube import GaussianCube
 from src_gui4dft.models.xsf import XSF
 
@@ -81,7 +81,7 @@ class ImporterExporter(object):
                 models = atoms_trajectory_step(filename)
 
             elif file_format == "project":
-                models = GUI4dftProjectFile.project_file_reader(filename)
+                models = ProjectFile.project_file_reader(filename)
             else:
                 print("Wrong format")
 
@@ -100,7 +100,7 @@ class ImporterExporter(object):
         if f_name.endswith(".xyz"):
             text = TSIESTA.to_siesta_xyz_data(model)
         if f_name.endswith(".data"):
-            text = GUI4dftProjectFile.project_file_writer(model)
+            text = ProjectFile.project_file_writer(model)
         helpers.write_text_to_file(f_name, text)
 
     @staticmethod

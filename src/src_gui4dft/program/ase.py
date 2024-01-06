@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 
-from core_gui_atomistic import helpers
-from core_gui_atomistic.atom import Atom
-from core_gui_atomistic.atomic_model import AtomicModel
-from core_gui_atomistic.periodic_table import TPeriodTable
+from core_atomistic import helpers
+from core_atomistic.atom import Atom
+from core_atomistic.atomic_model import AtomicModel
+from core_atomistic.periodic_table import TPeriodTable
 
 
 def from_ase_atoms_to_atomic_model(ase_atoms):

@@ -3,9 +3,9 @@ import re
 import math
 from copy import deepcopy
 import numpy as np
-from core_gui_atomistic import helpers
-from core_gui_atomistic.atom import Atom
-from core_gui_atomistic.atomic_model import AtomicModel
+
+from core_atomistic.atomic_model import AtomicModel
+from core_atomistic import helpers
 
 
 def n_atoms_from_struct(f_name):
