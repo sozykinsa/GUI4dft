@@ -1,7 +1,7 @@
-from src_gui4dft.models.capedswcnt import CapedSWNT
-from src_gui4dft.models.graphene import Graphene
-from src_gui4dft.models.bint import BiNT
-from src_gui4dft.models.swnt import SWNT
+from models.capedswcnt import CapedSWNT
+from models.graphene import Graphene
+from models.bint import BiNT
+from models.swnt import SWNT
 
 
 def test_swnt():

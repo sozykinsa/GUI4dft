@@ -1,7 +1,7 @@
-from core_atomistic_qt.pyqtgraphwidget import PyqtGraphWidget
-from core_atomistic_qt.pyqtgraphwidgetimage import PyqtGraphWidgetImage
-from src_gui4dft.qtbased.guiopengl import GuiOpenGL
-from src_gui4dft.qtbased.mainform import MainForm
+from src_core_atomistic_qt.qt_graph import PyqtGraphWidget
+from src_core_atomistic_qt.qt_image import PyqtGraphWidgetImage
+from qtbased.guiopengl import GuiOpenGL
+from qtbased.mainform import MainForm
 from qtpy.QtCore import QCoreApplication, Qt
 
 import pytest

@@ -1,4 +1,4 @@
-from src_gui4dft.utils.importer_exporter import ImporterExporter
+from utils.importer_exporter import ImporterExporter
 
 
 def test_fdf_parser(tests_path):

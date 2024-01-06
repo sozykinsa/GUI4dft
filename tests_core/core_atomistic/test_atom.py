@@ -1,4 +1,4 @@
-from core_atomistic.atom import Atom
+from src_core_atomistic.atom import Atom
 
 
 def test_atom():

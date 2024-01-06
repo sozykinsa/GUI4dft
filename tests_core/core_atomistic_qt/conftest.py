@@ -1,5 +1,5 @@
-from core_atomistic_qt.pyqtgraphwidget import PyqtGraphWidget
-from core_atomistic_qt.pyqtgraphwidgetimage import PyqtGraphWidgetImage
+from src_core_atomistic_qt.qt_graph import PyqtGraphWidget
+from src_core_atomistic_qt.qt_image import PyqtGraphWidgetImage
 from qtpy.QtWidgets import QApplication
 
 import pytest

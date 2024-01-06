@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 
-from src_gui4dft.utils.calculators import Calculators
+from utils.calculators import Calculators
 
 
 def test_lattice_approx():

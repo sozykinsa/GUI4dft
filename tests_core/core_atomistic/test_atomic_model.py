@@ -1,4 +1,4 @@
-from core_atomistic.atomic_model import AtomicModel
+from src_core_atomistic.atomic_model import AtomicModel
 import pytest
 import numpy as np
 from copy import copy, deepcopy
