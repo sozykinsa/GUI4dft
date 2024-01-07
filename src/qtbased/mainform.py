@@ -21,10 +21,10 @@ from qtpy.QtWidgets import QTreeWidgetItemIterator
 
 from ase.build import molecule, bulk
 
-from src_core_atomistic.atom import Atom
-from src_core_atomistic.atomic_model import AtomicModel
-from src_core_atomistic.periodic_table import TPeriodTable
-from src_core_atomistic import helpers
+from core_atomistic.atom import Atom
+from core_atomistic.atomic_model import AtomicModel
+from core_atomistic.periodic_table import TPeriodTable
+from core_atomistic import helpers
 
 from models.capedswcnt import CapedSWNT
 from models.bint import BiNT
@@ -41,12 +41,13 @@ from program.qe import model_to_qe_pw
 from program.wien import model_to_wien_struct
 from program.vasp import TVASP, vasp_dos, model_to_vasp_poscar
 from program.dftb import model_to_dftb_d0
+from program import crystal
 from program import ase
-from utils.importer_exporter import ImporterExporter
-from utils.electronic_prop_reader import read_siesta_bands, dos_from_file
 from program.fdfdata import TFDFFile
 from utils.calculators import Calculators as Calculator
 from utils.calculators import gaps
+from utils.importer_exporter import ImporterExporter
+from utils.electronic_prop_reader import read_siesta_bands, dos_from_file
 from ui.about import Ui_DialogAbout as Ui_about
 from ui.form import Ui_MainWindow as Ui_form
 
@@ -3114,14 +3115,7 @@ class MainForm(QMainWindow):
     def bond_len_correct(self, d):
         let1 = self.ui.FormAtomsList1.currentText()
         let2 = self.ui.FormAtomsList2.currentText()
-        ch1 = self.periodic_table.get_charge_by_letter(let1)
-        ch2 = self.periodic_table.get_charge_by_letter(let2)
-        self.periodic_table.Bonds[ch1][ch2] = d
-        self.periodic_table.Bonds[ch2][ch1] = d
-        self.ui.openGLWidget.main_model.set_mendeley(self.periodic_table)
-        self.ui.openGLWidget.main_model.find_bonds_fast()
-        self.ui.openGLWidget.add_all_elements()
-        self.ui.openGLWidget.update()
+        self.ui.openGLWidget.bond_len_correct(let1, let2, d)
         print(let1, "-", let2, ": ", d)
 
     def create_2d_hexagonal(self):
@@ -3294,11 +3288,6 @@ class MainForm(QMainWindow):
         # k_path = cell.bandpath('GXW', npoints=20)
         k_path = cell.bandpath(npoints=20)
 
-        # print(k_path)
-        # print(k_path.kpts)
-        # print("----")
-        # print(k_path.cartesian_kpts())
-        #BandPath(path='GXW', cell=[3x3], special_points={GKLUWX}, kpts=[20x3])
         txt = ""
         for point in k_path.kpts:
             txt += str(point[0]) + " " + str(point[1]) + " " + str(point[2]) + "\n"
@@ -3323,12 +3312,10 @@ class MainForm(QMainWindow):
 
     def change_color(self, colorUi, var_property):   # pragma: no cover
         color = QColorDialog.getColor()
-        colorUi.setStyleSheet(
-            "background-color:rgb(" + str(color.getRgb()[0]) + "," + str(color.getRgb()[1]) + "," + str(
-                color.getRgb()[2]) + ")")
+        color_str = str(color.getRgb()[0]) + "," + str(color.getRgb()[1]) + "," + str(color.getRgb()[2])
+        colorUi.setStyleSheet("background-color:rgb(" + color_str + ")")
         newcolor = [color.getRgbF()[0], color.getRgbF()[1], color.getRgbF()[2]]
-        self.save_property(var_property,
-                           str(color.getRgb()[0]) + " " + str(color.getRgb()[1]) + " " + str(color.getRgb()[2]))
+        self.save_property(var_property, color_str)
         return newcolor
 
     def volumeric_data_load(self):   # pragma: no cover

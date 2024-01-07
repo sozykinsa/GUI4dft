@@ -6,8 +6,8 @@ import OpenGL.GL as gl
 from copy import deepcopy
 import numpy as np
 
-from src_core_atomistic_qt.opengl_base import GuiOpenGLBase
-from src_core_atomistic.atomic_model import AtomicModel
+from core_atomistic_qt.opengl_base import GuiOpenGLBase
+from core_atomistic.atomic_model import AtomicModel
 from utils.voronoi import VoronoiAnalisis
 
 

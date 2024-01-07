@@ -8,8 +8,8 @@ from qtpy.QtCore import QEvent
 from qtpy.QtCore import Qt
 from qtpy.QtGui import QColor, QPainter, QFont
 from copy import deepcopy
-from src_core_atomistic.periodic_table import TPeriodTable
-from src_core_atomistic.atom import Atom
+from core_atomistic.periodic_table import TPeriodTable
+from core_atomistic.atom import Atom
 import math
 import numpy as np
 
@@ -858,6 +858,16 @@ class GuiOpenGLBase(QOpenGLWidget):
         self.main_model.move(self.coord0)
         self.active = False
         self.auto_zoom()
+        self.main_model.find_bonds_fast()
+        self.add_all_elements()
+        self.update()
+
+    def bond_len_correct(self, let1: str, let2: str, d: float):
+        ch1 = self.main_model.mendeley.get_charge_by_letter(let1)
+        ch2 = self.main_model.mendeley.get_charge_by_letter(let2)
+        self.main_model.mendeley.Bonds[ch1][ch2] = d
+        self.main_model.mendeley.Bonds[ch2][ch1] = d
+        #self.main_model.set_mendeley(self.periodic_table)
         self.main_model.find_bonds_fast()
         self.add_all_elements()
         self.update()

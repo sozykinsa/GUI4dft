@@ -4,8 +4,8 @@ from copy import deepcopy
 import os
 import math
 import numpy as np
-from src_core_atomistic.atomic_model import AtomicModel as TAtomicModel
-from src_core_atomistic.periodic_table import TPeriodTable
+from core_atomistic.atomic_model import AtomicModel as TAtomicModel
+from core_atomistic.periodic_table import TPeriodTable
 from models.volumericdatablock import VolumericDataBlock
 from models.volumericdata import VolumericData
 

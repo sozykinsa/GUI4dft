@@ -1,5 +1,5 @@
-from src_core_atomistic_qt.qt_graph import PyqtGraphWidget
-from src_core_atomistic_qt.qt_image import PyqtGraphWidgetImage
+from core_atomistic_qt.qt_graph import PyqtGraphWidget
+from core_atomistic_qt.qt_image import PyqtGraphWidgetImage
 from qtbased.guiopengl import GuiOpenGL
 from qtbased.mainform import MainForm
 from qtpy.QtCore import QCoreApplication, Qt

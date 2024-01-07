@@ -15,4 +15,4 @@ executable/gui4dft.spec
 tests/.coverage
 .coverage
 coverage.xml
-/tests_core/core_atomistic/.pytest_cache
+/tests_core_atomistic/.pytest_cache

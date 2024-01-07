@@ -12,8 +12,8 @@ from qtpy.QtCore import *
 from qtpy.QtGui import *
 from qtpy.QtWidgets import *
 
-from src_core_atomistic_qt.qt_graph import PyqtGraphWidget
-from src_core_atomistic_qt.qt_image import PyqtGraphWidgetImage
+from core_atomistic_qt.qt_graph import PyqtGraphWidget
+from core_atomistic_qt.qt_image import PyqtGraphWidgetImage
 from qtbased.guiopengl import GuiOpenGL
 
 

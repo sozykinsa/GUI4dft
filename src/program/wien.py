@@ -4,8 +4,8 @@ import math
 from copy import deepcopy
 import numpy as np
 
-from src_core_atomistic.atomic_model import AtomicModel
-from src_core_atomistic import helpers
+from core_atomistic.atomic_model import AtomicModel
+from core_atomistic import helpers
 
 
 def n_atoms_from_struct(f_name):

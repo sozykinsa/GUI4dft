@@ -1,6 +1,6 @@
 import math
 import numpy as np
-from src_core_atomistic.helpers import lat_vectors_from_params
+from core_atomistic.helpers import lat_vectors_from_params
 from program.siesta import TSIESTA
 
 

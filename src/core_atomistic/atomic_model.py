@@ -12,9 +12,9 @@ import numpy as np
 from numpy.linalg import inv
 from numpy.linalg import norm
 
-from src_core_atomistic import helpers
-from src_core_atomistic.periodic_table import TPeriodTable
-from src_core_atomistic.atom import Atom
+from core_atomistic import helpers
+from core_atomistic.periodic_table import TPeriodTable
+from core_atomistic.atom import Atom
 from scipy.spatial.distance import cdist
 from scipy.optimize import fmin
 import scipy

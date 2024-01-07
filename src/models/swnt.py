@@ -3,7 +3,7 @@
 import math
 import numpy as np
 
-from src_core_atomistic import helpers
+from core_atomistic import helpers
 from models.graphene import Graphene
 
 

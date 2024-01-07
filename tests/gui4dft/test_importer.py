@@ -1,4 +1,4 @@
-from src_core_atomistic import helpers
+from core_atomistic import helpers
 from utils.importer_exporter import ImporterExporter
 
 

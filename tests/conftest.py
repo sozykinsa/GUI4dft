@@ -1,6 +1,6 @@
 from pathlib import Path
-from src_core_atomistic.atomic_model import AtomicModel
-from src_core_atomistic.periodic_table import TPeriodTable
+from core_atomistic.atomic_model import AtomicModel
+from core_atomistic.periodic_table import TPeriodTable
 
 
 import pytest

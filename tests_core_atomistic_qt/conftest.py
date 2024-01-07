@@ -1,8 +1,20 @@
-from src_core_atomistic_qt.qt_graph import PyqtGraphWidget
-from src_core_atomistic_qt.qt_image import PyqtGraphWidgetImage
+from core_atomistic.periodic_table import TPeriodTable
+from core_atomistic_qt.qt_graph import PyqtGraphWidget
+from core_atomistic_qt.qt_image import PyqtGraphWidgetImage
 from qtpy.QtWidgets import QApplication
+from pathlib import Path
 
 import pytest
+
+
+@pytest.fixture
+def tests_path() -> Path:
+    return Path(__file__).parent
+
+
+@pytest.fixture
+def period_table() -> TPeriodTable:
+    return TPeriodTable()
 
 
 @pytest.fixture

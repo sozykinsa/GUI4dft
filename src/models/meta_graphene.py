@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from src_core_atomistic.atomic_model import AtomicModel
+from core_atomistic.atomic_model import AtomicModel
 from utils.importer_exporter import ImporterExporter
 from pathlib import Path
 

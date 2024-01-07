@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
 import os
-from src_core_atomistic.atomic_model import AtomicModel
-from src_core_atomistic import helpers
-from src_core_atomistic.project_file import ProjectFile
+from core_atomistic.atomic_model import AtomicModel
+from core_atomistic import helpers
+from core_atomistic.project_file import ProjectFile
 from program.vasp import fermi_energy_from_doscar, atoms_from_POSCAR
 from program.fdfdata import TFDFFile
 from program.siesta import TSIESTA

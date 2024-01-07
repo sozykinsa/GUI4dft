@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from copy import deepcopy
-from src_core_atomistic import helpers
+from core_atomistic import helpers
 import numpy as np
 import skimage
 if skimage.__version__ >= '0.17.2':
