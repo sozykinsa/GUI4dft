@@ -10,7 +10,9 @@ import sys
 from pathlib import Path
 from copy import deepcopy
 from operator import itemgetter
+import matplotlib
 import matplotlib.pyplot as plt
+matplotlib.use('QtAgg')
 import numpy as np
 
 from qtpy.QtCore import QLocale, QSettings, Qt, QSize
@@ -831,7 +833,7 @@ class MainForm(QMainWindow):
             q_tab_widg.setToolTip(dos_file)
             self.ui.FormActionsTabeDOSProperty.setItem(i - 1, 0, q_tab_widg)
             self.ui.FormActionsTabeDOSProperty.setItem(i - 1, 1, QTableWidgetItem(str(e_fermy)))
-            self.ui.FormActionsTabeDOSProperty.update()
+            # self.ui.FormActionsTabeDOSProperty.update()
 
     def check_volumeric_data(self, file_name):
         files = []
@@ -855,7 +857,8 @@ class MainForm(QMainWindow):
             if os.path.exists(file):
                 self.ui.FormActionsPostList3DData.addItems([file])
                 self.ui.FormActionsPostButSurfaceParse.setEnabled(True)
-            self.ui.FormActionsPostList3DData.update()
+            # self.ui.FormActionsPostList3DData.update()
+            self.ui.FormActionsPostList3DData.setCurrentRow(0)
 
     def change_fragment1_status_by_x(self):
         x_min = self.ui.xminborder.value()
@@ -1122,7 +1125,7 @@ class MainForm(QMainWindow):
         self.ui.FormModelComboModels.setModel(model)
         self.ui.FormModelComboModels.setCurrentIndex(len(self.models) - 1)
         self.ui.FormModelComboModels.currentIndexChanged.connect(self.model_to_screen)
-        self.ui.FormModelComboModels.update()
+        #self.ui.FormModelComboModels.update()
 
     def fill_atoms_table(self):
         model = self.ui.openGLWidget.get_model().atoms
@@ -2359,7 +2362,7 @@ class MainForm(QMainWindow):
 
     def clear_dos(self):
         self.ui.FormActionsTabeDOSProperty.setRowCount(0)
-        self.ui.FormActionsTabeDOSProperty.update()
+        #self.ui.FormActionsTabeDOSProperty.update()
 
     def plot_volume_param_energy(self):
         self.ui.PyqtGraphWidget.set_xticks(None)
@@ -2459,8 +2462,9 @@ class MainForm(QMainWindow):
 
     def plot_cell_approx(self, image_path):
         image_profile = QImage(image_path)
-        image_profile = image_profile.scaled(320, 54, aspectRatioMode=Qt.KeepAspectRatio,
-                                             transformMode=Qt.SmoothTransformation)
+        image_profile = image_profile.scaled(320, 54, aspectMode=Qt.KeepAspectRatio,
+                                             mode=Qt.SmoothTransformation
+                                             )
         self.ui.FormActionsPostLabelCellParamFig.setPixmap(QPixmap.fromImage(image_profile))
 
     def save_image_to_file(self, name=""):

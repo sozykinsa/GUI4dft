@@ -12,7 +12,7 @@ from qtpy.QtCore import QCoreApplication, Qt
 from qtpy.QtGui import QIcon
 from qtpy.QtWidgets import QApplication
 
-from qtbased.mainform import MainForm
+from qtbased.gui4dftform import MainForm
 
 sys.path.append('.')
 

@@ -497,7 +497,6 @@ class TSIESTA:
             row_data = chemical_species_label[j].split()
             tag = "" if int(row_data[1]) > 0 else int(row_data[1])
             chem_spec_info[row_data[0]] = [int(abs(int(row_data[1]))), row_data[2], tag]
-            print(chem_spec_info)
         return atomic_coordinates_format, number_of_atoms, chem_spec_info, lat, lat_vectors, units
 
     @staticmethod
