@@ -2230,20 +2230,29 @@ class MainForm(QMainWindow):
         title = self.ui.bands_title.text()
 
         if os.path.exists(file):
-            if self.ui.bands_spin_up.isChecked():
+            if self.ui.bands_spin_up.isChecked() or self.ui.bands_spin_up_down.isChecked():
                 bands, emaxf, eminf, homo, kmesh, lumo, xticklabels, xticks = read_siesta_bands(file, True, kmax, kmin)
-                self.ui.PyqtGraphWidget.plot([kmesh], bands, [None], title, x_title, y_title, False)
+                b_mins = np.min(bands, 1)
+                b_maxs = np.max(bands, 1)
+                inds = np.zeros(len(bands), dtype=int)
+                for i in range(len(bands)):
+                    if (b_mins[i] >= emin) and (b_mins[i] <= emax) or (b_maxs[i] >= emin) and (b_maxs[i] <= emax):
+                        inds[i] = i
+                self.ui.PyqtGraphWidget.plot([kmesh], bands[inds], [None], title, x_title, y_title, False)
 
-            if self.ui.bands_spin_down.isChecked():
+            if self.ui.bands_spin_down.isChecked() or self.ui.bands_spin_up_down.isChecked():
                 bands, emaxf, eminf, homo, kmesh, lumo, xticklabels, xticks = read_siesta_bands(file, False, kmax, kmin)
-                self.ui.PyqtGraphWidget.plot([kmesh], bands, [None], title, x_title, y_title, False)
-
-            if self.ui.bands_spin_up_down.isChecked():
-                bands, emaxf, eminf, homo, kmesh, lumo, xticklabels, xticks = read_siesta_bands(file, True, kmax, kmin)
-                self.ui.PyqtGraphWidget.plot([kmesh], bands, [None], title, x_title, y_title, False)
-
-                bands, emaxf, eminf, homo, kmesh, lumo, xticklabels, xticks = read_siesta_bands(file, False, kmax, kmin)
-                self.ui.PyqtGraphWidget.plot([kmesh], bands, [None], title, x_title, y_title, False, _style=Qt.DotLine)
+                b_mins = np.min(bands, 1)
+                b_maxs = np.max(bands, 1)
+                inds = np.zeros(len(bands), dtype=int)
+                for i in range(len(bands)):
+                    if (b_mins[i] >= emin) and (b_mins[i] <= emax) or (b_maxs[i] >= emin) and (b_maxs[i] <= emax):
+                        inds[i] = i
+                if self.ui.bands_spin_down.isChecked():
+                    self.ui.PyqtGraphWidget.plot([kmesh], bands[inds], [None], title, x_title, y_title, False)
+                if self.ui.bands_spin_up_down.isChecked():
+                    self.ui.PyqtGraphWidget.plot([kmesh], bands[inds], [None], title, x_title, y_title, False,
+                                                 _style=Qt.DotLine)
 
             major_tick = []
             for index in range(len(xticks)):

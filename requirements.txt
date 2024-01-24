@@ -1,9 +1,9 @@
 pyopengl
 pyside6
-qtpy==2.4.1
+qtpy
 ase
-numpy==1.26.2
-scipy==1.11.4
+numpy
+scipy
 matplotlib
 pyqtgraph
 scikit-image

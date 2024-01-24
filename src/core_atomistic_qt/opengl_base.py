@@ -619,9 +619,6 @@ class GuiOpenGLBase(QOpenGLWidget):
         gl.glEnable(gl.GL_LIGHT0)
         gl.glEnable(gl.GL_DEPTH_TEST)
         gl.glEnable(gl.GL_COLOR_MATERIAL)
-        # gl.glDisable(gl.GL_COLOR_MATERIAL)
-
-        # Determine the current lighting model
         gl.glLightModelf(gl.GL_LIGHT_MODEL_TWO_SIDE, gl.GL_TRUE)  # two-side lighting calculation
 
         gl.glEnable(gl.GL_LIGHT0)
@@ -680,7 +677,7 @@ class GuiOpenGLBase(QOpenGLWidget):
                         fl = False
                 if fl:
                     used_space.append([pos_x, pos_y])
-                    painter.drawText(pos_x - self.property_x_shift, pos_y - self.property_y_shift, st)
+                    painter.drawText(int(pos_x - self.property_x_shift), int(pos_y - self.property_y_shift), st)
         painter.end()
 
     @staticmethod
