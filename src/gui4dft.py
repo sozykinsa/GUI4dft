@@ -8,11 +8,11 @@ except Exception as e:
 import sys
 from pathlib import Path
 
-from PySide2.QtCore import QCoreApplication, Qt
-from PySide2.QtGui import QIcon
-from PySide2.QtWidgets import QApplication
+from qtpy.QtCore import QCoreApplication, Qt
+from qtpy.QtGui import QIcon
+from qtpy.QtWidgets import QApplication
 
-from src_gui4dft.qtbased.mainform import MainForm
+from qtbased.gui4dftform import MainForm
 
 sys.path.append('.')
 

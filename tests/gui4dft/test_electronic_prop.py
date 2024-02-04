@@ -1,8 +1,8 @@
-from src_gui4dft.utils.electronic_prop_reader import read_siesta_bands, dos_from_file, dos_siesta_vert
-from src_gui4dft.program.vasp import vasp_dos
-from src_gui4dft.program.siesta import TSIESTA
+from utils.electronic_prop_reader import read_siesta_bands, dos_from_file, dos_siesta_vert
+from program.vasp import vasp_dos
+from program.siesta import TSIESTA
 
-from src_gui4dft.utils.calculators import gaps
+from utils.calculators import gaps
 
 
 def test_dos_from_file(tests_path):

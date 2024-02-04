@@ -1,4 +1,4 @@
-from src_gui4dft.program.wien import n_atoms_from_struct, alats_from_struct, atoms_from_struct
+from program.wien import n_atoms_from_struct, alats_from_struct, atoms_from_struct
 
 
 def test_n_atoms_from_struct(tests_path):

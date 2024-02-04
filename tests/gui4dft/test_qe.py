@@ -1,6 +1,6 @@
 import pytest
 
-from src_gui4dft.program.qe import alats_from_pwout, atoms_from_pwout, vectors_from_pwout
+from program.qe import alats_from_pwout, atoms_from_pwout, vectors_from_pwout
 
 
 def test_vectors_from_pwout(tests_path):

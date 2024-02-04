@@ -1,5 +1,5 @@
 pyopengl
-pyside2
+pyside6
 qtpy
 ase
 numpy
