@@ -43,6 +43,7 @@ from program.qe import model_to_qe_pw
 from program.wien import model_to_wien_struct
 from program.vasp import TVASP, vasp_dos, model_to_vasp_poscar
 from program.dftb import model_to_dftb_d0
+from program.lammps import model_to_lammps_input
 from program import crystal
 from program import ase
 from program.fdfdata import TFDFFile
@@ -172,6 +173,7 @@ class MainForm(QMainWindow):
         self.ui.crystal_2d_d12_generate.clicked.connect(self.d12_2D_to_form)
         self.ui.crystal_3d_d12_generate.clicked.connect(self.d12_3D_to_form)
         self.ui.dftb_0d_generate.clicked.connect(self.dftb_0D_to_form)
+        self.ui.lammps_generate.clicked.connect(self.lammps_to_form)
 
         self.ui.data_from_form_to_input_file.clicked.connect(self.data_from_form_to_input_file)
         self.ui.model_rotation_x.valueChanged.connect(self.model_orientation_changed)
@@ -384,6 +386,7 @@ class MainForm(QMainWindow):
         model_meta_gr_type.appendRow(QStandardItem("psi-graphene"))
         model_meta_gr_type.appendRow(QStandardItem("biphenylene"))
         model_meta_gr_type.appendRow(QStandardItem("tpdh-graphene"))
+        model_meta_gr_type.appendRow(QStandardItem("HGY"))
         self.ui.model_meta_gr_type.setModel(model_meta_gr_type)
 
         bi_element_type_tube = QStandardItemModel()
@@ -655,12 +658,12 @@ class MainForm(QMainWindow):
         self.ui.FormActionsPostButSurfaceDelete.setEnabled(True)
 
     def set_part1_file(self) -> None:
-        f_name = self.get_file_name_from_open_dialog("All files (*.*)")
+        f_name = self.get_file_name_from_open_dialog("All files (*)")
         if os.path.exists(f_name):
             self.ui.part1_file.setText(f_name)
 
     def set_part2_file(self) -> None:
-        f_name = self.get_file_name_from_open_dialog("All files (*.*)")
+        f_name = self.get_file_name_from_open_dialog("All files (*)")
         if os.path.exists(f_name):
             self.ui.part2_file.setText(f_name)
 
@@ -2923,6 +2926,18 @@ class MainForm(QMainWindow):
         self.ui.PyqtGraphWidget.clear()
         self.ui.Form3Dand2DTabs.setCurrentIndex(1)
         self.ui.PyqtGraphWidget.plot([x_fig], [y_fig], [None], title, x_title, y_title, True)
+
+    def lammps_to_form(self):
+        if len(self.models) == 0:
+            return
+        try:
+            text = "Not implemented"
+            model = self.models[self.active_model_id]
+            text = model_to_lammps_input(model)
+            if len(text) > 0:
+                self.ui.FormActionsPreTextFDF.setText(text)
+        except Exception as e:
+            self.show_error(e)
 
     def dftb_0D_to_form(self):
         if len(self.models) == 0:

@@ -1,18 +1,21 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
-from ase.data import covalent_radii
+from ase.data import covalent_radii, atomic_masses_common
 from ase.data.colors import cpk_colors, jmol_colors
 
 
 class TPeriodTableAtom:
     """Replace color by 'user_color', 'ase_color', 'xxx_color'"""
-    def __init__(self, charge, radius, let, color, mass=1):
+    def __init__(self, charge, radius, let, color, mass=0):
         self.charge = charge
         self.radius = radius
         self.let = let
         # self.color = color
-        self.mass = mass
+        if (mass == 0) and (charge < 119):
+            self.mass = atomic_masses_common[charge]
+        else:
+            self.mass = mass
 
 
 default_color = [0.6, 0.6, 1.0, 1.0]

@@ -1,0 +1,69 @@
+NumberOfAtoms 24
+NumberOfSpecies 1
+WriteCoorStep True
+%block ChemicalSpeciesLabel
+ 1  6  C
+%endblock ChemicalSpeciesLabel
+LatticeConstant       1.0 Ang
+%block LatticeParameters
+  10.918132  10.928019191942518  30.0  90.0  90.0  120.00000
+%endblock LatticeParameters
+AtomicCoordinatesFormat Ang
+%block AtomicCoordinatesAndAtomicSpecies
+    7.73771075    3.91646015    0.00321888 1
+    5.83793527    5.69686868    0.00319663 1
+    7.00307550    2.64489670    0.00307992 1
+    5.58637353    2.79043812    0.00286192 1
+    6.90851533    5.07320737    0.00327538 1
+    4.51568352    3.41388222    0.00280007 1
+    2.27998040    4.56839740    0.00299596 1
+    3.68665538    4.57067093    0.00292072 1
+    1.45070689    3.41175512    0.00293376 1
+    0.12813302    5.69609889    0.00325181 1
+    1.54433620    5.83873967    0.00311587 1
+    2.24726774    7.05705163    0.00304912 1
+    3.71590058    7.05956093    0.00303845 1
+    4.42123046    5.84219660    0.00303219 1
+    1.66047367    8.35368040    0.00310463 1
+    4.29878106    8.35798568    0.00318221 1
+    9.14444238    3.91853989    0.00325878 1
+    9.88011355    2.64811366    0.00317446 1
+    7.70830376    1.42741070    0.00313964 1
+    9.17704378    1.42984463    0.00319481 1
+    7.12538799    0.12889487    0.00300610 1
+    9.76369877    0.13318502    0.00312341 1
+    9.97401099    5.07495527    0.00337039 1
+   11.29642180    2.79082798    0.00306982 1
+%endblock AtomicCoordinatesAndAtomicSpecies
+SystemName          tpdhg
+SystemLabel         C224
+WriteMullikenPop    1
+PAO.BasisSize  DZP
+MeshCutoff       350.0 Ry
+SpinPolarized True
+MaxSCFIterations       150
+SolutionMethod         diagon
+NetCharge     0.00
+DM.NumberPulay    4
+DM.MixingWeight   0.3
+DM.UseSaveDM      .true.
+NeglNonOverlapInt False
+XC.functional=GGA
+XC.authors=PBE
+WriteCoorXmol     True
+WriteForces .true.
+WriteMullikenPop     1
+MD.TypeOfRun           cg               # Type of dynamics: Conjugate gradients
+MD.NumCGsteps          320              # number of CG steps
+MD.MaxCGDispl          0.10 Ang
+MD.MaxForceTol         0.04 eV/Ang
+MD.UseSaveXV           yes
+MD.VariableCell        .false.
+%block kgrid_Monkhorst_Pack
+  3  0  0   0.0
+  0  3  0   0.0
+  0  0  1   0.0
+%endblock kgrid_Monkhorst_Pack
+%block ProjectedDensityOfStates
+   -24.00  15.00  0.100  1000  eV
+%endblock ProjectedDensityOfStates

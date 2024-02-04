@@ -1670,8 +1670,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>323</width>
-                 <height>466</height>
+                 <width>371</width>
+                 <height>562</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -3658,8 +3658,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>371</width>
-                 <height>562</height>
+                 <width>361</width>
+                 <height>405</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -4003,8 +4003,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>371</width>
-                 <height>562</height>
+                 <width>352</width>
+                 <height>209</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -4294,6 +4294,14 @@
                </layout>
               </widget>
               <widget class="QWidget" name="page_9">
+               <property name="geometry">
+                <rect>
+                 <x>0</x>
+                 <y>0</y>
+                 <width>100</width>
+                 <height>30</height>
+                </rect>
+               </property>
                <attribute name="label">
                 <string>Сhange type of atoms</string>
                </attribute>
@@ -6018,17 +6026,14 @@
              </widget>
             </item>
             <item>
-             <widget class="QGroupBox" name="groupBox_60">
-              <property name="minimumSize">
-               <size>
-                <width>0</width>
-                <height>0</height>
-               </size>
+             <widget class="QFrame" name="frame_29">
+              <property name="frameShape">
+               <enum>QFrame::StyledPanel</enum>
               </property>
-              <property name="title">
-               <string>DFTB+</string>
+              <property name="frameShadow">
+               <enum>QFrame::Raised</enum>
               </property>
-              <layout class="QHBoxLayout" name="horizontalLayout_200">
+              <layout class="QHBoxLayout" name="horizontalLayout_181">
                <property name="leftMargin">
                 <number>0</number>
                </property>
@@ -6042,39 +6047,22 @@
                 <number>0</number>
                </property>
                <item>
-                <widget class="QPushButton" name="pushButton_4">
+                <widget class="QPushButton" name="lammps_generate">
                  <property name="enabled">
-                  <bool>false</bool>
+                  <bool>true</bool>
                  </property>
                  <property name="text">
-                  <string>3D</string>
+                  <string>LAMMPS</string>
                  </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QPushButton" name="pushButton">
-                 <property name="enabled">
+                 <property name="checkable">
                   <bool>false</bool>
-                 </property>
-                 <property name="text">
-                  <string>2D</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QPushButton" name="pushButton_2">
-                 <property name="enabled">
-                  <bool>false</bool>
-                 </property>
-                 <property name="text">
-                  <string>1D</string>
                  </property>
                 </widget>
                </item>
                <item>
                 <widget class="QPushButton" name="dftb_0d_generate">
                  <property name="text">
-                  <string>0D</string>
+                  <string>DFTB+ 0D</string>
                  </property>
                 </widget>
                </item>

@@ -783,6 +783,16 @@ class AtomicModel(object):
                 types.append([i, elements[i]])
         return types
 
+    def get_charge_to_type_array(self):
+        per_tab = self.mendeley
+        text = ""
+        types = self.types_of_atoms()
+        charge_to_type = np.zeros(200, dtype=int)
+        for i in range(0, len(types)):
+            text += ' ' + str(per_tab.get_let(int(types[i][0])))
+            charge_to_type[int(types[i][0])] = i + 1
+        return charge_to_type, text
+
     def formula(self):
         text = ""
         charges = self.types_of_atoms()

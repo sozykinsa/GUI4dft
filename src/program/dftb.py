@@ -24,13 +24,8 @@ def model_to_dftb_d0(model: AtomicModel):
     model1 = deepcopy(model)
     model1.sort_atoms_by_type()
     types = model1.types_of_atoms()
-
-    per_tab = TPeriodTable()
-    charge_to_type = np.zeros(200, dtype=int)
-    for i in range(0, len(types)):
-        text += ' ' + str(per_tab.get_let(int(types[i][0])))
-        charge_to_type[int(types[i][0])] = i + 1
-    text += "\n\n"
+    charge_to_type,text1 = model1.get_charge_to_type_array()
+    text += text1 + "\n\n"
 
     for i in range(n_atoms):
         xyz_st = model1[i].xyz_string

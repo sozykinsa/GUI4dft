@@ -3,6 +3,58 @@ import numpy as np
 from core_atomistic.atomic_model import AtomicModel
 
 
+def model_to_lammps_input(model: AtomicModel):
+    """
+     # Comment
+
+        4577  atoms
+           3  atom types
+
+      0.000000000000      36.920000000000  xlo xhi
+      0.000000000000      36.920000000000  ylo yhi
+      0.000000000000      36.920000000000  zlo zhi
+
+     Masses
+
+            1   55.84500000             # Fe
+            2   50.94150000             # V
+            3   12.01100000             # C
+
+     Atoms # atomic
+
+         1    1       35.499999943200       4.260000170400      24.139999858000
+         2    1        0.000000000000       5.679999858000      22.720000170400
+         3    1       24.139999858000       4.260000170400      24.139999858000
+         4    1       34.079999886400       2.840000113600      22.720000170400
+         5    1        8.519999971600       5.679999858000      22.720000170400
+         6    1        4.260000170400       7.099999914800      24.139999858000
+         7    1        2.840000113600       5.679999858000      22.720000170400
+    """
+
+    text = "# Comment\n"
+    n_atoms = model.n_atoms()
+    text += str(n_atoms) + " atoms\n"
+    types = model.types_of_atoms()
+    text += str(len(types)) + " atom types\n\n"
+
+    text += "0.000000000000      36.920000000000  xlo xhi\n"
+    text += "0.000000000000      36.920000000000  ylo yhi\n"
+    text += "0.000000000000      36.920000000000  zlo zhi\n\n"
+
+    text += "Masses\n\n"
+    for i in range(len(types)):
+        item = model.mendeley.Atoms[types[i][0]]
+        text += str(i + 1) + " " + str(item.mass) + "  #" + item.let + "\n"
+
+    text += "Atoms # atomic\n\n"
+    charge_to_type, text1 = model.get_charge_to_type_array()
+
+    for i in range(n_atoms):
+        xyz_st = model[i].xyz_string
+        text += str(i + 1) + "  " + str(charge_to_type[model[i].charge]) + " " + xyz_st + "\n"
+    return text
+
+
 def atoms_trajectory_step(f_name):
     model = AtomicModel()
     n_atoms = 0

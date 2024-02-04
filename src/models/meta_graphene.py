@@ -22,6 +22,9 @@ class MetaGraphene(AtomicModel):
         if model_type == "tpdh-graphene":
             f_name = str(Path(__file__).parent / "cells" / 'tpdhg.fdf')
 
+        if model_type == "HGY":
+            f_name = str(Path(__file__).parent / "cells" / 'hgy.fdf')
+
         basis, fdf = ImporterExporter.import_from_file(f_name, fl='all', prop=False)
         basis = basis[0]
 
