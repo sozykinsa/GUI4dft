@@ -44,6 +44,7 @@ from program.wien import model_to_wien_struct
 from program.vasp import TVASP, vasp_dos, model_to_vasp_poscar
 from program.dftb import model_to_dftb_d0
 from program.lammps import model_to_lammps_input
+from program.octopus import model_to_octopus_input
 from program import crystal
 from program import ase
 from program.fdfdata import TFDFFile
@@ -174,6 +175,7 @@ class MainForm(QMainWindow):
         self.ui.crystal_3d_d12_generate.clicked.connect(self.d12_3D_to_form)
         self.ui.dftb_0d_generate.clicked.connect(self.dftb_0D_to_form)
         self.ui.lammps_generate.clicked.connect(self.lammps_to_form)
+        self.ui.octopus_generate.clicked.connect(self.octopus_to_form)
 
         self.ui.data_from_form_to_input_file.clicked.connect(self.data_from_form_to_input_file)
         self.ui.model_rotation_x.valueChanged.connect(self.model_orientation_changed)
@@ -212,7 +214,8 @@ class MainForm(QMainWindow):
         self.ui.plot_bands.clicked.connect(self.plot_bands)
         self.ui.parse_bands.clicked.connect(self.parse_bands)
         self.ui.FormActionsButtonPlotPDOSselected.clicked.connect(self.plot_selected_pdos)
-        self.ui.FormModifyCellButton.clicked.connect(self.edit_cell)
+        self.ui.modify_cell_cart_coord.clicked.connect(self.edit_cell)
+        self.ui.modify_cell_frac_coord.clicked.connect(self.modify_cell_frac_coord)
         self.ui.FormActionsPostButGetBonds.clicked.connect(self.get_bonds)
         self.ui.PropertyAtomAtomDistanceGet.clicked.connect(self.get_bond)
         self.ui.FormStylesFor2DGraph.clicked.connect(self.set_2d_graph_styles)
@@ -747,9 +750,11 @@ class MainForm(QMainWindow):
             return
         if self.ui.openGLWidget.selected_atom < 0:
             return
-        self.models[self.active_model_id].delete_atom(self.ui.openGLWidget.selected_atom)
+        self.models.append(deepcopy(self.models[self.active_model_id]))
+        self.fill_models_list()
+        self.models[-1].delete_atom(self.ui.openGLWidget.selected_atom)
         self.history_of_atom_selection = []
-        self.model_to_screen(self.active_model_id)
+        self.model_to_screen(-1)
 
     def atom_modify(self):
         if len(self.models) == 0:
@@ -1007,6 +1012,11 @@ class MainForm(QMainWindow):
         self.ui.openGLWidget.main_model.set_lat_vectors(v1, v2, v3)
         self.models.append(self.ui.openGLWidget.main_model)
         self.model_to_screen(-1)
+
+    def modify_cell_frac_coord(self):
+        if len(self.models) == 0:
+            return
+        print("Not implemented")
 
     def get_file_name_from_save_dialog(self, file_mask):  # pragma: no cover
         result = QFileDialog.getSaveFileName(self, 'Save File', self.work_dir, file_mask,
@@ -2844,9 +2854,10 @@ class MainForm(QMainWindow):
             if len(text) > 0:
                 file_mask = "FDF files (*.fdf);;VASP POSCAR file (*.POSCAR);;Crystal d12 (*.d12)"
                 file_mask += ";;PWscf in (*.in);;WIEN struct (*.struct);;CIF file (*.cif);;DFTB+ (*.gen)"
-                fname = self.get_file_name_from_save_dialog(file_mask)
-                if fname is not None:
-                    helpers.write_text_to_file(fname, text)
+                file_mask += ";;Octopus input (*.in)"
+                f_name = self.get_file_name_from_save_dialog(file_mask)
+                if f_name is not None:
+                    helpers.write_text_to_file(f_name, text)
         except Exception as e:
             self.show_error(e)
 
@@ -2931,9 +2942,19 @@ class MainForm(QMainWindow):
         if len(self.models) == 0:
             return
         try:
-            text = "Not implemented"
             model = self.models[self.active_model_id]
             text = model_to_lammps_input(model)
+            if len(text) > 0:
+                self.ui.FormActionsPreTextFDF.setText(text)
+        except Exception as e:
+            self.show_error(e)
+
+    def octopus_to_form(self):
+        if len(self.models) == 0:
+            return
+        try:
+            model = self.models[self.active_model_id]
+            text = model_to_octopus_input(model)
             if len(text) > 0:
                 self.ui.FormActionsPreTextFDF.setText(text)
         except Exception as e:

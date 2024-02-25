@@ -960,7 +960,7 @@ class Ui_MainWindow(object):
         self.toolBox.addItem(self.page_4, u"1D (nanotubes)")
         self.page_17 = QWidget()
         self.page_17.setObjectName(u"page_17")
-        self.page_17.setGeometry(QRect(0, 0, 371, 562))
+        self.page_17.setGeometry(QRect(0, 0, 323, 466))
         self.verticalLayout_27 = QVBoxLayout(self.page_17)
         self.verticalLayout_27.setObjectName(u"verticalLayout_27")
         self.groupBox_30 = QGroupBox(self.page_17)
@@ -2080,7 +2080,7 @@ class Ui_MainWindow(object):
         self.toolBox_6.setSizePolicy(sizePolicy2)
         self.page_29 = QWidget()
         self.page_29.setObjectName(u"page_29")
-        self.page_29.setGeometry(QRect(0, 0, 361, 405))
+        self.page_29.setGeometry(QRect(0, 0, 371, 562))
         self.verticalLayout_26 = QVBoxLayout(self.page_29)
         self.verticalLayout_26.setObjectName(u"verticalLayout_26")
         self.groupBox_50 = QGroupBox(self.page_29)
@@ -2256,7 +2256,7 @@ class Ui_MainWindow(object):
         self.toolBox_6.addItem(self.page_29, u"Add or Modify Atom")
         self.page = QWidget()
         self.page.setObjectName(u"page")
-        self.page.setGeometry(QRect(0, 0, 352, 209))
+        self.page.setGeometry(QRect(0, 0, 371, 562))
         self.verticalLayout_36 = QVBoxLayout(self.page)
         self.verticalLayout_36.setObjectName(u"verticalLayout_36")
         self.frame_49 = QFrame(self.page)
@@ -2378,18 +2378,33 @@ class Ui_MainWindow(object):
 
         self.frame_53 = QFrame(self.frame_49)
         self.frame_53.setObjectName(u"frame_53")
+        self.frame_53.setMinimumSize(QSize(0, 0))
         self.frame_53.setFrameShape(QFrame.NoFrame)
         self.frame_53.setFrameShadow(QFrame.Raised)
         self.horizontalLayout_48 = QHBoxLayout(self.frame_53)
         self.horizontalLayout_48.setObjectName(u"horizontalLayout_48")
+        self.horizontalLayout_48.setContentsMargins(-1, 0, -1, -1)
         self.horizontalSpacer_21 = QSpacerItem(92, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
         self.horizontalLayout_48.addItem(self.horizontalSpacer_21)
 
-        self.FormModifyCellButton = QPushButton(self.frame_53)
-        self.FormModifyCellButton.setObjectName(u"FormModifyCellButton")
+        self.modify_cell_cart_coord = QPushButton(self.frame_53)
+        self.modify_cell_cart_coord.setObjectName(u"modify_cell_cart_coord")
 
-        self.horizontalLayout_48.addWidget(self.FormModifyCellButton)
+        self.horizontalLayout_48.addWidget(self.modify_cell_cart_coord)
+
+        self.horizontalSpacer_81 = QSpacerItem(13, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_48.addItem(self.horizontalSpacer_81)
+
+        self.horizontalSpacer_124 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_48.addItem(self.horizontalSpacer_124)
+
+        self.modify_cell_frac_coord = QPushButton(self.frame_53)
+        self.modify_cell_frac_coord.setObjectName(u"modify_cell_frac_coord")
+
+        self.horizontalLayout_48.addWidget(self.modify_cell_frac_coord)
 
         self.horizontalSpacer_9 = QSpacerItem(91, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
@@ -3233,27 +3248,15 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_129.addWidget(self.crystal_3d_d12_generate)
 
-        self.horizontalSpacer_131 = QSpacerItem(28, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
-
-        self.horizontalLayout_129.addItem(self.horizontalSpacer_131)
-
         self.crystal_2d_d12_generate = QPushButton(self.groupBox_55)
         self.crystal_2d_d12_generate.setObjectName(u"crystal_2d_d12_generate")
 
         self.horizontalLayout_129.addWidget(self.crystal_2d_d12_generate)
 
-        self.horizontalSpacer_132 = QSpacerItem(28, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
-
-        self.horizontalLayout_129.addItem(self.horizontalSpacer_132)
-
         self.crystal_1d_d12_generate = QPushButton(self.groupBox_55)
         self.crystal_1d_d12_generate.setObjectName(u"crystal_1d_d12_generate")
 
         self.horizontalLayout_129.addWidget(self.crystal_1d_d12_generate)
-
-        self.horizontalSpacer_81 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
-
-        self.horizontalLayout_129.addItem(self.horizontalSpacer_81)
 
         self.crystal_0d_d12_generate = QPushButton(self.groupBox_55)
         self.crystal_0d_d12_generate.setObjectName(u"crystal_0d_d12_generate")
@@ -3279,6 +3282,7 @@ class Ui_MainWindow(object):
 
         self.frame_29 = QFrame(self.tab_24)
         self.frame_29.setObjectName(u"frame_29")
+        self.frame_29.setMinimumSize(QSize(0, 0))
         self.frame_29.setFrameShape(QFrame.StyledPanel)
         self.frame_29.setFrameShadow(QFrame.Raised)
         self.horizontalLayout_181 = QHBoxLayout(self.frame_29)
@@ -3295,6 +3299,11 @@ class Ui_MainWindow(object):
         self.dftb_0d_generate.setObjectName(u"dftb_0d_generate")
 
         self.horizontalLayout_181.addWidget(self.dftb_0d_generate)
+
+        self.octopus_generate = QPushButton(self.frame_29)
+        self.octopus_generate.setObjectName(u"octopus_generate")
+
+        self.horizontalLayout_181.addWidget(self.octopus_generate)
 
 
         self.verticalLayout_78.addWidget(self.frame_29)
@@ -7119,7 +7128,8 @@ class Ui_MainWindow(object):
         self.FormActionsPreButModifyAtom.setText(QCoreApplication.translate("MainWindow", u"Modify", None))
         self.FormActionsPreButAddAtom.setText(QCoreApplication.translate("MainWindow", u"Add", None))
         self.toolBox_6.setItemText(self.toolBox_6.indexOf(self.page_29), QCoreApplication.translate("MainWindow", u"Add or Modify Atom", None))
-        self.FormModifyCellButton.setText(QCoreApplication.translate("MainWindow", u"Edit", None))
+        self.modify_cell_cart_coord.setText(QCoreApplication.translate("MainWindow", u"Edit", None))
+        self.modify_cell_frac_coord.setText(QCoreApplication.translate("MainWindow", u"Edit (fractional)", None))
         self.toolBox_6.setItemText(self.toolBox_6.indexOf(self.page), QCoreApplication.translate("MainWindow", u"Cell", None))
         self.toolBox_6.setItemText(self.toolBox_6.indexOf(self.page_9), QCoreApplication.translate("MainWindow", u"\u0421hange type of atoms", None))
         self.label.setText(QCoreApplication.translate("MainWindow", u"<html><head/><body><p>This tab is designed to search for various configurations of a given number of atoms within a given cylindrical volume.</p></body></html>", None))
@@ -7183,6 +7193,7 @@ class Ui_MainWindow(object):
         self.crystal_0d_d12_generate.setText(QCoreApplication.translate("MainWindow", u"0D", None))
         self.lammps_generate.setText(QCoreApplication.translate("MainWindow", u"LAMMPS", None))
         self.dftb_0d_generate.setText(QCoreApplication.translate("MainWindow", u"DFTB+ 0D", None))
+        self.octopus_generate.setText(QCoreApplication.translate("MainWindow", u"Octopus", None))
         self.data_from_form_to_input_file.setText(QCoreApplication.translate("MainWindow", u"Save", None))
         self.tabWidget_3.setTabText(self.tabWidget_3.indexOf(self.tab_24), QCoreApplication.translate("MainWindow", u"Input file generator", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.FormTabActions), QCoreApplication.translate("MainWindow", u"Preprocessing", None))
