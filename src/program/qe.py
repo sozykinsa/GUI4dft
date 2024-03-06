@@ -247,9 +247,9 @@ def model_to_qe_pw(model: AtomicModel):
     vector1 = model.lat_vector1 / alat
     vector2 = model.lat_vector2 / alat
     vector3 = model.lat_vector3 / alat
-    text += str(vector1[0]) + " " + str(vector1[1]) + " " + str(vector1[2]) + "\n"
-    text += str(vector2[0]) + " " + str(vector2[1]) + " " + str(vector2[2]) + "\n"
-    text += str(vector3[0]) + " " + str(vector3[1]) + " " + str(vector3[2]) + "\n"
+    text += str(round(vector1[0], 10)) + "   " + str(round(vector1[1], 10)) + "   " + str(round(vector1[2], 10)) + "\n"
+    text += str(round(vector2[0], 10)) + "   " + str(round(vector2[1], 10)) + "   " + str(round(vector2[2], 10)) + "\n"
+    text += str(round(vector3[0], 10)) + "   " + str(round(vector3[1], 10)) + "   " + str(round(vector3[2], 10)) + "\n"
     text += "ATOMIC_SPECIES\n"
     for i in range(0, len(types)):
         text += str(model.mendeley.get_let(int(types[i][0]))) + " mass  UPF_file_name\n"
@@ -260,5 +260,5 @@ def model_to_qe_pw(model: AtomicModel):
     model1 = deepcopy(model)
     model1.convert_from_cart_to_direct()
     for atom in model1.atoms:
-        text += atom.let + " " + str(atom.x) + " " + str(atom.y) + " " + str(atom.z) + "\n"
+        text += atom.let + " " + atom.xyz_string + "\n"
     return text

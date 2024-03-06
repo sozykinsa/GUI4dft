@@ -68,7 +68,6 @@ class MainForm(QMainWindow):
         self.ui.setupUi(self)
 
         self.program: str = "SIESTA"  # mode of operation fot program
-        self.exec: str =sys.executable
 
         self.models = []
         self.ui.openGLWidget.set_form_elements(self.ui.FormSettingsViewCheckAtomSelection,
@@ -577,8 +576,7 @@ class MainForm(QMainWindow):
         return self.models[self.active_model_id]
 
     def add_cell_param_row(self):
-        i = self.ui.FormActionsPostTableCellParam.rowCount() + 1
-        self.ui.FormActionsPostTableCellParam.setRowCount(i)
+        self.ui.FormActionsPostTableCellParam.setRowCount(self.ui.FormActionsPostTableCellParam.rowCount() + 1)
 
     def add_data_cell_param(self):
         """Add cell params from file."""
@@ -987,8 +985,7 @@ class MainForm(QMainWindow):
         return self.periodic_table.get_all_colors()
 
     def delete_cell_param_row(self):
-        row = self.ui.FormActionsPostTableCellParam.currentRow()
-        self.ui.FormActionsPostTableCellParam.removeRow(row)
+        self.ui.FormActionsPostTableCellParam.removeRow(self.ui.FormActionsPostTableCellParam.currentRow())
 
     def delete_isosurface_color_from_table(self):
         row = self.ui.IsosurfaceColorsTable.currentRow()
@@ -1256,6 +1253,10 @@ class MainForm(QMainWindow):
 
     def fill_cell_info_row(self, energy, volume, a, b, c):
         i = self.ui.FormActionsPostTableCellParam.rowCount() + 1
+        if i > 1:
+            if self.ui.FormActionsPostTableCellParam.item(i - 2, 1) is None:
+                i -= 1
+
         self.ui.FormActionsPostTableCellParam.setRowCount(i)
         self.ui.FormActionsPostTableCellParam.setItem(i - 1, 0, QTableWidgetItem(str(volume)))
         self.ui.FormActionsPostTableCellParam.setItem(i - 1, 1, QTableWidgetItem(str(energy)))
@@ -1571,13 +1572,10 @@ class MainForm(QMainWindow):
         if len(self.models) > 0:   # pragma: no cover
             self.action_on_start = 'Open'
             self.save_property(SETTINGS_FormSettingsActionOnStart, self.action_on_start)
-            print(self.exec)
-            if os.path.exists(self.exec):
-                print("good path")
-                os.execl(self.exec, '"' + self.exec + '"', *sys.argv)
+            if sys.platform.startswith('win'):
+                os.execlp('python', 'python', *sys.argv)
             else:
-                print("try to run")
-                os.execl(self.exec, self.exec, *sys.argv)
+                os.execlp('python3', 'python3', *sys.argv)
 
         self.ui.Form3Dand2DTabs.setCurrentIndex(0)
         if not file_name:
@@ -2384,7 +2382,6 @@ class MainForm(QMainWindow):
 
     def clear_dos(self):
         self.ui.FormActionsTabeDOSProperty.setRowCount(0)
-        #self.ui.FormActionsTabeDOSProperty.update()
 
     def plot_volume_param_energy(self):
         self.ui.PyqtGraphWidget.set_xticks(None)
@@ -2395,16 +2392,21 @@ class MainForm(QMainWindow):
         xi = self.ui.FormActionsPostComboCellParamX.currentIndex()
         energy_units = self.ui.cell_energy_units.currentText()  # "Ry" "eV"
         volume_units = self.ui.cell_volume_units.currentText()  # "au^3"  "A^3"
-        print(method, xi, energy_units, volume_units)
-
-        yi = 1
 
         x = []
         y = []
 
         for index in range(self.ui.FormActionsPostTableCellParam.rowCount()):
-            x.append(float(self.ui.FormActionsPostTableCellParam.item(index, xi).text()))
-            y.append(float(self.ui.FormActionsPostTableCellParam.item(index, yi).text()))
+            x_new = float(self.ui.FormActionsPostTableCellParam.item(index, xi).text())
+            y_new = float(self.ui.FormActionsPostTableCellParam.item(index, 1).text())
+            f = True
+            for i in range(len(x)):
+                ro = math.sqrt(pow(x_new - x[i], 2) + pow(y_new - y[i], 2))
+                if ro < 1e-6:
+                    f = False
+            if f:
+                x.append(x_new)
+                y.append(y_new)
         x = np.array(x)
         y = np.array(y)
 
@@ -2484,9 +2486,8 @@ class MainForm(QMainWindow):
 
     def plot_cell_approx(self, image_path):
         image_profile = QImage(image_path)
-        image_profile = image_profile.scaled(320, 54, aspectMode=Qt.KeepAspectRatio,
-                                             mode=Qt.SmoothTransformation
-                                             )
+        image_profile = image_profile.scaled(320, 54, aspectRatioMode=Qt.KeepAspectRatio,
+                                             transformMode=Qt.SmoothTransformation)
         self.ui.FormActionsPostLabelCellParamFig.setPixmap(QPixmap.fromImage(image_profile))
 
     def save_image_to_file(self, name=""):
@@ -2854,7 +2855,7 @@ class MainForm(QMainWindow):
             if len(text) > 0:
                 file_mask = "FDF files (*.fdf);;VASP POSCAR file (*.POSCAR);;Crystal d12 (*.d12)"
                 file_mask += ";;PWscf in (*.in);;WIEN struct (*.struct);;CIF file (*.cif);;DFTB+ (*.gen)"
-                file_mask += ";;Octopus input (*.in)"
+                file_mask += ";;Lammps input (*.lmp);;Octopus input (*.in)"
                 f_name = self.get_file_name_from_save_dialog(file_mask)
                 if f_name is not None:
                     helpers.write_text_to_file(f_name, text)
