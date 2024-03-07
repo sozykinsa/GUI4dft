@@ -250,7 +250,8 @@ class MainForm(QMainWindow):
 
         self.ui.FormActionsPostButPlusCellParam.clicked.connect(self.add_cell_param)
         self.ui.FormActionsPostButAddRowCellParam.clicked.connect(self.add_cell_param_row)
-        self.ui.FormActionsPostButDeleteRowCellParam.clicked.connect(self.delete_cell_param_row)
+        self.ui.cell_param_delete_row.clicked.connect(self.delete_cell_param_row)
+        self.ui.cell_param_delete_all.clicked.connect(self.delete_cell_param_all)
         self.ui.cell_params_file_add.clicked.connect(self.add_data_cell_param)
 
         self.ui.FormModifyRotation.clicked.connect(self.model_rotation)
@@ -986,6 +987,10 @@ class MainForm(QMainWindow):
 
     def delete_cell_param_row(self):
         self.ui.FormActionsPostTableCellParam.removeRow(self.ui.FormActionsPostTableCellParam.currentRow())
+
+    def delete_cell_param_all(self):
+        self.ui.FormActionsPostTableCellParam.clear()
+        self.ui.FormActionsPostTableCellParam.setRowCount(0)
 
     def delete_isosurface_color_from_table(self):
         row = self.ui.IsosurfaceColorsTable.currentRow()
