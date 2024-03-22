@@ -121,6 +121,13 @@ def test_atom_atom_distance(h2o_model):
     assert round(model.atom_atom_distance(1, 2), 4) == 2.0
 
 
+def test_point_point_distance(swnt_33: AtomicModel) -> None:
+    model = swnt_33
+    pos1 = model[0].xyz
+    pos2 = model[6].xyz
+    assert model.point_point_distance(pos1, pos2) - 1.3621056 < 1e-6
+
+
 def test_set_lat_vectors(h2o_model):
     model = h2o_model
     model.set_lat_vectors([5, 0, 0], [0, 5, 0], [0, 5])

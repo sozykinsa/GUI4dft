@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 
-from utils.calculators import Calculators
+from utils.calculators import Calculators, fill_tube
 
 
 def test_lattice_approx():
@@ -26,5 +26,5 @@ def test_fill_tube():
     n_prompts = 1
     let = "Li"
     charge = 3
-    models = Calculators.fill_tube(rad_tube, length, n_atoms, rad_atom, delta, n_prompts, let, charge)
+    models = fill_tube(rad_tube, length, n_atoms, rad_atom, delta, n_prompts, let, charge)
     assert len(models) == 1

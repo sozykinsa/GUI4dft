@@ -583,16 +583,10 @@ class AtomicModel(object):
 
     def point_point_distance(self, pos1, pos2):
         delta_pos = pos2 - pos1
-        ro = norm(delta_pos)
         values = [-1, 0, 1]
-        for i in values:
-            for j in values:
-                for k in values:
-                    if abs(i) + abs(j) + abs(k) != 0:
-                        ro1 = norm(delta_pos + i * self.lat_vector1 + j * self.lat_vector2 + k * self.lat_vector3)
-                        if ro1 < ro:
-                            ro = ro1
-        return ro
+        ros = [[[norm(delta_pos + i * self.lat_vector1 + j * self.lat_vector2 + k * self.lat_vector3)
+                 for i in values] for j in values] for k in values]
+        return np.array(ros).min()
 
     def move_object_to_cell(self, arr, a_inv):
         for at in arr:

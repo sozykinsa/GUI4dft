@@ -1,4 +1,4 @@
-from program.vasp import TVASP, model_to_vasp_poscar, fermi_energy_from_doscar
+from program.vasp import TVASP, model_to_vasp_poscar, fermi_energy_from_doscar, abc_from_outcar, vectors_from_outcar
 
 
 def test_model_to_vasp_poscar(h2o_model):
@@ -24,7 +24,15 @@ def test_energy_tot(tests_path):
     assert e == -4.71040512
 
 
+def test_vectors(tests_path):
+    f_name = str(tests_path / 'ref_data' / 'vasp' / "OUTCAR")
+    vecs = vectors_from_outcar(f_name)
+    print(vecs[0][0])
+    a = vecs[0][0][0]
+    assert abs(a - 1.95) < 1e-2
+
+
 def test_abc(tests_path):
     f_name = str(tests_path / 'ref_data' / 'vasp' / "OUTCAR")
-    a, b, c = TVASP.abc(f_name)
+    a, b, c = abc_from_outcar(f_name)
     assert abs(a - 2.757716447) < 1e-7

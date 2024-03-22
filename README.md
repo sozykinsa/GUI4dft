@@ -22,7 +22,7 @@ export QT_API=pyside6 (in linux, or https://www.architectryan.com/2018/08/31/how
 Some operating systems may require additional packages to be installed:
 
 Ubuntu 22.04: sudo apt-get install -y libxcb-cursor-dev
-Xubuntu: ? sudo apt-get install qtbase5-dev
+
 
 ## Explanations for the versions of the program
 

@@ -4,6 +4,7 @@ from typing import Tuple
 
 import math
 import random
+from concurrent.futures import ThreadPoolExecutor
 
 import numpy as np
 from numpy import polyfit
@@ -14,6 +15,44 @@ from scipy.spatial import Voronoi
 from core_atomistic.atom import Atom
 from core_atomistic.atomic_model import AtomicModel
 from core_atomistic import helpers
+from models.carbon_structure import CarbonStructure
+
+
+def nearest_hexagon_run(ar):
+    return ar[0].nearest_hexagon_of_swnt(ar[1], ar[2])
+
+
+def hops(models):
+    models[0].move_atoms_to_cell()
+    new_model = CarbonStructure(models[0])
+    atlist = models[0].indexes_of_atoms_with_charge(3)
+
+    hexagons = new_model.hexagons_of_swnt()
+
+    for atom in atlist:
+        arg = [[CarbonStructure(model), atom, hexagons] for model in models]
+        with ThreadPoolExecutor(max_workers=4) as pool:
+            neighbors = list(pool.map(nearest_hexagon_run, arg))
+        times = []
+        kol = 0
+
+        neighbor = neighbors[0]
+        for mol in range(0, len(neighbors)):
+            neighbor1 = neighbors[mol]
+            if neighbor == neighbor1:
+                kol += 1
+            else:
+                times.append([kol, neighbor])
+                kol = 0
+                neighbor = neighbor1
+
+        if kol > 0:
+            times.append([kol, neighbor])
+
+        print("final:")
+        for j in range(0, len(times)):
+            field = str(j) + "   " + str(times[j][0]) + "   " + str(times[j][1])
+            print(field)
 
 
 def gaps(bands, emaxf, eminf, homo, lumo) -> Tuple[float, float]:
@@ -37,43 +76,86 @@ def gaps(bands, emaxf, eminf, homo, lumo) -> Tuple[float, float]:
     return gap, gap_ind
 
 
+def fill_tube(rad_tube, length: float, n_atoms: int, rad_atom, delta, n_prompts: int, let, charge: int):
+    """Getting a list of configurations from nAtoms with a radius of radAtom in a cylinder with a radius of radTube
+    length. The maximum displacement of atoms in each of the models is not less than delta."""
+    models = []
+    random.seed(a=None, version=2)
+
+    for i in range(0, n_prompts):
+        molecule = AtomicModel()
+        j = 0
+
+        while (j < 1000) and (len(molecule.atoms) < n_atoms):
+            x = random.uniform(-rad_tube, rad_tube)
+            a = math.sqrt(rad_tube * rad_tube - x * x)
+            y = random.uniform(-a, a)
+            z = random.uniform(0, length)
+            molecule.add_atom(Atom([x, y, z, let, charge]), 2 * rad_atom)
+            j += 1
+
+        if len(molecule.atoms) < n_atoms:
+            rad_atom *= 0.95
+            print("Radius of atom was dicreased. New value: " + str(rad_atom))
+
+        if len(molecule.atoms) == n_atoms:
+            my_delta = 4 * rad_tube + length
+            for newMolecula in models:
+                myDelta2 = molecule.delta(newMolecula)
+                if myDelta2 < my_delta:
+                    my_delta = myDelta2
+            if my_delta > delta:
+                models.append(molecule)
+                print("Iter " + str(i) + "/" + str(n_prompts) + "| we found " + str(len(models)) + " structures")
+            if len(models) == 0:
+                models.append(molecule)
+    return models
+
+
+def VoronoiAnalisis(Molecula, selectedAtom, maxDist):
+    new_model = Molecula.grow()
+    new_model.move_atoms_to_cell()
+    atoms_to_analise = new_model.indexes_of_atoms_in_sphere(range(0, len(new_model.atoms)), selectedAtom, maxDist)
+    points = np.empty((len(atoms_to_analise), 3))
+    k = 0
+    for i in atoms_to_analise:
+        points[k][0] = new_model[i].x
+        points[k][1] = new_model[i].y
+        points[k][2] = new_model[i].z
+        k += 1
+
+    vor = Voronoi(points)
+
+    indices = vor.regions[vor.point_region[0]]
+    if -1 in indices:  # some regions can be opened
+        vol = np.inf
+    else:
+        vol = ConvexHull(vor.vertices[indices]).volume
+
+    regions = []
+    for i in range(0, len(vor.point_region)):
+        regions.append(vor.regions[vor.point_region[i]])
+
+    point_ridges = []
+    for ridge in vor.ridge_vertices:
+        if (len(list(set(ridge) - set(regions[0]))) == 0) and (len(ridge) > 0):
+            point_ridges.append(ridge)
+
+    list_of_poligons = []
+
+    if point_ridges.count(-1) == 0:
+        for rid in point_ridges:
+            poligon = []
+            for ind1 in rid:
+                x = vor.vertices[ind1][0]
+                y = vor.vertices[ind1][1]
+                z = vor.vertices[ind1][2]
+                poligon.append([x, y, z])
+                list_of_poligons.append(poligon)
+    return list_of_poligons, vol
+
+
 class Calculators:
-    @staticmethod
-    def fill_tube(rad_tube, length: float, n_atoms: int, rad_atom, delta, n_prompts: int, let, charge: int):
-        """Getting a list of configurations from nAtoms with a radius of radAtom in a cylinder with a radius of radTube
-         length. The maximum displacement of atoms in each of the models is not less than delta."""
-        models = []
-        random.seed(a=None, version=2)
-
-        for i in range(0, n_prompts):
-            molecule = AtomicModel()
-            j = 0
-
-            while (j < 1000) and (len(molecule.atoms) < n_atoms):
-                x = random.uniform(-rad_tube, rad_tube)
-                a = math.sqrt(rad_tube * rad_tube - x * x)
-                y = random.uniform(-a, a)
-                z = random.uniform(0, length)
-                molecule.add_atom(Atom([x, y, z, let, charge]), 2 * rad_atom)
-                j += 1
-
-            if len(molecule.atoms) < n_atoms:
-                rad_atom *= 0.95
-                print("Radius of atom was dicreased. New value: " + str(rad_atom))
-
-            if len(molecule.atoms) == n_atoms:
-                my_delta = 4 * rad_tube + length
-                for newMolecula in models:
-                    myDelta2 = molecule.delta(newMolecula)
-                    if myDelta2 < my_delta:
-                        my_delta = myDelta2
-                if my_delta > delta:
-                    models.append(molecule)
-                    print("Iter " + str(i) + "/" + str(n_prompts) + "| we found " + str(len(models)) + " structures")
-                if len(models) == 0:
-                    models.append(molecule)
-        return models
-
     @staticmethod
     def fParabola(x, b0, b1, b2):
         return b0 + b1 * x + b2 * x**2
@@ -152,47 +234,3 @@ class Calculators:
         x0 = np.array([e0, b0, bP, v0])
         murnpars, ier = leastsq(Calculators.objectiveBirchMurnaghan, x0, args=(e, v))
         return murnpars, vfit.tolist(), Calculators.fMurnaghan(murnpars, vfit).tolist()
-
-    @staticmethod
-    def VoronoiAnalisis(Molecula, selectedAtom, maxDist):
-        newMolecula = Molecula.grow()
-        newMolecula.move_atoms_to_cell()
-        atoms_to_analise = newMolecula.indexes_of_atoms_in_ball(range(0, len(newMolecula.atoms)), selectedAtom, maxDist)
-        points = np.empty((len(atoms_to_analise), 3))
-        k = 0
-        for i in atoms_to_analise:
-            points[k][0] = newMolecula[i].x
-            points[k][1] = newMolecula[i].y
-            points[k][2] = newMolecula[i].z
-            k += 1
-
-        vor = Voronoi(points)
-
-        indices = vor.regions[vor.point_region[0]]
-        if -1 in indices:  # some regions can be opened
-            vol = np.inf
-        else:
-            vol = ConvexHull(vor.vertices[indices]).volume
-
-        regions = []
-        for i in range(0, len(vor.point_region)):
-            regions.append(vor.regions[vor.point_region[i]])
-
-        point_ridges = []
-        for ridge in vor.ridge_vertices:
-            if (len(list(set(ridge) - set(regions[0]))) == 0) and (len(ridge) > 0):
-                point_ridges.append(ridge)
-
-        list_of_poligons = []
-
-        if point_ridges.count(-1) == 0:
-            for rid in point_ridges:
-                poligon = []
-                for ind1 in rid:
-                    x = vor.vertices[ind1][0]
-                    y = vor.vertices[ind1][1]
-                    z = vor.vertices[ind1][2]
-                    poligon.append([x, y, z])
-                    list_of_poligons.append(poligon)
-
-        return list_of_poligons, vol

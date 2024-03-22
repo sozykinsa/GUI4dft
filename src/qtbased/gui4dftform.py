@@ -7,6 +7,8 @@ except Exception as e:
     pass
 import math
 import sys
+from multiprocessing import Pool
+from time import time
 from pathlib import Path
 from copy import deepcopy
 from operator import itemgetter
@@ -41,7 +43,7 @@ from qtbased.image3dexporter import Image3Dexporter
 from program.siesta import TSIESTA
 from program.qe import model_to_qe_pw
 from program.wien import model_to_wien_struct
-from program.vasp import TVASP, vasp_dos, model_to_vasp_poscar
+from program.vasp import TVASP, vasp_dos, model_to_vasp_poscar, abc_from_outcar
 from program.dftb import model_to_dftb_d0
 from program.lammps import model_to_lammps_input
 from program.octopus import model_to_octopus_input
@@ -49,7 +51,7 @@ from program import crystal
 from program import ase
 from program.fdfdata import TFDFFile
 from utils.calculators import Calculators as Calculator
-from utils.calculators import gaps
+from utils.calculators import gaps, hops, fill_tube
 from utils.importer_exporter import ImporterExporter
 from utils.electronic_prop_reader import read_siesta_bands, dos_from_file
 from ui.about import Ui_DialogAbout as Ui_about
@@ -143,7 +145,9 @@ class MainForm(QMainWindow):
 
         # buttons
         self.ui.FormActionsPostButPlotBondsHistogram.clicked.connect(self.plot_bonds_histogram)
-        self.ui.FormActionsPreButFillSpace.clicked.connect(self.fill_space)
+        self.ui.fill_space.clicked.connect(self.fill_space)
+        self.ui.add_atoms_to_hexagons.clicked.connect(self.add_atoms_to_hexagons)
+        self.ui.hops_analis.clicked.connect(self.hops_analyze)
 
         # models generation
         self.ui.get_0d_molecula_list.clicked.connect(self.get_0d_molecula_list)
@@ -996,9 +1000,7 @@ class MainForm(QMainWindow):
         row = self.ui.IsosurfaceColorsTable.currentRow()
         self.ui.IsosurfaceColorsTable.removeRow(row)
 
-    def edit_cell(self):
-        if len(self.models) == 0:
-            return
+    def lat_vectors_from_form(self):
         a1 = float(self.ui.FormModifyCellEditA1.text())
         a2 = float(self.ui.FormModifyCellEditA2.text())
         a3 = float(self.ui.FormModifyCellEditA3.text())
@@ -1011,6 +1013,12 @@ class MainForm(QMainWindow):
         c2 = float(self.ui.FormModifyCellEditC2.text())
         c3 = float(self.ui.FormModifyCellEditC3.text())
         v3 = [c1, c2, c3]
+        return v1, v2, v3
+
+    def edit_cell(self):
+        if len(self.models) == 0:
+            return
+        v1, v2, v3 = self.lat_vectors_from_form()
         self.ui.openGLWidget.main_model.set_lat_vectors(v1, v2, v3)
         self.models.append(self.ui.openGLWidget.main_model)
         self.model_to_screen(-1)
@@ -1018,7 +1026,12 @@ class MainForm(QMainWindow):
     def modify_cell_frac_coord(self):
         if len(self.models) == 0:
             return
-        print("Not implemented")
+        v1, v2, v3 = self.lat_vectors_from_form()
+        self.ui.openGLWidget.main_model.convert_from_cart_to_direct()
+        self.ui.openGLWidget.main_model.set_lat_vectors(v1, v2, v3)
+        self.ui.openGLWidget.main_model.convert_from_direct_to_cart()
+        self.models.append(self.ui.openGLWidget.main_model)
+        self.model_to_screen(-1)
 
     def get_file_name_from_save_dialog(self, file_mask):  # pragma: no cover
         result = QFileDialog.getSaveFileName(self, 'Save File', self.work_dir, file_mask,
@@ -1140,7 +1153,6 @@ class MainForm(QMainWindow):
         self.ui.FormModelComboModels.setModel(model)
         self.ui.FormModelComboModels.setCurrentIndex(len(self.models) - 1)
         self.ui.FormModelComboModels.currentIndexChanged.connect(self.model_to_screen)
-        #self.ui.FormModelComboModels.update()
 
     def fill_atoms_table(self):
         model = self.ui.openGLWidget.get_model().atoms
@@ -1188,7 +1200,7 @@ class MainForm(QMainWindow):
 
         if data_type == "TXSF":
             for dat in data:
-                text = (dat[0].title.split('_')[3]).split(':')[0]
+                text = (dat[0].title.split('_')[3]).split(':')[0].rstrip()
                 parent = QTreeWidgetItem(tree)
                 parent.setText(0, "{}".format(text) + "3D")
                 for da in dat:
@@ -1197,7 +1209,7 @@ class MainForm(QMainWindow):
 
         if data_type == "TGaussianCube":
             for dat in data:
-                text = dat[0].title.split(".cube")[0]
+                text = dat[0].title.split(".cube")[0].rstrip()
                 parent = QTreeWidgetItem(tree)
                 parent.setText(0, "{}".format(text))
 
@@ -1249,7 +1261,7 @@ class MainForm(QMainWindow):
         if sourse == "vasp_outcar":
             volume = TVASP.volume(f_name)
             energy, is_conv, iteration = TVASP.energy_tot(f_name)
-            a, b, c = TVASP.abc(f_name)
+            a, b, c = abc_from_outcar(f_name)
 
         self.fill_cell_info_row(energy, volume, a, b, c)
         self.ui.FormActionsPreZSizeFillSpace.setValue(c)
@@ -2491,8 +2503,8 @@ class MainForm(QMainWindow):
 
     def plot_cell_approx(self, image_path):
         image_profile = QImage(image_path)
-        image_profile = image_profile.scaled(320, 54, aspectRatioMode=Qt.KeepAspectRatio,
-                                             transformMode=Qt.SmoothTransformation)
+        image_profile = image_profile.scaled(320, 54, aspectMode=Qt.KeepAspectRatio,
+                                             mode=Qt.SmoothTransformation)
         self.ui.FormActionsPostLabelCellParamFig.setPixmap(QPixmap.fromImage(image_profile))
 
     def save_image_to_file(self, name=""):
@@ -3033,7 +3045,7 @@ class MainForm(QMainWindow):
         n_prompts = int(self.ui.FormActionsPreNPromptsFillSpace.value())
         rad_tube = float(self.ui.FormActionsPreRadiusFillSpace.value())
         length = float(self.ui.FormActionsPreZSizeFillSpace.value())
-        models = Calculator.fill_tube(rad_tube, length, n_atoms, 0.01 * rad_atom, delta, n_prompts, let, charge)
+        models = fill_tube(rad_tube, length, n_atoms, 0.01 * rad_atom, delta, n_prompts, let, charge)
 
         filename = ""
         try:
@@ -3055,6 +3067,18 @@ class MainForm(QMainWindow):
                     f.write(text)
             myiter += 1
         self.fill_models_list()
+
+    def add_atoms_to_hexagons(self) -> None:
+        if len(self.models) == 0:
+            return
+        n = self.ui.number_of_atoms_to_add.value()
+        print("Add ", n, " Li atoms")
+        print("Not implemented")
+
+    def hops_analyze(self) -> None:
+        if len(self.models) == 0:
+            return
+        hops(self.models)
 
     def parse_volumeric_data(self):
         if len(self.ui.FormActionsPostList3DData.selectedItems()) > 0:

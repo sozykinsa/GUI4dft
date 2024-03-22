@@ -16,7 +16,7 @@ def n_atoms_from_struct(f_name):
     f = open(f_name)
     f.readline()
     n = f.readline()
-    n = re.findall('\d+', n)[-1]
+    n = re.findall(r'\d+', n)[-1]
     f.close()
     return int(n)
 
