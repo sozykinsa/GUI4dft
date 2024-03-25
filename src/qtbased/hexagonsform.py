@@ -129,9 +129,6 @@ class MainForm(QMainWindow):
         self.ui.FormAtomsList1.currentIndexChanged.connect(self.bond_len_to_screen)
         self.ui.FormAtomsList2.currentIndexChanged.connect(self.bond_len_to_screen)
 
-        self.ui.activate_fragment_selection_mode.toggled.connect(self.activate_fragment_selection_mode)
-        self.ui.ActivateFragmentSelectionTransp.valueChanged.connect(self.activate_fragment_selection_mode)
-
         self.ui.fill_space.clicked.connect(self.fill_space)
         self.ui.add_atoms_to_hexagons.clicked.connect(self.add_atoms_to_hexagons)
         self.ui.hops_analis.clicked.connect(self.hops_analyze)
@@ -156,11 +153,6 @@ class MainForm(QMainWindow):
 
         self.ui.PropertyAtomAtomDistanceGet.clicked.connect(self.get_bond)
         self.ui.FormStylesFor2DGraph.clicked.connect(self.set_2d_graph_styles)
-
-        self.ui.changeFragment1StatusByX.clicked.connect(self.change_fragment1_status_by_x)
-        self.ui.changeFragment1StatusByY.clicked.connect(self.change_fragment1_status_by_y)
-        self.ui.changeFragment1StatusByZ.clicked.connect(self.change_fragment1_status_by_z)
-        self.ui.fragment1Clear.clicked.connect(self.fragment1_clear)
 
         model = QStandardItemModel()
         model.appendRow(QStandardItem("select"))
@@ -338,21 +330,6 @@ class MainForm(QMainWindow):
         self.ui.toolBar.addAction(to_down_action)
         self.ui.toolBar.addSeparator()
 
-    def activate_fragment_selection_mode(self):
-        if self.ui.activate_fragment_selection_mode.isChecked():
-            self.ui.openGLWidget.set_selected_fragment_mode(self.ui.AtomsInSelectedFragment,
-                                                            self.ui.ActivateFragmentSelectionTransp.value())
-            self.ui.changeFragment1StatusByX.setEnabled(True)
-            self.ui.changeFragment1StatusByY.setEnabled(True)
-            self.ui.changeFragment1StatusByZ.setEnabled(True)
-            self.ui.fragment1Clear.setEnabled(True)
-        else:
-            self.ui.openGLWidget.set_selected_fragment_mode(None, self.ui.ActivateFragmentSelectionTransp.value())
-            self.ui.changeFragment1StatusByX.setEnabled(False)
-            self.ui.changeFragment1StatusByY.setEnabled(False)
-            self.ui.changeFragment1StatusByZ.setEnabled(False)
-            self.ui.fragment1Clear.setEnabled(False)
-
     @property
     def active_model(self) -> AtomicModel:
         return self.models[self.active_model_id]
@@ -473,41 +450,6 @@ class MainForm(QMainWindow):
             self.ui.FormActionsTabeDOSProperty.setItem(i - 1, 0, q_tab_widg)
             self.ui.FormActionsTabeDOSProperty.setItem(i - 1, 1, QTableWidgetItem(str(e_fermy)))
             # self.ui.FormActionsTabeDOSProperty.update()
-
-    def change_fragment1_status_by_x(self):
-        x_min = self.ui.xminborder.value()
-        x_max = self.ui.xmaxborder.value()
-        ogl = self.ui.openGLWidget
-        model = ogl.get_model()
-        for ind, at in enumerate(model.atoms):
-            if (at.x >= x_min) and (at.x <= x_max):
-                ogl.main_model.atoms[ind].fragment1 = not ogl.main_model.atoms[ind].fragment1
-        self.fragment1_post_actions()
-
-    def change_fragment1_status_by_y(self):
-        y_min = self.ui.yminborder.value()
-        y_max = self.ui.ymaxborder.value()
-        ogl = self.ui.openGLWidget
-        model = ogl.get_model()
-        for ind, at in enumerate(model.atoms):
-            if (at.y >= y_min) and (at.y <= y_max):
-                ogl.main_model.atoms[ind].fragment1 = not ogl.main_model.atoms[ind].fragment1
-        self.fragment1_post_actions()
-
-    def change_fragment1_status_by_z(self):
-        z_min = self.ui.zminborder.value()
-        z_max = self.ui.zmaxborder.value()
-        ogl = self.ui.openGLWidget
-        model = ogl.get_model()
-        for ind, at in enumerate(model.atoms):
-            if (at.z >= z_min) and (at.z <= z_max):
-                ogl.main_model.atoms[ind].fragment1 = not ogl.main_model.atoms[ind].fragment1
-        self.fragment1_post_actions()
-
-    def fragment1_clear(self):
-        for at in self.ui.openGLWidget.main_model.atoms:
-            at.fragment1 = False
-        self.fragment1_post_actions()
 
     def fragment1_post_actions(self):
         self.ui.openGLWidget.atoms_of_selected_fragment_to_form()
@@ -1176,8 +1118,6 @@ class MainForm(QMainWindow):
                                                   view_atom_numbers, view_box, box_color, view_bonds, bonds_color,
                                                   bond_width, color_of_bonds_by_atoms,
                                                   view_axes, axes_color, contour_width)
-        self.ui.AtomsInSelectedFragment.clear()
-
         self.show_property_enabling()
 
     @staticmethod
@@ -1395,23 +1335,12 @@ class MainForm(QMainWindow):
         self.ui.openGLWidget.set_orientation(rotation_angles, camera_position, scale_factor)
 
     def selected_atom_position(self, element, position):
-        coord_type = self.selected_atom_coord_type()
-        position = self.ang_to_coords(position, coord_type)
-        self.ui.atoms_list_all.setCurrentIndex(element)
-        self.ui.FormActionsPreSpinAtomsCoordX.setValue(position[0])
-        self.ui.FormActionsPreSpinAtomsCoordX.update()
-        self.ui.FormActionsPreSpinAtomsCoordY.setValue(position[1])
-        self.ui.FormActionsPreSpinAtomsCoordY.update()
-        self.ui.FormActionsPreSpinAtomsCoordZ.setValue(position[2])
-        self.ui.FormActionsPreSpinAtomsCoordZ.update()
-        x, y, z = self.selected_atom_xyz_from_form()
-        self.ui.selected_atom_coords.setText("{0:6}    {1:6}    {2:6}".format(x, y, z))
+        pass
 
     def selected_atom_xyz_from_form(self):
-        x = self.ui.FormActionsPreSpinAtomsCoordX.value()
-        y = self.ui.FormActionsPreSpinAtomsCoordY.value()
-        z = self.ui.FormActionsPreSpinAtomsCoordZ.value()
-        return x, y, z
+        id = self.ui.openGLWidget.main_model.selected_atom
+        xyz = self.ui.openGLWidget.main_model[id].xyz
+        return xyz[0], xyz[1], xyz[2]
 
     def selected_atom_changed(self, selected):
         selected_atom = selected[0]

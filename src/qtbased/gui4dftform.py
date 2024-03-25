@@ -143,12 +143,6 @@ class MainForm(QMainWindow):
         self.ui.activate_fragment_selection_mode.toggled.connect(self.activate_fragment_selection_mode)
         self.ui.ActivateFragmentSelectionTransp.valueChanged.connect(self.activate_fragment_selection_mode)
 
-        # buttons
-        self.ui.FormActionsPostButPlotBondsHistogram.clicked.connect(self.plot_bonds_histogram)
-        self.ui.fill_space.clicked.connect(self.fill_space)
-        self.ui.add_atoms_to_hexagons.clicked.connect(self.add_atoms_to_hexagons)
-        self.ui.hops_analis.clicked.connect(self.hops_analyze)
-
         # models generation
         self.ui.get_0d_molecula_list.clicked.connect(self.get_0d_molecula_list)
         self.ui.generate_0d_molecula.clicked.connect(self.generate_0d_molecula)
@@ -356,10 +350,6 @@ class MainForm(QMainWindow):
         swnt_ind_type.appendRow(QStandardItem("(10,0)"))
         swnt_ind_type.appendRow(QStandardItem("(19,0)"))
         self.ui.FormActionsPreComboSWNTind.setModel(swnt_ind_type)
-
-        fill_space_model = QStandardItemModel()
-        fill_space_model.appendRow(QStandardItem("cylinder"))
-        self.ui.FormActionsPreComboFillSpace.setModel(fill_space_model)
 
         self.prepare_form_actions_combo_pdos_indexes()
         self.prepare_form_actions_combo_pdos_species()
@@ -3032,58 +3022,6 @@ class MainForm(QMainWindow):
                 self.ui.FormActionsPreTextFDF.setText(text)
         except Exception as e:
             self.show_error(e)
-
-    def fill_space(self):
-        if len(self.models) == 0:
-            return
-        mendeley = TPeriodTable()
-        n_atoms = int(self.ui.FormActionsPreNAtomsFillSpace.value())
-        charge = int(self.ui.FormActionsPreAtomChargeFillSpace.value())
-        rad_atom = mendeley.get_rad(charge)
-        let = mendeley.get_let(charge)
-        delta = float(self.ui.FormActionsPreDeltaFillSpace.value())
-        n_prompts = int(self.ui.FormActionsPreNPromptsFillSpace.value())
-        rad_tube = float(self.ui.FormActionsPreRadiusFillSpace.value())
-        length = float(self.ui.FormActionsPreZSizeFillSpace.value())
-        models = fill_tube(rad_tube, length, n_atoms, 0.01 * rad_atom, delta, n_prompts, let, charge)
-
-        filename = ""
-        try:
-            if self.ui.FormActionsPreSaveToFileFillSpace.isChecked():
-                filename = QFileDialog.getSaveFileName(self, 'Save File', options=QFileDialog.DontUseNativeDialog)[0]
-                filename = filename.split(".fdf")[0]
-        except Exception as exc:
-            self.show_error(exc)
-
-        myiter = 0
-        for model in models:
-            second_model = deepcopy(self.ui.openGLWidget.get_model())
-            for at in model:
-                second_model.add_atom(at)
-            self.models.append(second_model)
-            if self.ui.FormActionsPreSaveToFileFillSpace.isChecked():
-                text = self.fdf_data.get_all_data(second_model.atoms, self.coord_type, self.units_type, self.lattice_type)
-                with open(filename + str(myiter) + '.fdf', 'w') as f:
-                    f.write(text)
-            myiter += 1
-        self.fill_models_list()
-
-    def add_atoms_to_hexagons(self) -> None:
-        if len(self.models) == 0:
-            return
-        n = self.ui.number_of_atoms_to_add.value()
-        print("Add ", n, " Li atoms")
-        print("Not implemented")
-        model1 = deepcopy(self.ui.openGLWidget.get_model())
-        models = add_adatom(model1, n)
-        for model in models:
-            self.models.append(model)
-        self.fill_models_list()
-
-    def hops_analyze(self) -> None:
-        if len(self.models) == 0:
-            return
-        hops(self.models)
 
     def parse_volumeric_data(self):
         if len(self.ui.FormActionsPostList3DData.selectedItems()) > 0:

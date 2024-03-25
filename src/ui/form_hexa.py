@@ -18,11 +18,11 @@ from qtpy.QtGui import (QAction, QBrush, QColor, QConicalGradient,
     QTransform)
 from qtpy.QtWidgets import (QApplication, QCheckBox, QComboBox, QDoubleSpinBox,
     QFrame, QGroupBox, QHBoxLayout, QHeaderView,
-    QLabel, QLineEdit, QListWidget, QListWidgetItem,
-    QMainWindow, QMenu, QMenuBar, QPushButton,
-    QRadioButton, QSizePolicy, QSpacerItem, QSpinBox,
-    QTabWidget, QTableWidget, QTableWidgetItem, QTextBrowser,
-    QToolBar, QToolBox, QVBoxLayout, QWidget)
+    QLabel, QLineEdit, QMainWindow, QMenu,
+    QMenuBar, QPushButton, QRadioButton, QSizePolicy,
+    QSpacerItem, QSpinBox, QTabWidget, QTableWidget,
+    QTableWidgetItem, QTextBrowser, QToolBar, QToolBox,
+    QVBoxLayout, QWidget)
 
 from qtbased.guiopengl import GuiOpenGL
 from core_atomistic_qt.qt_graph import PyqtGraphWidget
@@ -241,199 +241,10 @@ class Ui_MainWindow(object):
         self.tab_20.setObjectName(u"tab_20")
         self.verticalLayout_89 = QVBoxLayout(self.tab_20)
         self.verticalLayout_89.setObjectName(u"verticalLayout_89")
-        self.tabWidget_7 = QTabWidget(self.tab_20)
-        self.tabWidget_7.setObjectName(u"tabWidget_7")
-        self.tab_25 = QWidget()
-        self.tab_25.setObjectName(u"tab_25")
-        self.verticalLayout_64 = QVBoxLayout(self.tab_25)
-        self.verticalLayout_64.setObjectName(u"verticalLayout_64")
-        self.AtomPropertiesText = QTextBrowser(self.tab_25)
+        self.AtomPropertiesText = QTextBrowser(self.tab_20)
         self.AtomPropertiesText.setObjectName(u"AtomPropertiesText")
 
-        self.verticalLayout_64.addWidget(self.AtomPropertiesText)
-
-        self.tabWidget_7.addTab(self.tab_25, "")
-        self.tab_26 = QWidget()
-        self.tab_26.setObjectName(u"tab_26")
-        self.verticalLayout_21 = QVBoxLayout(self.tab_26)
-        self.verticalLayout_21.setObjectName(u"verticalLayout_21")
-        self.activate_fragment_selection_mode = QCheckBox(self.tab_26)
-        self.activate_fragment_selection_mode.setObjectName(u"activate_fragment_selection_mode")
-
-        self.verticalLayout_21.addWidget(self.activate_fragment_selection_mode)
-
-        self.groupBox_21 = QGroupBox(self.tab_26)
-        self.groupBox_21.setObjectName(u"groupBox_21")
-        self.groupBox_21.setMinimumSize(QSize(0, 60))
-        self.horizontalLayout_72 = QHBoxLayout(self.groupBox_21)
-        self.horizontalLayout_72.setObjectName(u"horizontalLayout_72")
-        self.label_52 = QLabel(self.groupBox_21)
-        self.label_52.setObjectName(u"label_52")
-
-        self.horizontalLayout_72.addWidget(self.label_52)
-
-        self.ActivateFragmentSelectionTransp = QDoubleSpinBox(self.groupBox_21)
-        self.ActivateFragmentSelectionTransp.setObjectName(u"ActivateFragmentSelectionTransp")
-        self.ActivateFragmentSelectionTransp.setMaximum(1.000000000000000)
-        self.ActivateFragmentSelectionTransp.setSingleStep(0.100000000000000)
-        self.ActivateFragmentSelectionTransp.setValue(0.700000000000000)
-
-        self.horizontalLayout_72.addWidget(self.ActivateFragmentSelectionTransp)
-
-        self.horizontalSpacer_47 = QSpacerItem(228, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
-
-        self.horizontalLayout_72.addItem(self.horizontalSpacer_47)
-
-
-        self.verticalLayout_21.addWidget(self.groupBox_21)
-
-        self.AtomsInSelectedFragment = QListWidget(self.tab_26)
-        self.AtomsInSelectedFragment.setObjectName(u"AtomsInSelectedFragment")
-
-        self.verticalLayout_21.addWidget(self.AtomsInSelectedFragment)
-
-        self.frame_61 = QFrame(self.tab_26)
-        self.frame_61.setObjectName(u"frame_61")
-        self.frame_61.setFrameShape(QFrame.NoFrame)
-        self.frame_61.setFrameShadow(QFrame.Raised)
-        self.horizontalLayout_53 = QHBoxLayout(self.frame_61)
-        self.horizontalLayout_53.setObjectName(u"horizontalLayout_53")
-        self.label_55 = QLabel(self.frame_61)
-        self.label_55.setObjectName(u"label_55")
-
-        self.horizontalLayout_53.addWidget(self.label_55)
-
-        self.xminborder = QDoubleSpinBox(self.frame_61)
-        self.xminborder.setObjectName(u"xminborder")
-        self.xminborder.setMinimum(-99.989999999999995)
-
-        self.horizontalLayout_53.addWidget(self.xminborder)
-
-        self.label_57 = QLabel(self.frame_61)
-        self.label_57.setObjectName(u"label_57")
-
-        self.horizontalLayout_53.addWidget(self.label_57)
-
-        self.xmaxborder = QDoubleSpinBox(self.frame_61)
-        self.xmaxborder.setObjectName(u"xmaxborder")
-        self.xmaxborder.setMinimum(-99.989999999999995)
-        self.xmaxborder.setValue(2.000000000000000)
-
-        self.horizontalLayout_53.addWidget(self.xmaxborder)
-
-        self.changeFragment1StatusByX = QPushButton(self.frame_61)
-        self.changeFragment1StatusByX.setObjectName(u"changeFragment1StatusByX")
-        self.changeFragment1StatusByX.setEnabled(False)
-
-        self.horizontalLayout_53.addWidget(self.changeFragment1StatusByX)
-
-
-        self.verticalLayout_21.addWidget(self.frame_61)
-
-        self.frame_62 = QFrame(self.tab_26)
-        self.frame_62.setObjectName(u"frame_62")
-        self.frame_62.setFrameShape(QFrame.NoFrame)
-        self.frame_62.setFrameShadow(QFrame.Raised)
-        self.horizontalLayout_54 = QHBoxLayout(self.frame_62)
-        self.horizontalLayout_54.setObjectName(u"horizontalLayout_54")
-        self.label_58 = QLabel(self.frame_62)
-        self.label_58.setObjectName(u"label_58")
-
-        self.horizontalLayout_54.addWidget(self.label_58)
-
-        self.yminborder = QDoubleSpinBox(self.frame_62)
-        self.yminborder.setObjectName(u"yminborder")
-        self.yminborder.setMinimum(-99.989999999999995)
-
-        self.horizontalLayout_54.addWidget(self.yminborder)
-
-        self.label_59 = QLabel(self.frame_62)
-        self.label_59.setObjectName(u"label_59")
-
-        self.horizontalLayout_54.addWidget(self.label_59)
-
-        self.ymaxborder = QDoubleSpinBox(self.frame_62)
-        self.ymaxborder.setObjectName(u"ymaxborder")
-        self.ymaxborder.setMinimum(-99.989999999999995)
-        self.ymaxborder.setValue(2.000000000000000)
-
-        self.horizontalLayout_54.addWidget(self.ymaxborder)
-
-        self.changeFragment1StatusByY = QPushButton(self.frame_62)
-        self.changeFragment1StatusByY.setObjectName(u"changeFragment1StatusByY")
-        self.changeFragment1StatusByY.setEnabled(False)
-
-        self.horizontalLayout_54.addWidget(self.changeFragment1StatusByY)
-
-
-        self.verticalLayout_21.addWidget(self.frame_62)
-
-        self.frame_63 = QFrame(self.tab_26)
-        self.frame_63.setObjectName(u"frame_63")
-        self.frame_63.setFrameShape(QFrame.NoFrame)
-        self.frame_63.setFrameShadow(QFrame.Raised)
-        self.horizontalLayout_55 = QHBoxLayout(self.frame_63)
-        self.horizontalLayout_55.setObjectName(u"horizontalLayout_55")
-        self.label_60 = QLabel(self.frame_63)
-        self.label_60.setObjectName(u"label_60")
-
-        self.horizontalLayout_55.addWidget(self.label_60)
-
-        self.zminborder = QDoubleSpinBox(self.frame_63)
-        self.zminborder.setObjectName(u"zminborder")
-        self.zminborder.setMinimum(-99.989999999999995)
-
-        self.horizontalLayout_55.addWidget(self.zminborder)
-
-        self.label_61 = QLabel(self.frame_63)
-        self.label_61.setObjectName(u"label_61")
-
-        self.horizontalLayout_55.addWidget(self.label_61)
-
-        self.zmaxborder = QDoubleSpinBox(self.frame_63)
-        self.zmaxborder.setObjectName(u"zmaxborder")
-        self.zmaxborder.setMinimum(-99.989999999999995)
-        self.zmaxborder.setValue(2.000000000000000)
-
-        self.horizontalLayout_55.addWidget(self.zmaxborder)
-
-        self.changeFragment1StatusByZ = QPushButton(self.frame_63)
-        self.changeFragment1StatusByZ.setObjectName(u"changeFragment1StatusByZ")
-        self.changeFragment1StatusByZ.setEnabled(False)
-
-        self.horizontalLayout_55.addWidget(self.changeFragment1StatusByZ)
-
-
-        self.verticalLayout_21.addWidget(self.frame_63)
-
-        self.frame_64 = QFrame(self.tab_26)
-        self.frame_64.setObjectName(u"frame_64")
-        self.frame_64.setMinimumSize(QSize(0, 40))
-        self.frame_64.setFrameShape(QFrame.NoFrame)
-        self.frame_64.setFrameShadow(QFrame.Raised)
-        self.horizontalLayout_56 = QHBoxLayout(self.frame_64)
-        self.horizontalLayout_56.setObjectName(u"horizontalLayout_56")
-        self.horizontalLayout_56.setContentsMargins(-1, 0, -1, 0)
-        self.horizontalSpacer_28 = QSpacerItem(107, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
-
-        self.horizontalLayout_56.addItem(self.horizontalSpacer_28)
-
-        self.fragment1Clear = QPushButton(self.frame_64)
-        self.fragment1Clear.setObjectName(u"fragment1Clear")
-        self.fragment1Clear.setEnabled(False)
-
-        self.horizontalLayout_56.addWidget(self.fragment1Clear)
-
-        self.horizontalSpacer_29 = QSpacerItem(106, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
-
-        self.horizontalLayout_56.addItem(self.horizontalSpacer_29)
-
-
-        self.verticalLayout_21.addWidget(self.frame_64)
-
-        self.tabWidget_7.addTab(self.tab_26, "")
-
-        self.verticalLayout_89.addWidget(self.tabWidget_7)
+        self.verticalLayout_89.addWidget(self.AtomPropertiesText)
 
         self.groupBox_20 = QGroupBox(self.tab_20)
         self.groupBox_20.setObjectName(u"groupBox_20")
@@ -483,9 +294,10 @@ class Ui_MainWindow(object):
         self.tabWidget.addTab(self.tab_20, "")
         self.FormTabActions = QWidget()
         self.FormTabActions.setObjectName(u"FormTabActions")
+        self.verticalLayout_2 = QVBoxLayout(self.FormTabActions)
+        self.verticalLayout_2.setObjectName(u"verticalLayout_2")
         self.groupBox_24 = QGroupBox(self.FormTabActions)
         self.groupBox_24.setObjectName(u"groupBox_24")
-        self.groupBox_24.setGeometry(QRect(20, 10, 371, 234))
         self.groupBox_24.setMinimumSize(QSize(0, 0))
         self.verticalLayout_74 = QVBoxLayout(self.groupBox_24)
         self.verticalLayout_74.setObjectName(u"verticalLayout_74")
@@ -645,9 +457,11 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_74.addWidget(self.frame_82)
 
+
+        self.verticalLayout_2.addWidget(self.groupBox_24)
+
         self.groupBox_60 = QGroupBox(self.FormTabActions)
         self.groupBox_60.setObjectName(u"groupBox_60")
-        self.groupBox_60.setGeometry(QRect(40, 250, 371, 145))
         self.groupBox_60.setMinimumSize(QSize(0, 0))
         self.verticalLayout_75 = QVBoxLayout(self.groupBox_60)
         self.verticalLayout_75.setObjectName(u"verticalLayout_75")
@@ -701,12 +515,16 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_75.addWidget(self.frame_185)
 
+
+        self.verticalLayout_2.addWidget(self.groupBox_60)
+
         self.FormActionsPreSaveToFileFillSpace = QCheckBox(self.FormTabActions)
         self.FormActionsPreSaveToFileFillSpace.setObjectName(u"FormActionsPreSaveToFileFillSpace")
-        self.FormActionsPreSaveToFileFillSpace.setGeometry(QRect(30, 420, 371, 20))
+
+        self.verticalLayout_2.addWidget(self.FormActionsPreSaveToFileFillSpace)
+
         self.groupBox_61 = QGroupBox(self.FormTabActions)
         self.groupBox_61.setObjectName(u"groupBox_61")
-        self.groupBox_61.setGeometry(QRect(30, 480, 371, 200))
         self.groupBox_61.setMinimumSize(QSize(0, 200))
         self.horizontalLayout_204 = QHBoxLayout(self.groupBox_61)
         self.horizontalLayout_204.setObjectName(u"horizontalLayout_204")
@@ -731,6 +549,9 @@ class Ui_MainWindow(object):
 
 
         self.horizontalLayout_204.addWidget(self.frame_186)
+
+
+        self.verticalLayout_2.addWidget(self.groupBox_61)
 
         self.tabWidget.addTab(self.FormTabActions, "")
         self.tab_29 = QWidget()
@@ -1788,7 +1609,7 @@ class Ui_MainWindow(object):
         self.Form3Dand2DTabs.addItem(self.page_7, u"3D View")
         self.page_8 = QWidget()
         self.page_8.setObjectName(u"page_8")
-        self.page_8.setGeometry(QRect(0, 0, 665, 765))
+        self.page_8.setGeometry(QRect(0, 0, 79, 100))
         self.horizontalLayout = QHBoxLayout(self.page_8)
         self.horizontalLayout.setObjectName(u"horizontalLayout")
         self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
@@ -1845,7 +1666,6 @@ class Ui_MainWindow(object):
         self.retranslateUi(MainWindow)
 
         self.tabWidget.setCurrentIndex(0)
-        self.tabWidget_7.setCurrentIndex(0)
         self.tabWidget_9.setCurrentIndex(0)
         self.tabWidget_12.setCurrentIndex(1)
         self.Form3Dand2DTabs.setCurrentIndex(0)
@@ -1875,21 +1695,6 @@ class Ui_MainWindow(object):
         self.label_139.setText(QCoreApplication.translate("MainWindow", u"z", None))
         self.label_136.setText(QCoreApplication.translate("MainWindow", u"Scale", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.FormTabModel), QCoreApplication.translate("MainWindow", u"Model", None))
-        self.tabWidget_7.setTabText(self.tabWidget_7.indexOf(self.tab_25), QCoreApplication.translate("MainWindow", u"Single atom", None))
-        self.activate_fragment_selection_mode.setText(QCoreApplication.translate("MainWindow", u"Activate fragment selection mode", None))
-        self.groupBox_21.setTitle(QCoreApplication.translate("MainWindow", u"Visual effect for selected fragment", None))
-        self.label_52.setText(QCoreApplication.translate("MainWindow", u"Transparency", None))
-        self.label_55.setText(QCoreApplication.translate("MainWindow", u"x from", None))
-        self.label_57.setText(QCoreApplication.translate("MainWindow", u"to", None))
-        self.changeFragment1StatusByX.setText(QCoreApplication.translate("MainWindow", u"change status", None))
-        self.label_58.setText(QCoreApplication.translate("MainWindow", u"y from", None))
-        self.label_59.setText(QCoreApplication.translate("MainWindow", u"to", None))
-        self.changeFragment1StatusByY.setText(QCoreApplication.translate("MainWindow", u"change status", None))
-        self.label_60.setText(QCoreApplication.translate("MainWindow", u"z from", None))
-        self.label_61.setText(QCoreApplication.translate("MainWindow", u"to", None))
-        self.changeFragment1StatusByZ.setText(QCoreApplication.translate("MainWindow", u"change status", None))
-        self.fragment1Clear.setText(QCoreApplication.translate("MainWindow", u"clear", None))
-        self.tabWidget_7.setTabText(self.tabWidget_7.indexOf(self.tab_26), QCoreApplication.translate("MainWindow", u"Fragment", None))
         self.groupBox_20.setTitle(QCoreApplication.translate("MainWindow", u"Atom - atom distance", None))
         self.label_56.setText(QCoreApplication.translate("MainWindow", u"-", None))
         self.label_62.setText(QCoreApplication.translate("MainWindow", u":", None))
