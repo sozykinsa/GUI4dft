@@ -51,7 +51,7 @@ from program import crystal
 from program import ase
 from program.fdfdata import TFDFFile
 from utils.calculators import Calculators as Calculator
-from utils.calculators import gaps, hops, fill_tube
+from utils.calculators import add_adatom, gaps, hops, fill_tube
 from utils.importer_exporter import ImporterExporter
 from utils.electronic_prop_reader import read_siesta_bands, dos_from_file
 from ui.about import Ui_DialogAbout as Ui_about
@@ -3074,6 +3074,11 @@ class MainForm(QMainWindow):
         n = self.ui.number_of_atoms_to_add.value()
         print("Add ", n, " Li atoms")
         print("Not implemented")
+        model1 = deepcopy(self.ui.openGLWidget.get_model())
+        models = add_adatom(model1, n)
+        for model in models:
+            self.models.append(model)
+        self.fill_models_list()
 
     def hops_analyze(self) -> None:
         if len(self.models) == 0:

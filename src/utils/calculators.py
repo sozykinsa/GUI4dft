@@ -4,10 +4,12 @@ from typing import Tuple
 
 import math
 import random
+from itertools import combinations
 from concurrent.futures import ThreadPoolExecutor
 
 import numpy as np
 from numpy import polyfit
+from numpy.linalg import norm
 from scipy.optimize import leastsq
 from scipy.spatial import ConvexHull
 from scipy.spatial import Voronoi
@@ -112,10 +114,64 @@ def fill_tube(rad_tube, length: float, n_atoms: int, rad_atom, delta, n_prompts:
     return models
 
 
-def VoronoiAnalisis(Molecula, selectedAtom, maxDist):
-    new_model = Molecula.grow()
+def add_adatom(model, n):
+    model_hexa = CarbonStructure(model)
+    hexagons = model_hexa.hexagons_of_swnt()
+    n_hexa = len(hexagons)
+    print(n_hexa)
+    centers = hexagon_centers(model_hexa, hexagons)
+    n = n_hexa - 2
+    if n > n_hexa:
+        print("Not enough positions")
+    else:
+        #for i in combinations([str(k) for k in range(n_hexa)], n):
+        #    print(i, ' - '.join(i))
+        pass
+    return []
+
+
+def hexagon_centers(model, hexagons, normal=0):
+    pos = model.get_positions()
+    for hexagon in hexagons:
+        inds = np.array(hexagon, dtype=int)
+        vertices =pos[inds]
+        total = np.sum(vertices, axis=0) / 6
+        print(total)
+
+        # Example usage
+        point_on_perpendicular = find_perpendicular_point(vertices)
+        print("Coordinates of the point on the perpendicular from the center:", point_on_perpendicular)
+    pass
+
+
+# Function to find the center of the hexagon
+def find_center(vertices):
+    center = np.mean(vertices, axis=0)
+    return center
+
+
+def find_normal_vector(vertices):
+    v1 = vertices[1] - vertices[0]
+    v2 = vertices[2] - vertices[0]
+    normal_vector = np.cross(v1, v2)
+    return normal_vector / norm(normal_vector)
+
+
+# Function to find the coordinates of a point on the perpendicular
+def find_perpendicular_point(vertices):
+    center = find_center(vertices)
+    # Assume the perpendicular distance to be 1 unit, you can change as needed
+    perpendicular_distance = 1
+    # Direction vector along the perpendicular
+    direction_vector = find_normal_vector(vertices)
+    perpendicular_point = center + perpendicular_distance * direction_vector
+    return perpendicular_point
+
+
+def VoronoiAnalisis(model, selected_atom, max_dist):
+    new_model = model.grow()
     new_model.move_atoms_to_cell()
-    atoms_to_analise = new_model.indexes_of_atoms_in_sphere(range(0, len(new_model.atoms)), selectedAtom, maxDist)
+    atoms_to_analise = new_model.indexes_of_atoms_in_sphere(range(0, len(new_model.atoms)), selected_atom, max_dist)
     points = np.empty((len(atoms_to_analise), 3))
     k = 0
     for i in atoms_to_analise:
