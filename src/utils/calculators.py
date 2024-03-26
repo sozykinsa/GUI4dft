@@ -9,52 +9,11 @@ from concurrent.futures import ThreadPoolExecutor
 
 import numpy as np
 from numpy import polyfit
-from numpy.linalg import norm
 from scipy.optimize import leastsq
 from scipy.spatial import ConvexHull
 from scipy.spatial import Voronoi
 
-from core_atomistic.atom import Atom
-from core_atomistic.atomic_model import AtomicModel
 from core_atomistic import helpers
-from models.carbon_structure import CarbonStructure
-
-
-def nearest_hexagon_run(ar):
-    return ar[0].nearest_hexagon_of_swnt(ar[1], ar[2])
-
-
-def hops(models):
-    models[0].move_atoms_to_cell()
-    new_model = CarbonStructure(models[0])
-    atlist = models[0].indexes_of_atoms_with_charge(3)
-
-    hexagons = new_model.hexagons_of_swnt()
-
-    for atom in atlist:
-        arg = [[CarbonStructure(model), atom, hexagons] for model in models]
-        with ThreadPoolExecutor(max_workers=4) as pool:
-            neighbors = list(pool.map(nearest_hexagon_run, arg))
-        times = []
-        kol = 0
-
-        neighbor = neighbors[0]
-        for mol in range(0, len(neighbors)):
-            neighbor1 = neighbors[mol]
-            if neighbor == neighbor1:
-                kol += 1
-            else:
-                times.append([kol, neighbor])
-                kol = 0
-                neighbor = neighbor1
-
-        if kol > 0:
-            times.append([kol, neighbor])
-
-        print("final:")
-        for j in range(0, len(times)):
-            field = str(j) + "   " + str(times[j][0]) + "   " + str(times[j][1])
-            print(field)
 
 
 def gaps(bands, emaxf, eminf, homo, lumo) -> Tuple[float, float]:
@@ -76,96 +35,6 @@ def gaps(bands, emaxf, eminf, homo, lumo) -> Tuple[float, float]:
             lumo_min = lumo[i]
     gap_ind = lumo_min - homo_max
     return gap, gap_ind
-
-
-def fill_tube(rad_tube, length: float, n_atoms: int, rad_atom, delta, n_prompts: int, let, charge: int):
-    """Getting a list of configurations from nAtoms with a radius of radAtom in a cylinder with a radius of radTube
-    length. The maximum displacement of atoms in each of the models is not less than delta."""
-    models = []
-    random.seed(a=None, version=2)
-
-    for i in range(0, n_prompts):
-        molecule = AtomicModel()
-        j = 0
-
-        while (j < 1000) and (len(molecule.atoms) < n_atoms):
-            x = random.uniform(-rad_tube, rad_tube)
-            a = math.sqrt(rad_tube * rad_tube - x * x)
-            y = random.uniform(-a, a)
-            z = random.uniform(0, length)
-            molecule.add_atom(Atom([x, y, z, let, charge]), 2 * rad_atom)
-            j += 1
-
-        if len(molecule.atoms) < n_atoms:
-            rad_atom *= 0.95
-            print("Radius of atom was dicreased. New value: " + str(rad_atom))
-
-        if len(molecule.atoms) == n_atoms:
-            my_delta = 4 * rad_tube + length
-            for newMolecula in models:
-                myDelta2 = molecule.delta(newMolecula)
-                if myDelta2 < my_delta:
-                    my_delta = myDelta2
-            if my_delta > delta:
-                models.append(molecule)
-                print("Iter " + str(i) + "/" + str(n_prompts) + "| we found " + str(len(models)) + " structures")
-            if len(models) == 0:
-                models.append(molecule)
-    return models
-
-
-def add_adatom(model, n):
-    model_hexa = CarbonStructure(model)
-    hexagons = model_hexa.hexagons_of_swnt()
-    n_hexa = len(hexagons)
-    print(n_hexa)
-    centers = hexagon_centers(model_hexa, hexagons)
-    n = n_hexa - 2
-    if n > n_hexa:
-        print("Not enough positions")
-    else:
-        #for i in combinations([str(k) for k in range(n_hexa)], n):
-        #    print(i, ' - '.join(i))
-        pass
-    return []
-
-
-def hexagon_centers(model, hexagons, normal=0):
-    pos = model.get_positions()
-    for hexagon in hexagons:
-        inds = np.array(hexagon, dtype=int)
-        vertices =pos[inds]
-        total = np.sum(vertices, axis=0) / 6
-        print(total)
-
-        # Example usage
-        point_on_perpendicular = find_perpendicular_point(vertices)
-        print("Coordinates of the point on the perpendicular from the center:", point_on_perpendicular)
-    pass
-
-
-# Function to find the center of the hexagon
-def find_center(vertices):
-    center = np.mean(vertices, axis=0)
-    return center
-
-
-def find_normal_vector(vertices):
-    v1 = vertices[1] - vertices[0]
-    v2 = vertices[2] - vertices[0]
-    normal_vector = np.cross(v1, v2)
-    return normal_vector / norm(normal_vector)
-
-
-# Function to find the coordinates of a point on the perpendicular
-def find_perpendicular_point(vertices):
-    center = find_center(vertices)
-    # Assume the perpendicular distance to be 1 unit, you can change as needed
-    perpendicular_distance = 1
-    # Direction vector along the perpendicular
-    direction_vector = find_normal_vector(vertices)
-    perpendicular_point = center + perpendicular_distance * direction_vector
-    return perpendicular_point
 
 
 def VoronoiAnalisis(model, selected_atom, max_dist):

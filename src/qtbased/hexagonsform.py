@@ -7,13 +7,9 @@ except Exception as e:
     pass
 import math
 import sys
-from multiprocessing import Pool
-from time import time
 from pathlib import Path
 from copy import deepcopy
-from operator import itemgetter
 import matplotlib
-import matplotlib.pyplot as plt
 matplotlib.use('QtAgg')
 import numpy as np
 
@@ -23,37 +19,21 @@ from qtpy.QtWidgets import QAction, QDialog, QFileDialog, QMessageBox, QColorDia
 from qtpy.QtWidgets import QDoubleSpinBox, QMainWindow, QShortcut, QTableWidgetItem, QTreeWidgetItem
 from qtpy.QtWidgets import QTreeWidgetItemIterator
 
-from ase.build import molecule, bulk
-
-from core_atomistic.atom import Atom
 from core_atomistic.atomic_model import AtomicModel
 from core_atomistic.periodic_table import TPeriodTable
 from core_atomistic import helpers
 
-from models.capedswcnt import CapedSWNT
-from models.bint import BiNT
-from models.hexagonal_plane import HexagonalPlane, HexagonalPlaneHex
-from models.meta_graphene import MetaGraphene
-from models.swnt import SWNT
-from models.swgnt import SWGNT
 from models.gaussiancube import GaussianCube
 from models.volumericdata import VolumericData
 from models.xsf import XSF
 from qtbased.image3dexporter import Image3Dexporter
 from program.siesta import TSIESTA
-from program.qe import model_to_qe_pw
-from program.wien import model_to_wien_struct
 from program.vasp import TVASP, vasp_dos, model_to_vasp_poscar, abc_from_outcar
-from program.dftb import model_to_dftb_d0
-from program.lammps import model_to_lammps_input
-from program.octopus import model_to_octopus_input
 from program import crystal
-from program import ase
 from program.fdfdata import TFDFFile
-from utils.calculators import Calculators as Calculator
-from utils.calculators import add_adatom, gaps, hops, fill_tube
+#from utils.calculators import gaps,
 from utils.importer_exporter import ImporterExporter
-from utils.electronic_prop_reader import read_siesta_bands, dos_from_file
+from carbon_hexa.carbon_structure import add_adatom, hops, fill_tube
 from ui.about import Ui_DialogAbout as Ui_about
 from ui.form_hexa import Ui_MainWindow as Ui_form
 
@@ -614,32 +594,6 @@ class MainForm(QMainWindow):
         for i in range(0, len(properties)):
             self.ui.FormModelTableProperties.setItem(i, 0, QTableWidgetItem(properties[i][0]))
             self.ui.FormModelTableProperties.setItem(i, 1, QTableWidgetItem(properties[i][1]))
-
-    def fill_volumeric_data(self, data, tree=" "):
-        if tree == " ":
-            tree = self.ui.FormActionsPostTreeSurface
-        data_type = data.type
-        data = data.blocks
-        self.clear_qtree_widget(tree)
-
-        if data_type == "TXSF":
-            for dat in data:
-                text = (dat[0].title.split('_')[3]).split(':')[0].rstrip()
-                parent = QTreeWidgetItem(tree)
-                parent.setText(0, "{}".format(text) + "3D")
-                for da in dat:
-                    child = QTreeWidgetItem(parent)
-                    child.setText(0, "{}".format(text + ':' + da.title.split(':')[1]))
-
-        if data_type == "TGaussianCube":
-            for dat in data:
-                text = dat[0].title.split(".cube")[0].rstrip()
-                parent = QTreeWidgetItem(tree)
-                parent.setText(0, "{}".format(text))
-
-                child = QTreeWidgetItem(parent)
-                child.setText(0, "{}".format(text))
-        tree.show()
 
     def fill_bonds_charges(self):
         bonds_category = self.ui.FormActionsPostComboBonds.currentText()
@@ -1480,22 +1434,6 @@ class MainForm(QMainWindow):
             return
         hops(self.models)
 
-
-    def parse_volumeric_data_selected(self, filename: str = ""):
-        if filename.endswith(".XSF"):
-            self.volumeric_data = XSF()
-        if filename.endswith(".cube"):
-            self.volumeric_data = GaussianCube()
-        if self.volumeric_data.parse(filename):
-            self.fill_volumeric_data(self.volumeric_data)
-        self.ui.FormActionsPostButSurfaceLoadData.setEnabled(True)
-        self.clear_qtree_widget(self.ui.FormActionsPostTreeSurface2)
-        self.ui.FormActionsPosEdit3DData2.setText("")
-        self.clear_form_isosurface_data2_n()
-        self.ui.CalculateTheVolumericDataDifference.setEnabled(False)
-        self.ui.CalculateTheVolumericDataSum.setEnabled(False)
-        self.ui.VolumrricDataGrid2.setTitle("Grid")
-        self.ui.FormActionsPostButSurfaceLoadData2.setEnabled(False)
 
     @staticmethod
     def change_color_of_cell_prompt(table):  # pragma: no cover

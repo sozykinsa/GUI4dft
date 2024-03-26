@@ -1,9 +1,7 @@
 from models.capedswcnt import CapedSWNT
 from models.graphene import Graphene
-from models.carbon_structure import CarbonStructure
 from models.bint import BiNT
 from models.swnt import SWNT
-import math
 
 
 def test_swnt():
@@ -44,18 +42,3 @@ def test_caped_swnt():
 
     model = CapedSWNT(19, 0, 0, 1, 2, 2, 0, 2, 0)
     assert len(model.atoms) == 345
-
-
-def test_distances() -> None:
-    model = SWNT(3, 3, 0, 2)
-    carb_model = CarbonStructure(model)
-    distances = carb_model.distances(range(carb_model.n_atoms()))
-    assert abs(distances[0][1] - 1.42819119) < 1e-4
-    assert abs(distances[0][13] - 1.42819119) < 1e-4
-
-
-def test_carbon_structure() -> None:
-    model = SWNT(3, 3, 0, 4)
-    carb_model = CarbonStructure(model)
-    hexagons = carb_model.hexagons_of_swnt()
-    assert len(hexagons) == 24

@@ -7,8 +7,6 @@ except Exception as e:
     pass
 import math
 import sys
-from multiprocessing import Pool
-from time import time
 from pathlib import Path
 from copy import deepcopy
 from operator import itemgetter
@@ -51,7 +49,7 @@ from program import crystal
 from program import ase
 from program.fdfdata import TFDFFile
 from utils.calculators import Calculators as Calculator
-from utils.calculators import add_adatom, gaps, hops, fill_tube
+from utils.calculators import gaps
 from utils.importer_exporter import ImporterExporter
 from utils.electronic_prop_reader import read_siesta_bands, dos_from_file
 from ui.about import Ui_DialogAbout as Ui_about
@@ -1104,10 +1102,6 @@ class MainForm(QMainWindow):
             energies = crystal.energies(file_name)
             self.fill_energies(energies)
 
-        if helpers.check_format(file_name) == "SIESTAfdf":
-            c = np.linalg.norm(self.ui.openGLWidget.main_model.lat_vector3)
-            self.ui.FormActionsPreZSizeFillSpace.setValue(c)
-
     def fill_energies(self, energies: list[float]) -> None:
         """Plot energies for steps of output."""
         if len(energies) == 0:
@@ -1254,7 +1248,6 @@ class MainForm(QMainWindow):
             a, b, c = abc_from_outcar(f_name)
 
         self.fill_cell_info_row(energy, volume, a, b, c)
-        self.ui.FormActionsPreZSizeFillSpace.setValue(c)
         self.work_dir = os.path.dirname(f_name)
         self.save_active_folder()
 
