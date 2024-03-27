@@ -13,8 +13,8 @@ from program.dftb import atoms_from_gen
 from program.lammps import atoms_trajectory_step
 from program.vasp import fermi_energy_from_doscar, atoms_from_poscar, atoms_from_outcar, model_to_vasp_poscar
 from program.wien import atoms_from_struct
-from models.gaussiancube import GaussianCube
-from models.xsf import XSF
+from program.gaussiancube import GaussianCube
+from program.xsf import XSF
 
 
 class ImporterExporter(object):

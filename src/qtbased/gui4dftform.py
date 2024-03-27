@@ -34,9 +34,9 @@ from models.hexagonal_plane import HexagonalPlane, HexagonalPlaneHex
 from models.meta_graphene import MetaGraphene
 from models.swnt import SWNT
 from models.swgnt import SWGNT
-from models.gaussiancube import GaussianCube
-from models.volumericdata import VolumericData
-from models.xsf import XSF
+from program.gaussiancube import GaussianCube
+from program.volumericdata import VolumericData
+from program.xsf import XSF
 from qtbased.image3dexporter import Image3Dexporter
 from program.siesta import TSIESTA
 from program.qe import model_to_qe_pw
@@ -50,7 +50,7 @@ from program import ase
 from program.fdfdata import TFDFFile
 from utils.calculators import Calculators as Calculator
 from utils.calculators import gaps
-from utils.importer_exporter import ImporterExporter
+from program.importer_exporter import ImporterExporter
 from utils.electronic_prop_reader import read_siesta_bands, dos_from_file
 from ui.about import Ui_DialogAbout as Ui_about
 from ui.form import Ui_MainWindow as Ui_form

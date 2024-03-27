@@ -1,4 +1,4 @@
-from utils.importer_exporter import ImporterExporter
+from program.importer_exporter import ImporterExporter
 
 
 def test_fdf_parser(tests_path):
