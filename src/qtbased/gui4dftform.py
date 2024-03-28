@@ -67,8 +67,6 @@ class MainForm(QMainWindow):
         self.ui = Ui_form()
         self.ui.setupUi(self)
 
-        self.program: str = "SIESTA"  # mode of operation fot program
-
         self.models = []
         self.ui.openGLWidget.set_form_elements(self.ui.FormSettingsViewCheckAtomSelection,
                                                self.orientation_model_changed, self.selected_atom_position,
@@ -2944,7 +2942,8 @@ class MainForm(QMainWindow):
             return
         try:
             model = self.models[self.active_model_id]
-            text = model_to_lammps_input(model)
+            fl = self.ui.lammps_with_charge.isChecked()
+            text = model_to_lammps_input(model, charge=fl)
             if len(text) > 0:
                 self.ui.FormActionsPreTextFDF.setText(text)
         except Exception as e:

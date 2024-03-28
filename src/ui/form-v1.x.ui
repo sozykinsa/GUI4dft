@@ -4374,8 +4374,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>98</width>
-                 <height>28</height>
+                 <width>100</width>
+                 <height>30</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -5646,6 +5646,50 @@
                 </widget>
                </item>
                <item>
+                <widget class="QFrame" name="frame_29">
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="frameShape">
+                  <enum>QFrame::StyledPanel</enum>
+                 </property>
+                 <property name="frameShadow">
+                  <enum>QFrame::Raised</enum>
+                 </property>
+                 <layout class="QHBoxLayout" name="horizontalLayout_181">
+                  <property name="leftMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="topMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="rightMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="bottomMargin">
+                   <number>0</number>
+                  </property>
+                  <item>
+                   <widget class="QPushButton" name="dftb_0d_generate">
+                    <property name="text">
+                     <string>DFTB+ 0D</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QPushButton" name="octopus_generate">
+                    <property name="text">
+                     <string>Octopus</string>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </widget>
+               </item>
+               <item>
                 <widget class="QGroupBox" name="groupBox_55">
                  <property name="minimumSize">
                   <size>
@@ -5734,20 +5778,17 @@
              </widget>
             </item>
             <item>
-             <widget class="QFrame" name="frame_29">
+             <widget class="QGroupBox" name="groupBox_24">
               <property name="minimumSize">
                <size>
                 <width>0</width>
                 <height>0</height>
                </size>
               </property>
-              <property name="frameShape">
-               <enum>QFrame::StyledPanel</enum>
+              <property name="title">
+               <string>LAMMPS</string>
               </property>
-              <property name="frameShadow">
-               <enum>QFrame::Raised</enum>
-              </property>
-              <layout class="QHBoxLayout" name="horizontalLayout_181">
+              <layout class="QHBoxLayout" name="horizontalLayout_95">
                <property name="leftMargin">
                 <number>0</number>
                </property>
@@ -5766,7 +5807,7 @@
                   <bool>true</bool>
                  </property>
                  <property name="text">
-                  <string>LAMMPS</string>
+                  <string>lmp</string>
                  </property>
                  <property name="checkable">
                   <bool>false</bool>
@@ -5774,16 +5815,9 @@
                 </widget>
                </item>
                <item>
-                <widget class="QPushButton" name="dftb_0d_generate">
+                <widget class="QCheckBox" name="lammps_with_charge">
                  <property name="text">
-                  <string>DFTB+ 0D</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QPushButton" name="octopus_generate">
-                 <property name="text">
-                  <string>Octopus</string>
+                  <string>with charge</string>
                  </property>
                 </widget>
                </item>
@@ -12519,8 +12553,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>98</width>
-         <height>100</height>
+         <width>665</width>
+         <height>765</height>
         </rect>
        </property>
        <attribute name="label">

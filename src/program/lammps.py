@@ -3,7 +3,7 @@ import numpy as np
 from core_atomistic.atomic_model import AtomicModel
 
 
-def model_to_lammps_input(model: AtomicModel):
+def model_to_lammps_input(model: AtomicModel, charge=False):
     """
      # Comment
 
@@ -36,22 +36,24 @@ def model_to_lammps_input(model: AtomicModel):
     text += str(n_atoms) + " atoms\n"
     types = model.types_of_atoms()
     text += str(len(types)) + " atom types\n\n"
+    a, b, c, al, bt, gm = model.cell_params()
 
-    text += "0.000000000000      36.920000000000  xlo xhi\n"
-    text += "0.000000000000      36.920000000000  ylo yhi\n"
-    text += "0.000000000000      36.920000000000  zlo zhi\n\n"
+    text += "0.000000000000      " + str(a) + "  xlo xhi\n"
+    text += "0.000000000000      " + str(b) + "  ylo yhi\n"
+    text += "0.000000000000      " + str(c) + "  zlo zhi\n\n"
 
     text += "Masses\n\n"
     for i in range(len(types)):
         item = model.mendeley.Atoms[types[i][0]]
         text += str(i + 1) + " " + str(item.mass) + "  #" + item.let + "\n"
 
-    text += "Atoms # atomic\n\n"
+    text += "\nAtoms # atomic\n\n"
     charge_to_type, text1 = model.get_charge_to_type_array()
 
+    ch = " 0.0 " if charge else ""
     for i in range(n_atoms):
         xyz_st = model[i].xyz_string
-        text += str(i + 1) + "  " + str(charge_to_type[model[i].charge]) + " " + xyz_st + "\n"
+        text += str(i + 1) + "  " + str(charge_to_type[model[i].charge]) + ch + " " + xyz_st + "\n"
     return text
 
 
