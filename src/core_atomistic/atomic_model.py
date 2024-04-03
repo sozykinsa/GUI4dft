@@ -25,6 +25,7 @@ class AtomicModel(object):
         self.atoms: List[Atom] = []
         self.bonds = []
         self.bonds_per = []  # for exact calculation in form
+        self.dynamic_bonds: bool = True
 
         self.name = ""
         self.lat_vectors = 100 * np.eye(3)
@@ -632,13 +633,18 @@ class AtomicModel(object):
         return self.bonds_per
 
     def find_bonds_fast(self):
+        """The method returns list of bonds of the molecule."""
+        if not (self.dynamic_bonds or len(self.bonds) == 0):
+            return
+
         self.bonds = []
         for i in range(0, len(self.atoms)):
             for j in range(i + 1, len(self.atoms)):
-                rx2 = math.pow(self.atoms[i].x - self.atoms[j].x, 2)
-                ry2 = math.pow(self.atoms[i].y - self.atoms[j].y, 2)
-                rz2 = math.pow(self.atoms[i].z - self.atoms[j].z, 2)
-                r = math.sqrt(rx2 + ry2 + rz2)
+                #rx2 = math.pow(self.atoms[i].x - self.atoms[j].x, 2)
+                #ry2 = math.pow(self.atoms[i].y - self.atoms[j].y, 2)
+                #rz2 = math.pow(self.atoms[i].z - self.atoms[j].z, 2)
+                #r = math.sqrt(rx2 + ry2 + rz2)
+                r = norm(self.atoms[i].xyz - self.atoms[j].xyz)
                 r_tab = self.mendeley.Bonds[self.atoms[i].charge][self.atoms[j].charge]
                 if (r > 1e-4) and (r < 1.2 * r_tab):
                     self.bonds.append([i, j])

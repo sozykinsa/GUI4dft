@@ -8,6 +8,7 @@ from program.fdfdata import TFDFFile
 from program.siesta import TSIESTA
 from program.firefly import atomic_model_to_firefly_inp
 from program.crystal import structure_of_primitive_cell, structure_opt_step
+from program.chemdraw import model_from_ct
 from program.qe import atoms_from_pwout
 from program.dftb import atoms_from_gen
 from program.lammps import atoms_trajectory_step
@@ -51,6 +52,9 @@ class ImporterExporter(object):
 
             elif file_format == "GAUSSIAN_cube":
                 models = GaussianCube.get_atoms(filename)
+
+            elif file_format == "chemDrawCT":
+                models = model_from_ct(filename)
 
             elif file_format == "SiestaXYZ":
                 models = AtomicModel.atoms_from_xyz(filename)
