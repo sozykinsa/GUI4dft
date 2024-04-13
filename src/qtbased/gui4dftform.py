@@ -119,7 +119,7 @@ class MainForm(QMainWindow):
         self.ui.FormModelComboModels.currentIndexChanged.connect(self.model_to_screen)
         self.ui.FormActionsPostTreeSurface.itemSelectionChanged.connect(self.type_of_surface)
         self.ui.PropertyForColorOfAtom.currentIndexChanged.connect(self.color_atoms_with_property)
-        self.ui.ColorAtomsProperty.stateChanged.connect(self.color_atoms_with_property)
+        self.ui.ColorAtomsProperty.clicked.connect(self.color_atoms_with_property)
 
         self.ui.font_size_3d.valueChanged.connect(self.font_size_3d_changed)
         self.ui.property_shift_x.valueChanged.connect(self.property_position_changed)
@@ -211,6 +211,7 @@ class MainForm(QMainWindow):
         self.ui.modify_cell_frac_coord.clicked.connect(self.modify_cell_frac_coord)
         self.ui.FormActionsPostButGetBonds.clicked.connect(self.get_bonds)
         self.ui.PropertyAtomAtomDistanceGet.clicked.connect(self.get_bond)
+        self.ui.clusters_search.clicked.connect(self.clusters_search)
         self.ui.FormStylesFor2DGraph.clicked.connect(self.set_2d_graph_styles)
         self.ui.FormModifyTwist.clicked.connect(self.twist_model)
         self.ui.model_move_by_vector.clicked.connect(self.move_model)
@@ -1200,6 +1201,8 @@ class MainForm(QMainWindow):
         tree.show()
 
     def fill_bonds(self):
+        if len(self.models) == 0:
+            return
         c1, c2 = self.fill_bonds_charges()
         self.ui.FormActionsPosTableBonds.setRowCount(0)
 
@@ -1287,6 +1290,14 @@ class MainForm(QMainWindow):
         j = self.ui.PropertyAtomAtomDistanceAt2.value()
         bond = round(self.ui.openGLWidget.main_model.atom_atom_distance(i - 1, j - 1), 4)
         self.ui.PropertyAtomAtomDistance.setText(str(bond) + " A")
+
+    def clusters_search(self):    # pragma: no cover
+        clusters = self.ui.openGLWidget.main_model.find_clusters()
+        print(len(clusters), "clusters")
+        for cluster in clusters:
+            print(len(cluster))
+
+        # self.ui.clusters_info.setText(str(len(clusters)))
 
     def fit_with(self):   # pragma: no cover
         xf, yf, rf = self.models[self.active_model_id].fit_with_cylinder()

@@ -5522,6 +5522,38 @@ class Ui_MainWindow(object):
         self.verticalLayout_55.addWidget(self.groupBox_53)
 
         self.tabWidget_6.addTab(self.tab_17, "")
+        self.tab_19 = QWidget()
+        self.tab_19.setObjectName(u"tab_19")
+        self.verticalLayout_74 = QVBoxLayout(self.tab_19)
+        self.verticalLayout_74.setObjectName(u"verticalLayout_74")
+        self.frame_185 = QFrame(self.tab_19)
+        self.frame_185.setObjectName(u"frame_185")
+        self.frame_185.setFrameShape(QFrame.StyledPanel)
+        self.frame_185.setFrameShadow(QFrame.Raised)
+        self.horizontalLayout_98 = QHBoxLayout(self.frame_185)
+        self.horizontalLayout_98.setObjectName(u"horizontalLayout_98")
+        self.horizontalSpacer_71 = QSpacerItem(117, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_98.addItem(self.horizontalSpacer_71)
+
+        self.clusters_search = QPushButton(self.frame_185)
+        self.clusters_search.setObjectName(u"clusters_search")
+
+        self.horizontalLayout_98.addWidget(self.clusters_search)
+
+        self.horizontalSpacer_72 = QSpacerItem(117, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_98.addItem(self.horizontalSpacer_72)
+
+
+        self.verticalLayout_74.addWidget(self.frame_185)
+
+        self.clusters_info = QListWidget(self.tab_19)
+        self.clusters_info.setObjectName(u"clusters_info")
+
+        self.verticalLayout_74.addWidget(self.clusters_info)
+
+        self.tabWidget_6.addTab(self.tab_19, "")
         self.tab_50 = QWidget()
         self.tab_50.setObjectName(u"tab_50")
         self.verticalLayout_104 = QVBoxLayout(self.tab_50)
@@ -6009,23 +6041,84 @@ class Ui_MainWindow(object):
         self.horizontalLayout_112 = QHBoxLayout(self.frame_36)
         self.horizontalLayout_112.setObjectName(u"horizontalLayout_112")
         self.horizontalLayout_112.setContentsMargins(0, 0, 0, 0)
-        self.ColorAtomsProperty = QCheckBox(self.frame_36)
-        self.ColorAtomsProperty.setObjectName(u"ColorAtomsProperty")
-
-        self.horizontalLayout_112.addWidget(self.ColorAtomsProperty)
-
-        self.PropertyForColorOfAtom = QComboBox(self.frame_36)
-        self.PropertyForColorOfAtom.setObjectName(u"PropertyForColorOfAtom")
-
-        self.horizontalLayout_112.addWidget(self.PropertyForColorOfAtom)
-
-        self.show_property_text = QCheckBox(self.frame_36)
-        self.show_property_text.setObjectName(u"show_property_text")
-
-        self.horizontalLayout_112.addWidget(self.show_property_text)
-
 
         self.verticalLayout_31.addWidget(self.frame_36)
+
+        self.groupBox_60 = QGroupBox(self.tab_32)
+        self.groupBox_60.setObjectName(u"groupBox_60")
+        self.groupBox_60.setMinimumSize(QSize(0, 200))
+        self.horizontalLayout_97 = QHBoxLayout(self.groupBox_60)
+        self.horizontalLayout_97.setObjectName(u"horizontalLayout_97")
+        self.frame_11 = QFrame(self.groupBox_60)
+        self.frame_11.setObjectName(u"frame_11")
+        self.frame_11.setFrameShape(QFrame.StyledPanel)
+        self.frame_11.setFrameShadow(QFrame.Raised)
+        self.verticalLayout_10 = QVBoxLayout(self.frame_11)
+        self.verticalLayout_10.setObjectName(u"verticalLayout_10")
+        self.radioButton = QRadioButton(self.frame_11)
+        self.radioButton.setObjectName(u"radioButton")
+
+        self.verticalLayout_10.addWidget(self.radioButton)
+
+        self.ColorAtomsProperty = QRadioButton(self.frame_11)
+        self.ColorAtomsProperty.setObjectName(u"ColorAtomsProperty")
+
+        self.verticalLayout_10.addWidget(self.ColorAtomsProperty)
+
+        self.radioButton_5 = QRadioButton(self.frame_11)
+        self.radioButton_5.setObjectName(u"radioButton_5")
+
+        self.verticalLayout_10.addWidget(self.radioButton_5)
+
+
+        self.horizontalLayout_97.addWidget(self.frame_11)
+
+        self.frame_82 = QFrame(self.groupBox_60)
+        self.frame_82.setObjectName(u"frame_82")
+        self.frame_82.setFrameShape(QFrame.StyledPanel)
+        self.frame_82.setFrameShadow(QFrame.Raised)
+        self.verticalLayout_60 = QVBoxLayout(self.frame_82)
+        self.verticalLayout_60.setObjectName(u"verticalLayout_60")
+        self.frame_83 = QFrame(self.frame_82)
+        self.frame_83.setObjectName(u"frame_83")
+        self.frame_83.setMinimumSize(QSize(0, 30))
+        self.frame_83.setFrameShape(QFrame.StyledPanel)
+        self.frame_83.setFrameShadow(QFrame.Raised)
+
+        self.verticalLayout_60.addWidget(self.frame_83)
+
+        self.frame_95 = QFrame(self.frame_82)
+        self.frame_95.setObjectName(u"frame_95")
+        self.frame_95.setFrameShape(QFrame.StyledPanel)
+        self.frame_95.setFrameShadow(QFrame.Raised)
+        self.horizontalLayout_96 = QHBoxLayout(self.frame_95)
+        self.horizontalLayout_96.setObjectName(u"horizontalLayout_96")
+        self.PropertyForColorOfAtom = QComboBox(self.frame_95)
+        self.PropertyForColorOfAtom.setObjectName(u"PropertyForColorOfAtom")
+
+        self.horizontalLayout_96.addWidget(self.PropertyForColorOfAtom)
+
+        self.show_property_text = QCheckBox(self.frame_95)
+        self.show_property_text.setObjectName(u"show_property_text")
+
+        self.horizontalLayout_96.addWidget(self.show_property_text)
+
+
+        self.verticalLayout_60.addWidget(self.frame_95)
+
+        self.frame_96 = QFrame(self.frame_82)
+        self.frame_96.setObjectName(u"frame_96")
+        self.frame_96.setMinimumSize(QSize(0, 40))
+        self.frame_96.setFrameShape(QFrame.StyledPanel)
+        self.frame_96.setFrameShadow(QFrame.Raised)
+
+        self.verticalLayout_60.addWidget(self.frame_96)
+
+
+        self.horizontalLayout_97.addWidget(self.frame_82)
+
+
+        self.verticalLayout_31.addWidget(self.groupBox_60)
 
         self.verticalSpacer_9 = QSpacerItem(20, 374, QSizePolicy.Minimum, QSizePolicy.Expanding)
 
@@ -7224,6 +7317,8 @@ class Ui_MainWindow(object):
         self.label_130.setText(QCoreApplication.translate("MainWindow", u"Y label", None))
         self.cell_parameter_label_y.setText(QCoreApplication.translate("MainWindow", u"Energy, eV", None))
         self.tabWidget_6.setTabText(self.tabWidget_6.indexOf(self.tab_17), QCoreApplication.translate("MainWindow", u"Cell parameter", None))
+        self.clusters_search.setText(QCoreApplication.translate("MainWindow", u"Search", None))
+        self.tabWidget_6.setTabText(self.tabWidget_6.indexOf(self.tab_19), QCoreApplication.translate("MainWindow", u"Clusters", None))
         self.groupBox_54.setTitle(QCoreApplication.translate("MainWindow", u"Fit with", None))
         self.fit_with_cylinder.setText(QCoreApplication.translate("MainWindow", u"cylinder", None))
         self.fit_with_sphere.setText(QCoreApplication.translate("MainWindow", u"sphere", None))
@@ -7258,7 +7353,10 @@ class Ui_MainWindow(object):
         self.label_81.setText(QCoreApplication.translate("MainWindow", u"Figures in property", None))
         self.groupBox_34.setTitle(QCoreApplication.translate("MainWindow", u"OpenGl", None))
         self.OpenGL_GL_CULL_FACE.setText(QCoreApplication.translate("MainWindow", u"GL_CULL_FACE", None))
-        self.ColorAtomsProperty.setText(QCoreApplication.translate("MainWindow", u"Color atoms with property", None))
+        self.groupBox_60.setTitle(QCoreApplication.translate("MainWindow", u"Color atoms according to", None))
+        self.radioButton.setText(QCoreApplication.translate("MainWindow", u"atom type", None))
+        self.ColorAtomsProperty.setText(QCoreApplication.translate("MainWindow", u"property", None))
+        self.radioButton_5.setText(QCoreApplication.translate("MainWindow", u"cluster ID", None))
         self.show_property_text.setText(QCoreApplication.translate("MainWindow", u"Show property", None))
         self.tabWidget_9.setTabText(self.tabWidget_9.indexOf(self.tab_32), QCoreApplication.translate("MainWindow", u"View 3D", None))
         self.groupBox_9.setTitle(QCoreApplication.translate("MainWindow", u"Colors", None))
