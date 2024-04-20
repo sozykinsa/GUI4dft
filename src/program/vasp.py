@@ -67,35 +67,89 @@ class TVASP:
             my_file.close()
         return property
 
-    @staticmethod
-    def abc(filename):
-        """direct lattice vectors"""
-        prop = "direct lattice vectors"
-        a, b, c = 0.0, 0.0, 0.0
-        if os.path.exists(filename):
-            my_file = open(filename)
+
+def atoms_from_outcar(filename):
+    molecules = []
+    if os.path.exists(filename):
+        period_table = TPeriodTable()
+        all_vectors = vectors_from_outcar(filename)
+        specieses = specieses_from_outcar(filename)
+        prop = "POSITION"
+        my_file = open(filename)
+        str1 = my_file.readline()
+        while str1 != '':
+            if (str1 != '') and (str1.find(prop) >= 0):
+                my_file.readline()
+                new_str = AtomicModel()
+                for let in specieses:
+                    str1 = my_file.readline()
+                    data = str1.split()
+                    xyz = np.array([float(data[0]), float(data[1]), float(data[2])])
+                    new_str.add_atom_with_data(xyz, period_table.get_charge_by_letter(let))
+                vectors = all_vectors[len(molecules) + 1]
+                new_str.set_lat_vectors(vectors[0], vectors[1], vectors[2])
+                molecules.append(new_str)
             str1 = my_file.readline()
-            model = AtomicModel()
-            while str1 != '':
-                if (str1 != '') and (str1.find(prop) >= 0):
-                    str1 = my_file.readline()
-                    row1 = re.findall(r"[0-9,\.,-]+", str1)
-                    str1 = my_file.readline()
-                    row2 = re.findall(r"[0-9,\.,-]+", str1)
-                    str1 = my_file.readline()
-                    row3 = re.findall(r"[0-9,\.,-]+", str1)
+        my_file.close()
+    return molecules
 
-                    v1 = np.array((row1[0], row1[1], row1[2]), dtype=float)
-                    v2 = np.array((row2[0], row2[1], row2[2]), dtype=float)
-                    v3 = np.array((row3[0], row3[1], row3[2]), dtype=float)
-                    model.set_lat_vectors(v1, v2, v3)
-                    a, b, c, al, bet, gam = model.cell_params()
+
+def specieses_from_outcar(filename):
+    specieses = []
+    ions_per_type = ""
+    types = []
+    if os.path.exists(filename):
+        my_file = open(filename)
+        str1 = my_file.readline()
+        while str1 != '':
+            if str1.find("ions per type") >= 0:
+                ions_per_type = helpers.spacedel(str1.split("ions per type =")[1]).split(" ")
+            if str1.find("VRHFIN") >= 0:
+                types.append(str1.split("VRHFIN =")[1].split(":")[0])
+            str1 = my_file.readline()
+        my_file.close()
+    for n, let in zip(ions_per_type, types):
+        for i in range(int(n)):
+            specieses.append(let)
+    return specieses
+
+
+def abc_from_outcar(filename):
+    """direct lattice vectors"""
+    model = AtomicModel()
+    vecs = vectors_from_outcar(filename)
+    if len(vecs) > 0:
+        model.set_lat_vectors(vecs[-1][0], vecs[-1][1], vecs[-1][2])
+    a, b, c, al, bet, gam = model.cell_params()
+    return a, b, c
+
+
+def vectors_from_outcar(filename):
+    prop = "direct lattice vectors"
+    all_vectors = []
+    vectors = np.zeros((3, 3), dtype=float)
+    if os.path.exists(filename):
+        my_file = open(filename)
+        str1 = my_file.readline()
+        while str1 != '':
+            if (str1 != '') and (str1.find(prop) >= 0):
                 str1 = my_file.readline()
-            my_file.close()
-        return a, b, c
+                row1 = re.findall(r"[0-9,\.,-]+", str1)
+                str1 = my_file.readline()
+                row2 = re.findall(r"[0-9,\.,-]+", str1)
+                str1 = my_file.readline()
+                row3 = re.findall(r"[0-9,\.,-]+", str1)
+
+                vectors[0] = np.array((row1[0], row1[1], row1[2]), dtype=float)
+                vectors[1] = np.array((row2[0], row2[1], row2[2]), dtype=float)
+                vectors[2] = np.array((row3[0], row3[1], row3[2]), dtype=float)
+                all_vectors.append(vectors)
+            str1 = my_file.readline()
+        my_file.close()
+    return all_vectors
 
 
-def atoms_from_POSCAR(filename):
+def atoms_from_poscar(filename):
     """Import structure from POSCAR file."""
     period_table = TPeriodTable()
     molecules = []

@@ -34,22 +34,25 @@ from models.hexagonal_plane import HexagonalPlane, HexagonalPlaneHex
 from models.meta_graphene import MetaGraphene
 from models.swnt import SWNT
 from models.swgnt import SWGNT
-from models.gaussiancube import GaussianCube
-from models.volumericdata import VolumericData
-from models.xsf import XSF
+from program.gaussiancube import GaussianCube
+from program.volumericdata import VolumericData
+from program.xsf import XSF
 from qtbased.image3dexporter import Image3Dexporter
 from program.siesta import TSIESTA
-from program.qe import model_to_qe_pw
+from program.qe import model_to_qe_pw, alats_from_pwout
+from program.qe import energy_tot as qe_energy_tot
+from program.qe import volume as qe_volume
 from program.wien import model_to_wien_struct
-from program.vasp import TVASP, vasp_dos, model_to_vasp_poscar
+from program.vasp import TVASP, vasp_dos, model_to_vasp_poscar, abc_from_outcar
 from program.dftb import model_to_dftb_d0
 from program.lammps import model_to_lammps_input
+from program.octopus import model_to_octopus_input
 from program import crystal
 from program import ase
 from program.fdfdata import TFDFFile
 from utils.calculators import Calculators as Calculator
 from utils.calculators import gaps
-from utils.importer_exporter import ImporterExporter
+from program.importer_exporter import ImporterExporter
 from utils.electronic_prop_reader import read_siesta_bands, dos_from_file
 from ui.about import Ui_DialogAbout as Ui_about
 from ui.form import Ui_MainWindow as Ui_form
@@ -65,9 +68,6 @@ class MainForm(QMainWindow):
         super().__init__(*args)
         self.ui = Ui_form()
         self.ui.setupUi(self)
-
-        self.program: str = "SIESTA"  # mode of operation fot program
-        self.exec: str =sys.executable
 
         self.models = []
         self.ui.openGLWidget.set_form_elements(self.ui.FormSettingsViewCheckAtomSelection,
@@ -121,7 +121,7 @@ class MainForm(QMainWindow):
         self.ui.FormModelComboModels.currentIndexChanged.connect(self.model_to_screen)
         self.ui.FormActionsPostTreeSurface.itemSelectionChanged.connect(self.type_of_surface)
         self.ui.PropertyForColorOfAtom.currentIndexChanged.connect(self.color_atoms_with_property)
-        self.ui.ColorAtomsProperty.stateChanged.connect(self.color_atoms_with_property)
+        self.ui.ColorAtomsProperty.clicked.connect(self.color_atoms_with_property)
 
         self.ui.font_size_3d.valueChanged.connect(self.font_size_3d_changed)
         self.ui.property_shift_x.valueChanged.connect(self.property_position_changed)
@@ -140,10 +140,6 @@ class MainForm(QMainWindow):
 
         self.ui.activate_fragment_selection_mode.toggled.connect(self.activate_fragment_selection_mode)
         self.ui.ActivateFragmentSelectionTransp.valueChanged.connect(self.activate_fragment_selection_mode)
-
-        # buttons
-        self.ui.FormActionsPostButPlotBondsHistogram.clicked.connect(self.plot_bonds_histogram)
-        self.ui.FormActionsPreButFillSpace.clicked.connect(self.fill_space)
 
         # models generation
         self.ui.get_0d_molecula_list.clicked.connect(self.get_0d_molecula_list)
@@ -174,6 +170,7 @@ class MainForm(QMainWindow):
         self.ui.crystal_3d_d12_generate.clicked.connect(self.d12_3D_to_form)
         self.ui.dftb_0d_generate.clicked.connect(self.dftb_0D_to_form)
         self.ui.lammps_generate.clicked.connect(self.lammps_to_form)
+        self.ui.octopus_generate.clicked.connect(self.octopus_to_form)
 
         self.ui.data_from_form_to_input_file.clicked.connect(self.data_from_form_to_input_file)
         self.ui.model_rotation_x.valueChanged.connect(self.model_orientation_changed)
@@ -212,9 +209,11 @@ class MainForm(QMainWindow):
         self.ui.plot_bands.clicked.connect(self.plot_bands)
         self.ui.parse_bands.clicked.connect(self.parse_bands)
         self.ui.FormActionsButtonPlotPDOSselected.clicked.connect(self.plot_selected_pdos)
-        self.ui.FormModifyCellButton.clicked.connect(self.edit_cell)
+        self.ui.modify_cell_cart_coord.clicked.connect(self.edit_cell)
+        self.ui.modify_cell_frac_coord.clicked.connect(self.modify_cell_frac_coord)
         self.ui.FormActionsPostButGetBonds.clicked.connect(self.get_bonds)
         self.ui.PropertyAtomAtomDistanceGet.clicked.connect(self.get_bond)
+        self.ui.clusters_search.clicked.connect(self.clusters_search)
         self.ui.FormStylesFor2DGraph.clicked.connect(self.set_2d_graph_styles)
         self.ui.FormModifyTwist.clicked.connect(self.twist_model)
         self.ui.model_move_by_vector.clicked.connect(self.move_model)
@@ -248,7 +247,8 @@ class MainForm(QMainWindow):
 
         self.ui.FormActionsPostButPlusCellParam.clicked.connect(self.add_cell_param)
         self.ui.FormActionsPostButAddRowCellParam.clicked.connect(self.add_cell_param_row)
-        self.ui.FormActionsPostButDeleteRowCellParam.clicked.connect(self.delete_cell_param_row)
+        self.ui.cell_param_delete_row.clicked.connect(self.delete_cell_param_row)
+        self.ui.cell_param_delete_all.clicked.connect(self.delete_cell_param_all)
         self.ui.cell_params_file_add.clicked.connect(self.add_data_cell_param)
 
         self.ui.FormModifyRotation.clicked.connect(self.model_rotation)
@@ -350,10 +350,6 @@ class MainForm(QMainWindow):
         swnt_ind_type.appendRow(QStandardItem("(19,0)"))
         self.ui.FormActionsPreComboSWNTind.setModel(swnt_ind_type)
 
-        fill_space_model = QStandardItemModel()
-        fill_space_model.appendRow(QStandardItem("cylinder"))
-        self.ui.FormActionsPreComboFillSpace.setModel(fill_space_model)
-
         self.prepare_form_actions_combo_pdos_indexes()
         self.prepare_form_actions_combo_pdos_species()
 
@@ -396,15 +392,7 @@ class MainForm(QMainWindow):
         self.ui.FormNanotypeTypeSelector.setModel(bi_element_type_tube)
         self.ui.FormNanotypeTypeSelector.setCurrentIndex(0)
 
-        self.ui.FormActionsPostTableCellParam.setColumnCount(5)
-        self.ui.FormActionsPostTableCellParam.setHorizontalHeaderLabels(["volume", "Energy", "a", "b", "c"])
-        self.ui.FormActionsPostTableCellParam.setColumnWidth(0, 60)
-        self.ui.FormActionsPostTableCellParam.setColumnWidth(1, 70)
-        self.ui.FormActionsPostTableCellParam.setColumnWidth(2, 70)
-        self.ui.FormActionsPostTableCellParam.setColumnWidth(3, 70)
-        self.ui.FormActionsPostTableCellParam.setColumnWidth(4, 70)
-        self.ui.FormActionsPostTableCellParam.horizontalHeader().setStyleSheet(self.table_header_stylesheet)
-        self.ui.FormActionsPostTableCellParam.verticalHeader().setStyleSheet(self.table_header_stylesheet)
+        self.prepare_cell_param_table()
 
         args_cell = QStandardItemModel()
         args_cell.appendRow(QStandardItem("V"))
@@ -439,6 +427,17 @@ class MainForm(QMainWindow):
         self.ui.FormActionsPosTableBonds.verticalHeader().setStyleSheet(self.table_header_stylesheet)
 
         self.setup_actions()
+
+    def prepare_cell_param_table(self):
+        self.ui.FormActionsPostTableCellParam.setColumnCount(5)
+        self.ui.FormActionsPostTableCellParam.setHorizontalHeaderLabels(["volume", "Energy", "a", "b", "c"])
+        self.ui.FormActionsPostTableCellParam.setColumnWidth(0, 60)
+        self.ui.FormActionsPostTableCellParam.setColumnWidth(1, 70)
+        self.ui.FormActionsPostTableCellParam.setColumnWidth(2, 70)
+        self.ui.FormActionsPostTableCellParam.setColumnWidth(3, 70)
+        self.ui.FormActionsPostTableCellParam.setColumnWidth(4, 70)
+        self.ui.FormActionsPostTableCellParam.horizontalHeader().setStyleSheet(self.table_header_stylesheet)
+        self.ui.FormActionsPostTableCellParam.verticalHeader().setStyleSheet(self.table_header_stylesheet)
 
     def q_standard_item_model_init(self, data: list):
         model_type = QStandardItemModel()
@@ -563,7 +562,7 @@ class MainForm(QMainWindow):
         try:
             f_name = self.get_file_name_from_open_dialog("All files (*)")
             f_format = helpers.check_format(f_name)
-            if (f_format == "siesta_out") or (f_format == "vasp_outcar"):
+            if (f_format == "siesta_out") or (f_format == "vasp_outcar") or (f_format == "QEPWout"):
                 self.fill_cell_info(f_name, f_format)
             self.plot_volume_param_energy()
         except Exception as e:
@@ -574,8 +573,7 @@ class MainForm(QMainWindow):
         return self.models[self.active_model_id]
 
     def add_cell_param_row(self):
-        i = self.ui.FormActionsPostTableCellParam.rowCount() + 1
-        self.ui.FormActionsPostTableCellParam.setRowCount(i)
+        self.ui.FormActionsPostTableCellParam.setRowCount(self.ui.FormActionsPostTableCellParam.rowCount() + 1)
 
     def add_data_cell_param(self):
         """Add cell params from file."""
@@ -747,9 +745,11 @@ class MainForm(QMainWindow):
             return
         if self.ui.openGLWidget.selected_atom < 0:
             return
-        self.models[self.active_model_id].delete_atom(self.ui.openGLWidget.selected_atom)
+        self.models.append(deepcopy(self.models[self.active_model_id]))
+        self.fill_models_list()
+        self.models[-1].delete_atom(self.ui.openGLWidget.selected_atom)
         self.history_of_atom_selection = []
-        self.model_to_screen(self.active_model_id)
+        self.model_to_screen(-1)
 
     def atom_modify(self):
         if len(self.models) == 0:
@@ -982,16 +982,18 @@ class MainForm(QMainWindow):
         return self.periodic_table.get_all_colors()
 
     def delete_cell_param_row(self):
-        row = self.ui.FormActionsPostTableCellParam.currentRow()
-        self.ui.FormActionsPostTableCellParam.removeRow(row)
+        self.ui.FormActionsPostTableCellParam.removeRow(self.ui.FormActionsPostTableCellParam.currentRow())
+
+    def delete_cell_param_all(self):
+        self.ui.FormActionsPostTableCellParam.clear()
+        self.ui.FormActionsPostTableCellParam.setRowCount(0)
+        self.prepare_cell_param_table()
 
     def delete_isosurface_color_from_table(self):
         row = self.ui.IsosurfaceColorsTable.currentRow()
         self.ui.IsosurfaceColorsTable.removeRow(row)
 
-    def edit_cell(self):
-        if len(self.models) == 0:
-            return
+    def lat_vectors_from_form(self):
         a1 = float(self.ui.FormModifyCellEditA1.text())
         a2 = float(self.ui.FormModifyCellEditA2.text())
         a3 = float(self.ui.FormModifyCellEditA3.text())
@@ -1004,7 +1006,23 @@ class MainForm(QMainWindow):
         c2 = float(self.ui.FormModifyCellEditC2.text())
         c3 = float(self.ui.FormModifyCellEditC3.text())
         v3 = [c1, c2, c3]
+        return v1, v2, v3
+
+    def edit_cell(self):
+        if len(self.models) == 0:
+            return
+        v1, v2, v3 = self.lat_vectors_from_form()
         self.ui.openGLWidget.main_model.set_lat_vectors(v1, v2, v3)
+        self.models.append(self.ui.openGLWidget.main_model)
+        self.model_to_screen(-1)
+
+    def modify_cell_frac_coord(self):
+        if len(self.models) == 0:
+            return
+        v1, v2, v3 = self.lat_vectors_from_form()
+        self.ui.openGLWidget.main_model.convert_from_cart_to_direct()
+        self.ui.openGLWidget.main_model.set_lat_vectors(v1, v2, v3)
+        self.ui.openGLWidget.main_model.convert_from_direct_to_cart()
         self.models.append(self.ui.openGLWidget.main_model)
         self.model_to_screen(-1)
 
@@ -1089,10 +1107,6 @@ class MainForm(QMainWindow):
             energies = crystal.energies(file_name)
             self.fill_energies(energies)
 
-        if helpers.check_format(file_name) == "SIESTAfdf":
-            c = np.linalg.norm(self.ui.openGLWidget.main_model.lat_vector3)
-            self.ui.FormActionsPreZSizeFillSpace.setValue(c)
-
     def fill_energies(self, energies: list[float]) -> None:
         """Plot energies for steps of output."""
         if len(energies) == 0:
@@ -1128,7 +1142,6 @@ class MainForm(QMainWindow):
         self.ui.FormModelComboModels.setModel(model)
         self.ui.FormModelComboModels.setCurrentIndex(len(self.models) - 1)
         self.ui.FormModelComboModels.currentIndexChanged.connect(self.model_to_screen)
-        #self.ui.FormModelComboModels.update()
 
     def fill_atoms_table(self):
         model = self.ui.openGLWidget.get_model().atoms
@@ -1176,7 +1189,7 @@ class MainForm(QMainWindow):
 
         if data_type == "TXSF":
             for dat in data:
-                text = (dat[0].title.split('_')[3]).split(':')[0]
+                text = (dat[0].title.split('_')[3]).split(':')[0].rstrip()
                 parent = QTreeWidgetItem(tree)
                 parent.setText(0, "{}".format(text) + "3D")
                 for da in dat:
@@ -1185,7 +1198,7 @@ class MainForm(QMainWindow):
 
         if data_type == "TGaussianCube":
             for dat in data:
-                text = dat[0].title.split(".cube")[0]
+                text = dat[0].title.split(".cube")[0].rstrip()
                 parent = QTreeWidgetItem(tree)
                 parent.setText(0, "{}".format(text))
 
@@ -1194,6 +1207,8 @@ class MainForm(QMainWindow):
         tree.show()
 
     def fill_bonds(self):
+        if len(self.models) == 0:
+            return
         c1, c2 = self.fill_bonds_charges()
         self.ui.FormActionsPosTableBonds.setRowCount(0)
 
@@ -1237,15 +1252,23 @@ class MainForm(QMainWindow):
         if sourse == "vasp_outcar":
             volume = TVASP.volume(f_name)
             energy, is_conv, iteration = TVASP.energy_tot(f_name)
-            a, b, c = TVASP.abc(f_name)
+            a, b, c = abc_from_outcar(f_name)
+
+        if sourse == "QEPWout":
+            volume = qe_volume(f_name)
+            energy, is_conv, iteration = qe_energy_tot(f_name)
+            a, b, c, al, bet, gam = alats_from_pwout(f_name)
 
         self.fill_cell_info_row(energy, volume, a, b, c)
-        self.ui.FormActionsPreZSizeFillSpace.setValue(c)
         self.work_dir = os.path.dirname(f_name)
         self.save_active_folder()
 
     def fill_cell_info_row(self, energy, volume, a, b, c):
         i = self.ui.FormActionsPostTableCellParam.rowCount() + 1
+        if i > 1:
+            if self.ui.FormActionsPostTableCellParam.item(i - 2, 1) is None:
+                i -= 1
+
         self.ui.FormActionsPostTableCellParam.setRowCount(i)
         self.ui.FormActionsPostTableCellParam.setItem(i - 1, 0, QTableWidgetItem(str(volume)))
         self.ui.FormActionsPostTableCellParam.setItem(i - 1, 1, QTableWidgetItem(str(energy)))
@@ -1278,6 +1301,14 @@ class MainForm(QMainWindow):
         j = self.ui.PropertyAtomAtomDistanceAt2.value()
         bond = round(self.ui.openGLWidget.main_model.atom_atom_distance(i - 1, j - 1), 4)
         self.ui.PropertyAtomAtomDistance.setText(str(bond) + " A")
+
+    def clusters_search(self):    # pragma: no cover
+        clusters = self.ui.openGLWidget.main_model.find_clusters()
+        print(len(clusters), "clusters")
+        for cluster in clusters:
+            print(len(cluster))
+
+        # self.ui.clusters_info.setText(str(len(clusters)))
 
     def fit_with(self):   # pragma: no cover
         xf, yf, rf = self.models[self.active_model_id].fit_with_cylinder()
@@ -1561,13 +1592,10 @@ class MainForm(QMainWindow):
         if len(self.models) > 0:   # pragma: no cover
             self.action_on_start = 'Open'
             self.save_property(SETTINGS_FormSettingsActionOnStart, self.action_on_start)
-            print(self.exec)
-            if os.path.exists(self.exec):
-                print("good path")
-                os.execl(self.exec, '"' + self.exec + '"', *sys.argv)
+            if sys.platform.startswith('win'):
+                os.execlp('python', 'python', *sys.argv)
             else:
-                print("try to run")
-                os.execl(self.exec, self.exec, *sys.argv)
+                os.execlp('python3', 'python3', *sys.argv)
 
         self.ui.Form3Dand2DTabs.setCurrentIndex(0)
         if not file_name:
@@ -2374,7 +2402,6 @@ class MainForm(QMainWindow):
 
     def clear_dos(self):
         self.ui.FormActionsTabeDOSProperty.setRowCount(0)
-        #self.ui.FormActionsTabeDOSProperty.update()
 
     def plot_volume_param_energy(self):
         self.ui.PyqtGraphWidget.set_xticks(None)
@@ -2385,16 +2412,21 @@ class MainForm(QMainWindow):
         xi = self.ui.FormActionsPostComboCellParamX.currentIndex()
         energy_units = self.ui.cell_energy_units.currentText()  # "Ry" "eV"
         volume_units = self.ui.cell_volume_units.currentText()  # "au^3"  "A^3"
-        print(method, xi, energy_units, volume_units)
-
-        yi = 1
 
         x = []
         y = []
 
         for index in range(self.ui.FormActionsPostTableCellParam.rowCount()):
-            x.append(float(self.ui.FormActionsPostTableCellParam.item(index, xi).text()))
-            y.append(float(self.ui.FormActionsPostTableCellParam.item(index, yi).text()))
+            x_new = float(self.ui.FormActionsPostTableCellParam.item(index, xi).text())
+            y_new = float(self.ui.FormActionsPostTableCellParam.item(index, 1).text())
+            f = True
+            for i in range(len(x)):
+                ro = math.sqrt(pow(x_new - x[i], 2) + pow(y_new - y[i], 2))
+                if ro < 1e-6:
+                    f = False
+            if f:
+                x.append(x_new)
+                y.append(y_new)
         x = np.array(x)
         y = np.array(y)
 
@@ -2474,9 +2506,7 @@ class MainForm(QMainWindow):
 
     def plot_cell_approx(self, image_path):
         image_profile = QImage(image_path)
-        image_profile = image_profile.scaled(320, 54, aspectMode=Qt.KeepAspectRatio,
-                                             mode=Qt.SmoothTransformation
-                                             )
+        image_profile = image_profile.scaled(320, 54, Qt.KeepAspectRatio, Qt.SmoothTransformation)
         self.ui.FormActionsPostLabelCellParamFig.setPixmap(QPixmap.fromImage(image_profile))
 
     def save_image_to_file(self, name=""):
@@ -2844,9 +2874,10 @@ class MainForm(QMainWindow):
             if len(text) > 0:
                 file_mask = "FDF files (*.fdf);;VASP POSCAR file (*.POSCAR);;Crystal d12 (*.d12)"
                 file_mask += ";;PWscf in (*.in);;WIEN struct (*.struct);;CIF file (*.cif);;DFTB+ (*.gen)"
-                fname = self.get_file_name_from_save_dialog(file_mask)
-                if fname is not None:
-                    helpers.write_text_to_file(fname, text)
+                file_mask += ";;Lammps input (*.lmp);;Octopus input (*.in)"
+                f_name = self.get_file_name_from_save_dialog(file_mask)
+                if f_name is not None:
+                    helpers.write_text_to_file(f_name, text)
         except Exception as e:
             self.show_error(e)
 
@@ -2931,9 +2962,20 @@ class MainForm(QMainWindow):
         if len(self.models) == 0:
             return
         try:
-            text = "Not implemented"
             model = self.models[self.active_model_id]
-            text = model_to_lammps_input(model)
+            fl = self.ui.lammps_with_charge.isChecked()
+            text = model_to_lammps_input(model, charge=fl)
+            if len(text) > 0:
+                self.ui.FormActionsPreTextFDF.setText(text)
+        except Exception as e:
+            self.show_error(e)
+
+    def octopus_to_form(self):
+        if len(self.models) == 0:
+            return
+        try:
+            model = self.models[self.active_model_id]
+            text = model_to_octopus_input(model)
             if len(text) > 0:
                 self.ui.FormActionsPreTextFDF.setText(text)
         except Exception as e:
@@ -2993,41 +3035,6 @@ class MainForm(QMainWindow):
                 self.ui.FormActionsPreTextFDF.setText(text)
         except Exception as e:
             self.show_error(e)
-
-    def fill_space(self):
-        if len(self.models) == 0:
-            return
-        mendeley = TPeriodTable()
-        n_atoms = int(self.ui.FormActionsPreNAtomsFillSpace.value())
-        charge = int(self.ui.FormActionsPreAtomChargeFillSpace.value())
-        rad_atom = mendeley.get_rad(charge)
-        let = mendeley.get_let(charge)
-        delta = float(self.ui.FormActionsPreDeltaFillSpace.value())
-        n_prompts = int(self.ui.FormActionsPreNPromptsFillSpace.value())
-        rad_tube = float(self.ui.FormActionsPreRadiusFillSpace.value())
-        length = float(self.ui.FormActionsPreZSizeFillSpace.value())
-        models = Calculator.fill_tube(rad_tube, length, n_atoms, 0.01 * rad_atom, delta, n_prompts, let, charge)
-
-        filename = ""
-        try:
-            if self.ui.FormActionsPreSaveToFileFillSpace.isChecked():
-                filename = QFileDialog.getSaveFileName(self, 'Save File', options=QFileDialog.DontUseNativeDialog)[0]
-                filename = filename.split(".fdf")[0]
-        except Exception as exc:
-            self.show_error(exc)
-
-        myiter = 0
-        for model in models:
-            second_model = deepcopy(self.ui.openGLWidget.get_model())
-            for at in model:
-                second_model.add_atom(at)
-            self.models.append(second_model)
-            if self.ui.FormActionsPreSaveToFileFillSpace.isChecked():
-                text = self.fdf_data.get_all_data(second_model.atoms, self.coord_type, self.units_type, self.lattice_type)
-                with open(filename + str(myiter) + '.fdf', 'w') as f:
-                    f.write(text)
-            myiter += 1
-        self.fill_models_list()
 
     def parse_volumeric_data(self):
         if len(self.ui.FormActionsPostList3DData.selectedItems()) > 0:

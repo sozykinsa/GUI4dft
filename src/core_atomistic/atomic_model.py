@@ -25,6 +25,7 @@ class AtomicModel(object):
         self.atoms: List[Atom] = []
         self.bonds = []
         self.bonds_per = []  # for exact calculation in form
+        self.dynamic_bonds: bool = True
 
         self.name = ""
         self.lat_vectors = 100 * np.eye(3)
@@ -583,16 +584,10 @@ class AtomicModel(object):
 
     def point_point_distance(self, pos1, pos2):
         delta_pos = pos2 - pos1
-        ro = norm(delta_pos)
         values = [-1, 0, 1]
-        for i in values:
-            for j in values:
-                for k in values:
-                    if abs(i) + abs(j) + abs(k) != 0:
-                        ro1 = norm(delta_pos + i * self.lat_vector1 + j * self.lat_vector2 + k * self.lat_vector3)
-                        if ro1 < ro:
-                            ro = ro1
-        return ro
+        ros = [[[norm(delta_pos + i * self.lat_vector1 + j * self.lat_vector2 + k * self.lat_vector3)
+                 for i in values] for j in values] for k in values]
+        return np.array(ros).min()
 
     def move_object_to_cell(self, arr, a_inv):
         for at in arr:
@@ -624,6 +619,29 @@ class AtomicModel(object):
             neighbo.append(neighbor[i][0])
         return neighbo
 
+    def find_clusters(self):
+        clusters = [] # list of lists
+        inds = range(0, len(self.atoms)) # list of indices of atoms in model
+        bonds = deepcopy(self.bonds)
+        while len(bonds) > 0:
+            cluster = [bonds[0][0], bonds[0][1]]
+            bonds.remove(bonds[0])
+            len_cluster = 2
+            len_cluster_old = 0
+            while (len_cluster_old!= len_cluster) and (len(bonds) > 0):
+                for ind in cluster:
+                    for bond in bonds:
+                        if (bond[0] == ind) or (bond[1] == ind):
+                            if bond[0] not in cluster:
+                                cluster.append(bond[0])
+                            if bond[1] not in cluster:
+                                cluster.append(bond[1])
+                            bonds.remove(bond) # remove bond from list
+                len_cluster_old = len_cluster # update length of cluster
+                len_cluster = len(cluster)
+            clusters.append(cluster)
+        return clusters
+
     def find_bonds_exact(self):
         """The method returns list of bonds of the molecule."""
         if self.bonds_per:
@@ -638,13 +656,14 @@ class AtomicModel(object):
         return self.bonds_per
 
     def find_bonds_fast(self):
+        """The method returns list of bonds of the molecule."""
+        if not (self.dynamic_bonds or len(self.bonds) == 0):
+            return
+
         self.bonds = []
         for i in range(0, len(self.atoms)):
             for j in range(i + 1, len(self.atoms)):
-                rx2 = math.pow(self.atoms[i].x - self.atoms[j].x, 2)
-                ry2 = math.pow(self.atoms[i].y - self.atoms[j].y, 2)
-                rz2 = math.pow(self.atoms[i].z - self.atoms[j].z, 2)
-                r = math.sqrt(rx2 + ry2 + rz2)
+                r = norm(self.atoms[i].xyz - self.atoms[j].xyz)
                 r_tab = self.mendeley.Bonds[self.atoms[i].charge][self.atoms[j].charge]
                 if (r > 1e-4) and (r < 1.2 * r_tab):
                     self.bonds.append([i, j])

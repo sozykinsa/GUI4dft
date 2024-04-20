@@ -335,6 +335,9 @@ def check_format(filename):
     if name.endswith(".lammpstrj"):
         return "LammpsTrj"
 
+    if name.endswith(".ct"):
+        return "chemDrawCT"
+
     name = os.path.basename(name)
 
     if name.startswith("optc"):

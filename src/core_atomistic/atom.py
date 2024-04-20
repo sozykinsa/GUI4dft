@@ -46,7 +46,7 @@ class Atom(object):
 
     @property
     def xyz_string(self) -> str:
-        return "{0:12.6f}    {1:12.6f}    {2:12.6f}".format(self.xyz[0], self.xyz[1], self.xyz[2])
+        return "{0:15.9f}    {1:15.9f}    {2:15.9f}".format(self.xyz[0], self.xyz[1], self.xyz[2])
 
     def set_selected(self, fl):
         self.selected = fl

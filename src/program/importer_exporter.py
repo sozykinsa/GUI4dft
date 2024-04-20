@@ -4,18 +4,18 @@ import os
 from core_atomistic.atomic_model import AtomicModel
 from core_atomistic import helpers
 from core_atomistic.project_file import ProjectFile
-from program.vasp import fermi_energy_from_doscar, atoms_from_POSCAR
 from program.fdfdata import TFDFFile
 from program.siesta import TSIESTA
 from program.firefly import atomic_model_to_firefly_inp
-from program.vasp import model_to_vasp_poscar
 from program.crystal import structure_of_primitive_cell, structure_opt_step
+from program.chemdraw import model_from_ct
 from program.qe import atoms_from_pwout
-from program.wien import atoms_from_struct
 from program.dftb import atoms_from_gen
 from program.lammps import atoms_trajectory_step
-from models.gaussiancube import GaussianCube
-from models.xsf import XSF
+from program.vasp import fermi_energy_from_doscar, atoms_from_poscar, atoms_from_outcar, model_to_vasp_poscar
+from program.wien import atoms_from_struct
+from program.gaussiancube import GaussianCube
+from program.xsf import XSF
 
 
 class ImporterExporter(object):
@@ -53,6 +53,9 @@ class ImporterExporter(object):
             elif file_format == "GAUSSIAN_cube":
                 models = GaussianCube.get_atoms(filename)
 
+            elif file_format == "chemDrawCT":
+                models = model_from_ct(filename)
+
             elif file_format == "SiestaXYZ":
                 models = AtomicModel.atoms_from_xyz(filename)
 
@@ -60,7 +63,10 @@ class ImporterExporter(object):
                 models = AtomicModel.atoms_from_xmol_xyz(filename)
 
             elif file_format == "VASPposcar":
-                models = atoms_from_POSCAR(filename)
+                models = atoms_from_poscar(filename)
+
+            elif file_format == "vasp_outcar":
+                models = atoms_from_outcar(filename)
 
             elif file_format == "CRYSTALout":
                 models = structure_of_primitive_cell(filename)

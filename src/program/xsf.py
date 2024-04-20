@@ -8,8 +8,8 @@ from core_atomistic.atomic_model import AtomicModel as TAtomicModel
 from core_atomistic.periodic_table import TPeriodTable
 from core_atomistic import helpers
 
-from models.volumericdatablock import VolumericDataBlock
-from models.volumericdata import VolumericData
+from program.volumericdatablock import VolumericDataBlock
+from program.volumericdata import VolumericData
 
 
 class XSF(VolumericData):
