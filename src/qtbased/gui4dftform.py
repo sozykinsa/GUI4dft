@@ -39,7 +39,9 @@ from program.volumericdata import VolumericData
 from program.xsf import XSF
 from qtbased.image3dexporter import Image3Dexporter
 from program.siesta import TSIESTA
-from program.qe import model_to_qe_pw
+from program.qe import model_to_qe_pw, alats_from_pwout
+from program.qe import energy_tot as qe_energy_tot
+from program.qe import volume as qe_volume
 from program.wien import model_to_wien_struct
 from program.vasp import TVASP, vasp_dos, model_to_vasp_poscar, abc_from_outcar
 from program.dftb import model_to_dftb_d0
@@ -390,15 +392,7 @@ class MainForm(QMainWindow):
         self.ui.FormNanotypeTypeSelector.setModel(bi_element_type_tube)
         self.ui.FormNanotypeTypeSelector.setCurrentIndex(0)
 
-        self.ui.FormActionsPostTableCellParam.setColumnCount(5)
-        self.ui.FormActionsPostTableCellParam.setHorizontalHeaderLabels(["volume", "Energy", "a", "b", "c"])
-        self.ui.FormActionsPostTableCellParam.setColumnWidth(0, 60)
-        self.ui.FormActionsPostTableCellParam.setColumnWidth(1, 70)
-        self.ui.FormActionsPostTableCellParam.setColumnWidth(2, 70)
-        self.ui.FormActionsPostTableCellParam.setColumnWidth(3, 70)
-        self.ui.FormActionsPostTableCellParam.setColumnWidth(4, 70)
-        self.ui.FormActionsPostTableCellParam.horizontalHeader().setStyleSheet(self.table_header_stylesheet)
-        self.ui.FormActionsPostTableCellParam.verticalHeader().setStyleSheet(self.table_header_stylesheet)
+        self.prepare_cell_param_table()
 
         args_cell = QStandardItemModel()
         args_cell.appendRow(QStandardItem("V"))
@@ -433,6 +427,17 @@ class MainForm(QMainWindow):
         self.ui.FormActionsPosTableBonds.verticalHeader().setStyleSheet(self.table_header_stylesheet)
 
         self.setup_actions()
+
+    def prepare_cell_param_table(self):
+        self.ui.FormActionsPostTableCellParam.setColumnCount(5)
+        self.ui.FormActionsPostTableCellParam.setHorizontalHeaderLabels(["volume", "Energy", "a", "b", "c"])
+        self.ui.FormActionsPostTableCellParam.setColumnWidth(0, 60)
+        self.ui.FormActionsPostTableCellParam.setColumnWidth(1, 70)
+        self.ui.FormActionsPostTableCellParam.setColumnWidth(2, 70)
+        self.ui.FormActionsPostTableCellParam.setColumnWidth(3, 70)
+        self.ui.FormActionsPostTableCellParam.setColumnWidth(4, 70)
+        self.ui.FormActionsPostTableCellParam.horizontalHeader().setStyleSheet(self.table_header_stylesheet)
+        self.ui.FormActionsPostTableCellParam.verticalHeader().setStyleSheet(self.table_header_stylesheet)
 
     def q_standard_item_model_init(self, data: list):
         model_type = QStandardItemModel()
@@ -557,7 +562,7 @@ class MainForm(QMainWindow):
         try:
             f_name = self.get_file_name_from_open_dialog("All files (*)")
             f_format = helpers.check_format(f_name)
-            if (f_format == "siesta_out") or (f_format == "vasp_outcar"):
+            if (f_format == "siesta_out") or (f_format == "vasp_outcar") or (f_format == "QEPWout"):
                 self.fill_cell_info(f_name, f_format)
             self.plot_volume_param_energy()
         except Exception as e:
@@ -982,6 +987,7 @@ class MainForm(QMainWindow):
     def delete_cell_param_all(self):
         self.ui.FormActionsPostTableCellParam.clear()
         self.ui.FormActionsPostTableCellParam.setRowCount(0)
+        self.prepare_cell_param_table()
 
     def delete_isosurface_color_from_table(self):
         row = self.ui.IsosurfaceColorsTable.currentRow()
@@ -1247,6 +1253,11 @@ class MainForm(QMainWindow):
             volume = TVASP.volume(f_name)
             energy, is_conv, iteration = TVASP.energy_tot(f_name)
             a, b, c = abc_from_outcar(f_name)
+
+        if sourse == "QEPWout":
+            volume = qe_volume(f_name)
+            energy, is_conv, iteration = qe_energy_tot(f_name)
+            a, b, c, al, bet, gam = alats_from_pwout(f_name)
 
         self.fill_cell_info_row(energy, volume, a, b, c)
         self.work_dir = os.path.dirname(f_name)
@@ -2495,8 +2506,7 @@ class MainForm(QMainWindow):
 
     def plot_cell_approx(self, image_path):
         image_profile = QImage(image_path)
-        image_profile = image_profile.scaled(320, 54, aspectMode=Qt.KeepAspectRatio,
-                                             mode=Qt.SmoothTransformation)
+        image_profile = image_profile.scaled(320, 54, Qt.KeepAspectRatio, Qt.SmoothTransformation)
         self.ui.FormActionsPostLabelCellParamFig.setPixmap(QPixmap.fromImage(image_profile))
 
     def save_image_to_file(self, name=""):

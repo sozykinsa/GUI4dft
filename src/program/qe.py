@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 import math
+import os
+import re
 from copy import deepcopy
 import numpy as np
 from core_atomistic import helpers
@@ -253,12 +255,48 @@ def model_to_qe_pw(model: AtomicModel):
     text += "ATOMIC_SPECIES\n"
     for i in range(0, len(types)):
         text += str(model.mendeley.get_let(int(types[i][0]))) + " mass  UPF_file_name\n"
-    # text += "ATOMIC_POSITIONS {angstrom}\n"
     text += "ATOMIC_POSITIONS {crystal}\n"
-    # print("-!!!-->")
-    # print(text)
     model1 = deepcopy(model)
     model1.convert_from_cart_to_direct()
     for atom in model1.atoms:
         text += atom.let + " " + atom.xyz_string + "\n"
     return text
+
+
+def energy_tot(filename):
+    """Energy"""
+    prop = "!    total energy              ="
+    is_conv = "false"
+    iteration = ""
+    property1 = ""
+    if os.path.exists(filename):
+        my_file = open(filename)
+        str1 = my_file.readline()
+        while str1 != '':
+            if (str1 != '') and (str1.find("General timing and accounting informations for this job:") >= 0):
+                is_conv = "true"
+            if (str1 != '') and (str1.find("-- Iteration") >= 0):
+                iteration = str1
+            if (str1 != '') and (str1.find(prop) >= 0):
+                str1 = str1.replace(prop, ' ')
+                prop1 = re.findall(r"[0-9,\.,-]+", str1)[0]
+                property1 = float(prop1) #* 13.6056923
+            str1 = my_file.readline()
+        my_file.close()
+    return property1, is_conv, iteration
+
+
+def volume(filename):
+    """Cell volume"""
+    prop = "unit-cell volume          ="
+    if os.path.exists(filename):
+        my_file = open(filename)
+        str1 = my_file.readline()
+        while str1 != '':
+            if (str1 != '') and (str1.find(prop) >= 0):
+                str1 = str1.replace(prop, ' ')
+                prop1 = re.findall(r"[0-9,\.,-]+", str1)[0]
+                property = float(prop1)
+            str1 = my_file.readline()
+        my_file.close()
+    return property

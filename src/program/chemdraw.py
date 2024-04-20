@@ -36,7 +36,7 @@ def model_from_ct(name) -> AtomicModel:
         str1 = helpers.spacedel(row)
         s = str1.split(' ')
         xyz = np.array([float(s[0]), float(s[1]), float(s[2])], dtype=np.float32)
-        let = s[3]
+        let = s[3].replace("+", "")
         charge = mendeley.get_charge_by_letter(let)
         new_model.add_atom_with_data(xyz, charge)
 
