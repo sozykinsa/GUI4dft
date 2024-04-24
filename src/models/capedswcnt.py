@@ -38,8 +38,8 @@ class CapedSWNT(TAtomicModel):
                     for i in range(0, size1):
                         capatoms[i].z = -capatoms[i].z
 
-                minz = self.minZ()
-                maxz = capatoms.maxZ()
+                minz = self.min_z()
+                maxz = capatoms.max_z()
 
                 capatoms.move(np.array([0, 0, minz - maxz - zaz]))
                 capatoms.rotate_z(angle1)
@@ -52,8 +52,8 @@ class CapedSWNT(TAtomicModel):
                 if not self.invert():
                     for i in range(0, size1):
                         capatoms[i].z = -capatoms[i].z
-                maxz = self.maxZ()
-                minz = capatoms.minZ()
+                maxz = self.max_z()
+                minz = capatoms.min_z()
 
                 zaz = dist2
 

@@ -130,7 +130,7 @@ class AtomicModel(object):
     def twist_z(self, alpha):
         cm = self.center_mass()
         self.move(-cm)
-        z0 = self.minZ()
+        z0 = self.min_z()
         z1 = np.linalg.norm(self.lat_vector3)
 
         for i in range(0, len(self.atoms)):
@@ -182,15 +182,17 @@ class AtomicModel(object):
                 str2 = ani_file.readline()
         else:
             str2 = ani_file.readline()
-        atoms = []
+        new_model = AtomicModel()
         mendeley = TPeriodTable()
         reg = re.compile('[^a-zA-Z ]')
         for i1 in range(0, number_of_atoms):
             str1 = helpers.spacedel(str2)
             s = str1.split(' ')
-            d1 = float(s[indexes[1]])
-            d2 = float(s[indexes[2]])
-            d3 = float(s[indexes[3]])
+            xyz = np.array([s[indexes[1]], s[indexes[2]], s[indexes[3]]], dtype=float)
+            if max(indexes) < len(s) - 1:
+                tag = s[max(indexes) + 1]
+            else:
+                tag = ""
             c = s[indexes[0]]
             if c.isnumeric():
                 charge = int(c)
@@ -199,10 +201,9 @@ class AtomicModel(object):
                 c = reg.sub('', s[indexes[0]])
                 charge = mendeley.get_charge_by_letter(c)
             if (charge > 0) or is_allow_charge_incorrect:
-                atoms.append([d1, d2, d3, c, charge])
+                new_model.add_atom_with_data(xyz, charge, tag)
             if i1 < number_of_atoms -1:
                 str2 = ani_file.readline()
-        new_model = AtomicModel(atoms)
         new_model.set_lat_vectors_default()
         return new_model
 
@@ -395,6 +396,12 @@ class AtomicModel(object):
         self.rotate_y(betta)
         self.rotate_z(gamma)
 
+    def sub_model(self, inds):
+        new_model_atoms = []
+        for i in inds:
+            new_model_atoms.append(self.atoms[i])
+        return AtomicModel(new_model_atoms)
+
     def projection_to_cylinder(self, atomslist, radius):
         """This method returns projections on cylinder with radius for atom at."""
         row = []
@@ -490,7 +497,7 @@ class AtomicModel(object):
         cif_text += "\n\n\n\n#End data_GUI4dft_Data\n\n\n"
         return cif_text
 
-    def minX(self):
+    def min_x(self):
         """Minimum X-coordinate."""
         minx = self.atoms[0].x
         for atom in self.atoms:
@@ -498,7 +505,7 @@ class AtomicModel(object):
                 minx = atom.x
         return float(minx)
 
-    def maxX(self):
+    def max_x(self):
         """Maximum X-coordinate."""
         maxx = self.atoms[0].x
         for atom in self.atoms:
@@ -508,9 +515,9 @@ class AtomicModel(object):
 
     def size_x(self):
         """The length of the molecule along the X axis."""
-        return self.maxX() - self.minX()
+        return self.max_x() - self.min_x()
 
-    def minY(self):
+    def min_y(self):
         """Minimum Y-coordinate."""
         miny = self.atoms[0].y
 
@@ -519,7 +526,7 @@ class AtomicModel(object):
                 miny = atom.y
         return float(miny)
 
-    def maxY(self):
+    def max_y(self):
         """Maximum Y-coordinate."""
         maxy = self.atoms[0].y
 
@@ -530,9 +537,9 @@ class AtomicModel(object):
 
     def size_y(self):
         """The length of the molecule along the Y axis."""
-        return self.maxY() - self.minY()
+        return self.max_y() - self.min_y()
 
-    def minZ(self):
+    def min_z(self):
         """Minimum Z-coordinate."""
         minz = self.atoms[0].z
 
@@ -541,7 +548,7 @@ class AtomicModel(object):
                 minz = atom.z
         return float(minz)
 
-    def maxZ(self):
+    def max_z(self):
         """Maximum Z-coordinate."""
         maxz = self.atoms[0].z
 
@@ -552,7 +559,7 @@ class AtomicModel(object):
 
     def size_z(self):
         """The length of the molecule along the Z axis."""
-        return self.maxZ() - self.minZ()
+        return self.max_z() - self.min_z()
 
     def sort_atoms_by_type(self):
         for i in range(0, self.n_atoms()):
@@ -640,6 +647,16 @@ class AtomicModel(object):
                 len_cluster_old = len_cluster # update length of cluster
                 len_cluster = len(cluster)
             clusters.append(cluster)
+        return clusters
+
+    def find_clusters_by_tag(self):
+        clusters = []
+        tags = np.array(self.get_tags(), dtype=int)
+        size = max(tags)
+        for i in range(0, size):
+            clusters.append([])
+        for i in range(0, len(self.atoms)):
+            clusters[tags[i] - 1].append(i)
         return clusters
 
     def find_bonds_exact(self):
@@ -838,7 +855,7 @@ class AtomicModel(object):
         self.go_to_positive_array_translate(self.atoms)
 
     def go_to_positive_coordinates(self):
-        d_vec = np.array([self.minX(), self.minY(), self.minZ()])
+        d_vec = np.array([self.min_x(), self.min_y(), self.min_z()])
         self.move_array(self.atoms, d_vec)
         self.go_to_positive_array(self.atoms)
 

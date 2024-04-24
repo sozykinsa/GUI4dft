@@ -214,6 +214,7 @@ class MainForm(QMainWindow):
         self.ui.FormActionsPostButGetBonds.clicked.connect(self.get_bonds)
         self.ui.PropertyAtomAtomDistanceGet.clicked.connect(self.get_bond)
         self.ui.clusters_search.clicked.connect(self.clusters_search)
+        self.ui.clusters_from_tag.clicked.connect(self.clusters_from_tag)
         self.ui.FormStylesFor2DGraph.clicked.connect(self.set_2d_graph_styles)
         self.ui.FormModifyTwist.clicked.connect(self.twist_model)
         self.ui.model_move_by_vector.clicked.connect(self.move_model)
@@ -956,10 +957,10 @@ class MainForm(QMainWindow):
             model_scat.move(np.array([scat_move_x, scat_move_y, 0]))
             """ end: parts transformation"""
 
-            left_elec_max = model_left.maxZ()
-            left_bord = model_scat.minZ()
+            left_elec_max = model_left.max_z()
+            left_bord = model_scat.min_z()
 
-            right_elec_min = model_righ.minZ()
+            right_elec_min = model_righ.min_z()
 
             left_dist = self.ui.FormActionsPreSpinLeftElectrodeDist.value()
             right_dist = self.ui.FormActionsPreSpinRightElectrodeDist.value()
@@ -968,7 +969,7 @@ class MainForm(QMainWindow):
             model.add_atomic_model(model_left)
             model_scat.move(np.array([0, 0, -(left_bord - left_elec_max) + left_dist]))
             model.add_atomic_model(model_scat)
-            right_bord = model.maxZ()
+            right_bord = model.max_z()
             model_righ.move(np.array([0, 0, (right_bord - right_elec_min) + right_dist]))
             model.add_atomic_model(model_righ)
 
@@ -1304,11 +1305,22 @@ class MainForm(QMainWindow):
 
     def clusters_search(self):    # pragma: no cover
         clusters = self.ui.openGLWidget.main_model.find_clusters()
-        print(len(clusters), "clusters")
-        for cluster in clusters:
-            print(len(cluster))
+        self.cluster_data_to_form(clusters)
 
-        # self.ui.clusters_info.setText(str(len(clusters)))
+    def clusters_from_tag(self):
+        clusters = self.ui.openGLWidget.main_model.find_clusters_by_tag()
+        self.cluster_data_to_form(clusters)
+
+    def cluster_data_to_form(self, clusters):
+        text = "Clusters: " + str(len(clusters)) + "\n"
+        for i in range(len(clusters)):
+            cluster = clusters[i]
+            if len(cluster) > 0:
+                text += "Cluster " + str(i + 1) + ": " + str(len(cluster)) + "\n"
+                m1 = self.ui.openGLWidget.main_model.sub_model(cluster)
+                text += "cm :" + str(m1.center_mass()) + "\n"
+                text += "size z :" + str(round(m1.max_z() - m1.min_z(), 4)) + "\n"
+        self.ui.clusters_info.setText(text)
 
     def fit_with(self):   # pragma: no cover
         xf, yf, rf = self.models[self.active_model_id].fit_with_cylinder()

@@ -4005,19 +4005,6 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="QGroupBox" name="groupBox_62">
-                  <property name="minimumSize">
-                   <size>
-                    <width>0</width>
-                    <height>100</height>
-                   </size>
-                  </property>
-                  <property name="title">
-                   <string>Сhange type of atoms</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
                  <spacer name="verticalSpacer_31">
                   <property name="orientation">
                    <enum>Qt::Vertical</enum>
@@ -4374,8 +4361,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>98</width>
-                 <height>28</height>
+                 <width>100</width>
+                 <height>30</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -10240,13 +10227,33 @@
               </property>
               <layout class="QHBoxLayout" name="horizontalLayout_98">
                <item>
-                <spacer name="horizontalSpacer_71">
+                <spacer name="horizontalSpacer_131">
                  <property name="orientation">
                   <enum>Qt::Horizontal</enum>
                  </property>
                  <property name="sizeHint" stdset="0">
                   <size>
-                   <width>117</width>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+               <item>
+                <widget class="QPushButton" name="clusters_from_tag">
+                 <property name="text">
+                  <string>From tag</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <spacer name="horizontalSpacer_72">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
                    <height>20</height>
                   </size>
                  </property>
@@ -10260,13 +10267,13 @@
                 </widget>
                </item>
                <item>
-                <spacer name="horizontalSpacer_72">
+                <spacer name="horizontalSpacer_71">
                  <property name="orientation">
                   <enum>Qt::Horizontal</enum>
                  </property>
                  <property name="sizeHint" stdset="0">
                   <size>
-                   <width>117</width>
+                   <width>40</width>
                    <height>20</height>
                   </size>
                  </property>
@@ -10276,7 +10283,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QListWidget" name="clusters_info"/>
+             <widget class="QTextBrowser" name="clusters_info"/>
             </item>
            </layout>
           </widget>

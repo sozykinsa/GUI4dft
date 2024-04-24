@@ -773,9 +773,9 @@ class GuiOpenGLBase(QOpenGLWidget):
         if self.is_orthographic:
             self.scale_factor = aspect * 6.0 / model_size
         else:
-            x_max = self.main_model.maxX()
-            y_max = self.main_model.maxY()
-            z_max = self.main_model.maxZ()
+            x_max = self.main_model.max_x()
+            y_max = self.main_model.max_y()
+            z_max = self.main_model.max_z()
             rad = self.main_model.get_covalent_radii().max()
             h, w = self.height(), self.width()
             size = x_max + rad if h > w else y_max + rad

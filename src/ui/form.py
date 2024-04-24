@@ -2271,12 +2271,6 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_26.addWidget(self.groupBox_63)
 
-        self.groupBox_62 = QGroupBox(self.page_29)
-        self.groupBox_62.setObjectName(u"groupBox_62")
-        self.groupBox_62.setMinimumSize(QSize(0, 100))
-
-        self.verticalLayout_26.addWidget(self.groupBox_62)
-
         self.verticalSpacer_31 = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
 
         self.verticalLayout_26.addItem(self.verticalSpacer_31)
@@ -2451,7 +2445,7 @@ class Ui_MainWindow(object):
         self.toolBox_6.addItem(self.page, u"Cell")
         self.page_9 = QWidget()
         self.page_9.setObjectName(u"page_9")
-        self.page_9.setGeometry(QRect(0, 0, 98, 28))
+        self.page_9.setGeometry(QRect(0, 0, 100, 30))
         self.FormModelComboModels_2 = QComboBox(self.page_9)
         self.FormModelComboModels_2.setObjectName(u"FormModelComboModels_2")
         self.FormModelComboModels_2.setGeometry(QRect(50, 10, 61, 22))
@@ -5532,23 +5526,32 @@ class Ui_MainWindow(object):
         self.frame_185.setFrameShadow(QFrame.Raised)
         self.horizontalLayout_98 = QHBoxLayout(self.frame_185)
         self.horizontalLayout_98.setObjectName(u"horizontalLayout_98")
-        self.horizontalSpacer_71 = QSpacerItem(117, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.horizontalSpacer_131 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
-        self.horizontalLayout_98.addItem(self.horizontalSpacer_71)
+        self.horizontalLayout_98.addItem(self.horizontalSpacer_131)
+
+        self.clusters_from_tag = QPushButton(self.frame_185)
+        self.clusters_from_tag.setObjectName(u"clusters_from_tag")
+
+        self.horizontalLayout_98.addWidget(self.clusters_from_tag)
+
+        self.horizontalSpacer_72 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_98.addItem(self.horizontalSpacer_72)
 
         self.clusters_search = QPushButton(self.frame_185)
         self.clusters_search.setObjectName(u"clusters_search")
 
         self.horizontalLayout_98.addWidget(self.clusters_search)
 
-        self.horizontalSpacer_72 = QSpacerItem(117, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.horizontalSpacer_71 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
-        self.horizontalLayout_98.addItem(self.horizontalSpacer_72)
+        self.horizontalLayout_98.addItem(self.horizontalSpacer_71)
 
 
         self.verticalLayout_74.addWidget(self.frame_185)
 
-        self.clusters_info = QListWidget(self.tab_19)
+        self.clusters_info = QTextBrowser(self.tab_19)
         self.clusters_info.setObjectName(u"clusters_info")
 
         self.verticalLayout_74.addWidget(self.clusters_info)
@@ -7062,7 +7065,6 @@ class Ui_MainWindow(object):
         self.FormActionsPreButDeleteAtom.setText(QCoreApplication.translate("MainWindow", u"Delete", None))
         self.FormActionsPreButModifyAtom.setText(QCoreApplication.translate("MainWindow", u"Modify", None))
         self.FormActionsPreButAddAtom.setText(QCoreApplication.translate("MainWindow", u"Add", None))
-        self.groupBox_62.setTitle(QCoreApplication.translate("MainWindow", u"\u0421hange type of atoms", None))
         self.toolBox_6.setItemText(self.toolBox_6.indexOf(self.page_29), QCoreApplication.translate("MainWindow", u"Add or Modify Atom", None))
         self.modify_cell_cart_coord.setText(QCoreApplication.translate("MainWindow", u"Edit", None))
         self.modify_cell_frac_coord.setText(QCoreApplication.translate("MainWindow", u"Edit (fractional)", None))
@@ -7317,6 +7319,7 @@ class Ui_MainWindow(object):
         self.label_130.setText(QCoreApplication.translate("MainWindow", u"Y label", None))
         self.cell_parameter_label_y.setText(QCoreApplication.translate("MainWindow", u"Energy, eV", None))
         self.tabWidget_6.setTabText(self.tabWidget_6.indexOf(self.tab_17), QCoreApplication.translate("MainWindow", u"Cell parameter", None))
+        self.clusters_from_tag.setText(QCoreApplication.translate("MainWindow", u"From tag", None))
         self.clusters_search.setText(QCoreApplication.translate("MainWindow", u"Search", None))
         self.tabWidget_6.setTabText(self.tabWidget_6.indexOf(self.tab_19), QCoreApplication.translate("MainWindow", u"Clusters", None))
         self.groupBox_54.setTitle(QCoreApplication.translate("MainWindow", u"Fit with", None))
