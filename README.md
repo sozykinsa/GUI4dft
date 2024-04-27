@@ -5,7 +5,7 @@
 GUI4dft (Graphical User Interface for support of Density Functional Theory calculations) - first free SIESTA oriented GUI. It is a cross-platform program. 
 
 ## Install
-GUI4DFT program is written in Python 3 (version >= 3.9). It has some dependences. To install the necessary modules, run in the terminal (in the <gui4dft path>):
+GUI4DFT program is written in Python 3 (version 3.9 or 3.10). It has some dependences. To install the necessary modules, run in the terminal (in the <gui4dft path>):
 
 pip3 install -r ./requirements.txt
 
@@ -35,6 +35,8 @@ v1.2 - Contains some additional features. For example, it allows visualizing the
 v1.3 - This version uses pyqtgraph instead of matplotlib and pyside2 instead of PyQt5. The colors of the atoms and covalent radii are taken from the ASE module. The project is covered with tests.
 
 v1.4 - This is the next release in 1.x branch. Pyside6. Added support for exporting structural data to input files VASP, CRYSTAL, QE. 
+
+v1.5 - Python 3.12.
 
 The master branch contains more or less stable 1.x version functions.
 

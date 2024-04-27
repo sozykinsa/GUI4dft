@@ -77,6 +77,13 @@ class GuiOpenGLBase(QOpenGLWidget):
         self.orientation_model_changed: Callable = None
         self.selected_atom_position: Callable = None
         self.selected_atom_callback: Callable = None
+        self.selected_atom_callback: Callable = None
+
+        self.clusters_color = [np.array((1.0, 0.0, 0.0, 1.0), dtype=float),
+                               np.array((0.0, 0.0, 1.0, 1.0), dtype=float),
+                               np.array((0.0, 0.0, 1.0, 1.0), dtype=float),
+                               np.array((1.0, 1.0, 0.0, 1.0), dtype=float),
+                               np.array((1.0, 0.0, 1.0, 1.0), dtype=float)]
 
     def is_atom_selected(self):
         return self.selected_atom >= 0
@@ -416,7 +423,7 @@ class GuiOpenGLBase(QOpenGLWidget):
         max_val = 0
         mean_val = 0
 
-        if (len(prop) > 0) and (prop != "charge"):
+        if (len(prop) > 0) and (prop != "charge") and (prop != "cluster"):
             min_val = self.main_model.atoms[0].properties[prop]
             max_val = self.main_model.atoms[0].properties[prop]
             mean_val = self.main_model.atoms[0].properties[prop]
@@ -438,12 +445,15 @@ class GuiOpenGLBase(QOpenGLWidget):
             rad_scale = 0.3
 
             if not at.is_selected():
-                if (len(prop) > 0) and (prop != "charge"):
+                if (len(prop) > 0) and (prop != "charge") and (prop != "cluster"):
                     val = at.properties[prop]
                     if val > mean_val:
                         color = (color[0], math.fabs((val-mean_val)/(max_val-mean_val)), color[2], color[3])
                     else:
                         color = (color[0], color[1], math.fabs((val-mean_val)/(min_val-mean_val)), color[3])
+                elif prop == "cluster":
+                    color = self.clusters_color[at.cluster]
+                    pass
                 else:
                     color = self.color_of_atoms[at.charge]
                     if self.selected_fragment_mode and at.fragment1:

@@ -120,8 +120,11 @@ class MainForm(QMainWindow):
 
         self.ui.FormModelComboModels.currentIndexChanged.connect(self.model_to_screen)
         self.ui.FormActionsPostTreeSurface.itemSelectionChanged.connect(self.type_of_surface)
+
+        self.ui.color_atoms_with_atom_type.clicked.connect(self.color_atoms_with_property)
         self.ui.PropertyForColorOfAtom.currentIndexChanged.connect(self.color_atoms_with_property)
-        self.ui.ColorAtomsProperty.clicked.connect(self.color_atoms_with_property)
+        self.ui.color_atoms_with_property.clicked.connect(self.color_atoms_with_property)
+        self.ui.color_atoms_with_cluster_id.clicked.connect(self.color_atoms_with_property)
 
         self.ui.font_size_3d.valueChanged.connect(self.font_size_3d_changed)
         self.ui.property_shift_x.valueChanged.connect(self.property_position_changed)
@@ -245,6 +248,8 @@ class MainForm(QMainWindow):
         self.ui.FormActionsButtonAddDOSFile.clicked.connect(self.add_dos_file)
         self.ui.FormActionsButtonPlotDOS.clicked.connect(self.plot_dos)
         self.ui.FormActionsButtonClearDOS.clicked.connect(self.clear_dos)
+
+        self.ui.FormActionsPostButPlotBondsHistogram.clicked.connect(self.plot_bonds_histogram)
 
         self.ui.FormActionsPostButPlusCellParam.clicked.connect(self.add_cell_param)
         self.ui.FormActionsPostButAddRowCellParam.clicked.connect(self.add_cell_param_row)
@@ -1316,11 +1321,13 @@ class MainForm(QMainWindow):
         for i in range(len(clusters)):
             cluster = clusters[i]
             if len(cluster) > 0:
+                self.models[self.active_model_id].set_cluster(cluster, i)
                 text += "Cluster " + str(i + 1) + ": " + str(len(cluster)) + "\n"
                 m1 = self.ui.openGLWidget.main_model.sub_model(cluster)
                 text += "cm :" + str(m1.center_mass()) + "\n"
                 text += "size z :" + str(round(m1.max_z() - m1.min_z(), 4)) + "\n"
         self.ui.clusters_info.setText(text)
+        self.plot_model(self.active_model_id)
 
     def fit_with(self):   # pragma: no cover
         xf, yf, rf = self.models[self.active_model_id].fit_with_cylinder()
@@ -1684,7 +1691,9 @@ class MainForm(QMainWindow):
             self.ui.PropertyForColorOfAtom.setModel(atom_prop_type)
 
     def color_atoms_with_property(self):  # pragma: no cover
-        if self.ui.ColorAtomsProperty.isChecked():
+        if self.ui.color_atoms_with_cluster_id.isChecked():
+            self.ui.openGLWidget.color_atoms_with_property("cluster")
+        elif self.ui.color_atoms_with_property.isChecked():
             prop = self.ui.PropertyForColorOfAtom.currentText()
             if len(prop) > 0:
                 self.ui.openGLWidget.color_atoms_with_property(prop)

@@ -46,13 +46,14 @@ class AtomicModel(object):
     def __getitem__(self, i):
         return self.atoms[i]
 
-    def add_atom_with_data(self, xyz: np.ndarray, charge: int, tag: str = "") -> None:
+    def add_atom_with_data(self, xyz: np.ndarray, charge: int, let: str = "", tag: str = "") -> None:
         """
         xyz: coords
         charge: atomic number
         tag: additional information
         """
-        let = self.mendeley.get_let(charge)
+        if let == "":
+            let = self.mendeley.get_let(charge)
         atom = Atom([*xyz, let, charge])
         atom.tag = tag
         self.atoms.append(atom)
@@ -201,7 +202,7 @@ class AtomicModel(object):
                 c = reg.sub('', s[indexes[0]])
                 charge = mendeley.get_charge_by_letter(c)
             if (charge > 0) or is_allow_charge_incorrect:
-                new_model.add_atom_with_data(xyz, charge, tag)
+                new_model.add_atom_with_data(xyz, charge, let=c, tag=tag)
             if i1 < number_of_atoms -1:
                 str2 = ani_file.readline()
         new_model.set_lat_vectors_default()
@@ -560,6 +561,10 @@ class AtomicModel(object):
     def size_z(self):
         """The length of the molecule along the Z axis."""
         return self.max_z() - self.min_z()
+
+    def set_cluster(self, cluster, k):
+        for atom in cluster:
+            self.atoms[atom].cluster = k
 
     def sort_atoms_by_type(self):
         for i in range(0, self.n_atoms()):
