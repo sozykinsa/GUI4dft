@@ -135,8 +135,12 @@ class ImporterExporter(object):
     @staticmethod
     def check_bands_file(filename):
         """Check PDOS file for fdf/out filename."""
-        system_label = TSIESTA.system_label(filename)
-        file = os.path.dirname(filename) + "/" + str(system_label) + ".bands"
+        if helpers.check_format(filename) == "siesta_out":
+            system_label = TSIESTA.system_label(filename)
+            file = os.path.dirname(filename) + "/" + str(system_label) + ".bands"
+        elif helpers.check_format(filename) == "QEPWout":
+            file = os.path.dirname(filename) + "/Bandx.dat.gnu"
+
         if os.path.exists(file):
             return file
         else:

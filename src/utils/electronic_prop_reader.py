@@ -70,8 +70,6 @@ def read_siesta_bands(file, is_check_bands_spin, k_max, k_min):
     n_bands, n_spins = int(str1[0]), int(str1[1])
     n_k_points = int(str1[2])
     k_mesh = np.zeros((str1[2]))
-    homo = e_min * np.ones(n_k_points)
-    lumo = e_max * np.ones(n_k_points)
     bands = np.zeros((n_bands * n_spins, n_k_points))
     for i in range(0, str1[2]):
         str2 = f.readline().split()
@@ -90,22 +88,19 @@ def read_siesta_bands(file, is_check_bands_spin, k_max, k_min):
         bands = bands[:n_bands]
     else:
         bands = bands[n_bands:]
-    for i in range(0, n_bands):
+    f.close()
+    return bands, e_max, e_min, k_mesh
+
+
+def siesta_homo_lumo(bands, e_max, e_min):
+    # e_min, e_max = np.min(bands, 1), np.max(bands, 1)
+    homo = e_min * np.ones(len(bands[0]))
+    lumo = e_max * np.ones(len(bands[0]))
+    for i in range(0, len(bands)):
         for j in range(0, len(bands[0])):
             tm = float(bands[i][j])
             if (tm > homo[j]) and (tm <= 0):
                 homo[j] = tm
             if (tm < lumo[j]) and (tm > 0):
                 lumo[j] = tm
-    n_sticks = int(f.readline())
-    x_ticks = []
-    x_tick_labels = []
-    for i in range(0, n_sticks):
-        str3 = f.readline().split()
-        value = float(str3[0])
-        if (round(value, 2) >= k_min) and (round(value, 2) <= k_max):
-            x_ticks.append(value)
-            letter = helpers.utf8_letter(str3[1][1:-1])
-            x_tick_labels.append(letter)
-    f.close()
-    return bands, e_max, e_min, homo, k_mesh, lumo, x_tick_labels, x_ticks
+    return homo, lumo

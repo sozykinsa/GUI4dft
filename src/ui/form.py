@@ -2093,7 +2093,7 @@ class Ui_MainWindow(object):
         self.toolBox_6.setSizePolicy(sizePolicy2)
         self.page_29 = QWidget()
         self.page_29.setObjectName(u"page_29")
-        self.page_29.setGeometry(QRect(0, 0, 371, 593))
+        self.page_29.setGeometry(QRect(0, 0, 363, 329))
         self.verticalLayout_26 = QVBoxLayout(self.page_29)
         self.verticalLayout_26.setObjectName(u"verticalLayout_26")
         self.groupBox_63 = QGroupBox(self.page_29)
@@ -2445,7 +2445,7 @@ class Ui_MainWindow(object):
         self.toolBox_6.addItem(self.page, u"Cell")
         self.page_9 = QWidget()
         self.page_9.setObjectName(u"page_9")
-        self.page_9.setGeometry(QRect(0, 0, 98, 28))
+        self.page_9.setGeometry(QRect(0, 0, 100, 30))
         self.FormModelComboModels_2 = QComboBox(self.page_9)
         self.FormModelComboModels_2.setObjectName(u"FormModelComboModels_2")
         self.FormModelComboModels_2.setGeometry(QRect(50, 10, 61, 22))
@@ -3330,6 +3330,39 @@ class Ui_MainWindow(object):
 
 
         self.verticalLayout_7.addWidget(self.FormActionsGrBoxBANDSspin)
+
+        self.groupBox_61 = QGroupBox(self.tab_18)
+        self.groupBox_61.setObjectName(u"groupBox_61")
+        self.groupBox_61.setMinimumSize(QSize(0, 100))
+        self.verticalLayout_75 = QVBoxLayout(self.groupBox_61)
+        self.verticalLayout_75.setObjectName(u"verticalLayout_75")
+        self.high_symmetry_k_points = QTableWidget(self.groupBox_61)
+        self.high_symmetry_k_points.setObjectName(u"high_symmetry_k_points")
+
+        self.verticalLayout_75.addWidget(self.high_symmetry_k_points)
+
+        self.frame_186 = QFrame(self.groupBox_61)
+        self.frame_186.setObjectName(u"frame_186")
+        self.frame_186.setMinimumSize(QSize(0, 50))
+        self.frame_186.setFrameShape(QFrame.NoFrame)
+        self.frame_186.setFrameShadow(QFrame.Raised)
+        self.horizontalLayout_99 = QHBoxLayout(self.frame_186)
+        self.horizontalLayout_99.setObjectName(u"horizontalLayout_99")
+        self.add_kpoints_row = QPushButton(self.frame_186)
+        self.add_kpoints_row.setObjectName(u"add_kpoints_row")
+
+        self.horizontalLayout_99.addWidget(self.add_kpoints_row)
+
+        self.delete_kpoints_row = QPushButton(self.frame_186)
+        self.delete_kpoints_row.setObjectName(u"delete_kpoints_row")
+
+        self.horizontalLayout_99.addWidget(self.delete_kpoints_row)
+
+
+        self.verticalLayout_75.addWidget(self.frame_186)
+
+
+        self.verticalLayout_7.addWidget(self.groupBox_61)
 
         self.groupBox_48 = QGroupBox(self.tab_18)
         self.groupBox_48.setObjectName(u"groupBox_48")
@@ -5358,10 +5391,10 @@ class Ui_MainWindow(object):
         self.horizontalLayout_15 = QHBoxLayout(self.frame)
         self.horizontalLayout_15.setObjectName(u"horizontalLayout_15")
         self.horizontalLayout_15.setContentsMargins(0, 0, 0, 0)
-        self.FormActionsPostButAddRowCellParam = QPushButton(self.frame)
-        self.FormActionsPostButAddRowCellParam.setObjectName(u"FormActionsPostButAddRowCellParam")
+        self.add_cell_param_row = QPushButton(self.frame)
+        self.add_cell_param_row.setObjectName(u"add_cell_param_row")
 
-        self.horizontalLayout_15.addWidget(self.FormActionsPostButAddRowCellParam)
+        self.horizontalLayout_15.addWidget(self.add_cell_param_row)
 
         self.FormActionsPostButPlusCellParam = QPushButton(self.frame)
         self.FormActionsPostButPlusCellParam.setObjectName(u"FormActionsPostButPlusCellParam")
@@ -7136,6 +7169,9 @@ class Ui_MainWindow(object):
         self.bands_spin_up.setText(QCoreApplication.translate("MainWindow", u"Up", None))
         self.bands_spin_down.setText(QCoreApplication.translate("MainWindow", u"Down", None))
         self.bands_spin_up_down.setText(QCoreApplication.translate("MainWindow", u"Up+Down", None))
+        self.groupBox_61.setTitle(QCoreApplication.translate("MainWindow", u"High-symmetry point", None))
+        self.add_kpoints_row.setText(QCoreApplication.translate("MainWindow", u"Add Row", None))
+        self.delete_kpoints_row.setText(QCoreApplication.translate("MainWindow", u"Delete Selected", None))
         self.groupBox_48.setTitle(QCoreApplication.translate("MainWindow", u"Plot", None))
         self.label_120.setText(QCoreApplication.translate("MainWindow", u"Title", None))
         self.bands_title.setText(QCoreApplication.translate("MainWindow", u"Bands", None))
@@ -7300,7 +7336,7 @@ class Ui_MainWindow(object):
         self.tabWidget_6.setTabText(self.tabWidget_6.indexOf(self.tab_16), QCoreApplication.translate("MainWindow", u"Bonds", None))
         self.label_20.setText(QCoreApplication.translate("MainWindow", u"Energy units", None))
         self.label_35.setText(QCoreApplication.translate("MainWindow", u"Volume units", None))
-        self.FormActionsPostButAddRowCellParam.setText(QCoreApplication.translate("MainWindow", u"Add Row", None))
+        self.add_cell_param_row.setText(QCoreApplication.translate("MainWindow", u"Add Row", None))
         self.FormActionsPostButPlusCellParam.setText(QCoreApplication.translate("MainWindow", u"Add File", None))
         self.cell_params_file_add.setText(QCoreApplication.translate("MainWindow", u"Import", None))
         self.cell_param_delete_row.setText(QCoreApplication.translate("MainWindow", u"Delete Selected", None))

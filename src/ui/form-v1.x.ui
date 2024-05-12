@@ -3658,8 +3658,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>371</width>
-                 <height>593</height>
+                 <width>363</width>
+                 <height>329</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -4361,8 +4361,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>98</width>
-                 <height>28</height>
+                 <width>100</width>
+                 <height>30</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -6111,6 +6111,56 @@
                  <property name="text">
                   <string>Up+Down</string>
                  </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
+             <widget class="QGroupBox" name="groupBox_61">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>100</height>
+               </size>
+              </property>
+              <property name="title">
+               <string>High-symmetry point</string>
+              </property>
+              <layout class="QVBoxLayout" name="verticalLayout_75">
+               <item>
+                <widget class="QTableWidget" name="high_symmetry_k_points"/>
+               </item>
+               <item>
+                <widget class="QFrame" name="frame_186">
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>50</height>
+                  </size>
+                 </property>
+                 <property name="frameShape">
+                  <enum>QFrame::NoFrame</enum>
+                 </property>
+                 <property name="frameShadow">
+                  <enum>QFrame::Raised</enum>
+                 </property>
+                 <layout class="QHBoxLayout" name="horizontalLayout_99">
+                  <item>
+                   <widget class="QPushButton" name="add_kpoints_row">
+                    <property name="text">
+                     <string>Add Row</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QPushButton" name="delete_kpoints_row">
+                    <property name="text">
+                     <string>Delete Selected</string>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
                 </widget>
                </item>
               </layout>
@@ -9895,7 +9945,7 @@
                    <number>0</number>
                   </property>
                   <item>
-                   <widget class="QPushButton" name="FormActionsPostButAddRowCellParam">
+                   <widget class="QPushButton" name="add_cell_param_row">
                     <property name="text">
                      <string>Add Row</string>
                     </property>

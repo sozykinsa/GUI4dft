@@ -9,6 +9,19 @@ from core_atomistic.atom import Atom
 from core_atomistic.atomic_model import AtomicModel
 
 
+class TQE:
+
+    @staticmethod
+    def gnuplot_bands_reader(file):
+        data = np.loadtxt(file)
+        k = np.unique(data[:, 0])
+        kmin, kmax = min(k), max(k)
+        bands = np.reshape(data[:, 1], (-1, len(k)))
+        emax, emin = np.max(bands), np.min(bands)
+        nspins = 1
+        return emax, emin, kmax, kmin, nspins
+
+
 def vectors_from_pwout(f_name):
     """Lattice vectors from output file of PWscf.
     f_name: PWscf output file
@@ -234,6 +247,12 @@ def get_positions(f, vectors):
         str1 = helpers.spacedel(f.readline())
     model.lat_vectors = deepcopy(vectors)
     return model, str1
+
+
+def get_fermi_level(f):
+    e_fermi = helpers.from_file_property(f, "the Fermi energy is",  prop_type='float')
+    # "the Fermi energy is     4.9640 ev"
+    return e_fermi
 
 
 def model_to_qe_pw(model: AtomicModel):

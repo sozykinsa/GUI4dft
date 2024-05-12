@@ -1,4 +1,4 @@
-from utils.electronic_prop_reader import read_siesta_bands, dos_from_file, dos_siesta_vert
+from utils.electronic_prop_reader import read_siesta_bands, dos_from_file, dos_siesta_vert, siesta_homo_lumo
 from program.vasp import vasp_dos
 from program.siesta import TSIESTA
 
@@ -44,10 +44,10 @@ def test_bands(tests_path):
 
     kmin, kmax = 0.0, 0.39
     is_check_bands_spin = True
-    bands, emaxf, eminf, homo, kmesh, lumo, xticklabels, xticks = read_siesta_bands(f_name, is_check_bands_spin,
-                                                                                    kmax, kmin)
+    bands, emaxf, eminf, kmesh = read_siesta_bands(f_name, is_check_bands_spin, kmax, kmin)
     assert len(kmesh) == 100
 
+    homo, lumo = siesta_homo_lumo(bands, emaxf, eminf)
     gap, gap_ind = gaps(bands, emaxf, eminf, homo, lumo)
     assert gap == 0.6385999999999994
 
@@ -55,9 +55,9 @@ def test_bands(tests_path):
 
     kmin, kmax = 0.0, 0.39
     is_check_bands_spin = True
-    bands, emaxf, eminf, homo, kmesh, lumo, xticklabels, xticks = read_siesta_bands(f_name, is_check_bands_spin,
-                                                                                    kmax, kmin)
+    bands, emaxf, eminf, kmesh = read_siesta_bands(f_name, is_check_bands_spin, kmax, kmin)
     assert len(kmesh) == 100
 
+    homo, lumo = siesta_homo_lumo(bands, emaxf, eminf)
     gap, gap_ind = gaps(bands, emaxf, eminf, homo, lumo)
     assert gap == 0.6385999999999994
