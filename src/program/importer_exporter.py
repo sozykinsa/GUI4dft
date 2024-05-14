@@ -11,6 +11,9 @@ from program.firefly import atomic_model_to_firefly_inp
 from program.crystal import structure_of_primitive_cell, structure_opt_step
 from program.chemdraw import model_from_ct
 from program.qe import atoms_from_pwout
+from program.qe import energy_tot as qe_energy_tot
+from program.qe import volume as qe_volume
+from program.qe import alats_from_pwout
 from program.dftb import atoms_from_gen
 from program.lammps import atoms_trajectory_step
 from program.vasp import VASP

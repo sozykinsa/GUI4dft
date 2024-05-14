@@ -39,9 +39,7 @@ from program.volumericdata import VolumericData
 from program.xsf import XSF
 from qtbased.image3dexporter import Image3Dexporter
 from program.siesta import TSIESTA
-from program.qe import TQE, model_to_qe_pw, alats_from_pwout, get_fermi_level
-from program.qe import energy_tot as qe_energy_tot
-from program.qe import volume as qe_volume
+from program.qe import TQE, model_to_qe_pw, get_fermi_level
 from program.wien import model_to_wien_struct
 from program.vasp import VASP
 from program.dftb import model_to_dftb_d0
