@@ -43,7 +43,7 @@ from program.qe import TQE, model_to_qe_pw, alats_from_pwout, get_fermi_level
 from program.qe import energy_tot as qe_energy_tot
 from program.qe import volume as qe_volume
 from program.wien import model_to_wien_struct
-from program.vasp import TVASP, vasp_dos, model_to_vasp_poscar, abc_from_outcar
+from program.vasp import VASP
 from program.dftb import model_to_dftb_d0
 from program.lammps import model_to_lammps_input
 from program.octopus import model_to_octopus_input
@@ -1141,7 +1141,7 @@ class MainForm(QMainWindow):
                 self.ui.FormActionsTabeDOSProperty.setRowCount(i)
                 self.ui.FormActionsTabeDOSProperty.setItem(i - 1, 1, QTableWidgetItem(str(e_fermi)))
 
-    def fill_energies(self, energies: list[float]) -> None:
+    def fill_energies(self, energies) -> None:
         """Plot energies for steps of output."""
         if len(energies) == 0:
             return
@@ -1271,28 +1271,7 @@ class MainForm(QMainWindow):
         return c1, c2
 
     def fill_cell_info(self, f_name, sourse="siesta_out"):
-        volume = 0.0
-        energy = 0.0
-        a, b, c = 0.0, 0.0, 0.0
-
-        if sourse == "siesta_out":
-            volume = TSIESTA.volume(f_name)
-            energy = TSIESTA.energy_tot(f_name)
-            models, fdf_data = ImporterExporter.import_from_file(f_name)
-            model = models[-1]
-            a = np.linalg.norm(model.lat_vector1)
-            b = np.linalg.norm(model.lat_vector2)
-            c = np.linalg.norm(model.lat_vector3)
-        if sourse == "vasp_outcar":
-            volume = TVASP.volume(f_name)
-            energy, is_conv, iteration = TVASP.energy_tot(f_name)
-            a, b, c = abc_from_outcar(f_name)
-
-        if sourse == "QEPWout":
-            volume = qe_volume(f_name)
-            energy, is_conv, iteration = qe_energy_tot(f_name)
-            a, b, c, al, bet, gam = alats_from_pwout(f_name)
-
+        a, b, c, energy, volume = ImporterExporter.abc_energy_volume(f_name, sourse)
         self.fill_cell_info_row(energy, volume, a, b, c)
         self.work_dir = os.path.dirname(f_name)
         self.save_active_folder()
@@ -2399,7 +2378,7 @@ class MainForm(QMainWindow):
 
             if os.path.exists(path):
                 if path.endswith("DOSCAR"):
-                    spin_up, spin_down, energy = vasp_dos(path)
+                    spin_up, spin_down, energy = VASP.vasp_dos(path)
                 else:
                     spin_up, spin_down, energy = dos_from_file(path)
 
@@ -2941,7 +2920,7 @@ class MainForm(QMainWindow):
             return
         try:
             model = self.ui.openGLWidget.get_model()
-            text = model_to_vasp_poscar(model, self.coord_type)
+            text = VASP.model_to_vasp_poscar(model, self.coord_type)
             self.ui.FormActionsPreTextFDF.setText(text)
         except Exception:
             print("There are no atoms in the model")

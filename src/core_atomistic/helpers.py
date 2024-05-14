@@ -177,7 +177,6 @@ def list_of_values(filename, prop):
     return list_of_val
 
 
-
 def write_text_to_file(f_name, text):  # pragma: no cover
     if len(f_name) > 0:
         with open(f_name, 'w') as f:

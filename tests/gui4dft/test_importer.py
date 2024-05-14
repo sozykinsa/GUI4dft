@@ -6,7 +6,7 @@ def test_check_format(tests_path):
     assert helpers.check_format(str(tests_path / 'ref_data' / 'swcnt(8,0)' / "siesta1.out")) == "unknown"
     assert helpers.check_format(str(tests_path / 'ref_data' / 'swcnt(8,0)' / "siesta.out")) == "siesta_out"
     assert helpers.check_format(str(tests_path / 'ref_data' / 'siesta' / 'h2o-ang' / "siesta.fdf")) == "SIESTAfdf"
-    assert helpers.check_format(str(tests_path / 'ref_data' / 'vasp' / 'POSCAR')) == "VASPposcar"
+    assert helpers.check_format(str(tests_path / 'ref_data' / 'vasp' / 'vasp_cartesian' / 'POSCAR')) == "VASPposcar"
     assert helpers.check_format(str(tests_path / 'ref_data' / 'qe' / 'si-scf' / "pw.out")) == "QEPWout"
     file1 = str(tests_path / 'ref_data' / 'siesta' / 'h2o-ang-charges' / 'cube_and_xsf' / "siesta.BADER.cube")
     assert helpers.check_format(file1) == "GAUSSIAN_cube"
@@ -164,7 +164,7 @@ def test_importer_check_dos_pdos_bands(tests_path):
 
 
 def test_importer_poscar(tests_path):
-    f_name = str(tests_path / 'ref_data' / 'vasp' / 'POSCAR')
+    f_name = str(tests_path / 'ref_data' / 'vasp' / 'vasp_cartesian' / 'POSCAR')
     model, fdf = ImporterExporter.import_from_file(f_name, fl='all', prop=False)
     assert len(model[0].atoms) == 1
 

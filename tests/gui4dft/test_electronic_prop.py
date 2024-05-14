@@ -1,5 +1,5 @@
 from utils.electronic_prop_reader import read_siesta_bands, dos_from_file, dos_siesta_vert, siesta_homo_lumo
-from program.vasp import vasp_dos
+from program.vasp import VASP
 from program.siesta import TSIESTA
 
 from utils.calculators import gaps
@@ -10,8 +10,8 @@ def test_dos_from_file(tests_path):
     spin_up, spin_down, energy = dos_from_file(f_name)
     assert len(energy) == 1000
 
-    f_name = str(tests_path / 'ref_data' / 'vasp' / "DOSCAR")
-    spin_up, spin_down, energy = vasp_dos(f_name)
+    f_name = str(tests_path / 'ref_data' / 'vasp' / 'vasp_cartesian' / "DOSCAR")
+    spin_up, spin_down, energy = VASP.vasp_dos(f_name)
     assert len(energy) == 301
 
 
