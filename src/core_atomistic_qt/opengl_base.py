@@ -20,6 +20,9 @@ class GuiOpenGLBase(QOpenGLWidget):
         self.main_model = None
         self.perspective_angle: int = 35
         self.background_color = np.array((1.0, 1.0, 1.0), dtype=float)
+        self.periodic_table = TPeriodTable()
+        self.color_of_atoms = self.periodic_table.get_all_colors()
+        self.color_of_bonds_by_atoms: bool = True
         self.is_check_atom_selection: bool = False
         self.quality: int = 1
         # opengl lists
@@ -77,13 +80,6 @@ class GuiOpenGLBase(QOpenGLWidget):
         self.orientation_model_changed: Callable = None
         self.selected_atom_position: Callable = None
         self.selected_atom_callback: Callable = None
-        self.selected_atom_callback: Callable = None
-
-        self.clusters_color = [np.array((1.0, 0.0, 0.0, 1.0), dtype=float),
-                               np.array((0.0, 0.0, 1.0, 1.0), dtype=float),
-                               np.array((0.0, 0.0, 1.0, 1.0), dtype=float),
-                               np.array((1.0, 1.0, 0.0, 1.0), dtype=float),
-                               np.array((1.0, 0.0, 1.0, 1.0), dtype=float)]
 
     def is_atom_selected(self):
         return self.selected_atom >= 0
@@ -423,7 +419,7 @@ class GuiOpenGLBase(QOpenGLWidget):
         max_val = 0
         mean_val = 0
 
-        if (len(prop) > 0) and (prop != "charge") and (prop != "cluster"):
+        if (len(prop) > 0) and (prop != "charge"):
             min_val = self.main_model.atoms[0].properties[prop]
             max_val = self.main_model.atoms[0].properties[prop]
             mean_val = self.main_model.atoms[0].properties[prop]
@@ -445,15 +441,12 @@ class GuiOpenGLBase(QOpenGLWidget):
             rad_scale = 0.3
 
             if not at.is_selected():
-                if (len(prop) > 0) and (prop != "charge") and (prop != "cluster"):
+                if (len(prop) > 0) and (prop != "charge"):
                     val = at.properties[prop]
                     if val > mean_val:
                         color = (color[0], math.fabs((val-mean_val)/(max_val-mean_val)), color[2], color[3])
                     else:
                         color = (color[0], color[1], math.fabs((val-mean_val)/(min_val-mean_val)), color[3])
-                elif prop == "cluster":
-                    color = self.clusters_color[at.cluster]
-                    pass
                 else:
                     color = self.color_of_atoms[at.charge]
                     if self.selected_fragment_mode and at.fragment1:
@@ -874,7 +867,6 @@ class GuiOpenGLBase(QOpenGLWidget):
         ch2 = self.main_model.mendeley.get_charge_by_letter(let2)
         self.main_model.mendeley.Bonds[ch1][ch2] = d
         self.main_model.mendeley.Bonds[ch2][ch1] = d
-        #self.main_model.set_mendeley(self.periodic_table)
         self.main_model.find_bonds_fast()
         self.add_all_elements()
         self.update()

@@ -934,6 +934,8 @@ class MainForm(QMainWindow):
 
     @staticmethod
     def color_to_ui(color_ui, state_color):
+        if len(state_color.split()) < 3:
+            state_color = '0 0 0'
         r = state_color.split()[0]
         g = state_color.split()[1]
         b = state_color.split()[2]
@@ -1407,6 +1409,8 @@ class MainForm(QMainWindow):
 
     @staticmethod
     def get_color_from_setting(strcolor: str):
+        if len(strcolor.split()) < 3:
+            strcolor = '0 0 0'
         r = strcolor.split()[0]
         g = strcolor.split()[1]
         b = strcolor.split()[2]

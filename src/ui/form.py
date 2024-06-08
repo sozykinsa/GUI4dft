@@ -6067,6 +6067,23 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_163.addWidget(self.OpenGL_GL_CULL_FACE)
 
+        self.horizontalSpacer_132 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_163.addItem(self.horizontalSpacer_132)
+
+        self.ogl_quality_label = QLabel(self.groupBox_34)
+        self.ogl_quality_label.setObjectName(u"ogl_quality_label")
+
+        self.horizontalLayout_163.addWidget(self.ogl_quality_label)
+
+        self.ogl_quality = QSpinBox(self.groupBox_34)
+        self.ogl_quality.setObjectName(u"ogl_quality")
+        self.ogl_quality.setMinimum(1)
+        self.ogl_quality.setMaximum(20)
+        self.ogl_quality.setValue(10)
+
+        self.horizontalLayout_163.addWidget(self.ogl_quality)
+
 
         self.verticalLayout_31.addWidget(self.groupBox_34)
 
@@ -6119,14 +6136,14 @@ class Ui_MainWindow(object):
         self.frame_83 = QFrame(self.frame_82)
         self.frame_83.setObjectName(u"frame_83")
         self.frame_83.setMinimumSize(QSize(0, 30))
-        self.frame_83.setFrameShape(QFrame.StyledPanel)
+        self.frame_83.setFrameShape(QFrame.NoFrame)
         self.frame_83.setFrameShadow(QFrame.Raised)
 
         self.verticalLayout_60.addWidget(self.frame_83)
 
         self.frame_95 = QFrame(self.frame_82)
         self.frame_95.setObjectName(u"frame_95")
-        self.frame_95.setFrameShape(QFrame.StyledPanel)
+        self.frame_95.setFrameShape(QFrame.NoFrame)
         self.frame_95.setFrameShadow(QFrame.Raised)
         self.horizontalLayout_96 = QHBoxLayout(self.frame_95)
         self.horizontalLayout_96.setObjectName(u"horizontalLayout_96")
@@ -6146,7 +6163,7 @@ class Ui_MainWindow(object):
         self.frame_96 = QFrame(self.frame_82)
         self.frame_96.setObjectName(u"frame_96")
         self.frame_96.setMinimumSize(QSize(0, 40))
-        self.frame_96.setFrameShape(QFrame.StyledPanel)
+        self.frame_96.setFrameShape(QFrame.NoFrame)
         self.frame_96.setFrameShadow(QFrame.Raised)
 
         self.verticalLayout_60.addWidget(self.frame_96)
@@ -7393,6 +7410,7 @@ class Ui_MainWindow(object):
         self.label_81.setText(QCoreApplication.translate("MainWindow", u"Figures in property", None))
         self.groupBox_34.setTitle(QCoreApplication.translate("MainWindow", u"OpenGl", None))
         self.OpenGL_GL_CULL_FACE.setText(QCoreApplication.translate("MainWindow", u"GL_CULL_FACE", None))
+        self.ogl_quality_label.setText(QCoreApplication.translate("MainWindow", u"Quality", None))
         self.groupBox_60.setTitle(QCoreApplication.translate("MainWindow", u"Color atoms according to", None))
         self.color_atoms_with_atom_type.setText(QCoreApplication.translate("MainWindow", u"atom type", None))
         self.color_atoms_with_property.setText(QCoreApplication.translate("MainWindow", u"property", None))
