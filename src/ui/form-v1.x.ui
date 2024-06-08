@@ -3658,8 +3658,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>371</width>
-                 <height>593</height>
+                 <width>363</width>
+                 <height>329</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -4002,19 +4002,6 @@
                     </widget>
                    </item>
                   </layout>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QGroupBox" name="groupBox_62">
-                  <property name="minimumSize">
-                   <size>
-                    <width>0</width>
-                    <height>100</height>
-                   </size>
-                  </property>
-                  <property name="title">
-                   <string>Сhange type of atoms</string>
-                  </property>
                  </widget>
                 </item>
                 <item>
@@ -4374,8 +4361,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>98</width>
-                 <height>28</height>
+                 <width>100</width>
+                 <height>30</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -6124,6 +6111,56 @@
                  <property name="text">
                   <string>Up+Down</string>
                  </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
+             <widget class="QGroupBox" name="groupBox_61">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>100</height>
+               </size>
+              </property>
+              <property name="title">
+               <string>High-symmetry point</string>
+              </property>
+              <layout class="QVBoxLayout" name="verticalLayout_75">
+               <item>
+                <widget class="QTableWidget" name="high_symmetry_k_points"/>
+               </item>
+               <item>
+                <widget class="QFrame" name="frame_186">
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>50</height>
+                  </size>
+                 </property>
+                 <property name="frameShape">
+                  <enum>QFrame::NoFrame</enum>
+                 </property>
+                 <property name="frameShadow">
+                  <enum>QFrame::Raised</enum>
+                 </property>
+                 <layout class="QHBoxLayout" name="horizontalLayout_99">
+                  <item>
+                   <widget class="QPushButton" name="add_kpoints_row">
+                    <property name="text">
+                     <string>Add Row</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QPushButton" name="delete_kpoints_row">
+                    <property name="text">
+                     <string>Delete Selected</string>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
                 </widget>
                </item>
               </layout>
@@ -9908,7 +9945,7 @@
                    <number>0</number>
                   </property>
                   <item>
-                   <widget class="QPushButton" name="FormActionsPostButAddRowCellParam">
+                   <widget class="QPushButton" name="add_cell_param_row">
                     <property name="text">
                      <string>Add Row</string>
                     </property>
@@ -10240,13 +10277,33 @@
               </property>
               <layout class="QHBoxLayout" name="horizontalLayout_98">
                <item>
-                <spacer name="horizontalSpacer_71">
+                <spacer name="horizontalSpacer_131">
                  <property name="orientation">
                   <enum>Qt::Horizontal</enum>
                  </property>
                  <property name="sizeHint" stdset="0">
                   <size>
-                   <width>117</width>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+               <item>
+                <widget class="QPushButton" name="clusters_from_tag">
+                 <property name="text">
+                  <string>From tag</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <spacer name="horizontalSpacer_72">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
                    <height>20</height>
                   </size>
                  </property>
@@ -10260,13 +10317,13 @@
                 </widget>
                </item>
                <item>
-                <spacer name="horizontalSpacer_72">
+                <spacer name="horizontalSpacer_71">
                  <property name="orientation">
                   <enum>Qt::Horizontal</enum>
                  </property>
                  <property name="sizeHint" stdset="0">
                   <size>
-                   <width>117</width>
+                   <width>40</width>
                    <height>20</height>
                   </size>
                  </property>
@@ -10276,7 +10333,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QListWidget" name="clusters_info"/>
+             <widget class="QTextBrowser" name="clusters_info"/>
             </item>
            </layout>
           </widget>
@@ -10915,7 +10972,7 @@
                  <property name="minimumSize">
                   <size>
                    <width>0</width>
-                   <height>50</height>
+                   <height>0</height>
                   </size>
                  </property>
                  <property name="frameShape">
@@ -10973,7 +11030,13 @@
                   <property name="leftMargin">
                    <number>0</number>
                   </property>
+                  <property name="topMargin">
+                   <number>0</number>
+                  </property>
                   <property name="rightMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="bottomMargin">
                    <number>0</number>
                   </property>
                   <item>
@@ -11224,6 +11287,39 @@
                  </property>
                 </widget>
                </item>
+               <item>
+                <spacer name="horizontalSpacer_132">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+               <item>
+                <widget class="QLabel" name="ogl_quality_label">
+                 <property name="text">
+                  <string>Quality</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QSpinBox" name="ogl_quality">
+                 <property name="minimum">
+                  <number>1</number>
+                 </property>
+                 <property name="maximum">
+                  <number>20</number>
+                 </property>
+                 <property name="value">
+                  <number>10</number>
+                 </property>
+                </widget>
+               </item>
               </layout>
              </widget>
             </item>
@@ -11273,21 +11369,24 @@
                  </property>
                  <layout class="QVBoxLayout" name="verticalLayout_10">
                   <item>
-                   <widget class="QRadioButton" name="radioButton">
+                   <widget class="QRadioButton" name="color_atoms_with_atom_type">
                     <property name="text">
                      <string>atom type</string>
+                    </property>
+                    <property name="checked">
+                     <bool>true</bool>
                     </property>
                    </widget>
                   </item>
                   <item>
-                   <widget class="QRadioButton" name="ColorAtomsProperty">
+                   <widget class="QRadioButton" name="color_atoms_with_property">
                     <property name="text">
                      <string>property</string>
                     </property>
                    </widget>
                   </item>
                   <item>
-                   <widget class="QRadioButton" name="radioButton_5">
+                   <widget class="QRadioButton" name="color_atoms_with_cluster_id">
                     <property name="text">
                      <string>cluster ID</string>
                     </property>
@@ -11314,7 +11413,7 @@
                      </size>
                     </property>
                     <property name="frameShape">
-                     <enum>QFrame::StyledPanel</enum>
+                     <enum>QFrame::NoFrame</enum>
                     </property>
                     <property name="frameShadow">
                      <enum>QFrame::Raised</enum>
@@ -11324,7 +11423,7 @@
                   <item>
                    <widget class="QFrame" name="frame_95">
                     <property name="frameShape">
-                     <enum>QFrame::StyledPanel</enum>
+                     <enum>QFrame::NoFrame</enum>
                     </property>
                     <property name="frameShadow">
                      <enum>QFrame::Raised</enum>
@@ -11352,7 +11451,7 @@
                      </size>
                     </property>
                     <property name="frameShape">
-                     <enum>QFrame::StyledPanel</enum>
+                     <enum>QFrame::NoFrame</enum>
                     </property>
                     <property name="frameShadow">
                      <enum>QFrame::Raised</enum>

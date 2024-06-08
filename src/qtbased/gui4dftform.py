@@ -39,11 +39,9 @@ from program.volumericdata import VolumericData
 from program.xsf import XSF
 from qtbased.image3dexporter import Image3Dexporter
 from program.siesta import TSIESTA
-from program.qe import model_to_qe_pw, alats_from_pwout
-from program.qe import energy_tot as qe_energy_tot
-from program.qe import volume as qe_volume
+from program.qe import TQE, model_to_qe_pw, get_fermi_level
 from program.wien import model_to_wien_struct
-from program.vasp import TVASP, vasp_dos, model_to_vasp_poscar, abc_from_outcar
+from program.vasp import VASP
 from program.dftb import model_to_dftb_d0
 from program.lammps import model_to_lammps_input
 from program.octopus import model_to_octopus_input
@@ -53,7 +51,7 @@ from program.fdfdata import TFDFFile
 from utils.calculators import Calculators as Calculator
 from utils.calculators import gaps
 from program.importer_exporter import ImporterExporter
-from utils.electronic_prop_reader import read_siesta_bands, dos_from_file
+from utils.electronic_prop_reader import read_siesta_bands, dos_from_file, siesta_homo_lumo
 from ui.about import Ui_DialogAbout as Ui_about
 from ui.form import Ui_MainWindow as Ui_form
 
@@ -120,8 +118,11 @@ class MainForm(QMainWindow):
 
         self.ui.FormModelComboModels.currentIndexChanged.connect(self.model_to_screen)
         self.ui.FormActionsPostTreeSurface.itemSelectionChanged.connect(self.type_of_surface)
+
+        self.ui.color_atoms_with_atom_type.clicked.connect(self.color_atoms_with_property)
         self.ui.PropertyForColorOfAtom.currentIndexChanged.connect(self.color_atoms_with_property)
-        self.ui.ColorAtomsProperty.clicked.connect(self.color_atoms_with_property)
+        self.ui.color_atoms_with_property.clicked.connect(self.color_atoms_with_property)
+        self.ui.color_atoms_with_cluster_id.clicked.connect(self.color_atoms_with_property)
 
         self.ui.font_size_3d.valueChanged.connect(self.font_size_3d_changed)
         self.ui.property_shift_x.valueChanged.connect(self.property_position_changed)
@@ -214,6 +215,7 @@ class MainForm(QMainWindow):
         self.ui.FormActionsPostButGetBonds.clicked.connect(self.get_bonds)
         self.ui.PropertyAtomAtomDistanceGet.clicked.connect(self.get_bond)
         self.ui.clusters_search.clicked.connect(self.clusters_search)
+        self.ui.clusters_from_tag.clicked.connect(self.clusters_from_tag)
         self.ui.FormStylesFor2DGraph.clicked.connect(self.set_2d_graph_styles)
         self.ui.FormModifyTwist.clicked.connect(self.twist_model)
         self.ui.model_move_by_vector.clicked.connect(self.move_model)
@@ -245,11 +247,16 @@ class MainForm(QMainWindow):
         self.ui.FormActionsButtonPlotDOS.clicked.connect(self.plot_dos)
         self.ui.FormActionsButtonClearDOS.clicked.connect(self.clear_dos)
 
+        self.ui.FormActionsPostButPlotBondsHistogram.clicked.connect(self.plot_bonds_histogram)
+
         self.ui.FormActionsPostButPlusCellParam.clicked.connect(self.add_cell_param)
-        self.ui.FormActionsPostButAddRowCellParam.clicked.connect(self.add_cell_param_row)
+        self.ui.add_cell_param_row.clicked.connect(self.add_cell_param_row)
         self.ui.cell_param_delete_row.clicked.connect(self.delete_cell_param_row)
         self.ui.cell_param_delete_all.clicked.connect(self.delete_cell_param_all)
         self.ui.cell_params_file_add.clicked.connect(self.add_data_cell_param)
+
+        self.ui.add_kpoints_row.clicked.connect(self.add_kpoints_row)
+        self.ui.delete_kpoints_row.clicked.connect(self.delete_k_point_row)
 
         self.ui.FormModifyRotation.clicked.connect(self.model_rotation)
         self.ui.FormModifyGrowX.clicked.connect(self.model_grow_x)
@@ -393,6 +400,7 @@ class MainForm(QMainWindow):
         self.ui.FormNanotypeTypeSelector.setCurrentIndex(0)
 
         self.prepare_cell_param_table()
+        self.prepare_k_points_table()
 
         args_cell = QStandardItemModel()
         args_cell.appendRow(QStandardItem("V"))
@@ -439,7 +447,16 @@ class MainForm(QMainWindow):
         self.ui.FormActionsPostTableCellParam.horizontalHeader().setStyleSheet(self.table_header_stylesheet)
         self.ui.FormActionsPostTableCellParam.verticalHeader().setStyleSheet(self.table_header_stylesheet)
 
-    def q_standard_item_model_init(self, data: list):
+    def prepare_k_points_table(self):
+        self.ui.high_symmetry_k_points.setColumnCount(2)
+        self.ui.high_symmetry_k_points.setHorizontalHeaderLabels(["x", "letter"])
+        self.ui.high_symmetry_k_points.setColumnWidth(0, 160)
+        self.ui.high_symmetry_k_points.setColumnWidth(1, 150)
+        self.ui.high_symmetry_k_points.horizontalHeader().setStyleSheet(self.table_header_stylesheet)
+        self.ui.high_symmetry_k_points.verticalHeader().setStyleSheet(self.table_header_stylesheet)
+
+    @staticmethod
+    def q_standard_item_model_init(data: list):
         model_type = QStandardItemModel()
         for row in data:
             model_type.appendRow(QStandardItem(row))
@@ -571,6 +588,9 @@ class MainForm(QMainWindow):
     @property
     def active_model(self) -> AtomicModel:
         return self.models[self.active_model_id]
+
+    def add_kpoints_row(self):
+        self.ui.high_symmetry_k_points.setRowCount(self.ui.high_symmetry_k_points.rowCount() + 1)
 
     def add_cell_param_row(self):
         self.ui.FormActionsPostTableCellParam.setRowCount(self.ui.FormActionsPostTableCellParam.rowCount() + 1)
@@ -836,7 +856,6 @@ class MainForm(QMainWindow):
             q_tab_widg.setToolTip(dos_file)
             self.ui.FormActionsTabeDOSProperty.setItem(i - 1, 0, q_tab_widg)
             self.ui.FormActionsTabeDOSProperty.setItem(i - 1, 1, QTableWidgetItem(str(e_fermy)))
-            # self.ui.FormActionsTabeDOSProperty.update()
 
     def check_volumeric_data(self, file_name):
         files = []
@@ -915,6 +934,8 @@ class MainForm(QMainWindow):
 
     @staticmethod
     def color_to_ui(color_ui, state_color):
+        if len(state_color.split()) < 3:
+            state_color = '0 0 0'
         r = state_color.split()[0]
         g = state_color.split()[1]
         b = state_color.split()[2]
@@ -956,10 +977,10 @@ class MainForm(QMainWindow):
             model_scat.move(np.array([scat_move_x, scat_move_y, 0]))
             """ end: parts transformation"""
 
-            left_elec_max = model_left.maxZ()
-            left_bord = model_scat.minZ()
+            left_elec_max = model_left.max_z()
+            left_bord = model_scat.min_z()
 
-            right_elec_min = model_righ.minZ()
+            right_elec_min = model_righ.min_z()
 
             left_dist = self.ui.FormActionsPreSpinLeftElectrodeDist.value()
             right_dist = self.ui.FormActionsPreSpinRightElectrodeDist.value()
@@ -968,7 +989,7 @@ class MainForm(QMainWindow):
             model.add_atomic_model(model_left)
             model_scat.move(np.array([0, 0, -(left_bord - left_elec_max) + left_dist]))
             model.add_atomic_model(model_scat)
-            right_bord = model.maxZ()
+            right_bord = model.max_z()
             model_righ.move(np.array([0, 0, (right_bord - right_elec_min) + right_dist]))
             model.add_atomic_model(model_righ)
 
@@ -980,6 +1001,9 @@ class MainForm(QMainWindow):
 
     def colors_of_atoms(self):
         return self.periodic_table.get_all_colors()
+
+    def delete_k_point_row(self):
+        self.ui.high_symmetry_k_points.removeRow(self.ui.high_symmetry_k_points.currentRow())
 
     def delete_cell_param_row(self):
         self.ui.FormActionsPostTableCellParam.removeRow(self.ui.FormActionsPostTableCellParam.currentRow())
@@ -1107,7 +1131,17 @@ class MainForm(QMainWindow):
             energies = crystal.energies(file_name)
             self.fill_energies(energies)
 
-    def fill_energies(self, energies: list[float]) -> None:
+        if helpers.check_format(file_name) == "QEPWout":
+            self.check_bands(file_name)
+
+            e_fermi = get_fermi_level(file_name)
+            # print(e_fermi)
+            if e_fermi:
+                i = self.ui.FormActionsTabeDOSProperty.rowCount() + 1
+                self.ui.FormActionsTabeDOSProperty.setRowCount(i)
+                self.ui.FormActionsTabeDOSProperty.setItem(i - 1, 1, QTableWidgetItem(str(e_fermi)))
+
+    def fill_energies(self, energies) -> None:
         """Plot energies for steps of output."""
         if len(energies) == 0:
             return
@@ -1237,28 +1271,7 @@ class MainForm(QMainWindow):
         return c1, c2
 
     def fill_cell_info(self, f_name, sourse="siesta_out"):
-        volume = 0.0
-        energy = 0.0
-        a, b, c = 0.0, 0.0, 0.0
-
-        if sourse == "siesta_out":
-            volume = TSIESTA.volume(f_name)
-            energy = TSIESTA.energy_tot(f_name)
-            models, fdf_data = ImporterExporter.import_from_file(f_name)
-            model = models[-1]
-            a = np.linalg.norm(model.lat_vector1)
-            b = np.linalg.norm(model.lat_vector2)
-            c = np.linalg.norm(model.lat_vector3)
-        if sourse == "vasp_outcar":
-            volume = TVASP.volume(f_name)
-            energy, is_conv, iteration = TVASP.energy_tot(f_name)
-            a, b, c = abc_from_outcar(f_name)
-
-        if sourse == "QEPWout":
-            volume = qe_volume(f_name)
-            energy, is_conv, iteration = qe_energy_tot(f_name)
-            a, b, c, al, bet, gam = alats_from_pwout(f_name)
-
+        a, b, c, energy, volume = ImporterExporter.abc_energy_volume(f_name, sourse)
         self.fill_cell_info_row(energy, volume, a, b, c)
         self.work_dir = os.path.dirname(f_name)
         self.save_active_folder()
@@ -1304,11 +1317,24 @@ class MainForm(QMainWindow):
 
     def clusters_search(self):    # pragma: no cover
         clusters = self.ui.openGLWidget.main_model.find_clusters()
-        print(len(clusters), "clusters")
-        for cluster in clusters:
-            print(len(cluster))
+        self.cluster_data_to_form(clusters)
 
-        # self.ui.clusters_info.setText(str(len(clusters)))
+    def clusters_from_tag(self):
+        clusters = self.ui.openGLWidget.main_model.find_clusters_by_tag()
+        self.cluster_data_to_form(clusters)
+
+    def cluster_data_to_form(self, clusters):
+        text = "Clusters: " + str(len(clusters)) + "\n"
+        for i in range(len(clusters)):
+            cluster = clusters[i]
+            if len(cluster) > 0:
+                self.models[self.active_model_id].set_cluster(cluster, i)
+                text += "Cluster " + str(i + 1) + ": " + str(len(cluster)) + "\n"
+                m1 = self.ui.openGLWidget.main_model.sub_model(cluster)
+                text += "cm :" + str(m1.center_mass()) + "\n"
+                text += "size z :" + str(round(m1.max_z() - m1.min_z(), 4)) + "\n"
+        self.ui.clusters_info.setText(text)
+        self.plot_model(self.active_model_id)
 
     def fit_with(self):   # pragma: no cover
         xf, yf, rf = self.models[self.active_model_id].fit_with_cylinder()
@@ -1383,6 +1409,8 @@ class MainForm(QMainWindow):
 
     @staticmethod
     def get_color_from_setting(strcolor: str):
+        if len(strcolor.split()) < 3:
+            strcolor = '0 0 0'
         r = strcolor.split()[0]
         g = strcolor.split()[1]
         b = strcolor.split()[2]
@@ -1672,7 +1700,9 @@ class MainForm(QMainWindow):
             self.ui.PropertyForColorOfAtom.setModel(atom_prop_type)
 
     def color_atoms_with_property(self):  # pragma: no cover
-        if self.ui.ColorAtomsProperty.isChecked():
+        if self.ui.color_atoms_with_cluster_id.isChecked():
+            self.ui.openGLWidget.color_atoms_with_property("cluster")
+        elif self.ui.color_atoms_with_property.isChecked():
             prop = self.ui.PropertyForColorOfAtom.currentText()
             if len(prop) > 0:
                 self.ui.openGLWidget.color_atoms_with_property(prop)
@@ -2217,24 +2247,20 @@ class MainForm(QMainWindow):
     def parse_bands(self):
         file = self.ui.FormActionsLineBANDSfile.text()
         if os.path.exists(file):
-            f = open(file)
-            e_fermi = float(f.readline())
-            str1 = f.readline().split()
-            str1 = helpers.list_str_to_float(str1)
-            kmin, kmax = float(str1[0]), float(str1[1])
-            self.ui.spin_bands_xmin.setRange(kmin, kmax)
-            self.ui.spin_bands_xmin.setValue(kmin)
-            self.ui.spin_bands_xmax.setRange(kmin, kmax)
-            self.ui.spin_bands_xmax.setValue(kmax)
+            if not (file.endswith(".bands") or file.endswith(".dat.gnu")):
+                return
 
-            str1 = f.readline().split()
-            str1 = helpers.list_str_to_float(str1)
-            emin = float(str1[0]) - e_fermi
-            emax = float(str1[1]) - e_fermi
-            str1 = f.readline().split()
-            f.close()
-            str1 = helpers.list_str_to_int(str1)
-            nspins = float(str1[1])
+            if file.endswith(".bands"):
+                emax, emin, kmax, kmin, nspins = TSIESTA.siesta_bands_reader(file)
+                xticklabels, xticks = TSIESTA.read_siesta_bands_xlabels(file, kmax, kmin)
+                for tick, label in zip(xticks, xticklabels):
+                    self.ui.high_symmetry_k_points.setRowCount(self.ui.high_symmetry_k_points.rowCount() + 1)
+                    n = self.ui.high_symmetry_k_points.rowCount() - 1
+                    self.ui.high_symmetry_k_points.setItem(n, 0, QTableWidgetItem(str(tick)))
+                    self.ui.high_symmetry_k_points.setItem(n, 1, QTableWidgetItem(label))
+            elif file.endswith(".dat.gnu"):
+                emax, emin, kmax, kmin, nspins = TQE.gnuplot_bands_reader(file)
+
             if nspins == 2:
                 self.ui.FormActionsGrBoxBANDSspin.setEnabled(True)
             else:
@@ -2242,6 +2268,11 @@ class MainForm(QMainWindow):
 
             e_min_form = -2 if emin < -2 else emin
             e_max_form = 2 if emax > 2 else emax
+
+            self.ui.spin_bands_xmin.setRange(kmin, kmax)
+            self.ui.spin_bands_xmin.setValue(kmin)
+            self.ui.spin_bands_xmax.setRange(kmin, kmax)
+            self.ui.spin_bands_xmax.setValue(kmax)
             self.ui.spin_bands_emin.setRange(emin, emax)
             self.ui.spin_bands_emin.setValue(e_min_form)
             self.ui.spin_bands_emax.setRange(emin, emax)
@@ -2261,8 +2292,16 @@ class MainForm(QMainWindow):
         title = self.ui.bands_title.text()
 
         if os.path.exists(file):
-            if self.ui.bands_spin_up.isChecked() or self.ui.bands_spin_up_down.isChecked():
-                bands, emaxf, eminf, homo, kmesh, lumo, xticklabels, xticks = read_siesta_bands(file, True, kmax, kmin)
+            format = helpers.check_format(self.filename)
+            updown = self.ui.bands_spin_up_down.isChecked()
+
+            xticklabels, xticks = [], []
+            for index in range(self.ui.high_symmetry_k_points.rowCount()):
+                xticks.append(float(self.ui.high_symmetry_k_points.item(index, 0).text()))
+                xticklabels.append(self.ui.high_symmetry_k_points.item(index, 1).text())
+
+            if (format == "siesta_out") and (self.ui.bands_spin_up.isChecked() or updown):
+                bands, emaxf, eminf, kmesh = read_siesta_bands(file, True, kmax, kmin)
                 b_mins = np.min(bands, 1)
                 b_maxs = np.max(bands, 1)
                 inds = np.zeros(len(bands), dtype=int)
@@ -2271,8 +2310,8 @@ class MainForm(QMainWindow):
                         inds[i] = i
                 self.ui.PyqtGraphWidget.plot([kmesh], bands[inds], [None], title, x_title, y_title, False)
 
-            if self.ui.bands_spin_down.isChecked() or self.ui.bands_spin_up_down.isChecked():
-                bands, emaxf, eminf, homo, kmesh, lumo, xticklabels, xticks = read_siesta_bands(file, False, kmax, kmin)
+            if (format == "siesta_out") and (self.ui.bands_spin_down.isChecked() or updown):
+                bands, emaxf, eminf, kmesh = read_siesta_bands(file, False, kmax, kmin)
                 b_mins = np.min(bands, 1)
                 b_maxs = np.max(bands, 1)
                 inds = np.zeros(len(bands), dtype=int)
@@ -2285,6 +2324,16 @@ class MainForm(QMainWindow):
                     self.ui.PyqtGraphWidget.plot([kmesh], bands[inds], [None], title, x_title, y_title, False,
                                                  _style=Qt.DotLine)
 
+            if (format == "QEPWout") and (self.ui.bands_spin_up.isChecked() or updown):
+                bands, emaxf, eminf, kmesh = self.read_qe_bands(file)  # , kmax, kmin)
+                b_mins = np.min(bands, 1)
+                b_maxs = np.max(bands, 1)
+                inds = np.zeros(len(bands), dtype=int)
+                for i in range(len(bands)):
+                    if (b_mins[i] >= emin) and (b_mins[i] <= emax) or (b_maxs[i] >= emin) and (b_maxs[i] <= emax):
+                        inds[i] = i
+                self.ui.PyqtGraphWidget.plot([kmesh], bands[inds], [None], title, x_title, y_title, False)
+
             major_tick = []
             for index in range(len(xticks)):
                 self.ui.PyqtGraphWidget.add_line(xticks[index], 90, 2, Qt.DashLine)
@@ -2294,10 +2343,20 @@ class MainForm(QMainWindow):
             if self.ui.FormActionsCheckBANDSfermyShow.isChecked():
                 self.ui.PyqtGraphWidget.add_line(0, 0, 2, Qt.SolidLine)
 
+            homo, lumo = siesta_homo_lumo(bands, emax, emin)
             gap, gap_ind = gaps(bands, emaxf, eminf, homo, lumo)
 
             self.ui.FormActionsLabelBANDSgap.setText(
                 "Band gap = " + str(round(gap, 3)) + "  " + "Indirect gap = " + str(round(gap_ind, 3)))
+
+    def read_qe_bands(self, file):
+        e_fermi = float(self.ui.FormActionsTabeDOSProperty.item(0, 1).text())
+        data = np.loadtxt(file)
+        kmesh = np.unique(data[:, 0])
+        bands = np.reshape(data[:, 1], (-1, len(kmesh)))
+        bands -= e_fermi
+        emaxf, eminf = np.max(bands), np.min(bands)
+        return bands, emaxf, eminf, kmesh
 
     def plot_dos(self):
         self.ui.PyqtGraphWidget.set_xticks(None)
@@ -2321,7 +2380,7 @@ class MainForm(QMainWindow):
 
             if os.path.exists(path):
                 if path.endswith("DOSCAR"):
-                    spin_up, spin_down, energy = vasp_dos(path)
+                    spin_up, spin_down, energy = VASP.vasp_dos(path)
                 else:
                     spin_up, spin_down, energy = dos_from_file(path)
 
@@ -2863,7 +2922,7 @@ class MainForm(QMainWindow):
             return
         try:
             model = self.ui.openGLWidget.get_model()
-            text = model_to_vasp_poscar(model, self.coord_type)
+            text = VASP.model_to_vasp_poscar(model, self.coord_type)
             self.ui.FormActionsPreTextFDF.setText(text)
         except Exception:
             print("There are no atoms in the model")
@@ -2965,8 +3024,15 @@ class MainForm(QMainWindow):
             model = self.models[self.active_model_id]
             fl = self.ui.lammps_with_charge.isChecked()
             text = model_to_lammps_input(model, charge=fl)
-            if len(text) > 0:
+            if (len(text) > 0) and (len(text) < 10000):
                 self.ui.FormActionsPreTextFDF.setText(text)
+            if len(text) > 9999:
+                file_mask = "FDF files (*.fdf);;VASP POSCAR file (*.POSCAR);;Crystal d12 (*.d12)"
+                file_mask += ";;PWscf in (*.in);;WIEN struct (*.struct);;CIF file (*.cif);;DFTB+ (*.gen)"
+                file_mask += ";;Lammps input (*.lmp);;Octopus input (*.in)"
+                f_name = self.get_file_name_from_save_dialog(file_mask)
+                if f_name is not None:
+                    helpers.write_text_to_file(f_name, text)
         except Exception as e:
             self.show_error(e)
 

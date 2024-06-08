@@ -113,31 +113,19 @@ class GuiOpenGL(GuiOpenGLBase):
                              is_view_bonds, bonds_color, bond_width, bonds_by_atoms, is_view_axes, axes_color,
                              contour_width):
         self.clean()
-        self.prop = "charge"
         self.selected_atom = -1
         self.main_model = deepcopy(structure)
         self.coord0 = -self.main_model.get_center_of_mass()
         self.main_model.move(self.coord0)
-        self.is_view_box = is_view_box
-        self.is_view_atoms = is_view_atoms
-        self.is_atomic_numbers_visible = is_view_atom_numbers
-        self.is_view_bonds = is_view_bonds
-        self.color_of_bonds_by_atoms = bonds_by_atoms
-        self.bond_width = bond_width
-        self.is_view_axes = is_view_axes
-        self.color_of_axes = axes_color
         self.is_view_surface = False
         self.is_view_contour = False
         self.is_view_contour_fill = False
         self.active = False
-        self.color_of_atoms = atoms_colors
         self.auto_zoom()
-        self.color_of_bonds = bonds_color
-        self.color_of_box = box_color
         self.main_model.find_bonds_fast()
-        self.contour_width = contour_width
-        self.add_all_elements()
-        self.update()
+        self.set_structure_parameters(atoms_colors, is_view_atoms, is_view_atom_numbers, is_view_box, box_color,
+                                     is_view_bonds, bonds_color, bond_width, bonds_by_atoms, is_view_axes, axes_color,
+                                     contour_width)
 
     def auto_zoom(self):
         super().auto_zoom()

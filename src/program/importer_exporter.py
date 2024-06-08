@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+import numpy as np
 from core_atomistic.atomic_model import AtomicModel
 from core_atomistic import helpers
 from core_atomistic.project_file import ProjectFile
@@ -10,10 +11,13 @@ from program.firefly import atomic_model_to_firefly_inp
 from program.crystal import structure_of_primitive_cell, structure_opt_step
 from program.chemdraw import model_from_ct
 from program.qe import atoms_from_pwout
+from program.qe import energy_tot as qe_energy_tot
+from program.qe import volume as qe_volume
+from program.qe import alats_from_pwout
 from program.dftb import atoms_from_gen
 from program.lammps import atoms_trajectory_step
-from program.vasp import fermi_energy_from_doscar, atoms_from_poscar, atoms_from_outcar, model_to_vasp_poscar
-from program.wien import atoms_from_struct
+from program.vasp import VASP
+from program.wien import WIEN
 from program.gaussiancube import GaussianCube
 from program.xsf import XSF
 
@@ -63,10 +67,10 @@ class ImporterExporter(object):
                 models = AtomicModel.atoms_from_xmol_xyz(filename)
 
             elif file_format == "VASPposcar":
-                models = atoms_from_poscar(filename)
+                models = VASP.atoms_from_poscar(filename)
 
             elif file_format == "vasp_outcar":
-                models = atoms_from_outcar(filename)
+                models = VASP.atoms_from_outcar(filename)
 
             elif file_format == "CRYSTALout":
                 models = structure_of_primitive_cell(filename)
@@ -78,7 +82,8 @@ class ImporterExporter(object):
                 models = atoms_from_pwout(filename)
 
             elif file_format == "WIENstruct":
-                models = atoms_from_struct(filename)
+                wien = WIEN()
+                models = wien.atoms_from_struct(filename)
 
             elif file_format == "DFTBgen":
                 models = atoms_from_gen(filename)
@@ -98,7 +103,7 @@ class ImporterExporter(object):
         text = ""
         if f_name.find("POSCAR") >= 0:
             f_name = f_name.split(".")[0]
-            text = model_to_vasp_poscar(model)
+            text = VASP.model_to_vasp_poscar(model)
         if f_name.endswith(".inp"):
             text = atomic_model_to_firefly_inp(model)
         if f_name.endswith(".fdf"):
@@ -110,10 +115,34 @@ class ImporterExporter(object):
         helpers.write_text_to_file(f_name, text)
 
     @staticmethod
+    def abc_energy_volume(f_name, sourse):
+        volume = 0.0
+        energy = 0.0
+        a, b, c = 0.0, 0.0, 0.0
+        if sourse == "siesta_out":
+            volume = TSIESTA.volume(f_name)
+            energy = TSIESTA.energy_tot(f_name)
+            models, fdf_data = ImporterExporter.import_from_file(f_name)
+            model = models[-1]
+            a = np.linalg.norm(model.lat_vector1)
+            b = np.linalg.norm(model.lat_vector2)
+            c = np.linalg.norm(model.lat_vector3)
+        if sourse == "vasp_outcar":
+            volume = VASP.volume(f_name)
+            energy, is_conv, iteration = VASP.energy_tot(f_name)
+            vasp = VASP()
+            a, b, c = vasp.abc_from_outcar(f_name)
+        if sourse == "QEPWout":
+            volume = qe_volume(f_name)
+            energy, is_conv, iteration = qe_energy_tot(f_name)
+            a, b, c, al, bet, gam = alats_from_pwout(f_name)
+        return a, b, c, energy, volume
+
+    @staticmethod
     def check_dos_file(filename):
         """Check DOS file for fdf/out filename."""
         if filename.endswith("DOSCAR"):
-            return filename, fermi_energy_from_doscar(filename)
+            return filename, VASP.fermi_energy_from_doscar(filename)
 
         system_label = TSIESTA.system_label(filename)
         file = os.path.dirname(filename) + "/" + str(system_label) + ".DOS"
@@ -135,8 +164,12 @@ class ImporterExporter(object):
     @staticmethod
     def check_bands_file(filename):
         """Check PDOS file for fdf/out filename."""
-        system_label = TSIESTA.system_label(filename)
-        file = os.path.dirname(filename) + "/" + str(system_label) + ".bands"
+        if helpers.check_format(filename) == "siesta_out":
+            system_label = TSIESTA.system_label(filename)
+            file = os.path.dirname(filename) + "/" + str(system_label) + ".bands"
+        elif helpers.check_format(filename) == "QEPWout":
+            file = os.path.dirname(filename) + "/Bandx.dat.gnu"
+
         if os.path.exists(file):
             return file
         else:

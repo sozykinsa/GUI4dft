@@ -75,6 +75,52 @@ class TSIESTA:
         return pdos, energy
 
     @staticmethod
+    def siesta_bands_reader(file):
+        f = open(file)
+        e_fermi = float(f.readline())
+        str1 = f.readline().split()
+        str1 = helpers.list_str_to_float(str1)
+        kmin, kmax = float(str1[0]), float(str1[1])
+        str1 = f.readline().split()
+        str1 = helpers.list_str_to_float(str1)
+        emin = float(str1[0]) - e_fermi
+        emax = float(str1[1]) - e_fermi
+        str1 = f.readline().split()
+        str1 = helpers.list_str_to_int(str1)
+        nspins = float(str1[1])
+        f.close()
+        return emax, emin, kmax, kmin, nspins
+
+    @staticmethod
+    def read_siesta_bands_xlabels(file, k_max, k_min):
+        f = open(file)
+        f.readline()
+        f.readline()
+        f.readline()
+        str1 = f.readline().split()
+        str1 = helpers.list_str_to_int(str1)
+        n_bands, n_spins = int(str1[0]), int(str1[1])
+        n_k_points = int(str1[2])
+        for i in range(0, n_k_points):
+            str2 = f.readline().split()
+            kol = len(str2) - 1
+            while kol < n_bands * n_spins:
+                str2 = f.readline().split()
+                kol += len(str2)
+        n_sticks = int(f.readline())
+        x_ticks = []
+        x_tick_labels = []
+        for i in range(0, n_sticks):
+            str3 = f.readline().split()
+            value = float(str3[0])
+            if (round(value, 2) >= k_min) and (round(value, 2) <= k_max):
+                x_ticks.append(value)
+                letter = helpers.utf8_letter(str3[1][1:-1])
+                x_tick_labels.append(letter)
+        f.close()
+        return x_tick_labels, x_ticks
+
+    @staticmethod
     def get_charges_for_atoms(filename, method):
         if os.path.exists(filename):
             number_of_atoms = TSIESTA.number_of_atoms(filename)
@@ -503,8 +549,6 @@ class TSIESTA:
     def atoms_from_fdf_text(atomic_coordinates_format, number_of_atoms, chem_spec_info, lat, lat_vectors, lines, units):
         lines = helpers.clear_fdf_lines(lines)
         all_atoms = AtomicModel()
-        at_list = []
-        at_list1 = []
         i = 0
         is_block_atomic_coordinates = False
         is_block_z_matrix = False
@@ -512,7 +556,6 @@ class TSIESTA:
             if lines[i].find("%block Zmatrix") >= 0:
                 is_block_z_matrix = True
                 i += 1
-                at_list = []
                 if lines[i].find("cartesian") >= 0:
                     for j in range(0, number_of_atoms):
                         i += 1
@@ -520,7 +563,7 @@ class TSIESTA:
                         xyz = np.array([float(atom_full[1]), float(atom_full[2]), float(atom_full[3])])
                         charge = chem_spec_info[str(atom_full[0])][0]
                         tag = chem_spec_info[str(atom_full[0])][2]
-                        all_atoms.add_atom_with_data(xyz, charge, tag)
+                        all_atoms.add_atom_with_data(xyz, charge, tag=tag)
             if lines[i].find("%block AtomicCoordinatesAndAtomicSpecies") >= 0:
                 is_block_atomic_coordinates = True
                 mult = 1
@@ -532,7 +575,7 @@ class TSIESTA:
                     xyz = np.array([mult * float(atom_full[0]), mult * float(atom_full[1]), mult * float(atom_full[2])])
                     charge = chem_spec_info[str(atom_full[3])][0]
                     tag = chem_spec_info[str(atom_full[3])][2]
-                    all_atoms.add_atom_with_data(xyz, charge, tag)
+                    all_atoms.add_atom_with_data(xyz, charge, tag=tag)
             i += 1
         if lat_vectors is None:
             all_atoms.set_lat_vectors_default()

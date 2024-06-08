@@ -33,14 +33,18 @@ def model_to_lammps_input(model: AtomicModel, charge=False):
 
     text = "# Comment\n"
     n_atoms = model.n_atoms()
+    text += "box          tilt large\n"
+    text += "change_box   all triclinic\n"
     text += str(n_atoms) + " atoms\n"
     types = model.types_of_atoms()
-    text += str(len(types)) + " atom types\n\n"
+    text += str(len(types)) + " atom types\n"
     a, b, c, al, bt, gm = model.cell_params()
+    lx, ly, lz, xy, xz, yz = cellparams_to_lammps_cell(a, b, c, al, bt, gm)
 
-    text += "0.000000000000      " + str(a) + "  xlo xhi\n"
-    text += "0.000000000000      " + str(b) + "  ylo yhi\n"
-    text += "0.000000000000      " + str(c) + "  zlo zhi\n\n"
+    text += "0.000000000000      " + str(lx) + "  xlo xhi\n"
+    text += "0.000000000000      " + str(ly) + "  ylo yhi\n"
+    text += "0.000000000000      " + str(lz) + "  zlo zhi\n"
+    text += str(round(xy, 12)) + " " + str(round(xz, 12)) + " " + str(round(yz, 12)) + " xy xz yz\n\n"
 
     text += "Masses\n\n"
     for i in range(len(types)):
@@ -55,6 +59,16 @@ def model_to_lammps_input(model: AtomicModel, charge=False):
         xyz_st = model[i].xyz_string
         text += str(i + 1) + "  " + str(charge_to_type[model[i].charge]) + ch + " " + xyz_st + "\n"
     return text
+
+
+def cellparams_to_lammps_cell(a, b, c, al, bt, gm):
+    lx = a
+    xy = b * np.cos(gm * np.pi / 180)
+    xz = c * np.cos(bt * np.pi / 180)
+    ly = np.sqrt(b * b - xy * xy)
+    yz = (b * c * np.cos(al * np.pi / 180) - xy * xz) / ly
+    lz = np.sqrt(c * c - xz * xz - yz * yz)
+    return lx, ly, lz, xy, xz, yz
 
 
 def atoms_trajectory_step(f_name):
