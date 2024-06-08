@@ -3024,8 +3024,15 @@ class MainForm(QMainWindow):
             model = self.models[self.active_model_id]
             fl = self.ui.lammps_with_charge.isChecked()
             text = model_to_lammps_input(model, charge=fl)
-            if len(text) > 0:
+            if (len(text) > 0) and (len(text) < 10000):
                 self.ui.FormActionsPreTextFDF.setText(text)
+            if len(text) > 9999:
+                file_mask = "FDF files (*.fdf);;VASP POSCAR file (*.POSCAR);;Crystal d12 (*.d12)"
+                file_mask += ";;PWscf in (*.in);;WIEN struct (*.struct);;CIF file (*.cif);;DFTB+ (*.gen)"
+                file_mask += ";;Lammps input (*.lmp);;Octopus input (*.in)"
+                f_name = self.get_file_name_from_save_dialog(file_mask)
+                if f_name is not None:
+                    helpers.write_text_to_file(f_name, text)
         except Exception as e:
             self.show_error(e)
 
