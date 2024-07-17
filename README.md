@@ -36,7 +36,7 @@ v1.3 - This version uses pyqtgraph instead of matplotlib and pyside2 instead of 
 
 v1.4 - Pyside6. Added support for exporting structural data to input files VASP, CRYSTAL, QE. 
 
-v1.5 - This is the next release in 1.x branch. Python 3.12.
+v1.5 - This is the next release. Python 3.12.
 
 The master branch contains more or less stable 1.x version functions.
 

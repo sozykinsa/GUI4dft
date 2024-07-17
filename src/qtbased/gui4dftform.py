@@ -3217,7 +3217,6 @@ class MainForm(QMainWindow):
         let1 = self.ui.FormAtomsList1.currentText()
         let2 = self.ui.FormAtomsList2.currentText()
         self.ui.openGLWidget.bond_len_correct(let1, let2, d)
-        print(let1, "-", let2, ": ", d)
 
     def create_2d_hexagonal(self):
         n = self.ui.FormActionsPreLineGraphene_n.value()
@@ -3252,6 +3251,8 @@ class MainForm(QMainWindow):
                 lattice = 2
             if self.ui.generate_2d_hex3.isChecked():
                 lattice = 3
+            if self.ui.generate_2d_hex4.isChecked():
+                lattice = 4
             model = HexagonalPlaneHex(ch1, ch2, a, n - 1, m - 1, lattice=lattice)
         self.models.append(model)
         self.plot_model(-1)

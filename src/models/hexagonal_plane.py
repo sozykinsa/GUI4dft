@@ -29,6 +29,12 @@ class HexagonalPlaneHex(AtomicModel):
             atom1 = Atom([0.0, 0.0, 0.0, lets[0], chs[0]])
             atom2 = Atom([0.0, a, 0.0, lets[1], chs[1]])
 
+        if lattice == 4:
+            a1 = a * np.array([math.sqrt(3), 0.0, 0.0])
+            a2 = a * np.array([0.5 * math.sqrt(3), 1.5, 0])
+            atom1 = Atom([0.0, 0.0, 0.0, lets[0], chs[0]])
+            atom2 = Atom([0.0, a, 0.0, lets[1], chs[1]])
+
         a3 = 500 * np.array([0.0, 0.0, 1.0])
         basis = AtomicModel()
         basis.set_lat_vectors(a1, a2, a3)

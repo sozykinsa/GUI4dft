@@ -114,8 +114,8 @@ class Ui_MainWindow(object):
 
         self.model_rotation_x = QDoubleSpinBox(self.groupBox_58)
         self.model_rotation_x.setObjectName(u"model_rotation_x")
-        self.model_rotation_x.setMinimum(-360.000000000000000)
-        self.model_rotation_x.setMaximum(360.990000000000009)
+        self.model_rotation_x.setMinimum(-1360.000000000000000)
+        self.model_rotation_x.setMaximum(1360.990000000000009)
 
         self.horizontalLayout_17.addWidget(self.model_rotation_x)
 
@@ -130,8 +130,8 @@ class Ui_MainWindow(object):
 
         self.model_rotation_y = QDoubleSpinBox(self.groupBox_58)
         self.model_rotation_y.setObjectName(u"model_rotation_y")
-        self.model_rotation_y.setMinimum(-360.000000000000000)
-        self.model_rotation_y.setMaximum(360.990000000000009)
+        self.model_rotation_y.setMinimum(-1360.000000000000000)
+        self.model_rotation_y.setMaximum(1360.990000000000009)
 
         self.horizontalLayout_17.addWidget(self.model_rotation_y)
 
@@ -146,8 +146,8 @@ class Ui_MainWindow(object):
 
         self.model_rotation_z = QDoubleSpinBox(self.groupBox_58)
         self.model_rotation_z.setObjectName(u"model_rotation_z")
-        self.model_rotation_z.setMinimum(-360.000000000000000)
-        self.model_rotation_z.setMaximum(360.990000000000009)
+        self.model_rotation_z.setMinimum(-1360.000000000000000)
+        self.model_rotation_z.setMaximum(1360.990000000000009)
 
         self.horizontalLayout_17.addWidget(self.model_rotation_z)
 
@@ -973,7 +973,7 @@ class Ui_MainWindow(object):
         self.toolBox.addItem(self.page_4, u"1D (nanotubes)")
         self.page_17 = QWidget()
         self.page_17.setObjectName(u"page_17")
-        self.page_17.setGeometry(QRect(0, 0, 323, 466))
+        self.page_17.setGeometry(QRect(0, 0, 371, 562))
         self.verticalLayout_27 = QVBoxLayout(self.page_17)
         self.verticalLayout_27.setObjectName(u"verticalLayout_27")
         self.groupBox_30 = QGroupBox(self.page_17)
@@ -1065,9 +1065,15 @@ class Ui_MainWindow(object):
 
         self.generate_2d_hex3 = QRadioButton(self.frame_12)
         self.generate_2d_hex3.setObjectName(u"generate_2d_hex3")
-        self.generate_2d_hex3.setChecked(True)
+        self.generate_2d_hex3.setChecked(False)
 
         self.verticalLayout_72.addWidget(self.generate_2d_hex3)
+
+        self.generate_2d_hex4 = QRadioButton(self.frame_12)
+        self.generate_2d_hex4.setObjectName(u"generate_2d_hex4")
+        self.generate_2d_hex4.setChecked(True)
+
+        self.verticalLayout_72.addWidget(self.generate_2d_hex4)
 
 
         self.verticalLayout_11.addWidget(self.frame_12)
@@ -7033,6 +7039,7 @@ class Ui_MainWindow(object):
         self.generate_2d_hex1.setText(QCoreApplication.translate("MainWindow", u"Hexagonal 1", None))
         self.generate_2d_hex2.setText(QCoreApplication.translate("MainWindow", u"Hexagonal 2", None))
         self.generate_2d_hex3.setText(QCoreApplication.translate("MainWindow", u"Hexagonal 3", None))
+        self.generate_2d_hex4.setText(QCoreApplication.translate("MainWindow", u"Hexagonal 4", None))
         self.generate_2d_model.setText(QCoreApplication.translate("MainWindow", u"Create", None))
         self.groupBox_57.setTitle(QCoreApplication.translate("MainWindow", u"Meta-graphenes", None))
         self.label_85.setText(QCoreApplication.translate("MainWindow", u"n:", None))
