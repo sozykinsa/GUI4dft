@@ -75,7 +75,7 @@ class TSIESTA:
         return pdos, energy
 
     @staticmethod
-    def siesta_bands_reader(file):
+    def bands_parser(file):
         f = open(file)
         e_fermi = float(f.readline())
         str1 = f.readline().split()
@@ -92,7 +92,7 @@ class TSIESTA:
         return emax, emin, kmax, kmin, nspins
 
     @staticmethod
-    def read_siesta_bands_xlabels(file, k_max, k_min):
+    def read_bands_xlabels(file, k_max, k_min):
         f = open(file)
         f.readline()
         f.readline()

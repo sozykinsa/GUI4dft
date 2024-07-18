@@ -6,6 +6,37 @@ from core_atomistic.atomic_model import AtomicModel
 from core_atomistic import helpers
 
 
+class CRYSTAL:
+    @staticmethod
+    def bands_parser(file):
+        f = open(file)
+        # NKPT    50 NBND     5 NSPIN     2
+        str1 = f.readline().split()
+        nspins = int(str1[6])
+        nkpt = int(str1[2])
+        nbnd = int(str1[4])
+        for j in range(0, 4):
+            str1 = f.readline()
+        for j in range(0, nspins):
+            for i in range(0, 21):
+                str1 = f.readline()
+            str1 = str1.split()
+            kmin, kmax = float(str1[2].replace(',', '')), float(str1[4].replace(',', ''))
+
+            str1 = f.readline()
+            for i in range(0, nkpt):
+                kp = 0
+                while kp < nbnd:
+                    str1 = f.readline()
+                    kp += len(str1.split())
+
+            e_fermi = float(f.readline().split()[3])
+            emin = 1 - e_fermi
+            emax = 2 - e_fermi
+        f.close()
+        return emax, emin, kmax, kmin, nspins
+
+
 def model_0d_to_d12(model):
     text = "crystal\n"
     text += "MOLECULE\n"

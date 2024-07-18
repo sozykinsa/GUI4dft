@@ -39,9 +39,10 @@ from program.volumericdata import VolumericData
 from program.xsf import XSF
 from qtbased.image3dexporter import Image3Dexporter
 from program.siesta import TSIESTA
+from program.vasp import VASP
+from program.crystal import CRYSTAL
 from program.qe import TQE, model_to_qe_pw, get_fermi_level
 from program.wien import model_to_wien_struct
-from program.vasp import VASP
 from program.dftb import model_to_dftb_d0
 from program.lammps import model_to_lammps_input
 from program.octopus import model_to_octopus_input
@@ -66,6 +67,8 @@ class MainForm(QMainWindow):
         super().__init__(*args)
         self.ui = Ui_form()
         self.ui.setupUi(self)
+
+        self.ui.parse_bands.setEnabled(True)
 
         self.models = []
         self.ui.openGLWidget.set_form_elements(self.ui.FormSettingsViewCheckAtomSelection,
@@ -2246,18 +2249,25 @@ class MainForm(QMainWindow):
 
     def parse_bands(self):
         file = self.ui.FormActionsLineBANDSfile.text()
+
+        if not os.path.exists(file):
+            file = self.get_file_name_from_open_dialog("All files (*)")
+            self.ui.FormActionsLineBANDSfile.setText(file)
+
         if os.path.exists(file):
-            if not (file.endswith(".bands") or file.endswith(".dat.gnu")):
+            if not (file.endswith(".bands") or file.endswith(".dat.gnu") or file.endswith(".DAT")):
                 return
 
             if file.endswith(".bands"):
-                emax, emin, kmax, kmin, nspins = TSIESTA.siesta_bands_reader(file)
-                xticklabels, xticks = TSIESTA.read_siesta_bands_xlabels(file, kmax, kmin)
+                emax, emin, kmax, kmin, nspins = TSIESTA.bands_parser(file)
+                xticklabels, xticks = TSIESTA.read_bands_xlabels(file, kmax, kmin)
                 for tick, label in zip(xticks, xticklabels):
                     self.ui.high_symmetry_k_points.setRowCount(self.ui.high_symmetry_k_points.rowCount() + 1)
                     n = self.ui.high_symmetry_k_points.rowCount() - 1
                     self.ui.high_symmetry_k_points.setItem(n, 0, QTableWidgetItem(str(tick)))
                     self.ui.high_symmetry_k_points.setItem(n, 1, QTableWidgetItem(label))
+            elif file.endswith(".DAT"):
+                emax, emin, kmax, kmin, nspins = CRYSTAL.bands_parser(file)
             elif file.endswith(".dat.gnu"):
                 emax, emin, kmax, kmin, nspins = TQE.gnuplot_bands_reader(file)
 
@@ -2269,15 +2279,18 @@ class MainForm(QMainWindow):
             e_min_form = -2 if emin < -2 else emin
             e_max_form = 2 if emax > 2 else emax
 
-            self.ui.spin_bands_xmin.setRange(kmin, kmax)
-            self.ui.spin_bands_xmin.setValue(kmin)
-            self.ui.spin_bands_xmax.setRange(kmin, kmax)
-            self.ui.spin_bands_xmax.setValue(kmax)
-            self.ui.spin_bands_emin.setRange(emin, emax)
-            self.ui.spin_bands_emin.setValue(e_min_form)
-            self.ui.spin_bands_emax.setRange(emin, emax)
-            self.ui.spin_bands_emax.setValue(e_max_form)
-            self.ui.plot_bands.setEnabled(True)
+            self.bands_ready_to_plot(e_max_form, e_min_form, emax, emin, kmax, kmin)
+
+    def bands_ready_to_plot(self, e_max_form, e_min_form, emax, emin, kmax, kmin):
+        self.ui.spin_bands_xmin.setRange(kmin, kmax)
+        self.ui.spin_bands_xmin.setValue(kmin)
+        self.ui.spin_bands_xmax.setRange(kmin, kmax)
+        self.ui.spin_bands_xmax.setValue(kmax)
+        self.ui.spin_bands_emin.setRange(emin, emax)
+        self.ui.spin_bands_emin.setValue(e_min_form)
+        self.ui.spin_bands_emax.setRange(emin, emax)
+        self.ui.spin_bands_emax.setValue(e_max_form)
+        self.ui.plot_bands.setEnabled(True)
 
     def plot_bands(self):
         file = self.ui.FormActionsLineBANDSfile.text()
