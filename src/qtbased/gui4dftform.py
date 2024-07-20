@@ -12,9 +12,10 @@ from copy import deepcopy
 from operator import itemgetter
 import matplotlib
 import matplotlib.pyplot as plt
-matplotlib.use('QtAgg')
 import numpy as np
-
+import platform
+from qtpy import PYSIDE_VERSION
+from qtpy import PYQT_VERSION
 from qtpy.QtCore import QLocale, QSettings, Qt, QSize
 from qtpy.QtGui import QColor, QIcon, QImage, QKeySequence, QPixmap, QStandardItem, QStandardItemModel
 from qtpy.QtWidgets import QAction, QDialog, QFileDialog, QMessageBox, QColorDialog
@@ -55,6 +56,13 @@ from program.importer_exporter import ImporterExporter
 from utils.electronic_prop_reader import read_siesta_bands, dos_from_file, siesta_homo_lumo
 from ui.about import Ui_DialogAbout as Ui_about
 from ui.form import Ui_MainWindow as Ui_form
+
+matplotlib.use('QtAgg')
+print("Python version: ", platform.python_version())
+if PYSIDE_VERSION is not None:
+    print("PySide version: ", PYSIDE_VERSION)
+if PYQT_VERSION is not None:
+    print("PyQt version: ", PYQT_VERSION)
 
 sys.path.append('')
 
