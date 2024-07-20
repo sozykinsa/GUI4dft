@@ -48,7 +48,7 @@ class HexagonalPlaneHex(AtomicModel):
 
 class HexagonalPlane(AtomicModel):
     """The HexagonalPlane  with rectangular cell """
-    def __init__(self, ch1: int = 6, ch2: int = 6, a: float = 1.43, n=0, m=0, length=0):
+    def __init__(self, ch1: int = 6, ch2: int = 6, a: float = 1.43, n=0, m=0):
         super().__init__()
 
         self.maxMol = 200000
@@ -59,15 +59,16 @@ class HexagonalPlane(AtomicModel):
         if (n == 0) and (m == 0):
             return
 
-        np1, px, py, p_site_type, self.length = self.hexagonal_positions(n, m, length)
+        np1, px, py, p_site_type, self.length = self.hexagonal_positions(n, m)
 
         for i_par in range(0, np1):
             self.add_atom(Atom([px[i_par], py[i_par], 0, lets[p_site_type[i_par]], chs[p_site_type[i_par]]]))
 
-    def hexagonal_positions(self, n=0, m=0, leng=0):
+    def hexagonal_positions(self, n=0, m=0):
         px = np.zeros(self.maxMol)
         py = np.zeros(self.maxMol)
         p_site_type = np.zeros(self.maxMol, dtype=int)
+        leng = self.a * max(n, m)
 
         nx = 40
         ny = 100

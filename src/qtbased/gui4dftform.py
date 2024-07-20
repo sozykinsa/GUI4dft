@@ -3242,7 +3242,7 @@ class MainForm(QMainWindow):
     def create_2d_hexagonal(self):
         n = self.ui.FormActionsPreLineGraphene_n.value()
         m = self.ui.FormActionsPreLineGraphene_m.value()
-        leng = self.ui.FormActionsPreLineGraphene_len.value()
+        # leng = self.ui.FormActionsPreLineGraphene_len.value()
         model_type = self.ui.model_2d_type.currentText()
         is_ribbon = self.ui.generate_2d_ribbon.isChecked()
         ch1 = 6
@@ -3265,7 +3265,7 @@ class MainForm(QMainWindow):
             ch2 = 6
             a = 1.795
         if is_ribbon:
-            model = HexagonalPlane(ch1, ch2, a, n, m, leng)
+            model = HexagonalPlane(ch1, ch2, a, n, m)  #, leng)
         else:
             lattice = 1
             if self.ui.generate_2d_hex2.isChecked():
