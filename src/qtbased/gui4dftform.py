@@ -18,7 +18,7 @@ from qtpy import PYSIDE_VERSION
 from qtpy import PYQT_VERSION
 from qtpy.QtCore import QLocale, QSettings, Qt, QSize
 from qtpy.QtGui import QColor, QIcon, QImage, QKeySequence, QPixmap, QStandardItem, QStandardItemModel
-from qtpy.QtWidgets import QAction, QDialog, QFileDialog, QMessageBox, QColorDialog
+from qtpy.QtWidgets import QAction, QDialog, QFileDialog, QMessageBox, QColorDialog, QHeaderView
 from qtpy.QtWidgets import QDoubleSpinBox, QMainWindow, QShortcut, QTableWidgetItem, QTreeWidgetItem
 from qtpy.QtWidgets import QTreeWidgetItemIterator
 
@@ -312,11 +312,13 @@ class MainForm(QMainWindow):
         self.ui.FormModelTableAtoms.setColumnWidth(2, 95)
         self.ui.FormModelTableAtoms.setColumnWidth(3, 95)
         self.ui.FormModelTableAtoms.horizontalHeader().setStyleSheet(self.table_header_stylesheet)
+        self.ui.FormModelTableAtoms.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
         self.ui.FormModelTableAtoms.verticalHeader().setStyleSheet(self.table_header_stylesheet)
 
         self.ui.FormModelTableProperties.setColumnCount(2)
         self.ui.FormModelTableProperties.setRowCount(10)
         self.ui.FormModelTableProperties.setHorizontalHeaderLabels(["Property", "Value"])
+        self.ui.FormModelTableProperties.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.ResizeToContents)
         self.ui.FormModelTableProperties.setColumnWidth(0, 85)
         self.ui.FormModelTableProperties.setColumnWidth(1, 260)
         self.ui.FormModelTableProperties.horizontalHeader().setStyleSheet(self.table_header_stylesheet)

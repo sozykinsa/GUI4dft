@@ -83,7 +83,11 @@
          <widget class="QComboBox" name="FormModelComboModels"/>
         </item>
         <item>
-         <widget class="QTableWidget" name="FormModelTableAtoms"/>
+         <widget class="QTableWidget" name="FormModelTableAtoms">
+          <property name="sizeAdjustPolicy">
+           <enum>QAbstractScrollArea::AdjustToContents</enum>
+          </property>
+         </widget>
         </item>
         <item>
          <widget class="QTableWidget" name="FormModelTableProperties">
@@ -92,6 +96,9 @@
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
+          </property>
+          <property name="sizeAdjustPolicy">
+           <enum>QAbstractScrollArea::AdjustToContents</enum>
           </property>
          </widget>
         </item>
@@ -794,7 +801,7 @@
                    <item>
                     <widget class="QFrame" name="frame_87">
                      <property name="frameShape">
-                      <enum>QFrame::StyledPanel</enum>
+                      <enum>QFrame::NoFrame</enum>
                      </property>
                      <property name="frameShadow">
                       <enum>QFrame::Raised</enum>
@@ -816,7 +823,7 @@
                    <item>
                     <widget class="QFrame" name="frame_16">
                      <property name="frameShape">
-                      <enum>QFrame::StyledPanel</enum>
+                      <enum>QFrame::NoFrame</enum>
                      </property>
                      <property name="frameShadow">
                       <enum>QFrame::Raised</enum>
@@ -1670,8 +1677,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>371</width>
-                 <height>562</height>
+                 <width>286</width>
+                 <height>442</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -3624,8 +3631,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>363</width>
-                 <height>329</height>
+                 <width>371</width>
+                 <height>593</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -3990,8 +3997,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>352</width>
-                 <height>209</height>
+                 <width>376</width>
+                 <height>572</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -3999,32 +4006,62 @@
                </attribute>
                <layout class="QVBoxLayout" name="verticalLayout_36">
                 <item>
-                 <widget class="QFrame" name="frame_49">
+                 <widget class="QGroupBox" name="groupBox_66">
                   <property name="minimumSize">
                    <size>
                     <width>0</width>
-                    <height>180</height>
+                    <height>0</height>
                    </size>
                   </property>
-                  <property name="frameShape">
-                   <enum>QFrame::NoFrame</enum>
+                  <property name="title">
+                   <string>Lattice constant</string>
                   </property>
-                  <property name="frameShadow">
-                   <enum>QFrame::Raised</enum>
+                  <layout class="QHBoxLayout" name="horizontalLayout_202">
+                   <item>
+                    <widget class="QDoubleSpinBox" name="lattice_constant">
+                     <property name="decimals">
+                      <number>5</number>
+                     </property>
+                     <property name="maximum">
+                      <double>999.990000000000009</double>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <spacer name="horizontalSpacer_40">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>40</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QGroupBox" name="groupBox_67">
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>0</height>
+                   </size>
                   </property>
-                  <layout class="QVBoxLayout" name="verticalLayout_37">
-                   <property name="leftMargin">
-                    <number>0</number>
-                   </property>
-                   <property name="topMargin">
-                    <number>0</number>
-                   </property>
-                   <property name="rightMargin">
-                    <number>0</number>
-                   </property>
-                   <property name="bottomMargin">
-                    <number>0</number>
-                   </property>
+                  <property name="title">
+                   <string>Vectors</string>
+                  </property>
+                  <layout class="QVBoxLayout" name="verticalLayout_109">
+                   <item>
+                    <widget class="QCheckBox" name="vectors_freez">
+                     <property name="text">
+                      <string>Freez</string>
+                     </property>
+                    </widget>
+                   </item>
                    <item>
                     <widget class="QFrame" name="frame_50">
                      <property name="locale">
@@ -4217,92 +4254,76 @@
                      </layout>
                     </widget>
                    </item>
+                  </layout>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QFrame" name="frame_81">
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                  <property name="frameShape">
+                   <enum>QFrame::NoFrame</enum>
+                  </property>
+                  <property name="frameShadow">
+                   <enum>QFrame::Raised</enum>
+                  </property>
+                  <layout class="QHBoxLayout" name="horizontalLayout_203">
                    <item>
-                    <widget class="QFrame" name="frame_53">
-                     <property name="minimumSize">
+                    <spacer name="horizontalSpacer_21">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
                       <size>
-                       <width>0</width>
-                       <height>0</height>
+                       <width>92</width>
+                       <height>20</height>
                       </size>
                      </property>
-                     <property name="frameShape">
-                      <enum>QFrame::NoFrame</enum>
+                    </spacer>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="modify_cell_cart_coord">
+                     <property name="text">
+                      <string>Edit</string>
                      </property>
-                     <property name="frameShadow">
-                      <enum>QFrame::Raised</enum>
-                     </property>
-                     <layout class="QHBoxLayout" name="horizontalLayout_48">
-                      <property name="topMargin">
-                       <number>0</number>
-                      </property>
-                      <item>
-                       <spacer name="horizontalSpacer_21">
-                        <property name="orientation">
-                         <enum>Qt::Horizontal</enum>
-                        </property>
-                        <property name="sizeHint" stdset="0">
-                         <size>
-                          <width>92</width>
-                          <height>20</height>
-                         </size>
-                        </property>
-                       </spacer>
-                      </item>
-                      <item>
-                       <widget class="QPushButton" name="modify_cell_cart_coord">
-                        <property name="text">
-                         <string>Edit</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item>
-                       <spacer name="horizontalSpacer_81">
-                        <property name="orientation">
-                         <enum>Qt::Horizontal</enum>
-                        </property>
-                        <property name="sizeHint" stdset="0">
-                         <size>
-                          <width>13</width>
-                          <height>20</height>
-                         </size>
-                        </property>
-                       </spacer>
-                      </item>
-                      <item>
-                       <spacer name="horizontalSpacer_124">
-                        <property name="orientation">
-                         <enum>Qt::Horizontal</enum>
-                        </property>
-                        <property name="sizeHint" stdset="0">
-                         <size>
-                          <width>40</width>
-                          <height>20</height>
-                         </size>
-                        </property>
-                       </spacer>
-                      </item>
-                      <item>
-                       <widget class="QPushButton" name="modify_cell_frac_coord">
-                        <property name="text">
-                         <string>Edit (fractional)</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item>
-                       <spacer name="horizontalSpacer_9">
-                        <property name="orientation">
-                         <enum>Qt::Horizontal</enum>
-                        </property>
-                        <property name="sizeHint" stdset="0">
-                         <size>
-                          <width>91</width>
-                          <height>20</height>
-                         </size>
-                        </property>
-                       </spacer>
-                      </item>
-                     </layout>
                     </widget>
+                   </item>
+                   <item>
+                    <spacer name="horizontalSpacer_124">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>40</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="modify_cell_frac_coord">
+                     <property name="text">
+                      <string>Edit (fractional)</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <spacer name="horizontalSpacer_9">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>54</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                    </spacer>
                    </item>
                   </layout>
                  </widget>
@@ -9529,7 +9550,11 @@
              </widget>
             </item>
             <item>
-             <widget class="QTableWidget" name="FormActionsPosTableBonds"/>
+             <widget class="QTableWidget" name="FormActionsPosTableBonds">
+              <property name="sizeAdjustPolicy">
+               <enum>QAbstractScrollArea::AdjustToContents</enum>
+              </property>
+             </widget>
             </item>
             <item>
              <widget class="QFrame" name="frame_8">
@@ -11328,7 +11353,7 @@
                <item>
                 <widget class="QFrame" name="frame_11">
                  <property name="frameShape">
-                  <enum>QFrame::StyledPanel</enum>
+                  <enum>QFrame::NoFrame</enum>
                  </property>
                  <property name="frameShadow">
                   <enum>QFrame::Raised</enum>
@@ -11364,7 +11389,7 @@
                <item>
                 <widget class="QFrame" name="frame_82">
                  <property name="frameShape">
-                  <enum>QFrame::StyledPanel</enum>
+                  <enum>QFrame::NoFrame</enum>
                  </property>
                  <property name="frameShadow">
                   <enum>QFrame::Raised</enum>
