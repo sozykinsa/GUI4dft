@@ -1677,8 +1677,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>286</width>
-                 <height>442</height>
+                 <width>371</width>
+                 <height>562</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -1776,17 +1776,11 @@
                         <property name="title">
                          <string>Lattice</string>
                         </property>
-                        <layout class="QVBoxLayout" name="verticalLayout_106">
-                         <property name="topMargin">
-                          <number>0</number>
-                         </property>
-                         <property name="bottomMargin">
-                          <number>0</number>
-                         </property>
+                        <layout class="QVBoxLayout" name="verticalLayout_37">
                          <item>
                           <widget class="QRadioButton" name="generate_2d_ribbon">
                            <property name="text">
-                            <string>Ribbon</string>
+                            <string>Rectangle</string>
                            </property>
                           </widget>
                          </item>
@@ -1814,6 +1808,16 @@
                           <widget class="QRadioButton" name="generate_2d_hex3">
                            <property name="text">
                             <string>Hexagonal 3</string>
+                           </property>
+                           <property name="checked">
+                            <bool>false</bool>
+                           </property>
+                          </widget>
+                         </item>
+                         <item>
+                          <widget class="QRadioButton" name="generate_2d_hex4">
+                           <property name="text">
+                            <string>Hexagonal 4</string>
                            </property>
                            <property name="checked">
                             <bool>true</bool>
@@ -4022,8 +4026,14 @@
                      <property name="decimals">
                       <number>5</number>
                      </property>
+                     <property name="minimum">
+                      <double>0.000010000000000</double>
+                     </property>
                      <property name="maximum">
                       <double>999.990000000000009</double>
+                     </property>
+                     <property name="value">
+                      <double>1.000000000000000</double>
                      </property>
                     </widget>
                    </item>
@@ -4055,13 +4065,6 @@
                    <string>Vectors</string>
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_109">
-                   <item>
-                    <widget class="QCheckBox" name="vectors_freez">
-                     <property name="text">
-                      <string>Freez</string>
-                     </property>
-                    </widget>
-                   </item>
                    <item>
                     <widget class="QFrame" name="frame_50">
                      <property name="locale">
@@ -4348,8 +4351,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>100</width>
-                 <height>30</height>
+                 <width>98</width>
+                 <height>28</height>
                 </rect>
                </property>
                <attribute name="label">

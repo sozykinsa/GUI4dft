@@ -975,7 +975,7 @@ class Ui_MainWindow(object):
         self.toolBox.addItem(self.page_4, u"1D (nanotubes)")
         self.page_17 = QWidget()
         self.page_17.setObjectName(u"page_17")
-        self.page_17.setGeometry(QRect(0, 0, 286, 442))
+        self.page_17.setGeometry(QRect(0, 0, 371, 562))
         self.verticalLayout_27 = QVBoxLayout(self.page_17)
         self.verticalLayout_27.setObjectName(u"verticalLayout_27")
         self.groupBox_30 = QGroupBox(self.page_17)
@@ -1031,31 +1031,36 @@ class Ui_MainWindow(object):
         self.groupBox_62 = QGroupBox(self.frame_12)
         self.groupBox_62.setObjectName(u"groupBox_62")
         self.groupBox_62.setMinimumSize(QSize(0, 0))
-        self.verticalLayout_106 = QVBoxLayout(self.groupBox_62)
-        self.verticalLayout_106.setObjectName(u"verticalLayout_106")
-        self.verticalLayout_106.setContentsMargins(-1, 0, -1, 0)
+        self.verticalLayout_37 = QVBoxLayout(self.groupBox_62)
+        self.verticalLayout_37.setObjectName(u"verticalLayout_37")
         self.generate_2d_ribbon = QRadioButton(self.groupBox_62)
         self.generate_2d_ribbon.setObjectName(u"generate_2d_ribbon")
 
-        self.verticalLayout_106.addWidget(self.generate_2d_ribbon)
+        self.verticalLayout_37.addWidget(self.generate_2d_ribbon)
 
         self.generate_2d_hex1 = QRadioButton(self.groupBox_62)
         self.generate_2d_hex1.setObjectName(u"generate_2d_hex1")
         self.generate_2d_hex1.setChecked(False)
 
-        self.verticalLayout_106.addWidget(self.generate_2d_hex1)
+        self.verticalLayout_37.addWidget(self.generate_2d_hex1)
 
         self.generate_2d_hex2 = QRadioButton(self.groupBox_62)
         self.generate_2d_hex2.setObjectName(u"generate_2d_hex2")
         self.generate_2d_hex2.setChecked(False)
 
-        self.verticalLayout_106.addWidget(self.generate_2d_hex2)
+        self.verticalLayout_37.addWidget(self.generate_2d_hex2)
 
         self.generate_2d_hex3 = QRadioButton(self.groupBox_62)
         self.generate_2d_hex3.setObjectName(u"generate_2d_hex3")
-        self.generate_2d_hex3.setChecked(True)
+        self.generate_2d_hex3.setChecked(False)
 
-        self.verticalLayout_106.addWidget(self.generate_2d_hex3)
+        self.verticalLayout_37.addWidget(self.generate_2d_hex3)
+
+        self.generate_2d_hex4 = QRadioButton(self.groupBox_62)
+        self.generate_2d_hex4.setObjectName(u"generate_2d_hex4")
+        self.generate_2d_hex4.setChecked(True)
+
+        self.verticalLayout_37.addWidget(self.generate_2d_hex4)
 
 
         self.verticalLayout_72.addWidget(self.groupBox_62)
@@ -2276,7 +2281,9 @@ class Ui_MainWindow(object):
         self.lattice_constant = QDoubleSpinBox(self.groupBox_66)
         self.lattice_constant.setObjectName(u"lattice_constant")
         self.lattice_constant.setDecimals(5)
+        self.lattice_constant.setMinimum(0.000010000000000)
         self.lattice_constant.setMaximum(999.990000000000009)
+        self.lattice_constant.setValue(1.000000000000000)
 
         self.horizontalLayout_202.addWidget(self.lattice_constant)
 
@@ -2292,11 +2299,6 @@ class Ui_MainWindow(object):
         self.groupBox_67.setMinimumSize(QSize(0, 0))
         self.verticalLayout_109 = QVBoxLayout(self.groupBox_67)
         self.verticalLayout_109.setObjectName(u"verticalLayout_109")
-        self.vectors_freez = QCheckBox(self.groupBox_67)
-        self.vectors_freez.setObjectName(u"vectors_freez")
-
-        self.verticalLayout_109.addWidget(self.vectors_freez)
-
         self.frame_50 = QFrame(self.groupBox_67)
         self.frame_50.setObjectName(u"frame_50")
         self.frame_50.setLocale(QLocale(QLocale.English, QLocale.UnitedStates))
@@ -2448,7 +2450,7 @@ class Ui_MainWindow(object):
         self.toolBox_6.addItem(self.page, u"Cell")
         self.page_9 = QWidget()
         self.page_9.setObjectName(u"page_9")
-        self.page_9.setGeometry(QRect(0, 0, 100, 30))
+        self.page_9.setGeometry(QRect(0, 0, 98, 28))
         self.FormModelComboModels_2 = QComboBox(self.page_9)
         self.FormModelComboModels_2.setObjectName(u"FormModelComboModels_2")
         self.FormModelComboModels_2.setGeometry(QRect(50, 10, 61, 22))
@@ -7034,10 +7036,11 @@ class Ui_MainWindow(object):
         self.label_75.setText(QCoreApplication.translate("MainWindow", u"n:", None))
         self.label_76.setText(QCoreApplication.translate("MainWindow", u"m:", None))
         self.groupBox_62.setTitle(QCoreApplication.translate("MainWindow", u"Lattice", None))
-        self.generate_2d_ribbon.setText(QCoreApplication.translate("MainWindow", u"Ribbon", None))
+        self.generate_2d_ribbon.setText(QCoreApplication.translate("MainWindow", u"Rectangle", None))
         self.generate_2d_hex1.setText(QCoreApplication.translate("MainWindow", u"Hexagonal 1", None))
         self.generate_2d_hex2.setText(QCoreApplication.translate("MainWindow", u"Hexagonal 2", None))
         self.generate_2d_hex3.setText(QCoreApplication.translate("MainWindow", u"Hexagonal 3", None))
+        self.generate_2d_hex4.setText(QCoreApplication.translate("MainWindow", u"Hexagonal 4", None))
         self.generate_2d_model.setText(QCoreApplication.translate("MainWindow", u"Create", None))
         self.groupBox_57.setTitle(QCoreApplication.translate("MainWindow", u"Meta-graphenes", None))
         self.label_85.setText(QCoreApplication.translate("MainWindow", u"n:", None))
@@ -7124,7 +7127,6 @@ class Ui_MainWindow(object):
         self.toolBox_6.setItemText(self.toolBox_6.indexOf(self.page_29), QCoreApplication.translate("MainWindow", u"Add or Modify Atom", None))
         self.groupBox_66.setTitle(QCoreApplication.translate("MainWindow", u"Lattice constant", None))
         self.groupBox_67.setTitle(QCoreApplication.translate("MainWindow", u"Vectors", None))
-        self.vectors_freez.setText(QCoreApplication.translate("MainWindow", u"Freez", None))
         self.modify_cell_cart_coord.setText(QCoreApplication.translate("MainWindow", u"Edit", None))
         self.modify_cell_frac_coord.setText(QCoreApplication.translate("MainWindow", u"Edit (fractional)", None))
         self.toolBox_6.setItemText(self.toolBox_6.indexOf(self.page), QCoreApplication.translate("MainWindow", u"Cell", None))

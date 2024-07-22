@@ -1031,19 +1031,20 @@ class MainForm(QMainWindow):
         self.ui.IsosurfaceColorsTable.removeRow(row)
 
     def lat_vectors_from_form(self):
+        vectors = np.zeros((3, 3), dtype=float)
         a1 = float(self.ui.FormModifyCellEditA1.text())
         a2 = float(self.ui.FormModifyCellEditA2.text())
         a3 = float(self.ui.FormModifyCellEditA3.text())
-        v1 = [a1, a2, a3]
+        vectors[0] = np.array([a1, a2, a3])
         b1 = float(self.ui.FormModifyCellEditB1.text())
         b2 = float(self.ui.FormModifyCellEditB2.text())
         b3 = float(self.ui.FormModifyCellEditB3.text())
-        v2 = [b1, b2, b3]
+        vectors[1] = np.array([b1, b2, b3])
         c1 = float(self.ui.FormModifyCellEditC1.text())
         c2 = float(self.ui.FormModifyCellEditC2.text())
         c3 = float(self.ui.FormModifyCellEditC3.text())
-        v3 = [c1, c2, c3]
-        return v1, v2, v3
+        vectors[2] = np.array([c1, c2, c3])
+        return vectors * self.ui.lattice_constant.value()
 
     def edit_cell(self):
         if len(self.models) == 0:
@@ -1206,9 +1207,9 @@ class MainForm(QMainWindow):
         model = self.ui.openGLWidget.get_model()
 
         properties.append(["Natoms", str(len(model.atoms))])
-        properties.append(["LatVect1", str(model.lat_vector1)])
-        properties.append(["LatVect2", str(model.lat_vector2)])
-        properties.append(["LatVect3", str(model.lat_vector3)])
+        properties.append(["LatVect1", str(model.lat_vectors[0])])
+        properties.append(["LatVect2", str(model.lat_vectors[1])])
+        properties.append(["LatVect3", str(model.lat_vectors[2])])
         properties.append(["Formula", model.formula()])
 
         self.ui.FormModelTableProperties.setRowCount(len(properties))
@@ -1217,15 +1218,19 @@ class MainForm(QMainWindow):
             self.ui.FormModelTableProperties.setItem(i, 0, QTableWidgetItem(properties[i][0]))
             self.ui.FormModelTableProperties.setItem(i, 1, QTableWidgetItem(properties[i][1]))
 
-        self.ui.FormModifyCellEditA1.setValue(model.lat_vector1[0])
-        self.ui.FormModifyCellEditA2.setValue(model.lat_vector1[1])
-        self.ui.FormModifyCellEditA3.setValue(model.lat_vector1[2])
-        self.ui.FormModifyCellEditB1.setValue(model.lat_vector2[0])
-        self.ui.FormModifyCellEditB2.setValue(model.lat_vector2[1])
-        self.ui.FormModifyCellEditB3.setValue(model.lat_vector2[2])
-        self.ui.FormModifyCellEditC1.setValue(model.lat_vector3[0])
-        self.ui.FormModifyCellEditC2.setValue(model.lat_vector3[1])
-        self.ui.FormModifyCellEditC3.setValue(model.lat_vector3[2])
+        lat_const = max(abs(np.min(model.lat_vectors)), abs(np.max(model.lat_vectors)))
+        new_vectors = model.lat_vectors / lat_const
+
+        self.ui.lattice_constant.setValue(lat_const)
+        self.ui.FormModifyCellEditA1.setValue(new_vectors[0][0])
+        self.ui.FormModifyCellEditA2.setValue(new_vectors[0][1])
+        self.ui.FormModifyCellEditA3.setValue(new_vectors[0][2])
+        self.ui.FormModifyCellEditB1.setValue(new_vectors[1][0])
+        self.ui.FormModifyCellEditB2.setValue(new_vectors[1][1])
+        self.ui.FormModifyCellEditB3.setValue(new_vectors[1][2])
+        self.ui.FormModifyCellEditC1.setValue(new_vectors[2][0])
+        self.ui.FormModifyCellEditC2.setValue(new_vectors[2][1])
+        self.ui.FormModifyCellEditC3.setValue(new_vectors[2][2])
 
     def fill_volumeric_data(self, data, tree=" "):
         if tree == " ":
