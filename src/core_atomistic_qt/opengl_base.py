@@ -3,10 +3,10 @@ from typing import Callable
 
 import OpenGL.GL as gl
 import OpenGL.GLU as glu
-from qtpy.QtWidgets import QOpenGLWidget
-from qtpy.QtCore import QEvent
-from qtpy.QtCore import Qt
-from qtpy.QtGui import QColor, QPainter, QFont
+from PySide6.QtOpenGLWidgets import QOpenGLWidget
+from PySide6.QtCore import QEvent
+from PySide6.QtCore import Qt
+from PySide6.QtGui import QColor, QPainter, QFont
 from copy import deepcopy
 from core_atomistic.periodic_table import TPeriodTable
 from core_atomistic.atom import Atom
@@ -254,6 +254,7 @@ class GuiOpenGLBase(QOpenGLWidget):
         view = gl.glGetIntegerv(gl.GL_VIEWPORT)
         win_y = int(float(view[3]) - float(y))
         z = gl.glReadPixels(x, win_y, 1, 1, gl.GL_DEPTH_COMPONENT, gl.GL_FLOAT)
+        print('z = ', z)
         point = glu.gluUnProject(x, y, z, model, proj, view)
         al = math.pi * self.rotation_angles[0] / 180
         # !!! Why ????
