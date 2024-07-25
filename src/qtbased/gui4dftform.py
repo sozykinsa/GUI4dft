@@ -13,14 +13,12 @@ from operator import itemgetter
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
-import platform
-from qtpy import PYSIDE_VERSION
-from qtpy import PYQT_VERSION
-from qtpy.QtCore import QLocale, QSettings, Qt, QSize
-from qtpy.QtGui import QColor, QIcon, QImage, QKeySequence, QPixmap, QStandardItem, QStandardItemModel
-from qtpy.QtWidgets import QAction, QDialog, QFileDialog, QMessageBox, QColorDialog, QHeaderView
-from qtpy.QtWidgets import QDoubleSpinBox, QMainWindow, QShortcut, QTableWidgetItem, QTreeWidgetItem
-from qtpy.QtWidgets import QTreeWidgetItemIterator
+from PySide6.QtCore import QLocale, QSettings, Qt, QSize
+from PySide6.QtGui import QAction, QColor, QIcon, QImage, QKeySequence
+from PySide6.QtGui import QPixmap, QStandardItem, QStandardItemModel, QShortcut
+from PySide6.QtWidgets import QDialog, QFileDialog, QMessageBox, QColorDialog, QHeaderView
+from PySide6.QtWidgets import QDoubleSpinBox, QMainWindow, QTableWidgetItem, QTreeWidgetItem
+from PySide6.QtWidgets import QTreeWidgetItemIterator
 
 from ase.build import molecule, bulk
 
@@ -58,11 +56,6 @@ from ui.about import Ui_DialogAbout as Ui_about
 from ui.form import Ui_MainWindow as Ui_form
 
 matplotlib.use('QtAgg')
-print("Python version: ", platform.python_version())
-if PYSIDE_VERSION is not None:
-    print("PySide version: ", PYSIDE_VERSION)
-if PYQT_VERSION is not None:
-    print("PyQt version: ", PYQT_VERSION)
 
 sys.path.append('')
 
