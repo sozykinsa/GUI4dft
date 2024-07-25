@@ -296,14 +296,15 @@ class GuiOpenGL(GuiOpenGLBase):
             pass
 
     def get_atom_on_screen(self):
-        print("click3")
+        print("-----> ")
+        print("self.x_scene, self.y_scene: ", self.x_scene, self.y_scene)
         point = self.get_point_in_3d(self.x_scene, self.y_scene)
-        print("point ", point)
+        print("self.selected_atom ", self.selected_atom)
         old_selected = self.selected_atom
         print("self.scale_factor ", self.scale_factor)
         ind, min_r = self.nearest_point(self.scale_factor, self.main_model.atoms, point)
         self.update_selected_atom(ind, min_r)
-        print("min_r ", min_r)
+        print("int, min_r ", ind, min_r)
 
         if min_r < 1.4:
             if self.selected_atom >= 0:
