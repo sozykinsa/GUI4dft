@@ -176,4 +176,7 @@ def structure_of_primitive_cell(f_name):
 
 def energies(filename):
     """Energy from each step."""
-    return np.array(helpers.list_of_values(filename, "TOTAL ENERGY(HF)(AU)(   3)"), dtype=float) * 27.2113961317875
+    e = helpers.list_of_values(filename, "TOTAL ENERGY(HF)(AU)(", 1)
+    e_opt = helpers.from_file_property(filename, "* OPT END - CONVERGED * E(AU):", prop_type='float')
+    e.append(e_opt)
+    return np.array(e, dtype=float) * 27.2113961317875

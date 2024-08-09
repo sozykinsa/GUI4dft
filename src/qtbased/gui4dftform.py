@@ -1155,7 +1155,7 @@ class MainForm(QMainWindow):
 
     def fill_energies(self, energies) -> None:
         """Plot energies for steps of output."""
-        if len(energies) == 0:
+        if energies.size == 0:
             return
         energies_min = min(energies)
         energies -= energies_min
