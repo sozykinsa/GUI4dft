@@ -117,8 +117,8 @@ class GuiOpenGL(GuiOpenGLBase):
         self.main_model = deepcopy(structure)
         self.coord0 = -self.main_model.get_center_of_mass()
         self.main_model.move(self.coord0)
-        print("initial atomic structure 0: ")
-        print(self.main_model.atoms[0].xyz)
+        # print("initial atomic structure 0: ")
+        # print(self.main_model.atoms[0].xyz)
         self.is_view_surface = False
         self.is_view_contour = False
         self.is_view_contour_fill = False
@@ -282,8 +282,8 @@ class GuiOpenGL(GuiOpenGLBase):
 
                 text_to_render = []
                 if self.is_atomic_numbers_visible:
-                    print("text 0: ")
-                    print(self.main_model.atoms[0].xyz)
+                    # print("text 0: ")
+                    # print(self.main_model.atoms[0].xyz)
                     for i in range(0, len(self.main_model.atoms)):
                         at = self.main_model.atoms[i]
                         text_to_render.append([self.scale_factor * at.x, self.scale_factor * at.y,
@@ -296,15 +296,15 @@ class GuiOpenGL(GuiOpenGLBase):
             pass
 
     def get_atom_on_screen(self):
-        print("-----> ")
-        print("self.x_scene, self.y_scene: ", self.x_scene, self.y_scene)
+        # print("-----> ")
+        # print("self.x_scene, self.y_scene: ", self.x_scene, self.y_scene)
         point = self.get_point_in_3d(self.x_scene, self.y_scene)
-        print("self.selected_atom ", self.selected_atom)
+        # print("self.selected_atom ", self.selected_atom)
         old_selected = self.selected_atom
-        print("self.scale_factor ", self.scale_factor)
+        # print("self.scale_factor ", self.scale_factor)
         ind, min_r = self.nearest_point(self.scale_factor, self.main_model.atoms, point)
         self.update_selected_atom(ind, min_r)
-        print("int, min_r ", ind, min_r)
+        # print("int, min_r ", ind, min_r)
 
         if min_r < 1.4:
             if self.selected_atom >= 0:

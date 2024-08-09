@@ -97,6 +97,12 @@
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>200</height>
+           </size>
+          </property>
           <property name="sizeAdjustPolicy">
            <enum>QAbstractScrollArea::AdjustToContents</enum>
           </property>
@@ -784,8 +790,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>371</width>
-                 <height>562</height>
+                 <width>241</width>
+                 <height>176</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -1677,8 +1683,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>371</width>
-                 <height>562</height>
+                 <width>286</width>
+                 <height>491</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -3635,8 +3641,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>371</width>
-                 <height>593</height>
+                 <width>363</width>
+                 <height>329</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -4002,7 +4008,7 @@
                  <x>0</x>
                  <y>0</y>
                  <width>376</width>
-                 <height>572</height>
+                 <height>287</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -12798,8 +12804,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>665</width>
-         <height>765</height>
+         <width>98</width>
+         <height>100</height>
         </rect>
        </property>
        <attribute name="label">

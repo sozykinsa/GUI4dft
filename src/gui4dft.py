@@ -11,9 +11,9 @@ import platform
 from qtpy import PYSIDE_VERSION
 from qtpy import PYQT_VERSION
 
-from PySide6.QtCore import QCoreApplication, Qt
-from PySide6.QtGui import QIcon
-from PySide6.QtWidgets import QApplication
+from qtpy.QtCore import QCoreApplication, Qt
+from qtpy.QtGui import QIcon
+from qtpy.QtWidgets import QApplication
 
 from qtbased.gui4dftform import MainForm
 

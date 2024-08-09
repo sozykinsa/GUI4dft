@@ -1,12 +1,16 @@
 # This file is a part of GUI4dft programm.
 from typing import Callable
+import sys
 
 import OpenGL.GL as gl
 import OpenGL.GLU as glu
-from PySide6.QtOpenGLWidgets import QOpenGLWidget
-from PySide6.QtCore import QEvent
-from PySide6.QtCore import Qt
-from PySide6.QtGui import QColor, QPainter, QFont
+from qtpy.QtCore import QEvent
+from qtpy.QtCore import Qt
+from qtpy.QtGui import QColor, QPainter, QFont
+if sys.platform.startswith('win'):
+    from qtpy.QtWidgets import QOpenGLWidget
+else:
+    from qtpy.QtOpenGLWidgets import QOpenGLWidget
 from copy import deepcopy
 from core_atomistic.periodic_table import TPeriodTable
 from core_atomistic.atom import Atom
@@ -254,7 +258,7 @@ class GuiOpenGLBase(QOpenGLWidget):
         view = gl.glGetIntegerv(gl.GL_VIEWPORT)
         win_y = int(float(view[3]) - float(y))
         z = gl.glReadPixels(x, win_y, 1, 1, gl.GL_DEPTH_COMPONENT, gl.GL_FLOAT)
-        print('z = ', z)
+        # print('z = ', z)
         point = glu.gluUnProject(x, y, z, model, proj, view)
         al = math.pi * self.rotation_angles[0] / 180
         # !!! Why ????
