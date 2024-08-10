@@ -411,6 +411,7 @@ class GuiOpenGLBase(QOpenGLWidget):
         self.add_axes()
 
     def color_atoms_with_property(self, prop: str = "charge"):
+        print("prop: ", prop)
         self.clean()
         self.prop = prop
         self.add_all_elements()

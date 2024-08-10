@@ -243,6 +243,8 @@ class MainForm(QMainWindow):
         self.ui.changeFragment1StatusByZ.clicked.connect(self.change_fragment1_status_by_z)
         self.ui.fragment1Clear.clicked.connect(self.fragment1_clear)
 
+        self.ui.show_property_text.clicked.connect(self.show_property)
+
         self.ui.FormActionsPreButDeleteAtom.clicked.connect(self.atom_delete)
         self.ui.FormActionsPreButModifyAtom.clicked.connect(self.atom_modify)
         self.ui.FormActionsPreButAddAtom.clicked.connect(self.atom_add)
@@ -1349,6 +1351,7 @@ class MainForm(QMainWindow):
                 m1 = self.ui.openGLWidget.main_model.sub_model(cluster)
                 text += "cm :" + str(m1.center_mass()) + "\n"
                 text += "size z :" + str(round(m1.max_z() - m1.min_z(), 4)) + "\n"
+                self.ui.color_atoms_with_cluster_id.setEnabled(True)
         self.ui.clusters_info.setText(text)
         self.plot_model(self.active_model_id)
 
@@ -1876,6 +1879,8 @@ class MainForm(QMainWindow):
             return
         self.active_model_id = value
         self.ui.Form3Dand2DTabs.setCurrentIndex(0)
+        self.ui.color_atoms_with_atom_type.setChecked(True)
+        self.ui.color_atoms_with_cluster_id.setEnabled(False)
         view_atoms = self.ui.FormSettingsViewCheckShowAtoms.isChecked()
         view_atom_numbers = self.ui.FormSettingsViewCheckShowAtomNumber.isChecked()
         view_box = self.ui.FormSettingsViewCheckShowBox.isChecked()

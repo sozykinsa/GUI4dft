@@ -26,5 +26,5 @@ def test_structure_opt_step(tests_path):
 def test_energies(tests_path):
     f_name = str(tests_path / 'ref_data' / 'crystal' / 'corundum_optim' / "input.out")
     e = energies(f_name)
-    assert e.size == 4
+    assert e.size == 12
     assert e[0] == -38.10871652477017
