@@ -249,6 +249,13 @@ class MainForm(QMainWindow):
         self.ui.FormActionsPreButModifyAtom.clicked.connect(self.atom_modify)
         self.ui.FormActionsPreButAddAtom.clicked.connect(self.atom_add)
 
+        self.ui.atom_translation_1_plus.clicked.connect(self.atom_translation_1_plus)
+        self.ui.atom_translation_1_minus.clicked.connect(self.atom_translation_1_minus)
+        self.ui.atom_translation_2_plus.clicked.connect(self.atom_translation_2_plus)
+        self.ui.atom_translation_2_minus.clicked.connect(self.atom_translation_2_minus)
+        self.ui.atom_translation_3_plus.clicked.connect(self.atom_translation_3_plus)
+        self.ui.atom_translation_3_minus.clicked.connect(self.atom_translation_3_minus)
+
         self.ui.FormActionsPreButSelectLeftElectrode.clicked.connect(self.add_left_electrode_file)
         self.ui.FormActionsPreButSelectScatRegione.clicked.connect(self.add_scat_region_file)
         self.ui.FormActionsPreButSelectRightElectrode.clicked.connect(self.add_right_electrode_file)
@@ -771,6 +778,33 @@ class MainForm(QMainWindow):
             return
         charge, let, position = self.selected_atom_from_form()
         self.models[self.active_model_id].add_atom_with_data(position, charge)
+        self.model_to_screen(self.active_model_id)
+
+    def atom_translation_1_plus(self):
+        self.translate_atom(1, 0, 0)
+
+    def atom_translation_1_minus(self):
+        self.translate_atom(-1, 0, 0)
+
+    def atom_translation_2_plus(self):
+        self.translate_atom(0, 1, 0)
+
+    def atom_translation_2_minus(self):
+        self.translate_atom(0, -1, 0)
+
+    def atom_translation_3_plus(self):
+        self.translate_atom(0, 0, 1)
+
+    def atom_translation_3_minus(self):
+        self.translate_atom(0, 0, -1)
+
+    def translate_atom(self, xp, yp, zp):
+        if len(self.models) == 0:
+            return
+        if self.ui.openGLWidget.selected_atom < 0:
+            return
+        if self.ui.openGLWidget.selected_atom >= 0:
+            self.active_model.translate_atom(self.ui.openGLWidget.selected_atom, xp, yp, zp)
         self.model_to_screen(self.active_model_id)
 
     def atom_delete(self):

@@ -157,6 +157,10 @@ class AtomicModel(object):
         for atom in self.atoms:
             atom.xyz += dl
 
+    def translate_atom(self, selected_atom, step_x, step_y, step_z):
+        atom = self.atoms[selected_atom]
+        atom.xyz += step_x * self.lat_vector1 + step_y * self.lat_vector2 + step_z * self.lat_vector3
+
     @staticmethod
     def atoms_from_xmol_xyz(filename: str):
         """Import from XMOL xyz file."""

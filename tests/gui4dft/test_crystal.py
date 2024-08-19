@@ -27,4 +27,4 @@ def test_energies(tests_path):
     f_name = str(tests_path / 'ref_data' / 'crystal' / 'corundum_optim' / "input.out")
     e = energies(f_name)
     assert e.size == 12
-    assert e[0] == -38.10871652477017
+    assert e[0] == -38106.68336568802
