@@ -1083,6 +1083,7 @@ class MainForm(QMainWindow):
     def edit_cell(self):
         if len(self.models) == 0:
             return
+        is_adaptive = self.ui.lat_const_adaptive.isChecked()
         v1, v2, v3 = self.lat_vectors_from_form()
         self.ui.openGLWidget.main_model.set_lat_vectors(v1, v2, v3)
         self.models.append(self.ui.openGLWidget.main_model)
@@ -1252,8 +1253,12 @@ class MainForm(QMainWindow):
             self.ui.FormModelTableProperties.setItem(i, 0, QTableWidgetItem(properties[i][0]))
             self.ui.FormModelTableProperties.setItem(i, 1, QTableWidgetItem(properties[i][1]))
 
-        lat_const = max(abs(np.min(model.lat_vectors)), abs(np.max(model.lat_vectors)))
-        new_vectors = model.lat_vectors / lat_const
+        if self.ui.lat_const_adaptive.isChecked():
+            lat_const = max(abs(np.min(model.lat_vectors)), abs(np.max(model.lat_vectors)))
+            new_vectors = model.lat_vectors / lat_const
+        else:
+            lat_const = 1.0
+            new_vectors = model.lat_vectors
 
         self.ui.lattice_constant.setValue(lat_const)
         self.ui.FormModifyCellEditA1.setValue(new_vectors[0][0])
@@ -2987,7 +2992,9 @@ class MainForm(QMainWindow):
             return
         try:
             model = self.ui.openGLWidget.get_model()
-            text = VASP.model_to_vasp_poscar(model, self.coord_type)
+            is_freez = self.ui.freez_atoms.isChecked()
+            is_fragment = self.ui.activate_fragment_selection_mode.isChecked()
+            text = VASP.model_to_vasp_poscar(model, self.coord_type, is_freez and is_fragment)
             self.ui.FormActionsPreTextFDF.setText(text)
         except Exception:
             print("There are no atoms in the model")

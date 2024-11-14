@@ -4092,7 +4092,7 @@
                  <x>0</x>
                  <y>0</y>
                  <width>376</width>
-                 <height>287</height>
+                 <height>572</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -4112,6 +4112,13 @@
                   </property>
                   <layout class="QHBoxLayout" name="horizontalLayout_202">
                    <item>
+                    <widget class="QRadioButton" name="lat_const_adaptive">
+                     <property name="text">
+                      <string>Adaptive</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
                     <widget class="QDoubleSpinBox" name="lattice_constant">
                      <property name="decimals">
                       <number>5</number>
@@ -4124,6 +4131,23 @@
                      </property>
                      <property name="value">
                       <double>1.000000000000000</double>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QLabel" name="label">
+                     <property name="text">
+                      <string>or</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QRadioButton" name="radioButton">
+                     <property name="text">
+                      <string>fixed 1.0</string>
+                     </property>
+                     <property name="checked">
+                      <bool>true</bool>
                      </property>
                     </widget>
                    </item>
@@ -5590,6 +5614,31 @@
             <string>Input file</string>
            </attribute>
            <layout class="QVBoxLayout" name="verticalLayout_78">
+            <item>
+             <widget class="QFrame" name="frame_83">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="frameShape">
+               <enum>QFrame::NoFrame</enum>
+              </property>
+              <property name="frameShadow">
+               <enum>QFrame::Raised</enum>
+              </property>
+              <layout class="QVBoxLayout" name="verticalLayout_26">
+               <item>
+                <widget class="QCheckBox" name="freez_atoms">
+                 <property name="text">
+                  <string>Freez atoms</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
             <item>
              <widget class="QFrame" name="frame_161">
               <property name="minimumSize">

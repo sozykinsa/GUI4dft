@@ -2321,7 +2321,7 @@ class Ui_MainWindow(object):
         self.toolBox_6.addItem(self.page_29, u"Add or Modify Single (selected) atom")
         self.page = QWidget()
         self.page.setObjectName(u"page")
-        self.page.setGeometry(QRect(0, 0, 376, 287))
+        self.page.setGeometry(QRect(0, 0, 376, 572))
         self.verticalLayout_36 = QVBoxLayout(self.page)
         self.verticalLayout_36.setObjectName(u"verticalLayout_36")
         self.groupBox_66 = QGroupBox(self.page)
@@ -2329,6 +2329,11 @@ class Ui_MainWindow(object):
         self.groupBox_66.setMinimumSize(QSize(0, 0))
         self.horizontalLayout_202 = QHBoxLayout(self.groupBox_66)
         self.horizontalLayout_202.setObjectName(u"horizontalLayout_202")
+        self.lat_const_adaptive = QRadioButton(self.groupBox_66)
+        self.lat_const_adaptive.setObjectName(u"lat_const_adaptive")
+
+        self.horizontalLayout_202.addWidget(self.lat_const_adaptive)
+
         self.lattice_constant = QDoubleSpinBox(self.groupBox_66)
         self.lattice_constant.setObjectName(u"lattice_constant")
         self.lattice_constant.setDecimals(5)
@@ -2337,6 +2342,17 @@ class Ui_MainWindow(object):
         self.lattice_constant.setValue(1.000000000000000)
 
         self.horizontalLayout_202.addWidget(self.lattice_constant)
+
+        self.label = QLabel(self.groupBox_66)
+        self.label.setObjectName(u"label")
+
+        self.horizontalLayout_202.addWidget(self.label)
+
+        self.radioButton = QRadioButton(self.groupBox_66)
+        self.radioButton.setObjectName(u"radioButton")
+        self.radioButton.setChecked(True)
+
+        self.horizontalLayout_202.addWidget(self.radioButton)
 
         self.horizontalSpacer_40 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
@@ -3092,6 +3108,21 @@ class Ui_MainWindow(object):
         self.tab_24.setObjectName(u"tab_24")
         self.verticalLayout_78 = QVBoxLayout(self.tab_24)
         self.verticalLayout_78.setObjectName(u"verticalLayout_78")
+        self.frame_83 = QFrame(self.tab_24)
+        self.frame_83.setObjectName(u"frame_83")
+        self.frame_83.setMinimumSize(QSize(0, 0))
+        self.frame_83.setFrameShape(QFrame.NoFrame)
+        self.frame_83.setFrameShadow(QFrame.Raised)
+        self.verticalLayout_26 = QVBoxLayout(self.frame_83)
+        self.verticalLayout_26.setObjectName(u"verticalLayout_26")
+        self.freez_atoms = QCheckBox(self.frame_83)
+        self.freez_atoms.setObjectName(u"freez_atoms")
+
+        self.verticalLayout_26.addWidget(self.freez_atoms)
+
+
+        self.verticalLayout_78.addWidget(self.frame_83)
+
         self.frame_161 = QFrame(self.tab_24)
         self.frame_161.setObjectName(u"frame_161")
         self.frame_161.setMinimumSize(QSize(0, 0))
@@ -7169,6 +7200,9 @@ class Ui_MainWindow(object):
         self.atom_translation_3_minus.setText(QCoreApplication.translate("MainWindow", u"- Translation 3", None))
         self.toolBox_6.setItemText(self.toolBox_6.indexOf(self.page_29), QCoreApplication.translate("MainWindow", u"Add or Modify Single (selected) atom", None))
         self.groupBox_66.setTitle(QCoreApplication.translate("MainWindow", u"Lattice constant", None))
+        self.lat_const_adaptive.setText(QCoreApplication.translate("MainWindow", u"Adaptive", None))
+        self.label.setText(QCoreApplication.translate("MainWindow", u"or", None))
+        self.radioButton.setText(QCoreApplication.translate("MainWindow", u"fixed 1.0", None))
         self.groupBox_67.setTitle(QCoreApplication.translate("MainWindow", u"Vectors", None))
         self.modify_cell_cart_coord.setText(QCoreApplication.translate("MainWindow", u"Edit", None))
         self.modify_cell_frac_coord.setText(QCoreApplication.translate("MainWindow", u"Edit (fractional)", None))
@@ -7213,6 +7247,7 @@ class Ui_MainWindow(object):
         self.label_82.setText(QCoreApplication.translate("MainWindow", u"    N", None))
         self.get_k_path.setText(QCoreApplication.translate("MainWindow", u"Get k-path", None))
         self.tabWidget_3.setTabText(self.tabWidget_3.indexOf(self.tab_21), QCoreApplication.translate("MainWindow", u"K-path", None))
+        self.freez_atoms.setText(QCoreApplication.translate("MainWindow", u"Freez atoms", None))
         self.FDFGenerate.setText(QCoreApplication.translate("MainWindow", u"SIESTA *.fdf", None))
         self.POSCARgenerate.setText(QCoreApplication.translate("MainWindow", u"VASP POSCAR", None))
         self.QEgenerate.setText(QCoreApplication.translate("MainWindow", u"QE", None))

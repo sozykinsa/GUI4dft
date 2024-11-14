@@ -162,7 +162,7 @@ class VASP:
         return property
 
     @staticmethod
-    def model_to_vasp_poscar(model, coord_type="Fractional"):
+    def model_to_vasp_poscar(model, coord_type="Fractional", is_freez=False):
         """Create file in VASP POSCAR format."""
         data = ""
         data += "model \n"
@@ -189,6 +189,8 @@ class VASP:
                     count += 1
             data += ' ' + str(count)
         data += "\n"
+        if is_freez:
+            data += "Selective dynamics\n"
 
         model.sort_atoms_by_type()
         # model.go_to_positive_coordinates()
@@ -199,7 +201,7 @@ class VASP:
             data += "Direct\n"
         if coord_type == "Cartesian":
             data += "Cartesian\n"
-        data += model.coords_for_export("POSCAR")
+        data += model.coords_for_export("POSCAR", is_freez=is_freez)
         return data
 
     @staticmethod

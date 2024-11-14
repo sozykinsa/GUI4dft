@@ -868,7 +868,7 @@ class AtomicModel(object):
         self.move_array(self.atoms, d_vec)
         self.go_to_positive_array(self.atoms)
 
-    def coords_for_export(self, coord_style, units="Ang"):
+    def coords_for_export(self, coord_style, units="Ang", is_freez=False):
         data = ""
         types = self.types_of_atoms()
         if coord_style == "Cartesian":
@@ -889,7 +889,13 @@ class AtomicModel(object):
 
         if coord_style == "POSCAR":
             for i in range(0, len(self.atoms)):
-                data += ' ' + self.xyz_string(i) + "\n"
+                fr = ""
+                if is_freez:
+                    if self.atoms[i].fragment1:
+                        fr = " F F F"
+                    else:
+                        fr = " T T T"
+                data += ' ' + self.xyz_string(i) + fr + "\n"
 
         if coord_style == "Zmatrix Cartesian":
             for i in range(0, len(self.atoms)):
@@ -898,7 +904,10 @@ class AtomicModel(object):
                     if types[j][0] == self.atoms[i].charge:
                         str1 = ' ' + str(j + 1)
                 str2 = '    ' + self.xyz_string(i)
-                str3 = '      1  1  1'
+                if self.atoms[i].selected:
+                    str3 = '      0  0  0'
+                else:
+                    str3 = '      1  1  1'
                 data += str1 + str2 + str3 + "\n"
 
         if coord_style == "FireflyINP":
