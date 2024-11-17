@@ -1180,11 +1180,14 @@ class MainForm(QMainWindow):
             energies = crystal.energies(file_name)
             self.fill_energies(energies)
 
+        if helpers.check_format(file_name) == "vasp_outcar":
+            energies = VASP.energies_from_outcar(file_name)
+            self.fill_energies(energies)
+
         if helpers.check_format(file_name) == "QEPWout":
             self.check_bands(file_name)
 
             e_fermi = get_fermi_level(file_name)
-            # print(e_fermi)
             if e_fermi:
                 i = self.ui.FormActionsTabeDOSProperty.rowCount() + 1
                 self.ui.FormActionsTabeDOSProperty.setRowCount(i)

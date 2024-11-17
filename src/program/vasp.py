@@ -64,7 +64,7 @@ class VASP:
                 if str1.find("ions per type") >= 0:
                     ions_per_type = helpers.spacedel(str1.split("ions per type =")[1]).split(" ")
                 if str1.find("VRHFIN") >= 0:
-                    types.append(str1.split("VRHFIN =")[1].split(":")[0])
+                    types.append((str1.split("VRHFIN =")[1].split(":")[0]).replace(" ", ""))
                 str1 = my_file.readline()
             my_file.close()
         for n, let in zip(ions_per_type, types):
@@ -72,12 +72,13 @@ class VASP:
                 specieses.append(let)
         return specieses
 
-    def atoms_from_outcar(self, filename):
+    @staticmethod
+    def atoms_from_outcar(filename):
         molecules = []
         if os.path.exists(filename):
             period_table = TPeriodTable()
-            all_vectors = self.vectors_from_outcar(filename)
-            specieses = self.specieses_from_outcar(filename)
+            all_vectors = VASP.vectors_from_outcar(filename)
+            specieses = VASP.specieses_from_outcar(filename)
             prop = "POSITION"
             my_file = open(filename)
             str1 = my_file.readline()
@@ -160,6 +161,25 @@ class VASP:
                 str1 = my_file.readline()
             my_file.close()
         return property
+
+    @staticmethod
+    def energies_from_outcar(filename):
+        """Energies on every step"""
+        prop = "energy  without entropy="
+        energies = []
+        if os.path.exists(filename):
+            my_file = open(filename)
+            str1 = my_file.readline()
+            while str1 != '':
+                if (str1 != '') and (str1.find(prop) >= 0):
+                    data = str1.split("energy(sigma->0) =")
+                    if len(data) > 1:
+                        str1 = data[1].replace(prop, ' ')
+                        prop1 = re.findall(r"[0-9,\.,-]+", str1)[0]
+                        energies.append(float(prop1))
+                str1 = my_file.readline()
+            my_file.close()
+        return np.array(energies)
 
     @staticmethod
     def model_to_vasp_poscar(model, coord_type="Fractional", is_freez=False):
