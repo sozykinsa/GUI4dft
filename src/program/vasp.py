@@ -33,6 +33,9 @@ class VASP:
 
             coord_type = helpers.spacedel(struct_file.readline()).lower()
 
+            if coord_type.startswith("s"):
+                coord_type = helpers.spacedel(struct_file.readline()).lower()
+
             if (coord_type == "direct") or (coord_type == "cartesian"):
                 new_str = AtomicModel()
                 for i in range(0, len(numbers_of_atoms)):

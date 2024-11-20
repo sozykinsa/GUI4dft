@@ -30,6 +30,7 @@ from core_atomistic import helpers
 from models.capedswcnt import CapedSWNT
 from models.bint import BiNT
 from models.hexagonal_plane import HexagonalPlane, HexagonalPlaneHex
+from models.trigonal_plane import TrigonalPlane
 from models.meta_graphene import MetaGraphene
 from models.swnt import SWNT
 from models.swgnt import SWGNT
@@ -157,6 +158,7 @@ class MainForm(QMainWindow):
         self.ui.but_create_nanotube.clicked.connect(self.create_swnt)
         self.ui.FormActionsPreButBiElementGenerate.clicked.connect(self.create_bi_el_nt)
         self.ui.generate_2d_model.clicked.connect(self.create_2d_hexagonal)
+        self.ui.generate_trigonal_model.clicked.connect(self.create_trigonal)
         self.ui.generate_meta_gr_model.clicked.connect(self.create_meta_gr_model)
         self.ui.generate_3d_bulk.clicked.connect(self.generate_3d_bulk)
 
@@ -399,6 +401,7 @@ class MainForm(QMainWindow):
 
         model_2d_types = QStandardItemModel()
         model_2d_types.appendRow(QStandardItem("Graphene"))
+        model_2d_types.appendRow(QStandardItem("Silicene"))
         model_2d_types.appendRow(QStandardItem("hBN"))
         model_2d_types.appendRow(QStandardItem("hBC"))
         model_2d_types.appendRow(QStandardItem("hSiC"))
@@ -3293,6 +3296,14 @@ class MainForm(QMainWindow):
         let2 = self.ui.FormAtomsList2.currentText()
         self.ui.openGLWidget.bond_len_correct(let1, let2, d)
 
+    def create_trigonal(self):
+        n = self.ui.FormActionsPreLineGraphene_n.value()
+        m = self.ui.FormActionsPreLineGraphene_m.value()
+        model = TrigonalPlane(n, m)
+        self.models.append(model)
+        self.plot_model(-1)
+        self.fill_gui("Trigonal model")
+
     def create_2d_hexagonal(self):
         n = self.ui.FormActionsPreLineGraphene_n.value()
         m = self.ui.FormActionsPreLineGraphene_m.value()
@@ -3306,6 +3317,10 @@ class MainForm(QMainWindow):
             ch1 = 6
             ch2 = 6
             a = 1.43
+        if model_type == "Silicene":
+            ch1 = 14
+            ch2 = 14
+            a = 1.9
         if model_type == "hBN":
             ch1 = 5
             ch2 = 7

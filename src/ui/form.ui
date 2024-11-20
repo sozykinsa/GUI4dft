@@ -1683,8 +1683,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>286</width>
-                 <height>491</height>
+                 <width>371</width>
+                 <height>562</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -1694,7 +1694,7 @@
                 <item>
                  <widget class="QGroupBox" name="groupBox_30">
                   <property name="title">
-                   <string>Graphene, hBN, hBC, hSiC</string>
+                   <string>Graphene, Silicene, hBN, hBC, hSiC</string>
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_11">
                    <item>
@@ -1888,6 +1888,32 @@
                     </widget>
                    </item>
                   </layout>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QGroupBox" name="groupBox_63">
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>50</height>
+                   </size>
+                  </property>
+                  <property name="title">
+                   <string>Trigonal</string>
+                  </property>
+                  <widget class="QPushButton" name="generate_trigonal_model">
+                   <property name="geometry">
+                    <rect>
+                     <x>130</x>
+                     <y>10</y>
+                     <width>93</width>
+                     <height>28</height>
+                    </rect>
+                   </property>
+                   <property name="text">
+                    <string>Create</string>
+                   </property>
+                  </widget>
                  </widget>
                 </item>
                 <item>
@@ -4092,7 +4118,7 @@
                  <x>0</x>
                  <y>0</y>
                  <width>376</width>
-                 <height>572</height>
+                 <height>287</height>
                 </rect>
                </property>
                <attribute name="label">

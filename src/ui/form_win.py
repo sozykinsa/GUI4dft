@@ -976,7 +976,7 @@ class Ui_MainWindow(object):
         self.toolBox.addItem(self.page_4, u"1D (nanotubes)")
         self.page_17 = QWidget()
         self.page_17.setObjectName(u"page_17")
-        self.page_17.setGeometry(QRect(0, 0, 286, 491))
+        self.page_17.setGeometry(QRect(0, 0, 371, 562))
         self.verticalLayout_27 = QVBoxLayout(self.page_17)
         self.verticalLayout_27.setObjectName(u"verticalLayout_27")
         self.groupBox_30 = QGroupBox(self.page_17)
@@ -1094,6 +1094,15 @@ class Ui_MainWindow(object):
 
 
         self.verticalLayout_27.addWidget(self.groupBox_30)
+
+        self.groupBox_63 = QGroupBox(self.page_17)
+        self.groupBox_63.setObjectName(u"groupBox_63")
+        self.groupBox_63.setMinimumSize(QSize(0, 50))
+        self.generate_trigonal_model = QPushButton(self.groupBox_63)
+        self.generate_trigonal_model.setObjectName(u"generate_trigonal_model")
+        self.generate_trigonal_model.setGeometry(QRect(130, 10, 93, 28))
+
+        self.verticalLayout_27.addWidget(self.groupBox_63)
 
         self.groupBox_57 = QGroupBox(self.page_17)
         self.groupBox_57.setObjectName(u"groupBox_57")
@@ -2321,7 +2330,7 @@ class Ui_MainWindow(object):
         self.toolBox_6.addItem(self.page_29, u"Add or Modify Single (selected) atom")
         self.page = QWidget()
         self.page.setObjectName(u"page")
-        self.page.setGeometry(QRect(0, 0, 376, 572))
+        self.page.setGeometry(QRect(0, 0, 376, 287))
         self.verticalLayout_36 = QVBoxLayout(self.page)
         self.verticalLayout_36.setObjectName(u"verticalLayout_36")
         self.groupBox_66 = QGroupBox(self.page)
@@ -7099,7 +7108,7 @@ class Ui_MainWindow(object):
         self.FormActionsPreButBiElementGenerate.setText(QCoreApplication.translate("MainWindow", u"Create", None))
         self.tabWidget_11.setTabText(self.tabWidget_11.indexOf(self.tab_38), QCoreApplication.translate("MainWindow", u"Bi element", None))
         self.toolBox.setItemText(self.toolBox.indexOf(self.page_4), QCoreApplication.translate("MainWindow", u"1D (nanotubes)", None))
-        self.groupBox_30.setTitle(QCoreApplication.translate("MainWindow", u"Graphene, hBN, hBC, hSiC", None))
+        self.groupBox_30.setTitle(QCoreApplication.translate("MainWindow", u"Graphene, Silicene, hBN, hBC, hSiC", None))
         self.groupBox_65.setTitle(QCoreApplication.translate("MainWindow", u"Type and Size", None))
         self.label_75.setText(QCoreApplication.translate("MainWindow", u"n:", None))
         self.label_76.setText(QCoreApplication.translate("MainWindow", u"m:", None))
@@ -7110,6 +7119,8 @@ class Ui_MainWindow(object):
         self.generate_2d_hex3.setText(QCoreApplication.translate("MainWindow", u"Hexagonal 3", None))
         self.generate_2d_hex4.setText(QCoreApplication.translate("MainWindow", u"Hexagonal 4", None))
         self.generate_2d_model.setText(QCoreApplication.translate("MainWindow", u"Create", None))
+        self.groupBox_63.setTitle(QCoreApplication.translate("MainWindow", u"Trigonal", None))
+        self.generate_trigonal_model.setText(QCoreApplication.translate("MainWindow", u"Create", None))
         self.groupBox_57.setTitle(QCoreApplication.translate("MainWindow", u"Meta-graphenes", None))
         self.label_85.setText(QCoreApplication.translate("MainWindow", u"n:", None))
         self.label_86.setText(QCoreApplication.translate("MainWindow", u"m:", None))
