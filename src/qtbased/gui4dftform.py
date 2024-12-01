@@ -413,6 +413,7 @@ class MainForm(QMainWindow):
         model_meta_gr_type.appendRow(QStandardItem("biphenylene"))
         model_meta_gr_type.appendRow(QStandardItem("tpdh-graphene"))
         model_meta_gr_type.appendRow(QStandardItem("HGY"))
+        model_meta_gr_type.appendRow(QStandardItem("PTI"))
         self.ui.model_meta_gr_type.setModel(model_meta_gr_type)
 
         bi_element_type_tube = QStandardItemModel()
