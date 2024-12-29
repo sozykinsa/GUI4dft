@@ -27,6 +27,8 @@ from core_atomistic.atomic_model import AtomicModel
 from core_atomistic.periodic_table import TPeriodTable
 from core_atomistic import helpers
 
+from qtbased.image3dexporter import Image3Dexporter
+
 from models.capedswcnt import CapedSWNT
 from models.bint import BiNT
 from models.hexagonal_plane import HexagonalPlane, HexagonalPlaneHex
@@ -34,10 +36,12 @@ from models.trigonal_plane import TrigonalPlane
 from models.meta_graphene import MetaGraphene
 from models.swnt import SWNT
 from models.swgnt import SWGNT
+
+from program.importer_exporter import ImporterExporter
 from program.gaussiancube import GaussianCube
 from program.volumericdata import VolumericData
 from program.xsf import XSF
-from qtbased.image3dexporter import Image3Dexporter
+from program.chargemol import get_charges_ddec6
 from program.siesta import TSIESTA
 from program.vasp import VASP
 from program.crystal import CRYSTAL
@@ -49,9 +53,9 @@ from program.octopus import model_to_octopus_input
 from program import crystal
 from program import ase
 from program.fdfdata import TFDFFile
+
 from utils.calculators import Calculators as Calculator
 from utils.calculators import gaps
-from program.importer_exporter import ImporterExporter
 from utils.electronic_prop_reader import read_siesta_bands, dos_from_file, siesta_homo_lumo
 from ui.about import Ui_DialogAbout as Ui_about
 
@@ -117,6 +121,7 @@ class MainForm(QMainWindow):
     def setup_ui(self):  # pragma: no cover
         self.load_settings()
         self.ui.actionOpen.triggered.connect(self.menu_open)
+        self.ui.actionImport.triggered.connect(self.menu_import)
         self.ui.actionExport.triggered.connect(self.menu_export)
         self.ui.actionClose.triggered.connect(self.close)
         self.ui.actionOrtho.triggered.connect(self.menu_ortho)
@@ -1394,9 +1399,15 @@ class MainForm(QMainWindow):
             if len(cluster) > 0:
                 self.models[self.active_model_id].set_cluster(cluster, i)
                 text += "Cluster " + str(i + 1) + ": " + str(len(cluster)) + "\n"
-                m1 = self.ui.openGLWidget.main_model.sub_model(cluster)
+                m1 = self.active_model.sub_model(cluster)
                 text += "cm :" + str(m1.center_mass()) + "\n"
                 text += "size z :" + str(round(m1.max_z() - m1.min_z(), 4)) + "\n"
+                if m1.atoms[0].get_property("DDEC6") is not None:
+                    ch = 0.0
+                    for j in range(len(m1.atoms)):
+                        ch += m1.atoms[j].get_property("DDEC6")
+                    text += "DDEC6 charge :" + str(round(ch, 4)) + "\n"
+
                 self.ui.color_atoms_with_cluster_id.setEnabled(True)
         self.ui.clusters_info.setText(text)
         self.plot_model(self.active_model_id)
@@ -1665,22 +1676,6 @@ class MainForm(QMainWindow):
         self.ui.openGLWidget.set_perspective_angle(self.perspective_angle)
         self.ui.openGLWidget.update()
 
-    def menu_export(self):  # pragma: no cover
-        if self.ui.openGLWidget.main_model.n_atoms() > 0:
-            try:
-                file_format = "FDF files (*.fdf);;XYZ files (*.xyz);;FireFly input files (*.inp)"
-                file_format += ";;VASP POSCAR file (*.POSCAR);;GUI4dft project file (*.data)"
-                file_name = self.get_file_name_from_save_dialog(file_format)
-
-                if not file_name:
-                    return
-
-                ImporterExporter.export_to_file(self.models[self.active_model_id], file_name)
-                self.work_dir = os.path.dirname(file_name)
-                self.save_active_folder()
-            except Exception as e:
-                self.show_error(e)
-
     def menu_open(self, file_name=False):
         if len(self.models) > 0:   # pragma: no cover
             self.action_on_start = 'Open'
@@ -1704,6 +1699,38 @@ class MainForm(QMainWindow):
             try:
                 self.plot_last_model()
             except Exception as e:  # pragma: no cover
+                self.show_error(e)
+
+    def menu_import(self):
+        if self.ui.openGLWidget.main_model.n_atoms() > 0:
+            try:
+                file_format = "Chargemol files (*.xyz);;All files (*)"
+                file_name = self.get_file_name_from_open_dialog(file_format)
+
+                if not file_name:
+                    return
+
+                if file_name.endswith(".xyz"):
+                    print(file_name)
+                    get_charges_ddec6(file_name, self.active_model)
+
+            except Exception as e:
+                self.show_error(e)
+
+    def menu_export(self):  # pragma: no cover
+        if self.ui.openGLWidget.main_model.n_atoms() > 0:
+            try:
+                file_format = "FDF files (*.fdf);;XYZ files (*.xyz);;FireFly input files (*.inp)"
+                file_format += ";;VASP POSCAR file (*.POSCAR);;GUI4dft project file (*.data)"
+                file_name = self.get_file_name_from_save_dialog(file_format)
+
+                if not file_name:
+                    return
+
+                ImporterExporter.export_to_file(self.models[self.active_model_id], file_name)
+                self.work_dir = os.path.dirname(file_name)
+                self.save_active_folder()
+            except Exception as e:
                 self.show_error(e)
 
     def get_atomic_model_and_fdf(self, fname):

@@ -636,15 +636,15 @@ class AtomicModel(object):
         return neighbo
 
     def find_clusters(self):
-        clusters = [] # list of lists
-        inds = range(0, len(self.atoms)) # list of indices of atoms in model
+        clusters = []  # list of lists
+        # inds = range(0, len(self.atoms))  # list of indices of atoms in model
         bonds = deepcopy(self.bonds)
         while len(bonds) > 0:
             cluster = [bonds[0][0], bonds[0][1]]
             bonds.remove(bonds[0])
             len_cluster = 2
             len_cluster_old = 0
-            while (len_cluster_old!= len_cluster) and (len(bonds) > 0):
+            while (len_cluster_old != len_cluster) and (len(bonds) > 0):
                 for ind in cluster:
                     for bond in bonds:
                         if (bond[0] == ind) or (bond[1] == ind):
@@ -652,8 +652,8 @@ class AtomicModel(object):
                                 cluster.append(bond[0])
                             if bond[1] not in cluster:
                                 cluster.append(bond[1])
-                            bonds.remove(bond) # remove bond from list
-                len_cluster_old = len_cluster # update length of cluster
+                            bonds.remove(bond)  # remove bond from list
+                len_cluster_old = len_cluster  # update length of cluster
                 len_cluster = len(cluster)
             clusters.append(cluster)
         return clusters

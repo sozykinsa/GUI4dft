@@ -1683,8 +1683,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>371</width>
-                 <height>562</height>
+                 <width>286</width>
+                 <height>548</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -2548,8 +2548,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>371</width>
-                 <height>562</height>
+                 <width>337</width>
+                 <height>549</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -13005,6 +13005,7 @@
      <string>File</string>
     </property>
     <addaction name="actionOpen"/>
+    <addaction name="actionImport"/>
     <addaction name="actionExport"/>
     <addaction name="actionClose"/>
    </widget>
@@ -13112,6 +13113,11 @@
   <action name="actionManual">
    <property name="text">
     <string>Manual</string>
+   </property>
+  </action>
+  <action name="actionImport">
+   <property name="text">
+    <string>Import properties</string>
    </property>
   </action>
  </widget>
