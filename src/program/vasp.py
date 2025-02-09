@@ -30,10 +30,12 @@ class VASP:
             sorts_of_atoms = helpers.spacedel(struct_file.readline()).split()
             numbers_of_atoms = helpers.spacedel(struct_file.readline()).split()
             numbers_of_atoms = helpers.list_str_to_int(numbers_of_atoms)
+            selective_dynamics = False
 
             coord_type = helpers.spacedel(struct_file.readline()).lower()
 
             if coord_type.startswith("s"):
+                selective_dynamics = True
                 coord_type = helpers.spacedel(struct_file.readline()).lower()
 
             if (coord_type == "direct") or (coord_type == "cartesian"):
@@ -48,7 +50,11 @@ class VASP:
                         z = float(s[2])
                         charge = period_table.get_charge_by_letter(sorts_of_atoms[i])
                         let = sorts_of_atoms[i]
-                        new_str.add_atom(Atom([x, y, z, let, charge]))
+                        new_atom = Atom([x, y, z, let, charge])
+                        if selective_dynamics:
+                            if (s[3] == "F") or (s[4] == "F") or (s[5] == "F"):
+                                new_atom.fragment1 = True
+                        new_str.add_atom(new_atom)
                 new_str.set_lat_vectors(lat1, lat2, lat3)
                 if coord_type == "direct":
                     new_str.convert_from_direct_to_cart()

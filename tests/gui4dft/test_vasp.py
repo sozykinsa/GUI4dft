@@ -6,9 +6,13 @@ def test_atoms_from_poscar(tests_path):
     model = VASP.atoms_from_poscar(f_name)[0]
     assert model.n_atoms() == 4
 
-    f_name = str(tests_path / 'ref_data' / 'vasp' / 'vasp_cartesian'/ "POSCAR")
+    f_name = str(tests_path / 'ref_data' / 'vasp' / 'vasp_cartesian' / "POSCAR")
     model = VASP.atoms_from_poscar(f_name)[0]
     assert model.n_atoms() == 1
+
+    f_name = str(tests_path / 'ref_data' / 'vasp' / 'vasp_selective' / "POSCAR")
+    model = VASP.atoms_from_poscar(f_name)[0]
+    assert model.n_atoms() == 4
 
 
 def test_atoms_from_outcar(tests_path):
