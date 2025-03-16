@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from copy import deepcopy
 import numpy as np
+import math
 from core_atomistic.atom import Atom
 from core_atomistic.atomic_model import AtomicModel
 from core_atomistic import helpers
@@ -131,6 +132,59 @@ def structure_opt_step(f_name):
     return models
 
 
+def optimisatioion_steps(f_name):
+    models = []
+    f = open(f_name)
+    start = 4
+    str1 = f.readline()
+    while str1:
+        if str1.find("COORDINATE AND CELL OPTIMIZATION - POINT") >= 0:
+            model = AtomicModel()
+            #print("found step: " + str1)
+            str1 = f.readline()
+            str1 = f.readline()
+            str1 = f.readline()
+            str1 = f.readline()
+            if str1.find("A              B              C           ALPHA      BETA       GAMMA") >= 0:
+                start = 4
+                str1 = f.readline()
+                a, b, c = float(str1.split()[0]), float(str1.split()[1]), float(str1.split()[2])
+                alpha, beta = math.radians(float(str1.split()[3])), math.radians(float(str1.split()[4]))
+                gamma = math.radians(float(str1.split()[5]))
+                #print("found params: ", a, b, c, alpha, beta, gamma)
+
+                str1 = f.readline()
+                str1 = f.readline()
+                str1 = f.readline()
+                #print("found: " + str1)
+                mult_x = 1.0
+                mult_y = 1.0
+                mult_z = 1.0
+                if str1.find("X/A") >= 0:
+                    mult_x = a
+                str1 = f.readline()
+                str1 = f.readline()
+
+                while len(str1) > 5:
+                    str1 = helpers.spacedel(str1)
+                    s = str1.split(' ')
+                    # print(s)
+                    x = float(s[start]) * mult_x
+                    y = float(s[start + 1]) * mult_y
+                    z = float(s[start + 2]) * mult_z
+                    charge = int(s[start - 2])
+                    let = s[start - 1]
+                    model.add_atom(Atom([x, y, z, let, charge]))
+                    str1 = helpers.spacedel(f.readline())
+
+                model.lat_vectors = helpers.lat_vectors_from_params(a, b, c, alpha, beta, gamma)
+                models.append(model)
+
+        str1 = f.readline()
+    f.close()
+    return models
+
+
 def structure_of_primitive_cell(f_name):
     models = []
     f = open(f_name)
@@ -177,6 +231,8 @@ def structure_of_primitive_cell(f_name):
 def energies(filename):
     """Energy from each step."""
     e = helpers.list_of_values(filename, "TOTAL ENERGY(HF)(AU)(", 1)
+    if len(e) == 0:
+        e = helpers.list_of_values(filename, "TOTAL ENERGY(DFT)(AU)(", 1)
     e_opt = helpers.from_file_property(filename, "* OPT END - CONVERGED * E(AU):", prop_type='float')
     e.append(e_opt)
     return np.array(e, dtype=float) * 27.2113961317875
