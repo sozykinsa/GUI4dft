@@ -2528,7 +2528,7 @@ class Ui_MainWindow(object):
         self.toolBox_6.addItem(self.page, u"Cell")
         self.page_9 = QWidget()
         self.page_9.setObjectName(u"page_9")
-        self.page_9.setGeometry(QRect(0, 0, 98, 28))
+        self.page_9.setGeometry(QRect(0, 0, 100, 30))
         self.FormModelComboModels_2 = QComboBox(self.page_9)
         self.FormModelComboModels_2.setObjectName(u"FormModelComboModels_2")
         self.FormModelComboModels_2.setGeometry(QRect(50, 10, 61, 22))
@@ -5555,6 +5555,26 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_55.addWidget(self.frame_162)
 
+        self.frame_95 = QFrame(self.tab_17)
+        self.frame_95.setObjectName(u"frame_95")
+        self.frame_95.setMinimumSize(QSize(0, 0))
+        self.frame_95.setFrameShape(QFrame.StyledPanel)
+        self.frame_95.setFrameShadow(QFrame.Raised)
+        self.horizontalLayout_207 = QHBoxLayout(self.frame_95)
+        self.horizontalLayout_207.setObjectName(u"horizontalLayout_207")
+        self.horizontalLayout_207.setContentsMargins(0, 0, 0, 0)
+        self.export_for_ev = QPushButton(self.frame_95)
+        self.export_for_ev.setObjectName(u"export_for_ev")
+
+        self.horizontalLayout_207.addWidget(self.export_for_ev)
+
+        self.horizontalSpacer_81 = QSpacerItem(266, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+
+        self.horizontalLayout_207.addItem(self.horizontalSpacer_81)
+
+
+        self.verticalLayout_55.addWidget(self.frame_95)
+
         self.frame_3 = QFrame(self.tab_17)
         self.frame_3.setObjectName(u"frame_3")
         self.frame_3.setEnabled(True)
@@ -7463,6 +7483,7 @@ class Ui_MainWindow(object):
         self.cell_param_delete_all.setText(QCoreApplication.translate("MainWindow", u"Delete All", None))
         self.optimize_cell_param.setText(QCoreApplication.translate("MainWindow", u"Optimize", None))
         self.optimize_cell_param_shift.setText(QCoreApplication.translate("MainWindow", u"Shift", None))
+        self.export_for_ev.setText(QCoreApplication.translate("MainWindow", u"Export for ev.x", None))
         self.FormActionsPostLabelCellParamOptimExpr.setText("")
         self.FormActionsPostLabelCellParamFig.setText("")
         self.FormActionsPostLabelCellParamOptimExpr2.setText("")

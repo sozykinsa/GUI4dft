@@ -151,17 +151,24 @@ def optimisatioion_steps(f_name):
                 a, b, c = float(str1.split()[0]), float(str1.split()[1]), float(str1.split()[2])
                 alpha, beta = math.radians(float(str1.split()[3])), math.radians(float(str1.split()[4]))
                 gamma = math.radians(float(str1.split()[5]))
-                #print("found params: ", a, b, c, alpha, beta, gamma)
 
                 str1 = f.readline()
                 str1 = f.readline()
                 str1 = f.readline()
-                #print("found: " + str1)
+
                 mult_x = 1.0
                 mult_y = 1.0
                 mult_z = 1.0
+
                 if str1.find("X/A") >= 0:
                     mult_x = a
+
+                if str1.find("Y/B") >= 0:
+                    mult_y = b
+
+                if str1.find("Z/C") >= 0:
+                    mult_z = c
+
                 str1 = f.readline()
                 str1 = f.readline()
 

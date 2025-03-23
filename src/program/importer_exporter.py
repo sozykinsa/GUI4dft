@@ -74,8 +74,8 @@ class ImporterExporter(object):
 
             elif file_format == "CRYSTALout":
                 models = optimisatioion_steps(filename)
-                if len(models) == 0:
-                    models = structure_of_primitive_cell(filename)
+                models1 = structure_of_primitive_cell(filename)
+                models.extend(models1)
 
             elif (file_format == "CRYSTALopt_cryst") or (file_format == "CRYSTALopt_atom"):
                 models = structure_opt_step(filename)

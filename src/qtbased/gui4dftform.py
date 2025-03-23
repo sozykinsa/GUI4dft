@@ -300,6 +300,7 @@ class MainForm(QMainWindow):
 
         self.ui.FormActionsPostButVoronoi.clicked.connect(self.plot_voronoi)
         self.ui.optimize_cell_param.clicked.connect(self.plot_volume_param_energy)
+        self.ui.export_for_ev.clicked.connect(self.export_data_for_ev)
 
         self.ui.dipole_calc.clicked.connect(self.dipole_calc)
 
@@ -2565,6 +2566,13 @@ class MainForm(QMainWindow):
 
     def clear_dos(self):
         self.ui.FormActionsTabeDOSProperty.setRowCount(0)
+
+    def export_data_for_ev(self):
+        print("export_data_for_ev")
+        format_str = "All files (*)"
+        fname = self.get_file_name_from_save_dialog(format_str)
+        if fname:
+            print("export_data_for_ev to ", fname)
 
     def plot_volume_param_energy(self):
         self.ui.PyqtGraphWidget.set_xticks(None)
