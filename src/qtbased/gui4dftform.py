@@ -2970,8 +2970,8 @@ class MainForm(QMainWindow):
             self.ui.ColorRow.plot_mpl_colormap(self.ui.FormSettingsColorsScale.currentText())
 
     def type_of_surface(self):
-        self.ui.FormActionsPostLabelSurfaceMin.setText("")
-        self.ui.FormActionsPostLabelSurfaceMax.setText("")
+        self.ui.volumeric_min.setText("")
+        self.ui.volumeric_max.setText("")
         self.ui.FormActionsPostLabelSurfaceValue.setValue(0)
         self.ui.FormActionsPostButSurface.setEnabled(False)
         self.ui.FormActionsPostButContour.setEnabled(False)
@@ -3617,9 +3617,10 @@ class MainForm(QMainWindow):
         self.volumeric_data_max_min_to_form()
 
     def volumeric_data_max_min_to_form(self):  # pragma: no cover
-        minv, maxv = self.volumeric_data.min, self.volumeric_data.max
-        self.ui.FormActionsPostLabelSurfaceMax.setText("Max: " + str(round(maxv, 5)))
-        self.ui.FormActionsPostLabelSurfaceMin.setText("Min: " + str(round(minv, 5)))
+        minv, maxv, average = self.volumeric_data.min, self.volumeric_data.max, self.volumeric_data.average
+        self.ui.volumeric_max.setText("Max: " + str(round(maxv, 5)))
+        self.ui.volumeric_min.setText("Min: " + str(round(minv, 5)))
+        self.ui.volumeric_average.setText("Average: " + str(round(average, 5)))
         self.ui.FormActionsPostLabelSurfaceValue.setRange(minv, maxv)
         self.ui.FormActionsPostLabelSurfaceValue.setValue(round(0.5 * (maxv + minv), 5))
 

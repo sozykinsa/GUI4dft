@@ -2528,7 +2528,7 @@ class Ui_MainWindow(object):
         self.toolBox_6.addItem(self.page, u"Cell")
         self.page_9 = QWidget()
         self.page_9.setObjectName(u"page_9")
-        self.page_9.setGeometry(QRect(0, 0, 100, 30))
+        self.page_9.setGeometry(QRect(0, 0, 98, 28))
         self.FormModelComboModels_2 = QComboBox(self.page_9)
         self.FormModelComboModels_2.setObjectName(u"FormModelComboModels_2")
         self.FormModelComboModels_2.setGeometry(QRect(50, 10, 61, 22))
@@ -4452,16 +4452,21 @@ class Ui_MainWindow(object):
         self.horizontalLayout_33 = QHBoxLayout(self.groupBox_6)
         self.horizontalLayout_33.setObjectName(u"horizontalLayout_33")
         self.horizontalLayout_33.setContentsMargins(-1, 2, -1, 2)
-        self.FormActionsPostLabelSurfaceMin = QLabel(self.groupBox_6)
-        self.FormActionsPostLabelSurfaceMin.setObjectName(u"FormActionsPostLabelSurfaceMin")
-        self.FormActionsPostLabelSurfaceMin.setMinimumSize(QSize(0, 0))
+        self.volumeric_min = QLabel(self.groupBox_6)
+        self.volumeric_min.setObjectName(u"volumeric_min")
+        self.volumeric_min.setMinimumSize(QSize(0, 0))
 
-        self.horizontalLayout_33.addWidget(self.FormActionsPostLabelSurfaceMin)
+        self.horizontalLayout_33.addWidget(self.volumeric_min)
 
-        self.FormActionsPostLabelSurfaceMax = QLabel(self.groupBox_6)
-        self.FormActionsPostLabelSurfaceMax.setObjectName(u"FormActionsPostLabelSurfaceMax")
+        self.volumeric_max = QLabel(self.groupBox_6)
+        self.volumeric_max.setObjectName(u"volumeric_max")
 
-        self.horizontalLayout_33.addWidget(self.FormActionsPostLabelSurfaceMax)
+        self.horizontalLayout_33.addWidget(self.volumeric_max)
+
+        self.volumeric_average = QLabel(self.groupBox_6)
+        self.volumeric_average.setObjectName(u"volumeric_average")
+
+        self.horizontalLayout_33.addWidget(self.volumeric_average)
 
 
         self.verticalLayout_4.addWidget(self.groupBox_6)
@@ -7404,8 +7409,9 @@ class Ui_MainWindow(object):
         self.FormActionsPostButSurfaceParse.setText(QCoreApplication.translate("MainWindow", u"Parse", None))
         self.FormActionsPostButSurfaceLoadData.setText(QCoreApplication.translate("MainWindow", u"Load Data", None))
         self.groupBox_6.setTitle(QCoreApplication.translate("MainWindow", u"Values", None))
-        self.FormActionsPostLabelSurfaceMin.setText("")
-        self.FormActionsPostLabelSurfaceMax.setText("")
+        self.volumeric_min.setText("")
+        self.volumeric_max.setText("")
+        self.volumeric_average.setText("")
         self.tabWidget_2.setTabText(self.tabWidget_2.indexOf(self.tab_2), QCoreApplication.translate("MainWindow", u"Data 1", None))
         self.FormActionsPostButSurfaceParse2.setText(QCoreApplication.translate("MainWindow", u"Open *.XSF or *.CUBE file", None))
         self.FormActionsPostButSurfaceLoadData2.setText(QCoreApplication.translate("MainWindow", u"Load Data", None))
