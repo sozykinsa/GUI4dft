@@ -29,6 +29,7 @@ class AtomicModel(object):
 
         self.name = ""
         self.lat_vectors = 100 * np.eye(3)
+        self.lat_constant: float = 1.0
         if mendeley is not None:
             self.mendeley = mendeley
         else:
@@ -60,6 +61,14 @@ class AtomicModel(object):
 
     def set_mendeley(self, mendeley):
         self.mendeley = mendeley
+
+    @property
+    def lat_const(self) -> float:
+        return self.lat_constant
+
+    @lat_const.setter
+    def lat_const(self, lat=1.0):
+        self.lat_constant = lat
 
     @property
     def lat_vector1(self) -> float:
@@ -245,7 +254,8 @@ class AtomicModel(object):
         gam = self.get_angle_gamma()
         return a, b, c, al, bet, gam
 
-    def set_lat_vectors(self, v1, v2, v3):
+    def set_lat_vectors(self, v1, v2, v3, lat_const=1.0):
+        self.lat_const = lat_const
         if (len(v1) == 3) and (len(v2) == 3) and (len(v3) == 3):
             self.lat_vector1 = np.array(v1)
             self.lat_vector2 = np.array(v2)
@@ -441,9 +451,13 @@ class AtomicModel(object):
                     newatoms.append(at)
         return newatoms
 
-    def convert_from_scaled_to_cart(self, lat):
+    def convert_from_scaled_to_cart(self):
         for atom in self.atoms:
-            atom.xyz *= lat
+            atom.xyz *= self.lat_const
+
+    def convert_from_cart_to_scaled(self):
+        for atom in self.atoms:
+            atom.xyz /= self.lat_const
 
     def convert_from_direct_to_cart(self):
         for atom in self.atoms:

@@ -116,7 +116,6 @@ def atoms_from_pwout(f_name):
     f = open(f_name)
     str1 = f.readline()
     while str1:
-
         if str1.find("celldm(1)=") >= 0:
             """ cell
             celldm(1)=  10.200000  celldm(2)=   0.000000  celldm(3)=   0.000000
@@ -131,14 +130,12 @@ def atoms_from_pwout(f_name):
             a = float(params[1]) * 0.52917720859
             b = float(params[3]) * 0.52917720859
             c = float(params[5]) * 0.52917720859
-            # print(a, b, c)
             if (b == 0) and (c == 0):
                 b = deepcopy(a)
                 c = deepcopy(a)
             elif (b != 0) and (c == 0):
                 c = deepcopy(b)
                 b = deepcopy(a)
-            # print(a, b, c)
             f.readline()
             f.readline()
             str1 = f.readline()
@@ -172,13 +169,13 @@ def atoms_from_pwout(f_name):
             1.004854534   1.740459107   0.000000000
             0.000000000  -0.000000000   3.321930409
             """
-            print("CELL_PARAMETERS (alat")
+            # print("CELL_PARAMETERS (alat")
             a1_tmp = f.readline().split()
-            vectors[0] = a * np.array([a1_tmp[0], a1_tmp[1], a1_tmp[2]], dtype=float)
+            vectors[0] = np.array([a1_tmp[0], a1_tmp[1], a1_tmp[2]], dtype=float)
             a2_tmp = f.readline().split()
-            vectors[1] = a * np.array([a2_tmp[0], a2_tmp[1], a2_tmp[2]], dtype=float)
+            vectors[1] = np.array([a2_tmp[0], a2_tmp[1], a2_tmp[2]], dtype=float)
             a3_tmp = f.readline().split()
-            vectors[2] = a * np.array([a3_tmp[0], a3_tmp[1], a3_tmp[2]], dtype=float)
+            vectors[2] = np.array([a3_tmp[0], a3_tmp[1], a3_tmp[2]], dtype=float)
 
         if str1.find("ATOMIC_POSITIONS (alat)") >= 0:
             """ every step
@@ -188,7 +185,8 @@ def atoms_from_pwout(f_name):
             """
             # print("ATOMIC_POSITIONS (alat)")
             model, str1 = get_positions(f, vectors)
-            model.convert_from_scaled_to_cart(a)
+            model.lat_const = a
+            model.convert_from_scaled_to_cart()
             models.append(model)
 
         if str1.find("ATOMIC_POSITIONS (crystal)") >= 0:
@@ -199,6 +197,7 @@ def atoms_from_pwout(f_name):
             """
             # print("ATOMIC_POSITIONS (crystal)")
             model, str1 = get_positions(f, vectors)
+            model.lat_const = 1.0
             model.convert_from_direct_to_cart()
             models.append(model)
 

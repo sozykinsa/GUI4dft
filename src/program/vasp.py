@@ -19,14 +19,14 @@ class VASP:
         molecules = []
         if os.path.exists(filename):
             struct_file = open(filename)
-            helpers.spacedel(struct_file.readline())
+            model_name = helpers.spacedel(struct_file.readline())
             lat_const = float(helpers.spacedel(struct_file.readline()))
             lat1 = helpers.spacedel(struct_file.readline()).split()
-            lat1 = np.array(helpers.list_str_to_float(lat1)) * lat_const
+            lat1 = np.array(helpers.list_str_to_float(lat1))  # * lat_const
             lat2 = helpers.spacedel(struct_file.readline()).split()
-            lat2 = np.array(helpers.list_str_to_float(lat2)) * lat_const
+            lat2 = np.array(helpers.list_str_to_float(lat2))  # * lat_const
             lat3 = helpers.spacedel(struct_file.readline()).split()
-            lat3 = np.array(helpers.list_str_to_float(lat3)) * lat_const
+            lat3 = np.array(helpers.list_str_to_float(lat3))  # * lat_const
             sorts_of_atoms = helpers.spacedel(struct_file.readline()).split()
             numbers_of_atoms = helpers.spacedel(struct_file.readline()).split()
             numbers_of_atoms = helpers.list_str_to_int(numbers_of_atoms)
@@ -39,15 +39,18 @@ class VASP:
                 coord_type = helpers.spacedel(struct_file.readline()).lower()
 
             if (coord_type == "direct") or (coord_type == "cartesian"):
+                mult = 1.0
+                if coord_type == "cartesian":
+                    mult = lat_const
                 new_str = AtomicModel()
                 for i in range(0, len(numbers_of_atoms)):
                     number = numbers_of_atoms[i]
                     for j in range(0, number):
                         str1 = helpers.spacedel(struct_file.readline())
                         s = str1.split(' ')
-                        x = float(s[0])
-                        y = float(s[1])
-                        z = float(s[2])
+                        x = float(s[0]) * mult
+                        y = float(s[1]) * mult
+                        z = float(s[2]) * mult
                         charge = period_table.get_charge_by_letter(sorts_of_atoms[i])
                         let = sorts_of_atoms[i]
                         new_atom = Atom([x, y, z, let, charge])
@@ -55,7 +58,8 @@ class VASP:
                             if (s[3] == "F") or (s[4] == "F") or (s[5] == "F"):
                                 new_atom.fragment1 = True
                         new_str.add_atom(new_atom)
-                new_str.set_lat_vectors(lat1, lat2, lat3)
+                new_str.set_lat_vectors(lat1, lat2, lat3, lat_const)
+                new_str.name = model_name
                 if coord_type == "direct":
                     new_str.convert_from_direct_to_cart()
                 molecules.append(new_str)
@@ -194,8 +198,8 @@ class VASP:
     def model_to_vasp_poscar(model, coord_type="Fractional", is_freez=False):
         """Create file in VASP POSCAR format."""
         data = ""
-        data += "model \n"
-        data += ' 1.0 \n'
+        data += model.name + "\n"
+        data += str(model.lat_const) + '\n'
 
         data += '  ' + str(model.lat_vector1[0]) + '  ' + str(model.lat_vector1[1]) + '  ' + \
                 str(model.lat_vector1[2]) + '\n'
@@ -222,14 +226,13 @@ class VASP:
             data += "Selective dynamics\n"
 
         model.sort_atoms_by_type()
-        # model.go_to_positive_coordinates()
         model.move_atoms_to_center()
         if coord_type == "Fractional":
             model.convert_from_cart_to_direct()
-        if coord_type == "Fractional":
             data += "Direct\n"
         if coord_type == "Cartesian":
             data += "Cartesian\n"
+            model.convert_from_cart_to_scaled()
         data += model.coords_for_export("POSCAR", is_freez=is_freez)
         return data
 

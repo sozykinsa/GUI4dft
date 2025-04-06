@@ -42,7 +42,8 @@ class GaussianCube(VolumericData):
             f.close()
             AllAtoms = TAtomicModel(atoms)
             AllAtoms.set_lat_vectors(vec1, vec2, vec3)
-            AllAtoms.convert_from_scaled_to_cart(mult)
+            AllAtoms.lat_const = mult
+            AllAtoms.convert_from_scaled_to_cart()
 
             Molecules.append(AllAtoms)
         return Molecules

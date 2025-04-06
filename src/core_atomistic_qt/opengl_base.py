@@ -506,9 +506,9 @@ class GuiOpenGLBase(QOpenGLWidget):
         gl.glNewList(self.object + 3, gl.GL_COMPILE)
         gl.glColor3f(*self.color_of_box[0:3])
 
-        v1 = self.main_model.lat_vector1 * self.scale_factor
-        v2 = self.main_model.lat_vector2 * self.scale_factor
-        v3 = self.main_model.lat_vector3 * self.scale_factor
+        v1 = self.main_model.lat_vector1 * self.main_model.lat_const * self.scale_factor
+        v2 = self.main_model.lat_vector2 * self.main_model.lat_const * self.scale_factor
+        v3 = self.main_model.lat_vector3 * self.main_model.lat_const * self.scale_factor
 
         origin = - (v1 + v2 + v3) / 2
 

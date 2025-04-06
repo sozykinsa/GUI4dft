@@ -295,12 +295,11 @@ class TSIESTA:
     @staticmethod
     def atoms_from_fdf(filename):
         """Return a AtList from fdf file."""
-        atomic_coord_format, n_atoms, chem_spec_info, lat, lat_vectors, units = TSIESTA.atoms_from_fdf_prepare(filename)
+        coord_form, n_atoms, spec_info, lat_const, lat_vect, units = TSIESTA.atoms_from_fdf_prepare(filename)
         f = open(filename)
         lines = f.readlines()
         f.close()
-        all_atoms = TSIESTA.atoms_from_fdf_text(atomic_coord_format, n_atoms, chem_spec_info, lat, lat_vectors, lines,
-                                                units)
+        all_atoms = TSIESTA.atoms_from_fdf_text(coord_form, n_atoms, spec_info, lat_const, lat_vect, lines, units)
         return [all_atoms]
 
     @staticmethod
@@ -546,7 +545,7 @@ class TSIESTA:
         return atomic_coordinates_format, number_of_atoms, chem_spec_info, lat, lat_vectors, units
 
     @staticmethod
-    def atoms_from_fdf_text(atomic_coordinates_format, number_of_atoms, chem_spec_info, lat, lat_vectors, lines, units):
+    def atoms_from_fdf_text(coordinates_format, number_of_atoms, chem_spec_info, lat, lat_vectors, lines, units):
         lines = helpers.clear_fdf_lines(lines)
         all_atoms = AtomicModel()
         i = 0
@@ -567,12 +566,12 @@ class TSIESTA:
             if lines[i].find("%block AtomicCoordinatesAndAtomicSpecies") >= 0:
                 is_block_atomic_coordinates = True
                 mult = 1
-                if atomic_coordinates_format == "NotScaledCartesianBohr":
+                if coordinates_format == "NotScaledCartesianBohr":
                     mult = 0.52917720859
                 for j in range(0, number_of_atoms):
                     i += 1
                     atom_full = lines[i].split()
-                    xyz = np.array([mult * float(atom_full[0]), mult * float(atom_full[1]), mult * float(atom_full[2])])
+                    xyz = mult * np.array([float(atom_full[0]), float(atom_full[1]), float(atom_full[2])])
                     charge = chem_spec_info[str(atom_full[3])][0]
                     tag = chem_spec_info[str(atom_full[3])][2]
                     all_atoms.add_atom_with_data(xyz, charge, tag=tag)
@@ -580,16 +579,17 @@ class TSIESTA:
         if lat_vectors is None:
             all_atoms.set_lat_vectors_default()
         else:
+            all_atoms.lat_const = lat
             all_atoms.set_lat_vectors(lat_vectors[0], lat_vectors[1], lat_vectors[2])
         if is_block_z_matrix:
             if units.lower() == "bohr":
                 all_atoms.convert_from_scaled_to_cart(0.52917720859)
         else:
             if is_block_atomic_coordinates:
-                if atomic_coordinates_format == "ScaledByLatticeVectors":
+                if coordinates_format == "ScaledByLatticeVectors":
                     all_atoms.convert_from_direct_to_cart()
-                if atomic_coordinates_format == "ScaledCartesian":
-                    all_atoms.convert_from_scaled_to_cart(lat)
+                if coordinates_format == "ScaledCartesian":
+                    all_atoms.convert_from_scaled_to_cart()
         return all_atoms
 
     @staticmethod

@@ -31,9 +31,9 @@ def test_specieses_from_outcar(tests_path):
 
 def test_model_to_vasp_poscar(h2o_model):
     text = VASP.model_to_vasp_poscar(h2o_model)
-    assert len(text) == 216
+    assert len(text) == 208
     text = VASP.model_to_vasp_poscar(h2o_model, coord_type="Cartesian")
-    assert len(text) == 219
+    assert len(text) == 211
 
 
 def test_fermi_energy_from_doscar(tests_path):

@@ -6960,6 +6960,27 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_3.addWidget(self.frame_80)
 
+        self.frame_96 = QFrame(self.FormTabSettings)
+        self.frame_96.setObjectName(u"frame_96")
+        self.frame_96.setMinimumSize(QSize(0, 0))
+        self.frame_96.setFrameShape(QFrame.NoFrame)
+        self.frame_96.setFrameShadow(QFrame.Raised)
+        self.horizontalLayout_208 = QHBoxLayout(self.frame_96)
+        self.horizontalLayout_208.setObjectName(u"horizontalLayout_208")
+        self.horizontalLayout_208.setContentsMargins(0, -1, 0, -1)
+        self.label_3 = QLabel(self.frame_96)
+        self.label_3.setObjectName(u"label_3")
+
+        self.horizontalLayout_208.addWidget(self.label_3)
+
+        self.python = QLineEdit(self.frame_96)
+        self.python.setObjectName(u"python")
+
+        self.horizontalLayout_208.addWidget(self.python)
+
+
+        self.verticalLayout_3.addWidget(self.frame_96)
+
         self.verticalSpacer_18 = QSpacerItem(20, 568, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.verticalLayout_3.addItem(self.verticalSpacer_18)
@@ -7595,6 +7616,7 @@ class Ui_MainWindow(object):
         self.FormSettingsPreferredCoordinates.setCurrentText("")
         self.label_50.setText(QCoreApplication.translate("MainWindow", u"Preferred lattice", None))
         self.FormSettingsPreferredLattice.setCurrentText("")
+        self.label_3.setText(QCoreApplication.translate("MainWindow", u"Python", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.FormTabSettings), QCoreApplication.translate("MainWindow", u"Settings", None))
         self.Form3Dand2DTabs.setItemText(self.Form3Dand2DTabs.indexOf(self.page_7), QCoreApplication.translate("MainWindow", u"3D View", None))
         self.Form3Dand2DTabs.setItemText(self.Form3Dand2DTabs.indexOf(self.page_8), QCoreApplication.translate("MainWindow", u"2D Figure", None))

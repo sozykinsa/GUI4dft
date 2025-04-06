@@ -1088,14 +1088,14 @@ class MainForm(QMainWindow):
         c2 = float(self.ui.FormModifyCellEditC2.text())
         c3 = float(self.ui.FormModifyCellEditC3.text())
         vectors[2] = np.array([c1, c2, c3])
-        return vectors * self.ui.lattice_constant.value()
+        return vectors, self.ui.lattice_constant.value()
 
     def edit_cell(self):
         if len(self.models) == 0:
             return
         is_adaptive = self.ui.lat_const_adaptive.isChecked()
-        v1, v2, v3 = self.lat_vectors_from_form()
-        self.ui.openGLWidget.main_model.set_lat_vectors(v1, v2, v3)
+        v1, v2, v3, lattice_constant = self.lat_vectors_from_form()
+        self.ui.openGLWidget.main_model.set_lat_vectors(v1, v2, v3, lattice_constant)
         self.models.append(self.ui.openGLWidget.main_model)
         self.model_to_screen(-1)
 
@@ -1251,10 +1251,10 @@ class MainForm(QMainWindow):
 
     def fill_properties_table(self):
         properties = []
-
         model = self.ui.openGLWidget.get_model()
 
         properties.append(["Natoms", str(len(model.atoms))])
+        properties.append(["LatConst", str(model.lat_const)])
         properties.append(["LatVect1", str(model.lat_vectors[0])])
         properties.append(["LatVect2", str(model.lat_vectors[1])])
         properties.append(["LatVect3", str(model.lat_vectors[2])])
@@ -1267,11 +1267,11 @@ class MainForm(QMainWindow):
             self.ui.FormModelTableProperties.setItem(i, 1, QTableWidgetItem(properties[i][1]))
 
         if self.ui.lat_const_adaptive.isChecked():
-            lat_const = max(abs(np.min(model.lat_vectors)), abs(np.max(model.lat_vectors)))
-            new_vectors = model.lat_vectors / lat_const
+            lat_const = model.lat_const
+            new_vectors = model.lat_vectors
         else:
             lat_const = 1.0
-            new_vectors = model.lat_vectors
+            new_vectors = model.lat_vectors * model.lat_const
 
         self.ui.lattice_constant.setValue(lat_const)
         self.ui.FormModifyCellEditA1.setValue(new_vectors[0][0])
@@ -1385,7 +1385,7 @@ class MainForm(QMainWindow):
         bond = round(self.ui.openGLWidget.main_model.atom_atom_distance(i - 1, j - 1), 4)
         self.ui.PropertyAtomAtomDistance.setText(str(bond) + " A")
 
-    def clusters_search(self):    # pragma: no cover
+    def clusters_search(self):   # pragma: no cover
         clusters = self.ui.openGLWidget.main_model.find_clusters()
         self.cluster_data_to_form(clusters)
 
@@ -1681,10 +1681,17 @@ class MainForm(QMainWindow):
         if len(self.models) > 0:   # pragma: no cover
             self.action_on_start = 'Open'
             self.save_property(SETTINGS_FormSettingsActionOnStart, self.action_on_start)
+            run_str = self.ui.python.text()
+            print(self.ui.python.text())
             if sys.platform.startswith('win'):
-                os.execlp('python', 'python', *sys.argv)
+                if len(run_str) < 3:
+                    run_str = "python"
+                #os.execlp('python', 'python', *sys.argv)
             else:
-                os.execlp('python3', 'python3', *sys.argv)
+                if len(run_str) < 3:
+                    run_str = "python3"
+                #os.execlp('python3', 'python3', *sys.argv)
+            os.execlp(run_str, run_str, *sys.argv)
 
         self.ui.Form3Dand2DTabs.setCurrentIndex(0)
         if not file_name:
