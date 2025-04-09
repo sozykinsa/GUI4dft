@@ -2394,7 +2394,7 @@ class MainForm(QMainWindow):
     def plot_bands(self):
         file = self.ui.FormActionsLineBANDSfile.text()
         self.ui.Form3Dand2DTabs.setCurrentIndex(1)
-        kmin, kmax = self.ui.spin_bands_xmin.value(), self.ui.spin_bands_xmax.value() + 1e-6
+        kmin, kmax = self.ui.spin_bands_xmin.value(), self.ui.spin_bands_xmax.value() + 1e-5
         emin, emax = self.ui.spin_bands_emin.value(), self.ui.spin_bands_emax.value()
         delta = 0.05 * (kmax - kmin)
         self.ui.PyqtGraphWidget.clear()

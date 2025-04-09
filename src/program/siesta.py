@@ -113,7 +113,7 @@ class TSIESTA:
         for i in range(0, n_sticks):
             str3 = f.readline().split()
             value = float(str3[0])
-            if (round(value, 2) >= k_min) and (round(value, 2) <= k_max):
+            if (round(value, 6) >= k_min) and (round(value, 6) <= k_max + 1e-6):
                 x_ticks.append(value)
                 letter = helpers.utf8_letter(str3[1][1:-1])
                 x_tick_labels.append(letter)
