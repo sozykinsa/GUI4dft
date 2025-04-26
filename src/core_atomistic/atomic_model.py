@@ -290,7 +290,7 @@ class AtomicModel(object):
         dist = 10000
         if min_dist > 0:
             model = AtomicModel(self.atoms)
-            model.set_lat_vectors(self.lat_vector1, self.lat_vector2, self.lat_vector3)
+            model.set_lat_vectors(self.lat_vectors)
             model.add_atom(atom)
             for ind in range(0, len(self.atoms)):
                 r = model.atom_atom_distance(ind, -1)  # len(model.atoms) - 1)
