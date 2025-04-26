@@ -37,7 +37,7 @@ class HexagonalPlaneHex(AtomicModel):
 
         a3 = 500 * np.array([0.0, 0.0, 1.0])
         basis = AtomicModel()
-        basis.set_lat_vectors(a1, a2, a3)
+        basis.set_lat_vectors([a1, a2, a3])
         basis.add_atom(atom1)
         basis.add_atom(atom2)
         model = basis.grow_x(n)

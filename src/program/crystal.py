@@ -126,7 +126,7 @@ def structure_opt_step(f_name):
             row = f.readline().split()
         number_of_atoms = int(row[0])
         new_model = AtomicModel.atoms_from_xyz_structure(number_of_atoms, f, [0, 1, 2, 3])
-        new_model.set_lat_vectors(vec1, vec2, vec3)
+        new_model.set_lat_vectors([vec1, vec2, vec3])
         models.append(new_model)
     f.close()
     return models

@@ -58,7 +58,7 @@ class VASP:
                             if (s[3] == "F") or (s[4] == "F") or (s[5] == "F"):
                                 new_atom.fragment1 = True
                         new_str.add_atom(new_atom)
-                new_str.set_lat_vectors(lat1, lat2, lat3, lat_const)
+                new_str.set_lat_vectors([lat1, lat2, lat3], lat_const)
                 new_str.name = model_name
                 if coord_type == "direct":
                     new_str.convert_from_direct_to_cart()
@@ -105,7 +105,7 @@ class VASP:
                         xyz = np.array([float(data[0]), float(data[1]), float(data[2])])
                         new_str.add_atom_with_data(xyz, period_table.get_charge_by_letter(let))
                     vectors = all_vectors[len(molecules) + 1]
-                    new_str.set_lat_vectors(vectors[0], vectors[1], vectors[2])
+                    new_str.set_lat_vectors(vectors)
                     molecules.append(new_str)
                 str1 = my_file.readline()
             my_file.close()
@@ -116,7 +116,7 @@ class VASP:
         model = AtomicModel()
         vecs = self.vectors_from_outcar(filename)
         if len(vecs) > 0:
-            model.set_lat_vectors(vecs[-1][0], vecs[-1][1], vecs[-1][2])
+            model.set_lat_vectors(vecs[-1])
         a, b, c, al, bet, gam = model.cell_params()
         return a, b, c
 

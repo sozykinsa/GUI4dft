@@ -616,7 +616,7 @@ class AtomicModel(object):
     def point_point_distance(self, pos1, pos2):
         delta_pos = pos2 - pos1
         values = [-1, 0, 1]
-        ros = [[[norm(delta_pos + i * self.lat_vector1 + j * self.lat_vector2 + k * self.lat_vector3)
+        ros = [[[norm(delta_pos + i * self.lat_vectors[0] + j * self.lat_vectors[1] + k * self.lat_vectors[2])
                  for i in values] for j in values] for k in values]
         return np.array(ros).min()
 
@@ -625,8 +625,8 @@ class AtomicModel(object):
             pos = at.xyz
             b = pos.transpose()
             total = a_inv.dot(b)
-            pos -= math.trunc(total[0] + 0.5) * self.lat_vector1 + math.trunc(total[1] + 0.5) * self.lat_vector2 +\
-                   math.trunc(total[2] + 0.5) * self.lat_vector3
+            pos -= math.trunc(total[0] + 0.5) * self.lat_vectors[0] + math.trunc(total[1] + 0.5) * self.lat_vectors[1] +\
+                   math.trunc(total[2] + 0.5) * self.lat_vectors[2]
             at.xyz = pos
 
     def neighbors(self, atom, col, charge):
@@ -791,7 +791,7 @@ class AtomicModel(object):
                         for atom in copy_of_model.atoms:
                             new_at_list.append(atom)
         new_model = AtomicModel(new_at_list)
-        new_model.set_lat_vectors(3 * self.lat_vector1, 3 * self.lat_vector2, 3 * self.lat_vector3)
+        new_model.set_lat_vectors(3 * self.lat_vectors)
         return new_model
 
     def grow_x(self, n: int = 1):
@@ -804,7 +804,9 @@ class AtomicModel(object):
             for atom in copy_of_model.atoms:
                 new_at_list.append(atom)
         new_model = AtomicModel(new_at_list)
-        new_model.set_lat_vectors((1 + n) * self.lat_vector1, self.lat_vector2, self.lat_vector3)
+        new_lat_vectors = deepcopy(self.lat_vectors)
+        new_lat_vectors[0] = (1 + n) * self.lat_vectors[0]
+        new_model.set_lat_vectors(new_lat_vectors)
         return new_model
 
     def grow_y(self, n: int = 1):
@@ -817,7 +819,9 @@ class AtomicModel(object):
             for atom in copy_of_model.atoms:
                 new_at_list.append(atom)
         new_model = AtomicModel(new_at_list)
-        new_model.set_lat_vectors(self.lat_vector1, (1 + n) * self.lat_vector2, self.lat_vector3)
+        new_lat_vectors = deepcopy(self.lat_vectors)
+        new_lat_vectors[1] = (1 + n) * self.lat_vectors[1]
+        new_model.set_lat_vectors(new_lat_vectors)
         return new_model
 
     def grow_z(self, n: int = 1):
@@ -830,7 +834,9 @@ class AtomicModel(object):
             for atom in copy_of_model.atoms:
                 new_at_list.append(atom)
         new_model = AtomicModel(new_at_list)
-        new_model.set_lat_vectors(self.lat_vector1, self.lat_vector2, (1 + n) * self.lat_vector3)
+        new_lat_vectors = deepcopy(self.lat_vectors)
+        new_lat_vectors[2] = (1 + n) * self.lat_vectors[2]
+        new_model.set_lat_vectors(new_lat_vectors)
         return new_model
 
     def types_of_atoms(self):

@@ -41,7 +41,7 @@ class GaussianCube(VolumericData):
                 atoms.append([float(row[2]), float(row[3]), float(row[4]), periodTable.get_let(charge), charge])
             f.close()
             AllAtoms = TAtomicModel(atoms)
-            AllAtoms.set_lat_vectors(vec1, vec2, vec3)
+            AllAtoms.set_lat_vectors([vec1, vec2, vec3])
             AllAtoms.lat_const = mult
             AllAtoms.convert_from_scaled_to_cart()
 

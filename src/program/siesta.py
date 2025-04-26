@@ -580,7 +580,7 @@ class TSIESTA:
             all_atoms.set_lat_vectors_default()
         else:
             all_atoms.lat_const = lat
-            all_atoms.set_lat_vectors(lat_vectors[0], lat_vectors[1], lat_vectors[2])
+            all_atoms.set_lat_vectors(lat_vectors)
         if is_block_z_matrix:
             if units.lower() == "bohr":
                 all_atoms.convert_from_scaled_to_cart(0.52917720859)
@@ -647,7 +647,7 @@ class TSIESTA:
 
                     if len(atoms) > 0:
                         all_atoms = AtomicModel(atoms)
-                        all_atoms.set_lat_vectors(lat_vect_1, lat_vect_2, lat_vect_3)
+                        all_atoms.set_lat_vectors([lat_vect_1, lat_vect_2, lat_vect_3])
                         if need_to_convert1:
                             all_atoms.convert_from_direct_to_cart()
                             need_to_convert1 = 0
@@ -746,7 +746,7 @@ class TSIESTA:
                     vec3 = MdSiestaFile.readline().split()
                     vec3 = helpers.list_str_to_float(vec3)
                     AllAtoms = AtomicModel(atoms)
-                    AllAtoms.set_lat_vectors(vec1, vec2, vec3)
+                    AllAtoms.set_lat_vectors([vec1, vec2, vec3])
                     molecules.append(AllAtoms)
                 str1 = MdSiestaFile.readline()
             MdSiestaFile.close()
@@ -787,7 +787,7 @@ class TSIESTA:
                             z = row[2]
 
                             newStr.add_atom(Atom([x, y, z, let, charge]))
-                    newStr.set_lat_vectors(lat1, lat2, lat3)
+                    newStr.set_lat_vectors([lat1, lat2, lat3])
                     newStr.convert_from_direct_to_cart()
                     molecules.append(newStr)
         return molecules
@@ -849,7 +849,7 @@ class TSIESTA:
                     at_list.append(line2)
                 if len(at_list) == number_of_atoms:
                     AllAtoms = AtomicModel(at_list)
-                    AllAtoms.set_lat_vectors(lat_vect_1, lat_vect_2, lat_vect_3)
+                    AllAtoms.set_lat_vectors([lat_vect_1, lat_vect_2, lat_vect_3])
                     return [AllAtoms]
             if line.find("outcoor: Relaxed atomic coordinates (fractional)") > -1:
                 f3 = True
@@ -890,7 +890,7 @@ class TSIESTA:
                 charge = int(S[1])
                 let = period_table.get_let(charge)
                 new_str.add_atom(Atom([x, y, z, let, charge]))
-            new_str.set_lat_vectors(lat1, lat2, lat3)
+            new_str.set_lat_vectors([lat1, lat2, lat3])
             new_str.convert_from_direct_to_cart()
             molecules.append(new_str)
         return molecules
