@@ -1094,8 +1094,8 @@ class MainForm(QMainWindow):
         if len(self.models) == 0:
             return
         is_adaptive = self.ui.lat_const_adaptive.isChecked()
-        v1, v2, v3, lattice_constant = self.lat_vectors_from_form()
-        self.ui.openGLWidget.main_model.set_lat_vectors(v1, v2, v3, lattice_constant)
+        vectors, lattice_constant = self.lat_vectors_from_form()
+        self.ui.openGLWidget.main_model.set_lat_vectors(vectors, lattice_constant)
         self.models.append(self.ui.openGLWidget.main_model)
         self.model_to_screen(-1)
 

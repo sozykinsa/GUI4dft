@@ -254,7 +254,8 @@ class AtomicModel(object):
         gam = self.get_angle_gamma()
         return a, b, c, al, bet, gam
 
-    def set_lat_vectors(self, v1, v2, v3, lat_const=1.0):
+    def set_lat_vectors(self, vectors, lat_const=1.0):
+        v1, v2, v3 = vectors[0], vectors[1], vectors[2]
         self.lat_const = lat_const
         if (len(v1) == 3) and (len(v2) == 3) and (len(v3) == 3):
             self.lat_vector1 = np.array(v1)
