@@ -37,7 +37,7 @@ class ImporterExporter(object):
                 fdf.from_fdf_file(filename)
 
             elif file_format == "siesta_out":
-                models = TSIESTA.get_output_data(filename, fl, models, prop)
+                models = TSIESTA.get_output_data(filename, fl, prop)
                 if len(models) == 0:
                     models = TSIESTA.atoms_from_fdf(filename)
                 fdf.from_out_file(filename)
@@ -73,7 +73,7 @@ class ImporterExporter(object):
                 models = VASP.atoms_from_outcar(filename)
 
             elif file_format == "CRYSTALout":
-                models = optimisatioion_steps(filename)
+                models = optimisatioion_steps(filename, prop)
                 models1 = structure_of_primitive_cell(filename)
                 models.extend(models1)
 

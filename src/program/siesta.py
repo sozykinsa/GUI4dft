@@ -860,7 +860,7 @@ class TSIESTA:
                     at_list.append(line2)
                 if len(at_list) == number_of_atoms:
                     AllAtoms = AtomicModel(at_list)
-                    AllAtoms.set_lat_vectors(lat_vect_1, lat_vect_2, lat_vect_3)
+                    AllAtoms.set_lat_vectors([lat_vect_1, lat_vect_2, lat_vect_3])
                     AllAtoms.convert_from_direct_to_cart()
                     return [AllAtoms]
         return []
@@ -896,7 +896,7 @@ class TSIESTA:
         return molecules
 
     @staticmethod
-    def get_output_data(filename, fl, models, prop):
+    def get_output_data(filename, fl, prop):
         type_of_run = (TSIESTA.type_of_run(filename).split())[0].lower()
         models = []
         if type_of_run != "sp":

@@ -132,7 +132,7 @@ def structure_opt_step(f_name):
     return models
 
 
-def optimisatioion_steps(f_name):
+def optimisatioion_steps(f_name, prop=""):
     models = []
     f = open(f_name)
     start = 4
