@@ -17,6 +17,9 @@ class VolumericData:
         self.Nx = None
         self.Ny = None
         self.Nz = None
+        self.min = None
+        self.max = None
+        self.average = None
         self.blocks = []
         self.atoms = []
         self.data3D = np.zeros((1, 1))
@@ -37,6 +40,7 @@ class VolumericData:
 
         self.min = np.min(self.data3D)
         self.max = np.max(self.data3D)
+        self.average = np.average(self.data3D)
         self.data3D = self.data3D.reshape((self.Nx, self.Ny, self.Nz), order=orderData)
 
     def difference(self, secondData, mult=1):
@@ -171,10 +175,6 @@ class VolumericData:
         text_ar = np.array2string(data_3d, threshold=data_3d.size)[1:-1]
         print(len(text_ar))
 
-        #for i in range(0, data_3d.size):
-        #    if i % 1000 == 0:
-        #        print(i, "/", data_3d.size)
-        #    text += str(data_3d[i]) + "   "
         text += text_ar
         print("stop")
 

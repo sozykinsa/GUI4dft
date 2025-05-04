@@ -16,7 +16,7 @@ class SWNT(Graphene):
         super().__init__(n, m, length)
 
         rad = self.radius(n, m)
-        self.set_lat_vectors([10 * rad, 0, 0], [0, 10 * rad, 0], [0, 0, length])
+        self.set_lat_vectors([[10 * rad, 0, 0], [0, 10 * rad, 0], [0, 0, length]])
 
         """ output """
         vx = (n + m) * 3.0 / 2.0 * self.a

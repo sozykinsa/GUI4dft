@@ -1,12 +1,16 @@
 # This file is a part of GUI4dft programm.
 from typing import Callable
+import sys
 
 import OpenGL.GL as gl
 import OpenGL.GLU as glu
-from qtpy.QtWidgets import QOpenGLWidget
 from qtpy.QtCore import QEvent
 from qtpy.QtCore import Qt
 from qtpy.QtGui import QColor, QPainter, QFont
+if sys.platform.startswith('win'):
+    from qtpy.QtWidgets import QOpenGLWidget
+else:
+    from qtpy.QtOpenGLWidgets import QOpenGLWidget
 from copy import deepcopy
 from core_atomistic.periodic_table import TPeriodTable
 from core_atomistic.atom import Atom
@@ -254,6 +258,7 @@ class GuiOpenGLBase(QOpenGLWidget):
         view = gl.glGetIntegerv(gl.GL_VIEWPORT)
         win_y = int(float(view[3]) - float(y))
         z = gl.glReadPixels(x, win_y, 1, 1, gl.GL_DEPTH_COMPONENT, gl.GL_FLOAT)
+        # print('z = ', z)
         point = glu.gluUnProject(x, y, z, model, proj, view)
         al = math.pi * self.rotation_angles[0] / 180
         # !!! Why ????
@@ -406,6 +411,7 @@ class GuiOpenGLBase(QOpenGLWidget):
         self.add_axes()
 
     def color_atoms_with_property(self, prop: str = "charge"):
+        print("prop: ", prop)
         self.clean()
         self.prop = prop
         self.add_all_elements()
@@ -500,9 +506,9 @@ class GuiOpenGLBase(QOpenGLWidget):
         gl.glNewList(self.object + 3, gl.GL_COMPILE)
         gl.glColor3f(*self.color_of_box[0:3])
 
-        v1 = self.main_model.lat_vector1 * self.scale_factor
-        v2 = self.main_model.lat_vector2 * self.scale_factor
-        v3 = self.main_model.lat_vector3 * self.scale_factor
+        v1 = self.main_model.lat_vector1 * self.main_model.lat_const * self.scale_factor
+        v2 = self.main_model.lat_vector2 * self.main_model.lat_const * self.scale_factor
+        v3 = self.main_model.lat_vector3 * self.main_model.lat_const * self.scale_factor
 
         origin = - (v1 + v2 + v3) / 2
 

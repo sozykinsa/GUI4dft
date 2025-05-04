@@ -158,21 +158,22 @@ def from_file_property(filename: str, prop: str, count: int = 1, prop_type: str 
     The type parameter specifies the type of the return value (int, float, or string)
     """
     k = 1
-    is_found, k, property = property_from_sub_file(filename, k, prop, count, prop_type)
+    is_found, k, value = property_from_sub_file(filename, k, prop, count, prop_type)
     if is_found:
-        return property
+        return value
     else:
         return None
 
 
-def list_of_values(filename, prop):
+def list_of_values(filename, prop, count=0):
     """Return all float values of prop from filename."""
     list_of_val = []
     if os.path.exists(filename):
         f = open(filename)
         for st in f:
             if st.find(prop) >= 0:
-                list_of_val.append(float(re.findall(r"[0-9,\.,-]+", st.replace(prop, ""))[0]))
+                prop1 = str_to_float(st.replace(prop, ""), count)
+                list_of_val.append(float(prop1))
         f.close()
     return list_of_val
 
@@ -201,10 +202,11 @@ def property_from_sub_file(filename, k, prop, count, typen):
                 if typen == 'string':
                     property_value = spacedel(str1)
                 else:
-                    prop1 = re.findall(r"[0-9,\.,-]+", str1)[0]
                     if typen == 'int':
+                        prop1 = re.findall(r"[0-9,\.,-]+", str1)[0]
                         property_value = int(prop1)
                     if typen == 'float':
+                        prop1 = str_to_float(str1)
                         property_value = float(prop1)
 
                 if k == count:
@@ -218,6 +220,23 @@ def property_from_sub_file(filename, k, prop, count, typen):
             str1 = my_file.readline()
         my_file.close()
     return is_found, k, property_value
+
+
+def str_to_float(str1, count=0):
+    re_float = re.compile("""(?x)
+                                  [+-]?\ *      # first, match an optional sign *and space*
+                                  (             # then match integers or f.p. mantissas:
+                                      \d+       # start out with a ...
+                                      (
+                                          \.\d* # mantissa of the form a.b or a.
+                                      )?        # ? takes care of integers of the form a
+                                     |\.\d+     # mantissa of the form .b
+                                  )
+                                  ([eE][+-]?\d+)?  # finally, optionally match an exponent
+                               $""")
+    if len(str1.split()) > count:
+        str1 = str1.split()[count]
+    return re_float.match(str1).group(0)
 
 
 def text_between_lines(filename, line1, line2):

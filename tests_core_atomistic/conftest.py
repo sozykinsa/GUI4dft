@@ -36,5 +36,5 @@ def swnt_33() -> AtomicModel:
     vec1 = np.array([25.0, 0.0, 0.0], dtype=float)
     vec2 = np.array([0.0, 25.0, 0.0], dtype=float)
     vec3 = np.array([0.0, 0.0, 2.4], dtype=float)
-    model.set_lat_vectors(vec1, vec2, vec3)
+    model.set_lat_vectors([vec1, vec2, vec3])
     return model

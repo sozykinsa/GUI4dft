@@ -8,7 +8,7 @@ from core_atomistic.project_file import ProjectFile
 from program.fdfdata import TFDFFile
 from program.siesta import TSIESTA
 from program.firefly import atomic_model_to_firefly_inp
-from program.crystal import structure_of_primitive_cell, structure_opt_step
+from program.crystal import structure_of_primitive_cell, structure_opt_step, optimisatioion_steps
 from program.chemdraw import model_from_ct
 from program.qe import atoms_from_pwout
 from program.qe import energy_tot as qe_energy_tot
@@ -37,7 +37,7 @@ class ImporterExporter(object):
                 fdf.from_fdf_file(filename)
 
             elif file_format == "siesta_out":
-                models = TSIESTA.get_output_data(filename, fl, models, prop)
+                models = TSIESTA.get_output_data(filename, fl, prop)
                 if len(models) == 0:
                     models = TSIESTA.atoms_from_fdf(filename)
                 fdf.from_out_file(filename)
@@ -73,7 +73,9 @@ class ImporterExporter(object):
                 models = VASP.atoms_from_outcar(filename)
 
             elif file_format == "CRYSTALout":
-                models = structure_of_primitive_cell(filename)
+                models = optimisatioion_steps(filename, prop)
+                models1 = structure_of_primitive_cell(filename)
+                models.extend(models1)
 
             elif (file_format == "CRYSTALopt_cryst") or (file_format == "CRYSTALopt_atom"):
                 models = structure_opt_step(filename)
