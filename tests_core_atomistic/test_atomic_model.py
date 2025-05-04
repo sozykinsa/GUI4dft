@@ -130,8 +130,8 @@ def test_point_point_distance(swnt_33: AtomicModel) -> None:
 
 def test_set_lat_vectors(h2o_model):
     model = h2o_model
-    model.set_lat_vectors([5, 0, 0], [0, 5, 0], [0, 5])
-    model.set_lat_vectors([5, 0, 0], [0, 5, 0], [0, 0, 5])
+    model.set_lat_vectors([[5, 0, 0], [0, 5, 0], [0, 5]])
+    model.set_lat_vectors([[5, 0, 0], [0, 5, 0], [0, 0, 5]])
     assert model.get_angle_gamma() == 90.0
 
 

@@ -812,7 +812,7 @@ class AtomicModel(object):
             for atom in copy_of_model.atoms:
                 new_at_list.append(atom)
         new_model = AtomicModel(new_at_list)
-        new_model.set_lat_vectors(self.lat_vector1, self.lat_vector2, (1 + n) * self.lat_vector3)
+        new_model.set_lat_vectors([self.lat_vector1, self.lat_vector2, (1 + n) * self.lat_vector3])
         return new_model
 
     def types_of_atoms(self):
