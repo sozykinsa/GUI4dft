@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from core_atomistic.atomic_model import AtomicModel
-from program.importer_exporter import ImporterExporter
+from src_gui4dft.program.importer_exporter import ImporterExporter
 from pathlib import Path
 
 

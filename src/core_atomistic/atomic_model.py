@@ -241,7 +241,8 @@ class AtomicModel(object):
         gam = self.get_angle_gamma()
         return a, b, c, al, bet, gam
 
-    def set_lat_vectors(self, v1, v2, v3):
+    def set_lat_vectors(self, vectors):
+        v1, v2, v3 = vectors[0], vectors[1], vectors[2]
         if (len(v1) == 3) and (len(v2) == 3) and (len(v3) == 3):
             self.lat_vector1 = np.array(v1)
             self.lat_vector2 = np.array(v2)
@@ -772,7 +773,7 @@ class AtomicModel(object):
                         for atom in copy_of_model.atoms:
                             new_at_list.append(atom)
         new_model = AtomicModel(new_at_list)
-        new_model.set_lat_vectors(3 * self.lat_vector1, 3 * self.lat_vector2, 3 * self.lat_vector3)
+        new_model.set_lat_vectors([3 * self.lat_vector1, 3 * self.lat_vector2, 3 * self.lat_vector3])
         return new_model
 
     def grow_x(self, n: int = 1):
@@ -785,7 +786,7 @@ class AtomicModel(object):
             for atom in copy_of_model.atoms:
                 new_at_list.append(atom)
         new_model = AtomicModel(new_at_list)
-        new_model.set_lat_vectors((1 + n) * self.lat_vector1, self.lat_vector2, self.lat_vector3)
+        new_model.set_lat_vectors([(1 + n) * self.lat_vector1, self.lat_vector2, self.lat_vector3])
         return new_model
 
     def grow_y(self, n: int = 1):
@@ -798,7 +799,7 @@ class AtomicModel(object):
             for atom in copy_of_model.atoms:
                 new_at_list.append(atom)
         new_model = AtomicModel(new_at_list)
-        new_model.set_lat_vectors(self.lat_vector1, (1 + n) * self.lat_vector2, self.lat_vector3)
+        new_model.set_lat_vectors([self.lat_vector1, (1 + n) * self.lat_vector2, self.lat_vector3])
         return new_model
 
     def grow_z(self, n: int = 1):

@@ -8,8 +8,8 @@ from core_atomistic.atomic_model import AtomicModel as TAtomicModel
 from core_atomistic.periodic_table import TPeriodTable
 from core_atomistic import helpers
 
-from program.volumericdatablock import VolumericDataBlock
-from program.volumericdata import VolumericData
+from src_gui4dft.program.volumericdatablock import VolumericDataBlock
+from src_gui4dft.program.volumericdata import VolumericData
 
 
 class XSF(VolumericData):
@@ -53,9 +53,9 @@ class XSF(VolumericData):
                             vec3 = helpers.list_str_to_float(vec3)
                             f.close()
 
-                            AllAtoms = TAtomicModel(atoms)
-                            AllAtoms.set_lat_vectors(vec1, vec2, vec3)
-                            Molecules.append(AllAtoms)
+                            all_atoms = TAtomicModel(atoms)
+                            all_atoms.set_lat_vectors([vec1, vec2, vec3])
+                            Molecules.append(all_atoms)
                             return Molecules
                 row = f.readline()
             f.close()

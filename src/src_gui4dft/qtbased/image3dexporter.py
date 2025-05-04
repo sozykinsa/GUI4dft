@@ -2,7 +2,7 @@
 
 from qtpy.QtWidgets import QMainWindow
 from qtpy.QtCore import QSize
-from ui.image3D import Ui_MainWindow as Ui_image3D
+from src_gui4dft.ui.image3D import Ui_MainWindow as Ui_image3D
 
 
 class Image3Dexporter(QMainWindow):

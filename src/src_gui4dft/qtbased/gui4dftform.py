@@ -28,32 +28,31 @@ from core_atomistic.atomic_model import AtomicModel
 from core_atomistic.periodic_table import TPeriodTable
 from core_atomistic import helpers
 
-from models.capedswcnt import CapedSWNT
-from models.bint import BiNT
-from models.hexagonal_plane import HexagonalPlane, HexagonalPlaneHex
-from models.meta_graphene import MetaGraphene
-from models.swnt import SWNT
-from models.swgnt import SWGNT
-from program.gaussiancube import GaussianCube
-from program.volumericdata import VolumericData
-from program.xsf import XSF
-from qtbased.image3dexporter import Image3Dexporter
-from program.siesta import TSIESTA
-from program.qe import TQE, model_to_qe_pw, get_fermi_level
-from program.wien import model_to_wien_struct
-from program.vasp import VASP
-from program.dftb import model_to_dftb_d0
-from program.lammps import model_to_lammps_input
-from program.octopus import model_to_octopus_input
-from program import crystal
-from program import ase
-from program.fdfdata import TFDFFile
-from utils.calculators import Calculators as Calculator
-from utils.calculators import gaps
-from program.importer_exporter import ImporterExporter
-from utils.electronic_prop_reader import read_siesta_bands, dos_from_file, siesta_homo_lumo
-from ui.about import Ui_DialogAbout as Ui_about
-from ui.form import Ui_MainWindow as Ui_form
+from src_gui4dft.models.capedswcnt import CapedSWNT
+from src_gui4dft.models.bint import BiNT
+from src_gui4dft.models.hexagonal_plane import HexagonalPlane, HexagonalPlaneHex
+from src_gui4dft.models.meta_graphene import MetaGraphene
+from src_gui4dft.models.swnt import SWNT
+from src_gui4dft.models.swgnt import SWGNT
+from src_gui4dft.program.gaussiancube import GaussianCube
+from src_gui4dft.program.volumericdata import VolumericData
+from src_gui4dft.program.xsf import XSF
+from src_gui4dft.qtbased.image3dexporter import Image3Dexporter
+from src_gui4dft.program.siesta import TSIESTA
+from src_gui4dft.program.qe import TQE, model_to_qe_pw, get_fermi_level
+from src_gui4dft.program.wien import model_to_wien_struct
+from src_gui4dft.program.vasp import VASP
+from src_gui4dft.program.dftb import model_to_dftb_d0
+from src_gui4dft.program.lammps import model_to_lammps_input
+from src_gui4dft.program.octopus import model_to_octopus_input
+from src_gui4dft.program import ase, crystal
+from src_gui4dft.program.fdfdata import TFDFFile
+from src_gui4dft.utils.calculators import Calculators as Calculator
+from src_gui4dft.utils.calculators import gaps
+from src_gui4dft.program.importer_exporter import ImporterExporter
+from src_gui4dft.utils.electronic_prop_reader import read_siesta_bands, dos_from_file, siesta_homo_lumo
+from src_gui4dft.ui.about import Ui_DialogAbout as Ui_about
+from src_gui4dft.ui.form import Ui_MainWindow as Ui_form
 
 sys.path.append('')
 

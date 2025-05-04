@@ -3,7 +3,7 @@
 import os
 from copy import deepcopy
 from core_atomistic.helpers import text_between_lines
-from program.siesta import TSIESTA
+from src_gui4dft.program.siesta import TSIESTA
 
 
 ##################################################################

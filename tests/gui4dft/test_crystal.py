@@ -1,5 +1,5 @@
-from program.crystal import model_1d_to_d12, model_2d_to_d12
-from program.importer_exporter import ImporterExporter
+from src_gui4dft.program.crystal import model_1d_to_d12, model_2d_to_d12
+from src_gui4dft.program.importer_exporter import ImporterExporter
 
 
 def test_model_1d_to_d12(tests_path):

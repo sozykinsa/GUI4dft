@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from models.hexagonal_plane import HexagonalPlane
+from src_gui4dft.models.hexagonal_plane import HexagonalPlane
 
 
 class Graphene(HexagonalPlane):

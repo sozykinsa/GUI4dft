@@ -1,6 +1,6 @@
-from program.gaussiancube import GaussianCube
-from program.xsf import XSF
-from program.volumericdatablock import VolumericDataBlock
+from src_gui4dft.program.gaussiancube import GaussianCube
+from src_gui4dft.program.xsf import XSF
+from src_gui4dft.program.volumericdatablock import VolumericDataBlock
 
 
 def test_volumeric_data_block():

@@ -5,21 +5,21 @@ import numpy as np
 from core_atomistic.atomic_model import AtomicModel
 from core_atomistic import helpers
 from core_atomistic.project_file import ProjectFile
-from program.fdfdata import TFDFFile
-from program.siesta import TSIESTA
-from program.firefly import atomic_model_to_firefly_inp
-from program.crystal import structure_of_primitive_cell, structure_opt_step
-from program.chemdraw import model_from_ct
-from program.qe import atoms_from_pwout
-from program.qe import energy_tot as qe_energy_tot
-from program.qe import volume as qe_volume
-from program.qe import alats_from_pwout
-from program.dftb import atoms_from_gen
-from program.lammps import atoms_trajectory_step
-from program.vasp import VASP
-from program.wien import WIEN
-from program.gaussiancube import GaussianCube
-from program.xsf import XSF
+from src_gui4dft.program.fdfdata import TFDFFile
+from src_gui4dft.program.siesta import TSIESTA
+from src_gui4dft.program.firefly import atomic_model_to_firefly_inp
+from src_gui4dft.program.crystal import structure_of_primitive_cell, structure_opt_step
+from src_gui4dft.program.chemdraw import model_from_ct
+from src_gui4dft.program.qe import atoms_from_pwout
+from src_gui4dft.program.qe import energy_tot as qe_energy_tot
+from src_gui4dft.program.qe import volume as qe_volume
+from src_gui4dft.program.qe import alats_from_pwout
+from src_gui4dft.program.dftb import atoms_from_gen
+from src_gui4dft.program.lammps import atoms_trajectory_step
+from src_gui4dft.program.vasp import VASP
+from src_gui4dft.program.wien import WIEN
+from src_gui4dft.program.gaussiancube import GaussianCube
+from src_gui4dft.program.xsf import XSF
 
 
 class ImporterExporter(object):

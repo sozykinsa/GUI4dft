@@ -28,7 +28,7 @@ class WIEN:
         n_atoms = self.n_atoms_from_struct(f_name)
         a, b, c, alp, bet, gam = alats_from_struct(f_name)
         lattice = helpers.lat_vectors_from_params(a, b, c, alp, bet, gam)
-        model.set_lat_vectors(lattice[0], lattice[1], lattice[2])
+        model.set_lat_vectors([lattice[0], lattice[1], lattice[2]])
         f = open(f_name)
         for i in range(5):
             str1 = f.readline()

@@ -6,8 +6,8 @@ import math
 import numpy as np
 from core_atomistic.atomic_model import AtomicModel as TAtomicModel
 from core_atomistic.periodic_table import TPeriodTable
-from program.volumericdatablock import VolumericDataBlock
-from program.volumericdata import VolumericData
+from src_gui4dft.program.volumericdatablock import VolumericDataBlock
+from src_gui4dft.program.volumericdata import VolumericData
 
 
 
@@ -19,8 +19,8 @@ class GaussianCube(VolumericData):
 
     @staticmethod
     def get_atoms(filename):
-        periodTable = TPeriodTable()
-        Molecules = []
+        period_table = TPeriodTable()
+        molecules = []
         if os.path.exists(filename):
             f = open(filename)
             f.readline()
@@ -38,14 +38,14 @@ class GaussianCube(VolumericData):
             for i in range(0, n_atoms):
                 row = f.readline().split()
                 charge = int(row[0])
-                atoms.append([float(row[2]), float(row[3]), float(row[4]), periodTable.get_let(charge), charge])
+                atoms.append([float(row[2]), float(row[3]), float(row[4]), period_table.get_let(charge), charge])
             f.close()
-            AllAtoms = TAtomicModel(atoms)
-            AllAtoms.set_lat_vectors(vec1, vec2, vec3)
-            AllAtoms.convert_from_scaled_to_cart(mult)
+            all_atoms = TAtomicModel(atoms)
+            all_atoms.set_lat_vectors([vec1, vec2, vec3])
+            all_atoms.convert_from_scaled_to_cart(mult)
 
-            Molecules.append(AllAtoms)
-        return Molecules
+            molecules.append(all_atoms)
+        return molecules
 
     @staticmethod
     def local_get_N_vect(row):
