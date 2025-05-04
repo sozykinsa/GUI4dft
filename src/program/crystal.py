@@ -135,15 +135,13 @@ def structure_opt_step(f_name):
 def optimisatioion_steps(f_name, prop=""):
     models = []
     f = open(f_name)
-    start = 4
     str1 = f.readline()
     while str1:
         if str1.find("COORDINATE AND CELL OPTIMIZATION - POINT") >= 0:
             model = AtomicModel()
-            #print("found step: " + str1)
-            str1 = f.readline()
-            str1 = f.readline()
-            str1 = f.readline()
+            f.readline()
+            f.readline()
+            f.readline()
             str1 = f.readline()
             if str1.find("A              B              C           ALPHA      BETA       GAMMA") >= 0:
                 start = 4
@@ -152,8 +150,8 @@ def optimisatioion_steps(f_name, prop=""):
                 alpha, beta = math.radians(float(str1.split()[3])), math.radians(float(str1.split()[4]))
                 gamma = math.radians(float(str1.split()[5]))
 
-                str1 = f.readline()
-                str1 = f.readline()
+                f.readline()
+                f.readline()
                 str1 = f.readline()
 
                 mult_x = 1.0
@@ -169,13 +167,12 @@ def optimisatioion_steps(f_name, prop=""):
                 if str1.find("Z/C") >= 0:
                     mult_z = c
 
-                str1 = f.readline()
+                f.readline()
                 str1 = f.readline()
 
                 while len(str1) > 5:
                     str1 = helpers.spacedel(str1)
                     s = str1.split(' ')
-                    # print(s)
                     x = float(s[start]) * mult_x
                     y = float(s[start + 1]) * mult_y
                     z = float(s[start + 2]) * mult_z

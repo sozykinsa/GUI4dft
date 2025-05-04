@@ -1764,16 +1764,17 @@ class MainForm(QMainWindow):
         self.ui.openGLWidget.update()
 
     def menu_show_box(self):  # pragma: no cover
-        self.ui.FormSettingsViewCheckShowBox.isChecked(True)
+        self.ui.FormSettingsViewCheckShowBox.setChecked(True)  # isChecked(True)
         self.ui.openGLWidget.is_view_box = True
         self.ui.openGLWidget.update()
 
     def menu_hide_box(self):  # pragma: no cover
-        self.ui.FormSettingsViewCheckShowBox.isChecked(False)
+        self.ui.FormSettingsViewCheckShowBox.setChecked(False)  # isChecked(False)
         self.ui.openGLWidget.is_view_box = False
         self.ui.openGLWidget.update()
 
-    def menu_manual(self):  # pragma: no cover
+    @staticmethod
+    def menu_manual():  # pragma: no cover
         path = str(Path(__file__).parent.parent.parent / 'doc' / 'gui4dft.pdf')
         os.system(path)
 

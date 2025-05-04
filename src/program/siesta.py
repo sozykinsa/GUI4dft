@@ -122,6 +122,7 @@ class TSIESTA:
 
     @staticmethod
     def get_charges_for_atoms(filename, method):
+        charges = []
         if os.path.exists(filename):
             number_of_atoms = TSIESTA.number_of_atoms(filename)
             charges = []
@@ -657,13 +658,13 @@ class TSIESTA:
                 if is_fractional_found:
                     need_to_convert1 = 1
 
-                is_angfound = str1.find("zmatrix: Z-matrix coordinates: (Ang ; rad )") >= 0
+                is_ang_found = str1.find("zmatrix: Z-matrix coordinates: (Ang ; rad )") >= 0
                 is_bohr_found = str1.find("zmatrix: Z-matrix coordinates: (Bohr; rad )") >= 0
                 mult = 1.0
                 if is_bohr_found:
                     mult = 0.52917720859
 
-                if (str1 != '') and (is_angfound or is_bohr_found or is_fractional_found) and (is_spes_f == 1):
+                if (str1 != '') and (is_ang_found or is_bohr_found or is_fractional_found) and (is_spes_f == 1):
                     if not is_fractional_found:
                         for j in range(0, 2):
                             siesta_file.readline()
@@ -685,71 +686,69 @@ class TSIESTA:
     @staticmethod
     def atoms_from_output_md(filename):
         """import from MD output """
-        periodTable = TPeriodTable()
+        period_table = TPeriodTable()
         molecules = []
         if os.path.exists(filename):
             number_of_species = TSIESTA.number_of_species(filename)
             number_of_atoms = TSIESTA.number_of_atoms(filename)
-            MdSiestaFile = open(filename)
-            speciesLabel = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+            md_siesta_file = open(filename)
+            species_label = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
             sl = []
-            isSpesFinde = 0
-            isSpesF = 0
-            str1 = MdSiestaFile.readline()
+            is_spes_find = 0
+            is_spes_f = 0
+            str1 = md_siesta_file.readline()
             while str1 != '':
                 if (str1 != '') and (str1.find("siesta: Atomic coordinates (Bohr) and species") >= 0) and (
-                        isSpesF == 0):
-                    str1 = MdSiestaFile.readline()
+                        is_spes_f == 0):
+                    str1 = md_siesta_file.readline()
                     while str1.find('siesta') >= 0:
                         str1 = helpers.spacedel(str1)
                         sl.append(int(str.split(str1, ' ')[4]))
-                        str1 = MdSiestaFile.readline()
-                    isSpesF = 1
-                if (str1 != '') and (str1.find("ChemicalSpeciesLabel") >= 0) and (isSpesFinde == 0):
+                        str1 = md_siesta_file.readline()
+                    is_spes_f = 1
+                if (str1 != '') and (str1.find("ChemicalSpeciesLabel") >= 0) and (is_spes_find == 0):
                     for i in range(0, number_of_species):
-                        str1 = helpers.spacedel(MdSiestaFile.readline())
-                        S = str.split(str1, ' ')
-                        speciesLabel[int(S[0])] = S[1]
-                    isSpesFinde = 1
+                        str1 = helpers.spacedel(md_siesta_file.readline())
+                        s = str.split(str1, ' ')
+                        species_label[int(s[0])] = s[1]
+                    is_spes_find = 1
 
                 if (str1 != '') and (str1.find("Begin CG move") >= 0 or str1.find("Begin MD step") >= 0 or str1.find(
                         "Begin CG opt. move") >= 0):
                     if (str1 != '') and str1.find("Begin MD step") >= 0:
                         for j in range(0, 3):
-                            MdSiestaFile.readline()
+                            md_siesta_file.readline()
                     else:
                         if (str1.find("Begin CG move") >= 0) or (str1.find("Begin CG opt. move") >= 0):
                             while (str1 != '') and (str1.find("block") == -1) and (
                                     str1.find("outcoor: Atomic coordinates (Ang)") == -1):
-                                str1 = MdSiestaFile.readline()
+                                str1 = md_siesta_file.readline()
 
                     atoms = []
                     for i1 in range(0, number_of_atoms):
-                        str1 = helpers.spacedel(MdSiestaFile.readline())
+                        str1 = helpers.spacedel(md_siesta_file.readline())
                         if str1 == "":
                             return []
-                        S = str1.split(' ')
-                        d1 = float(S[0])
-                        d2 = float(S[1])
-                        d3 = float(S[2])
-                        Charge = speciesLabel[sl[len(atoms)]]
-                        C = periodTable.get_let(Charge)
-                        A = [d1, d2, d3, C, Charge]
-                        atoms.append(A)
-                    str1 = MdSiestaFile.readline()
+                        s = str1.split(' ')
+                        d1 = float(s[0])
+                        d2 = float(s[1])
+                        d3 = float(s[2])
+                        charge = species_label[sl[len(atoms)]]
+                        atoms.append([d1, d2, d3, period_table.get_let(charge), charge])
+                    str1 = md_siesta_file.readline()
                     while str1.find("outcell: Unit cell vectors (Ang):") == -1:
-                        str1 = MdSiestaFile.readline()
-                    vec1 = MdSiestaFile.readline().split()
+                        str1 = md_siesta_file.readline()
+                    vec1 = md_siesta_file.readline().split()
                     vec1 = helpers.list_str_to_float(vec1)
-                    vec2 = MdSiestaFile.readline().split()
+                    vec2 = md_siesta_file.readline().split()
                     vec2 = helpers.list_str_to_float(vec2)
-                    vec3 = MdSiestaFile.readline().split()
+                    vec3 = md_siesta_file.readline().split()
                     vec3 = helpers.list_str_to_float(vec3)
-                    AllAtoms = AtomicModel(atoms)
-                    AllAtoms.set_lat_vectors([vec1, vec2, vec3])
-                    molecules.append(AllAtoms)
-                str1 = MdSiestaFile.readline()
-            MdSiestaFile.close()
+                    all_atoms = AtomicModel(atoms)
+                    all_atoms.set_lat_vectors([vec1, vec2, vec3])
+                    molecules.append(all_atoms)
+                str1 = md_siesta_file.readline()
+            md_siesta_file.close()
         return molecules
 
     @staticmethod
@@ -760,7 +759,7 @@ class TSIESTA:
             struct_file = open(filename)
             str1 = struct_file.readline()
             while str1.find("---") >= 0:
-                newStr = AtomicModel()
+                new_str = AtomicModel()
                 lat_const = float(struct_file.readline())
                 lat1 = helpers.spacedel(struct_file.readline()).split()
                 lat1 = helpers.list_str_to_float(lat1)
@@ -786,10 +785,10 @@ class TSIESTA:
                             y = row[1]
                             z = row[2]
 
-                            newStr.add_atom(Atom([x, y, z, let, charge]))
-                    newStr.set_lat_vectors([lat1, lat2, lat3])
-                    newStr.convert_from_direct_to_cart()
-                    molecules.append(newStr)
+                            new_str.add_atom(Atom([x, y, z, let, charge]))
+                    new_str.set_lat_vectors([lat1, lat2, lat3])
+                    new_str.convert_from_direct_to_cart()
+                    molecules.append(new_str)
         return molecules
 
     @staticmethod
@@ -848,9 +847,9 @@ class TSIESTA:
                              species[int(line1[3]) - 1][1]]
                     at_list.append(line2)
                 if len(at_list) == number_of_atoms:
-                    AllAtoms = AtomicModel(at_list)
-                    AllAtoms.set_lat_vectors([lat_vect_1, lat_vect_2, lat_vect_3])
-                    return [AllAtoms]
+                    all_atoms = AtomicModel(at_list)
+                    all_atoms.set_lat_vectors([lat_vect_1, lat_vect_2, lat_vect_3])
+                    return [all_atoms]
             if line.find("outcoor: Relaxed atomic coordinates (fractional)") > -1:
                 f3 = True
             else:
@@ -859,10 +858,10 @@ class TSIESTA:
                     line2 = [float(line1[0]), float(line1[1]), float(line1[2]), line1[5], species[int(line1[3]) - 1][1]]
                     at_list.append(line2)
                 if len(at_list) == number_of_atoms:
-                    AllAtoms = AtomicModel(at_list)
-                    AllAtoms.set_lat_vectors([lat_vect_1, lat_vect_2, lat_vect_3])
-                    AllAtoms.convert_from_direct_to_cart()
-                    return [AllAtoms]
+                    all_atoms = AtomicModel(at_list)
+                    all_atoms.set_lat_vectors([lat_vect_1, lat_vect_2, lat_vect_3])
+                    all_atoms.convert_from_direct_to_cart()
+                    return [all_atoms]
         return []
 
     @staticmethod
@@ -883,11 +882,11 @@ class TSIESTA:
             new_str = AtomicModel()
             for i1 in range(0, number_of_atoms):
                 str1 = helpers.spacedel(struct_file.readline())
-                S = str1.split(' ')
-                x = float(S[2])
-                y = float(S[3])
-                z = float(S[4])
-                charge = int(S[1])
+                s = str1.split(' ')
+                x = float(s[2])
+                y = float(s[3])
+                z = float(s[4])
+                charge = int(s[1])
                 let = period_table.get_let(charge)
                 new_str.add_atom(Atom([x, y, z, let, charge]))
             new_str.set_lat_vectors([lat1, lat2, lat3])
