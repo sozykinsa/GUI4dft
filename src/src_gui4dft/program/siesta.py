@@ -860,7 +860,7 @@ class TSIESTA:
                     at_list.append(line2)
                 if len(at_list) == number_of_atoms:
                     all_atoms = AtomicModel(at_list)
-                    all_atoms.set_lat_vectors(lat_vect_1, lat_vect_2, lat_vect_3)
+                    all_atoms.set_lat_vectors([lat_vect_1, lat_vect_2, lat_vect_3])
                     all_atoms.convert_from_direct_to_cart()
                     return [all_atoms]
         return []

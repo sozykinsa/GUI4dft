@@ -135,7 +135,7 @@ def structure_of_primitive_cell(f_name):
                 model.add_atom(Atom([x, y, z, let, charge]))
                 str1 = helpers.spacedel(f.readline())
         if f2:
-            model.set_lat_vectors(vec1, vec2, vec3)
+            model.set_lat_vectors([vec1, vec2, vec3])
         if f1 or f2:
             models.append(model)
         str1 = f.readline()
