@@ -64,7 +64,7 @@ class VASP:
                 if str1.find("ions per type") >= 0:
                     ions_per_type = helpers.spacedel(str1.split("ions per type =")[1]).split(" ")
                 if str1.find("VRHFIN") >= 0:
-                    types.append(str1.split("VRHFIN =")[1].split(":")[0])
+                    types.append(str1.split("VRHFIN =")[1].split(":")[0].replace(" ", ""))
                 str1 = my_file.readline()
             my_file.close()
         for n, let in zip(ions_per_type, types):
@@ -72,12 +72,13 @@ class VASP:
                 specieses.append(let)
         return specieses
 
-    def atoms_from_outcar(self, filename):
+    @staticmethod
+    def atoms_from_outcar(filename):
         molecules = []
         if os.path.exists(filename):
             period_table = TPeriodTable()
-            all_vectors = self.vectors_from_outcar(filename)
-            specieses = self.specieses_from_outcar(filename)
+            all_vectors = VASP.vectors_from_outcar(filename)
+            specieses = VASP.specieses_from_outcar(filename)
             prop = "POSITION"
             my_file = open(filename)
             str1 = my_file.readline()
@@ -97,10 +98,11 @@ class VASP:
             my_file.close()
         return molecules
 
-    def abc_from_outcar(self, filename):
+    @staticmethod
+    def abc_from_outcar(filename):
         """direct lattice vectors"""
         model = AtomicModel()
-        vecs = self.vectors_from_outcar(filename)
+        vecs = VASP.vectors_from_outcar(filename)
         if len(vecs) > 0:
             model.set_lat_vectors([vecs[-1][0], vecs[-1][1], vecs[-1][2]])
         a, b, c, al, bet, gam = model.cell_params()
