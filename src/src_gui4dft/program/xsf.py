@@ -53,9 +53,9 @@ class XSF(VolumericData):
                             vec3 = helpers.list_str_to_float(vec3)
                             f.close()
 
-                            all_atoms = TAtomicModel(atoms)
-                            all_atoms.set_lat_vectors([vec1, vec2, vec3])
-                            Molecules.append(all_atoms)
+                            AllAtoms = TAtomicModel(atoms)
+                            AllAtoms.set_lat_vectors([vec1, vec2, vec3])
+                            Molecules.append(AllAtoms)
                             return Molecules
                 row = f.readline()
             f.close()

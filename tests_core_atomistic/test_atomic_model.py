@@ -92,15 +92,15 @@ def test_grow(h2o_model):
     model = h2o_model
     model_x = model.grow_x()
     assert len(model_x.atoms) == 6
-    assert model_x.lat_vector1 == pytest.approx(2 * model.lat_vector1)
+    assert model_x.lat_vectors[0] == pytest.approx(2 * model.lat_vectors[0])
 
     model_y = model.grow_y()
     assert len(model_y.atoms) == 6
-    assert model_y.lat_vector2 == pytest.approx(2 * model.lat_vector2)
+    assert model_y.lat_vectors[1] == pytest.approx(2 * model.lat_vectors[1])
 
     model_z = model.grow_z()
     assert len(model_z.atoms) == 6
-    assert model_z.lat_vector3 == pytest.approx(2 * model.lat_vector3)
+    assert model_z.lat_vectors[2] == pytest.approx(2 * model.lat_vectors[2])
 
     model_xyz = model.grow()
     assert len(model_xyz.atoms) == 81

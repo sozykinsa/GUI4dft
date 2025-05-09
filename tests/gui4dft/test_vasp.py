@@ -6,9 +6,13 @@ def test_atoms_from_poscar(tests_path):
     model = VASP.atoms_from_poscar(f_name)[0]
     assert model.n_atoms() == 4
 
-    f_name = str(tests_path / 'ref_data' / 'vasp' / 'vasp_cartesian'/ "POSCAR")
+    f_name = str(tests_path / 'ref_data' / 'vasp' / 'vasp_cartesian' / "POSCAR")
     model = VASP.atoms_from_poscar(f_name)[0]
     assert model.n_atoms() == 1
+
+    f_name = str(tests_path / 'ref_data' / 'vasp' / 'vasp_selective' / "POSCAR")
+    model = VASP.atoms_from_poscar(f_name)[0]
+    assert model.n_atoms() == 4
 
 
 def test_atoms_from_outcar(tests_path):
@@ -27,9 +31,9 @@ def test_specieses_from_outcar(tests_path):
 
 def test_model_to_vasp_poscar(h2o_model):
     text = VASP.model_to_vasp_poscar(h2o_model)
-    assert len(text) == 216
+    assert len(text) == 208
     text = VASP.model_to_vasp_poscar(h2o_model, coord_type="Cartesian")
-    assert len(text) == 219
+    assert len(text) == 211
 
 
 def test_fermi_energy_from_doscar(tests_path):

@@ -19,8 +19,8 @@ class GaussianCube(VolumericData):
 
     @staticmethod
     def get_atoms(filename):
-        period_table = TPeriodTable()
-        molecules = []
+        periodTable = TPeriodTable()
+        Molecules = []
         if os.path.exists(filename):
             f = open(filename)
             f.readline()
@@ -38,14 +38,15 @@ class GaussianCube(VolumericData):
             for i in range(0, n_atoms):
                 row = f.readline().split()
                 charge = int(row[0])
-                atoms.append([float(row[2]), float(row[3]), float(row[4]), period_table.get_let(charge), charge])
+                atoms.append([float(row[2]), float(row[3]), float(row[4]), periodTable.get_let(charge), charge])
             f.close()
-            all_atoms = TAtomicModel(atoms)
-            all_atoms.set_lat_vectors([vec1, vec2, vec3])
-            all_atoms.convert_from_scaled_to_cart(mult)
+            AllAtoms = TAtomicModel(atoms)
+            AllAtoms.set_lat_vectors([vec1, vec2, vec3])
+            AllAtoms.lat_const = mult
+            AllAtoms.convert_from_scaled_to_cart()
 
-            molecules.append(all_atoms)
-        return molecules
+            Molecules.append(AllAtoms)
+        return Molecules
 
     @staticmethod
     def local_get_N_vect(row):

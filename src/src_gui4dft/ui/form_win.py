@@ -8,16 +8,16 @@
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
 
-from PySide6.QtCore import (QCoreApplication, QLocale,
-                            QMetaObject, QRect,
-                            QSize, Qt)
-from PySide6.QtGui import (QAction)
-from PySide6.QtWidgets import (QAbstractItemView, QAbstractScrollArea, QAbstractSpinBox, QCheckBox, QComboBox, QDoubleSpinBox, QFrame,
-                               QGroupBox, QHBoxLayout, QLabel,
-                               QLineEdit, QListWidget, QMenu, QMenuBar, QPlainTextEdit, QPushButton,
-                               QRadioButton, QSizePolicy, QSlider, QSpacerItem,
-                               QSpinBox, QTabWidget, QTableWidget, QTextBrowser, QToolBar, QToolBox, QTreeWidget,
-                               QTreeWidgetItem, QVBoxLayout, QWidget)
+from qtpy.QtCore import (QCoreApplication, QLocale,
+                         QMetaObject, QRect,
+                         QSize, Qt)
+from qtpy.QtGui import (QAction)
+from qtpy.QtWidgets import (QAbstractItemView, QAbstractScrollArea, QAbstractSpinBox, QCheckBox, QComboBox, QDoubleSpinBox, QFrame,
+                            QGroupBox, QHBoxLayout, QLabel,
+                            QLineEdit, QListWidget, QMenu, QMenuBar, QPlainTextEdit, QPushButton,
+                            QRadioButton, QSizePolicy, QSlider, QSpacerItem,
+                            QSpinBox, QTabWidget, QTableWidget, QTextBrowser, QToolBar, QToolBox, QTreeWidget,
+                            QTreeWidgetItem, QVBoxLayout, QWidget)
 
 from src_gui4dft.qtbased.guiopengl import GuiOpenGL
 from core_atomistic_qt.qt_graph import PyqtGraphWidget

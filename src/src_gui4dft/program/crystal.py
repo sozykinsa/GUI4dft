@@ -1,9 +1,41 @@
 # -*- coding: utf-8 -*-
 from copy import deepcopy
 import numpy as np
+import math
 from core_atomistic.atom import Atom
 from core_atomistic.atomic_model import AtomicModel
 from core_atomistic import helpers
+
+
+class CRYSTAL:
+    @staticmethod
+    def bands_parser(file):
+        f = open(file)
+        # NKPT    50 NBND     5 NSPIN     2
+        str1 = f.readline().split()
+        nspins = int(str1[6])
+        nkpt = int(str1[2])
+        nbnd = int(str1[4])
+        for j in range(0, 4):
+            str1 = f.readline()
+        for j in range(0, nspins):
+            for i in range(0, 21):
+                str1 = f.readline()
+            str1 = str1.split()
+            kmin, kmax = float(str1[2].replace(',', '')), float(str1[4].replace(',', ''))
+
+            str1 = f.readline()
+            for i in range(0, nkpt):
+                kp = 0
+                while kp < nbnd:
+                    str1 = f.readline()
+                    kp += len(str1.split())
+
+            e_fermi = float(f.readline().split()[3])
+            emin = 1 - e_fermi
+            emax = 2 - e_fermi
+        f.close()
+        return emax, emin, kmax, kmin, nspins
 
 
 def model_0d_to_d12(model):
@@ -100,6 +132,63 @@ def structure_opt_step(f_name):
     return models
 
 
+def optimisatioion_steps(f_name, prop=""):
+    models = []
+    f = open(f_name)
+    str1 = f.readline()
+    while str1:
+        if str1.find("COORDINATE AND CELL OPTIMIZATION - POINT") >= 0:
+            model = AtomicModel()
+            f.readline()
+            f.readline()
+            f.readline()
+            str1 = f.readline()
+            if str1.find("A              B              C           ALPHA      BETA       GAMMA") >= 0:
+                start = 4
+                str1 = f.readline()
+                a, b, c = float(str1.split()[0]), float(str1.split()[1]), float(str1.split()[2])
+                alpha, beta = math.radians(float(str1.split()[3])), math.radians(float(str1.split()[4]))
+                gamma = math.radians(float(str1.split()[5]))
+
+                f.readline()
+                f.readline()
+                str1 = f.readline()
+
+                mult_x = 1.0
+                mult_y = 1.0
+                mult_z = 1.0
+
+                if str1.find("X/A") >= 0:
+                    mult_x = a
+
+                if str1.find("Y/B") >= 0:
+                    mult_y = b
+
+                if str1.find("Z/C") >= 0:
+                    mult_z = c
+
+                f.readline()
+                str1 = f.readline()
+
+                while len(str1) > 5:
+                    str1 = helpers.spacedel(str1)
+                    s = str1.split(' ')
+                    x = float(s[start]) * mult_x
+                    y = float(s[start + 1]) * mult_y
+                    z = float(s[start + 2]) * mult_z
+                    charge = int(s[start - 2])
+                    let = s[start - 1]
+                    model.add_atom(Atom([x, y, z, let, charge]))
+                    str1 = helpers.spacedel(f.readline())
+
+                model.lat_vectors = helpers.lat_vectors_from_params(a, b, c, alpha, beta, gamma)
+                models.append(model)
+
+        str1 = f.readline()
+    f.close()
+    return models
+
+
 def structure_of_primitive_cell(f_name):
     models = []
     f = open(f_name)
@@ -135,7 +224,7 @@ def structure_of_primitive_cell(f_name):
                 model.add_atom(Atom([x, y, z, let, charge]))
                 str1 = helpers.spacedel(f.readline())
         if f2:
-            model.set_lat_vectors([vec1, vec2, vec3])
+            model.set_lat_vectors(vec1, vec2, vec3)
         if f1 or f2:
             models.append(model)
         str1 = f.readline()
@@ -145,4 +234,9 @@ def structure_of_primitive_cell(f_name):
 
 def energies(filename):
     """Energy from each step."""
-    return np.array(helpers.list_of_values(filename, "TOTAL ENERGY(HF)(AU)(   3)"), dtype=float) * 27.2113961317875
+    e = helpers.list_of_values(filename, "TOTAL ENERGY(HF)(AU)(", 1)
+    if len(e) == 0:
+        e = helpers.list_of_values(filename, "TOTAL ENERGY(DFT)(AU)(", 1)
+    e_opt = helpers.from_file_property(filename, "* OPT END - CONVERGED * E(AU):", prop_type='float')
+    e.append(e_opt)
+    return np.array(e, dtype=float) * 27.2113961317875

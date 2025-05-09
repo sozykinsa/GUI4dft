@@ -1,4 +1,4 @@
-from src_gui4dft.program.crystal import model_1d_to_d12, model_2d_to_d12
+from src_gui4dft.program.crystal import model_1d_to_d12, model_2d_to_d12, energies
 from src_gui4dft.program.importer_exporter import ImporterExporter
 
 
@@ -22,3 +22,9 @@ def test_structure_opt_step(tests_path):
     model, fdf = ImporterExporter.import_from_file(f_name, fl='all', prop=False)
     assert len(model[0].atoms) == 3
 
+
+def test_energies(tests_path):
+    f_name = str(tests_path / 'ref_data' / 'crystal' / 'corundum_optim' / "input.out")
+    e = energies(f_name)
+    assert e.size == 12
+    assert e[0] == -38106.68336568802

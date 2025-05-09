@@ -1,0 +1,64 @@
+NumberOfAtoms 18
+NumberOfSpecies 3
+WriteCoorStep True
+%block ChemicalSpeciesLabel
+ 1  1  H
+ 2  6  C
+ 3  7  N
+%endblock ChemicalSpeciesLabel
+LatticeConstant       1.0 Ang
+%block LatticeVectors
+  7.451   4.295  -0.0
+  7.451  -4.295  -0.0
+  -0.0  0.0  25.0
+%endblock LatticeVectors
+AtomicCoordinatesFormat Fractional
+%block AtomicCoordinatesAndAtomicSpecies
+    0.83978148    0.63036146    0.00000000 1
+    0.36758129    0.36771037    0.00000000 1
+    0.10466015   -0.10467237    0.00000000 1
+    0.73886795    0.46193277    0.00000000 2
+    0.63717554    0.26755275    0.00000000 2
+    0.93367483    0.16527970    0.00000000 2
+    0.46745394    0.09800470    0.00000000 2
+    0.27326122   -0.00391571    0.00000000 2
+    0.56984694   -0.19854410    0.00000000 2
+    0.72025241    0.63144487    0.00000000 3
+    0.59392886    0.44253909    0.00000000 3
+    0.91369151    0.32987988    0.00000000 3
+    0.48665792    0.24847082    0.00000000 3
+    0.80182430    0.12247167    0.00000000 3
+    0.29256778    0.14111241    0.00000000 3
+    0.61255119   -0.06664094    0.00000000 3
+    0.10370870    0.01481793    0.00000000 3
+    0.40534059   -0.17873842    0.00000000 3
+%endblock AtomicCoordinatesAndAtomicSpecies
+SystemName          pti
+SystemLabel         siesta
+WriteMullikenPop    1
+PAO.BasisSize  DZP
+MeshCutoff       350.0 Ry
+SpinPolarized True
+MaxSCFIterations       150
+SolutionMethod         diagon
+NetCharge     0.00
+DM.NumberPulay    4
+DM.MixingWeight   0.3
+DM.UseSaveDM      .true.
+NeglNonOverlapInt False
+XC.functional=GGA
+XC.authors=PBE
+WriteCoorXmol     True
+WriteForces .true.
+WriteMullikenPop     1
+MD.TypeOfRun           cg               # Type of dynamics: Conjugate gradients
+MD.NumCGsteps          320              # number of CG steps
+MD.MaxCGDispl          0.10 Ang
+MD.MaxForceTol         0.04 eV/Ang
+MD.UseSaveXV           yes
+MD.VariableCell        .false.
+%block kgrid_Monkhorst_Pack
+  7  0  0   0.0
+  0  7  0   0.0
+  0  0  1   0.0
+%endblock kgrid_Monkhorst_Pack
