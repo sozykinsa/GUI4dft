@@ -223,7 +223,7 @@ def property_from_sub_file(filename, k, prop, count, typen):
 
 
 def str_to_float(str1, count=0):
-    re_float = re.compile("""(?x)
+    re_float = re.compile(r"""(?x)
                                   [+-]?\ *      # first, match an optional sign *and space*
                                   (             # then match integers or f.p. mantissas:
                                       \d+       # start out with a ...

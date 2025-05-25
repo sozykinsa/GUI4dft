@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'about.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.6.1
+## Created by: Qt User Interface Compiler version 6.6.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -22,16 +22,16 @@ class Ui_DialogAbout(object):
     def setupUi(self, DialogAbout):
         if not DialogAbout.objectName():
             DialogAbout.setObjectName(u"DialogAbout")
-        DialogAbout.resize(550, 300)
-        sizePolicy = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        DialogAbout.resize(580, 307)
+        sizePolicy = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(DialogAbout.sizePolicy().hasHeightForWidth())
         DialogAbout.setSizePolicy(sizePolicy)
         self.textBrowser = QTextBrowser(DialogAbout)
         self.textBrowser.setObjectName(u"textBrowser")
-        self.textBrowser.setGeometry(QRect(0, 0, 550, 300))
-        sizePolicy1 = QSizePolicy(QSizePolicy.Maximum, QSizePolicy.Maximum)
+        self.textBrowser.setGeometry(QRect(0, 0, 581, 311))
+        sizePolicy1 = QSizePolicy(QSizePolicy.Policy.Maximum, QSizePolicy.Policy.Maximum)
         sizePolicy1.setHorizontalStretch(0)
         sizePolicy1.setVerticalStretch(0)
         sizePolicy1.setHeightForWidth(self.textBrowser.sizePolicy().hasHeightForWidth())
@@ -49,12 +49,16 @@ class Ui_DialogAbout(object):
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:'MS Shell Dlg 2'; font-size:7.8pt; font-weight:400; font-style:normal;\">\n"
 "<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">GUI4dft</p>\n"
-"<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-style:italic;\">Graphical User Interface for Density Functional Theory</span><br />version: 1.4</p>\n"
+"<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-style:italic;\">Graphical User Interface for Density Functional Theory</span><br />version: 1.5</p>\n"
 "<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">was writen by Sergey Sozykin from South Ural State University, </p>\n"
 "<p align=\"center\" style=\" margin-top:0px; margin-bott"
                         "om:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Chelabinsk, Russia </p>\n"
 "<p align=\"center\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">If the program was helpful in your research, please cite the article <br />https://doi.org/10.1016/j.cpc.2021.107843</p>\n"
 "<p align=\"center\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">The latest version of the program is available at GITHUB<br /> https://github.com/sozykinsa/GUI4dft</p>\n"
+"<p align=\"center\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">You can use my program critplot to work with output files of the TOPOND and Critic2 programs:</p>\n"
+"<p align=\"center\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">https://github.com/s"
+                        "ozykinsa/CritPlot</p>\n"
+"<p align=\"center\" style=\"-qt-paragraph-type:empty; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p>\n"
 "<p align=\"center\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">You can ask questions about the program by e-mail:<br /> sozykinsa@susu.ru</p></body></html>", None))
     # retranslateUi
 

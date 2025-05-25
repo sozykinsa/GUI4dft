@@ -46,7 +46,7 @@ class WIEN:
             while (str1.find("ATOM") < 0) and str1:
                 str1 = f.readline()
             coord = str1  # ATOM  -1: X=0.00000000 Y=0.00000000 Z=0.00000000
-            atom_coords = re.findall('\d+.\d+', coord)
+            atom_coords = re.findall(r'\d+.\d+', coord)
             xyz = np.array([float(atom_coords[-3]), float(atom_coords[-2]), float(atom_coords[-1])], dtype=float)
             f.readline()
             str1 = f.readline()  # Fe         NPT=  781  R0=0.00005000 RMT=    2.0000   Z: 26.0
