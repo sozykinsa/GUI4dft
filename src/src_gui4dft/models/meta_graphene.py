@@ -28,6 +28,12 @@ class MetaGraphene(AtomicModel):
         if model_type == "PTI":
             f_name = str(Path(__file__).parent / "cells" / 'pti.fdf')
 
+        if model_type == "C2N":
+            f_name = str(Path(__file__).parent / "cells" / 'c2n.fdf')
+
+        if model_type == "TOC":
+            f_name = str(Path(__file__).parent / "cells" / 'toc.fdf')
+
         basis, fdf = ImporterExporter.import_from_file(f_name, fl='all', prop=False)
         basis = basis[0]
 
