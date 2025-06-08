@@ -4,7 +4,7 @@ import math
 import numpy as np
 
 from core_atomistic import helpers
-from models.graphene import Graphene
+from src_gui4dft.models.graphene import Graphene
 
 
 class SWNT(Graphene):

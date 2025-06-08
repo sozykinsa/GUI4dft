@@ -15,7 +15,7 @@ from qtpy.QtCore import QCoreApplication, Qt
 from qtpy.QtGui import QIcon
 from qtpy.QtWidgets import QApplication
 
-from qtbased.gui4dftform import MainForm
+from src_gui4dft.qtbased.gui4dftform import MainForm
 
 print("Python version: ", platform.python_version())
 if PYSIDE_VERSION is not None:

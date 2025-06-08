@@ -7,7 +7,7 @@ from pathlib import Path
 
 from core_atomistic.atom import Atom
 from core_atomistic.atomic_model import AtomicModel as TAtomicModel
-from models.swnt import SWNT
+from src_gui4dft.models.swnt import SWNT
 
 
 class CapedSWNT(TAtomicModel):
