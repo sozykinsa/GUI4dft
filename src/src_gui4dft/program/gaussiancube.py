@@ -6,8 +6,8 @@ import math
 import numpy as np
 from core_atomistic.atomic_model import AtomicModel as TAtomicModel
 from core_atomistic.periodic_table import TPeriodTable
-from program.volumericdatablock import VolumericDataBlock
-from program.volumericdata import VolumericData
+from src_gui4dft.program.volumericdatablock import VolumericDataBlock
+from src_gui4dft.program.volumericdata import VolumericData
 
 
 

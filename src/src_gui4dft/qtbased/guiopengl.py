@@ -8,7 +8,7 @@ import numpy as np
 
 from core_atomistic_qt.opengl_base import GuiOpenGLBase
 from core_atomistic.atomic_model import AtomicModel
-from utils.calculators import VoronoiAnalisis
+from src_gui4dft.utils.calculators import VoronoiAnalisis
 
 
 class GuiOpenGL(GuiOpenGLBase):

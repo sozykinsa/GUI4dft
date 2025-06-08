@@ -1,4 +1,4 @@
-from program.vasp import VASP
+from src_gui4dft.program.vasp import VASP
 
 
 def test_atoms_from_poscar(tests_path):

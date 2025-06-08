@@ -8,17 +8,11 @@
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
 
-from qtpy.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
-    QMetaObject, QObject, QPoint, QRect,
-    QSize, QTime, QUrl, Qt)
-from qtpy.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
-    QFont, QFontDatabase, QGradient, QIcon,
-    QImage, QKeySequence, QLinearGradient, QPainter,
-    QPalette, QPixmap, QRadialGradient, QTransform)
-from qtpy.QtWidgets import (QApplication, QMainWindow, QSizePolicy, QVBoxLayout,
-    QWidget)
+from qtpy.QtCore import (QCoreApplication, QMetaObject)
+from qtpy.QtWidgets import (QVBoxLayout,
+                            QWidget)
 
-from qtbased.guiopengl import GuiOpenGL
+from src_gui4dft.qtbased.guiopengl import GuiOpenGL
 
 
 class Ui_MainWindow(object):
