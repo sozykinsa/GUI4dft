@@ -235,6 +235,7 @@ class MainForm(QMainWindow):
         self.ui.FormModifyTwist.clicked.connect(self.twist_model)
         self.ui.model_move_by_vector.clicked.connect(self.move_model)
         self.ui.fit_with.clicked.connect(self.fit_with)
+        self.ui.video_create.clicked.connect(self.video_create)
 
         self.ui.FormSelectPart1File.clicked.connect(self.set_part1_file)
         self.ui.FormSelectPart2File.clicked.connect(self.set_part2_file)
@@ -1418,6 +1419,31 @@ class MainForm(QMainWindow):
         xf, yf, rf = self.models[self.active_model_id].fit_with_cylinder()
         self.ui.fit_with_textBrowser.setText("x0 = " + str(round(xf, 4)) + " A\ny0 = " +
                                              str(round(yf, 4)) + " A\nR = " + str(round(rf, 4)) + " A")
+
+    def video_create(self):   # pragma: no cover
+        print("video_creat")
+        delta = np.array([1.0, 0, 0])
+        if self.ui.video_x.isChecked():
+            delta = np.array([self.ui.video_angle_step.value(), 0, 0])
+        if self.ui.video_y.isChecked():
+            delta = np.array([0, self.ui.video_angle_step.value(), 0])
+        if self.ui.video_z.isChecked():
+            delta = np.array([0, 0, self.ui.video_angle_step.value()])
+
+        angle_start = self.ui.video_angle_start.value()
+        angle_stop = self.ui.video_angle_stop.value()
+        n = int((angle_stop - angle_start) / self.ui.video_angle_step.value()) + 1
+        format_str = "PNG files (*.png);;JPG files (*.jpg);;BMP files (*.bmp)"
+        fname = self.get_file_name_from_save_dialog(format_str)
+        print(fname)
+        base, ext = os.path.splitext(fname)
+        n_length = len(str(n))
+        for i in range(n):
+            number = f"{i:0{n_length}d}"
+            new_filepath = f"{base}{number}{ext}"
+            self.save_image_to_file(name=new_filepath, quantity=2)
+            self.ui.openGLWidget.rotation_angles += delta
+            self.ui.openGLWidget.update()
 
     def get_colors_list(self, minv, maxv, values, cmap, color_scale):
         n = len(values)
@@ -2689,21 +2715,22 @@ class MainForm(QMainWindow):
         image_profile = image_profile.scaled(320, 54, Qt.KeepAspectRatio, Qt.SmoothTransformation)
         self.ui.FormActionsPostLabelCellParamFig.setPixmap(QPixmap.fromImage(image_profile))
 
-    def save_image_to_file(self, name=""):
+    def save_image_to_file(self, name="", quantity=5):
         if len(self.models) == 0:
             return
         try:
             if not name:
                 format_str = "PNG files (*.png);;JPG files (*.jpg);;BMP files (*.bmp)"
-                fname = self.get_file_name_from_save_dialog(format_str)
-                if fname:
-                    new_window = Image3Dexporter(5 * self.ui.openGLWidget.width(), 5 * self.ui.openGLWidget.height(), 5)
-                    new_window.ui.openGLWidget.copy_state(self.ui.openGLWidget)
+                name = self.get_file_name_from_save_dialog(format_str)
+            if name:
+                new_window = Image3Dexporter(quantity * self.ui.openGLWidget.width(),
+                                             quantity * self.ui.openGLWidget.height(), quantity)
+                new_window.ui.openGLWidget.copy_state(self.ui.openGLWidget)
 
-                    new_window.ui.openGLWidget.image3d_to_file(fname)
-                    new_window.destroy()
-                    self.work_dir = os.path.dirname(fname)
-                    self.save_active_folder()
+                new_window.ui.openGLWidget.image3d_to_file(name)
+                new_window.destroy()
+                self.work_dir = os.path.dirname(name)
+                self.save_active_folder()
         except Exception as excep:
             self.show_error(excep)
 

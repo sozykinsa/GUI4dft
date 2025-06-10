@@ -2521,7 +2521,7 @@ class Ui_MainWindow(object):
         self.toolBox_6.addItem(self.page, u"Cell")
         self.page_9 = QWidget()
         self.page_9.setObjectName(u"page_9")
-        self.page_9.setGeometry(QRect(0, 0, 98, 28))
+        self.page_9.setGeometry(QRect(0, 0, 100, 30))
         self.FormModelComboModels_2 = QComboBox(self.page_9)
         self.FormModelComboModels_2.setObjectName(u"FormModelComboModels_2")
         self.FormModelComboModels_2.setGeometry(QRect(50, 10, 61, 22))
@@ -6837,6 +6837,124 @@ class Ui_MainWindow(object):
         self.verticalLayout_14.addWidget(self.tabWidget_12)
 
         self.tabWidget_9.addTab(self.tab_37, "")
+        self.tab_35 = QWidget()
+        self.tab_35.setObjectName(u"tab_35")
+        self.verticalLayout_106 = QVBoxLayout(self.tab_35)
+        self.verticalLayout_106.setObjectName(u"verticalLayout_106")
+        self.groupBox_70 = QGroupBox(self.tab_35)
+        self.groupBox_70.setObjectName(u"groupBox_70")
+        self.horizontalLayout_212 = QHBoxLayout(self.groupBox_70)
+        self.horizontalLayout_212.setObjectName(u"horizontalLayout_212")
+        self.video_x = QRadioButton(self.groupBox_70)
+        self.video_x.setObjectName(u"video_x")
+
+        self.horizontalLayout_212.addWidget(self.video_x)
+
+        self.video_y = QRadioButton(self.groupBox_70)
+        self.video_y.setObjectName(u"video_y")
+
+        self.horizontalLayout_212.addWidget(self.video_y)
+
+        self.video_z = QRadioButton(self.groupBox_70)
+        self.video_z.setObjectName(u"video_z")
+
+        self.horizontalLayout_212.addWidget(self.video_z)
+
+
+        self.verticalLayout_106.addWidget(self.groupBox_70)
+
+        self.groupBox_71 = QGroupBox(self.tab_35)
+        self.groupBox_71.setObjectName(u"groupBox_71")
+        self.verticalLayout_99 = QVBoxLayout(self.groupBox_71)
+        self.verticalLayout_99.setObjectName(u"verticalLayout_99")
+        self.frame_187 = QFrame(self.groupBox_71)
+        self.frame_187.setObjectName(u"frame_187")
+        self.frame_187.setFrameShape(QFrame.StyledPanel)
+        self.frame_187.setFrameShadow(QFrame.Raised)
+        self.horizontalLayout_209 = QHBoxLayout(self.frame_187)
+        self.horizontalLayout_209.setObjectName(u"horizontalLayout_209")
+        self.label_4 = QLabel(self.frame_187)
+        self.label_4.setObjectName(u"label_4")
+
+        self.horizontalLayout_209.addWidget(self.label_4)
+
+        self.video_angle_start = QDoubleSpinBox(self.frame_187)
+        self.video_angle_start.setObjectName(u"video_angle_start")
+        self.video_angle_start.setDecimals(2)
+        self.video_angle_start.setMinimum(-360.000000000000000)
+        self.video_angle_start.setMaximum(720.000000000000000)
+
+        self.horizontalLayout_209.addWidget(self.video_angle_start)
+
+        self.horizontalSpacer_152 = QSpacerItem(209, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+
+        self.horizontalLayout_209.addItem(self.horizontalSpacer_152)
+
+
+        self.verticalLayout_99.addWidget(self.frame_187)
+
+        self.frame_188 = QFrame(self.groupBox_71)
+        self.frame_188.setObjectName(u"frame_188")
+        self.frame_188.setFrameShape(QFrame.StyledPanel)
+        self.frame_188.setFrameShadow(QFrame.Raised)
+        self.horizontalLayout_210 = QHBoxLayout(self.frame_188)
+        self.horizontalLayout_210.setObjectName(u"horizontalLayout_210")
+        self.label_5 = QLabel(self.frame_188)
+        self.label_5.setObjectName(u"label_5")
+
+        self.horizontalLayout_210.addWidget(self.label_5)
+
+        self.video_angle_stop = QDoubleSpinBox(self.frame_188)
+        self.video_angle_stop.setObjectName(u"video_angle_stop")
+        self.video_angle_stop.setMinimum(-360.000000000000000)
+        self.video_angle_stop.setMaximum(720.000000000000000)
+
+        self.horizontalLayout_210.addWidget(self.video_angle_stop)
+
+        self.horizontalSpacer_158 = QSpacerItem(225, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+
+        self.horizontalLayout_210.addItem(self.horizontalSpacer_158)
+
+
+        self.verticalLayout_99.addWidget(self.frame_188)
+
+        self.frame_189 = QFrame(self.groupBox_71)
+        self.frame_189.setObjectName(u"frame_189")
+        self.frame_189.setFrameShape(QFrame.StyledPanel)
+        self.frame_189.setFrameShadow(QFrame.Raised)
+        self.horizontalLayout_211 = QHBoxLayout(self.frame_189)
+        self.horizontalLayout_211.setObjectName(u"horizontalLayout_211")
+        self.label_6 = QLabel(self.frame_189)
+        self.label_6.setObjectName(u"label_6")
+
+        self.horizontalLayout_211.addWidget(self.label_6)
+
+        self.video_angle_step = QDoubleSpinBox(self.frame_189)
+        self.video_angle_step.setObjectName(u"video_angle_step")
+        self.video_angle_step.setMaximum(360.000000000000000)
+
+        self.horizontalLayout_211.addWidget(self.video_angle_step)
+
+        self.horizontalSpacer_157 = QSpacerItem(215, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+
+        self.horizontalLayout_211.addItem(self.horizontalSpacer_157)
+
+
+        self.verticalLayout_99.addWidget(self.frame_189)
+
+
+        self.verticalLayout_106.addWidget(self.groupBox_71)
+
+        self.video_create = QPushButton(self.tab_35)
+        self.video_create.setObjectName(u"video_create")
+
+        self.verticalLayout_106.addWidget(self.video_create)
+
+        self.verticalSpacer_20 = QSpacerItem(20, 441, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
+
+        self.verticalLayout_106.addItem(self.verticalSpacer_20)
+
+        self.tabWidget_9.addTab(self.tab_35, "")
 
         self.verticalLayout_23.addWidget(self.tabWidget_9)
 
@@ -7598,6 +7716,16 @@ class Ui_MainWindow(object):
         self.label_16.setText(QCoreApplication.translate("MainWindow", u"Max value", None))
         self.tabWidget_12.setTabText(self.tabWidget_12.indexOf(self.tab_41), QCoreApplication.translate("MainWindow", u"Other Colors", None))
         self.tabWidget_9.setTabText(self.tabWidget_9.indexOf(self.tab_37), QCoreApplication.translate("MainWindow", u"Colors", None))
+        self.groupBox_70.setTitle(QCoreApplication.translate("MainWindow", u"Axis", None))
+        self.video_x.setText(QCoreApplication.translate("MainWindow", u"X", None))
+        self.video_y.setText(QCoreApplication.translate("MainWindow", u"Y", None))
+        self.video_z.setText(QCoreApplication.translate("MainWindow", u"Z", None))
+        self.groupBox_71.setTitle(QCoreApplication.translate("MainWindow", u"Angles", None))
+        self.label_4.setText(QCoreApplication.translate("MainWindow", u"from", None))
+        self.label_5.setText(QCoreApplication.translate("MainWindow", u"to", None))
+        self.label_6.setText(QCoreApplication.translate("MainWindow", u"Step", None))
+        self.video_create.setText(QCoreApplication.translate("MainWindow", u"Create", None))
+        self.tabWidget_9.setTabText(self.tabWidget_9.indexOf(self.tab_35), QCoreApplication.translate("MainWindow", u"Export", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_29), QCoreApplication.translate("MainWindow", u"View", None))
         self.FormSettingsOpeningCheckOnlyOptimal.setText(QCoreApplication.translate("MainWindow", u"Get only optimal structures", None))
         self.FormSettingsParseAtomicProperties.setText(QCoreApplication.translate("MainWindow", u"Parse atomic properties", None))
