@@ -38,6 +38,8 @@ v1.4 - Pyside6. Added support for exporting structural data to input files VASP,
 
 v1.5 - Pyside6 for Linux and PyQt5 for Windows.
 
+v2.0 - Next release with CritPlot functionality.
+
 The master branch contains more or less stable 1.x version functions.
 
 ## Code testing

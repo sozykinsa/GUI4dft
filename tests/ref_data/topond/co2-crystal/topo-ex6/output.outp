@@ -1,0 +1,329 @@
+
+         
+ *******************************************************************************
+ *                                                                             *
+ *                               CRYSTAL23                                     *
+ *                      public : 1.0.1 - October 2022                          *
+ *                       HTTP://WWW.CRYSTAL.UNITO.IT                           *
+ *                                                                             *
+ *                              MAIN AUTHORS                                   *
+ *                                                                             *
+ *  R. DOVESI(1,11), V.R. SAUNDERS(2), C. ROETTI(1,11), R. ORLANDO(1,11),      *
+ *  C.M. ZICOVICH-WILSON(1,3), F. PASCALE(4), B. CIVALLERI(1,11),              *
+ *  K. DOLL(5), N.M. HARRISON(6), I.J. BUSH(7), Ph. D'ARCO(8),                 *
+ *  M. LLUNELL(9), M. CAUSA'(10), Y. NOEL(8), L. MASCHIO(1,11), A. ERBA(1,11)  *
+ *  M. RE'RAT(14), S. CASASSA(1,11), B.G. SEARLE(2), J.K. DESMARAIS(1)         *
+ *                                                                             *
+ *        CONTRIBUTIONS TO THE CODE HAVE ALSO BEEN GIVEN BY                    *
+ *                                                                             *
+ *  M. FERRABONE(1,11), M. DE LA PIERRE(1,11), M. FERRERO(1,11),               *
+ *  J. BAIMA(1,11), E. ALBANESE(1,11), M.F. PEINTINGER(12), R. BAST(13),       *
+ *  B. KIRTMAN(15), V. LACIVITA(1,11), R. DEMICHELIS(1,16)                     *
+ *  G. BRANDEBURG(17), S. SALUSTRO(1,11), G. SANSONE(1,11)                     *
+ *  M.T. RUGGIERO(18), L.E. DAGA(1), L. DONA'(1), A. COSSARD(1)                *
+ *                                                                             *
+ * (1) THEORETICAL CHEMISTRY GROUP - UNIVERSITA' DI TORINO - TORINO (ITALY)    *
+ * (2) SCIENTIFIC COMPUTING DEPARTMENT - STFC DARESBURY (UK)                   *
+ * (3) UNIVERSIDAD AUTONOMA DEL ESTADO DE MORELOS - CUERNAVACA (MEXICO)        *
+ * (4) UNIVERSITE' DE LORRAINE - NANCY (FRANCE)                                *
+ * (5) UNIVERSITAET STUTTGART- STUTTGART (GERMANY)                             *
+ * (6) IMPERIAL COLLEGE - LONDON (UK)                                          *
+ * (7) SCIENTIFIC COMPUTING DEPARTMENT - STFC RAL (UK)                         *
+ * (8) UPMC - SORBONNE UNIVERSITES - PARIS (FRANCE)                            *
+ * (9) UNIVERSIDAD DE BARCELONA - BARCELONA (SPAIN)                            *
+ *(10) UNIVERSITA' DI NAPOLI "FEDERICO II" - NAPOLI (ITALY)                    *
+ *(11) NIS - NANOSTRUCTURED INTERFACES AND SURFACES - TORINO (ITALY)           *
+ *(12) MPI FUER CHEMISCHE ENERGIEKONVERSION - MUELHEIM AN DER RUHR (GERMANY)   *
+ *(13) UNIVERSITY OF TROMSO - TROMSO (NORWAY)                                  *
+ *(14) UNIVERSITE' DE PAU ET DES PAYS DE L'ADOUR - PAU (FRANCE)                *
+ *(15) UNIVERSITY OF CALIFORNIA SANTA BARBARA - SANTA BARBARA (USA)            *
+ *(16) CURTIN UNIVERSITY - PERTH (AUSTRALIA)                                   *
+ *(17) UNIVERSITY COLLEGE LONDON - LONDON (UK)                                 *
+ *(18) UNIVERSITY OF VERMONT - BURLINGTON (USA)                                *
+ *                                                                             *
+ *******************************************************************************
+ EEEEEEEEEE STARTING  DATE 21 01 2023 TIME 14:58:27.8
+ INFORMATION **** SET_MPP **** PCRYSTAL CALCULATION
+
+ *******************************************************************************
+ CO2 mp-11725                                                                    
+ CRYSTAL - PROPERTIES - TYPE OF CALCULATION :  RESTRICTED CLOSED SHELL
+ *******************************************************************************
+ KOHN-SHAM HAMILTONIAN
+
+ (EXCHANGE)[CORRELATION] FUNCTIONAL:(BECKE 88)[LEE-YANG-PARR]
+
+ NON-LOCAL WEIGHTING FACTOR (EXCHANGE) =           0.9000
+ NON-LOCAL WEIGHTING FACTOR [CORRELATION] =        0.8100
+
+ HYBRID EXCHANGE - PERCENTAGE OF FOCK EXCHANGE    20.0000
+
+ DIRECT LATTICE VECTOR COMPONENTS (ANGSTROM)
+         4.81000    0.00000    0.00000
+         0.00000    4.81000    0.00000
+         0.00000    0.00000    3.73000
+
+ LATTICE PARAMETERS  (ANGSTROM AND DEGREES) - PRIMITIVE CELL
+       A          B          C         ALPHA      BETA     GAMMA        VOLUME
+    4.81000    4.81000    3.73000     90.0000   90.0000   90.0000      86.29765
+ *******************************************************************************
+ N. OF ATOMS PER CELL         6 COULOMB OVERLAP TOL          (T1) 10**   -6
+ NUMBER OF SHELLS            36 COULOMB PENETRATION TOL      (T2) 10**   -6
+ NUMBER OF AO                84 EXCHANGE OVERLAP TOL         (T3) 10**   -6
+ N. OF ELECTRONS PER CELL    44 EXCHANGE PSEUDO OVP (F(G))   (T4) 10**   -6
+ CORE ELECTRONS PER CELL     12 EXCHANGE PSEUDO OVP (P(G))   (T5) 10**  -12
+ N. OF SYMMETRY OPERATORS    16 POLE ORDER IN MONO ZONE                   4
+ *******************************************************************************
+   ATOM N.AT.  SHELL    X(A)      Y(A)      Z(A)      EXAD       N.ELECT.
+ *******************************************************************************
+    1    6 C     6     2.405     2.405     0.000   4.286E-01       5.324
+    2    6 C     6     0.000     0.000     1.865   4.286E-01       5.324
+    3    8 O     6     0.825     0.825     1.865   1.790E-01       8.338
+    4    8 O     6    -0.825    -0.825     1.865   1.790E-01       8.338
+    5    8 O     6    -1.580     1.580     0.000   1.790E-01       8.338
+    6    8 O     6     1.580    -1.580     0.000   1.790E-01       8.338
+ *******************************************************************************
+ DE(K)                   0.000E+00  ENERGY LEVEL SHIFTING        0.00000
+ TOTAL ENERGY -3.7669569535682E+02  CONVERGENCE ON ENER       -2.256E-08
+ KIN. ENERGY   3.7372349414743E+02  VIR. COEFF.           1.04664322E+00
+ N. OF SCF CYCLES                7  FERMI ENERGY              -0.372E+00
+ WEIGHT OF F(I) IN F(I+1)      30
+ SHRINK. FACT.(MONKH.)     4  4  4  SHRINKING FACTOR(GILAT NET)        4
+ NUMBER OF K POINTS IN THE IBZ  18  CELL VOLUME (A.U.)        582.365437
+ *******************************************************************************
+
+ GCALCO - MAX INDICES DIRECT LATTICE VECTOR    13    13    18
+ NO.OF VECTORS CREATED 6999 STARS  524 RMAX    99.00914 BOHR
+ TTTTTTTTTTTTTTTTTTTTTTTTTTTTTT gordsh1     TELAPSE        0.14 TCPU        0.11
+
+ MATRIX SIZE: P(G)  114280, F(G)   19678, P(G) IRR    6534, F(G) IRR    2664
+ MAX G-VECTOR INDEX FOR 1- AND 2-ELECTRON INTEGRALS 127
+
+
+ CAPPA:IS1  4;IS2  4;IS3  4; K PTS MONK NET  18; SYMMOPS:K SPACE  16;G SPACE  16
+
+ *******************************************************************************
+ *                                                                             *
+ *                              T O P O N D  2 0 2 1                           *
+ *                                                                             *
+ *           AN ELECTRON DENSITY TOPOLOGICAL ANALYSIS PROGRAM FOR              *
+ *                 SYSTEMS PERIODIC IN N (N=0-3) DIMENSIONS                    *
+ *                                                                             *
+ *               USER MANUAL BY CARLO GATTI AND SILVIA CASASSA                 *
+ *                                                                             *
+ *            CNR-ISTM, ISTITUTO DI SCIENZE E TECNOLOGIE MOLECOLARI            *
+ *                   VIA GOLGI 19  - I-20133 MILANO - ITALIA                   *
+ *                     E-MAIL: c.gatti@istm.cnr.it                             *
+ *                                                                             *
+ *******************************************************************************
+
+  TOPOND PARAMETER 
+
+  LIM016 [INF24]        =       1000
+  LIM015 [INF20]        =         36
+  LIM035 [LIM016*INF5]  =     524000
+  NTOMAX [LIM016*INF5]  =     524000
+  INF79  [INF79]        =       6999
+  MAXGSTAR [INF2*INF5]  =        384
+
+ *******************************************************************************
+ *******************************************************************************
+ *                                                                             *
+ *               TOPOND GENERALISATION TO F AND G ATOMIC ORBITALS              *
+ *                                                                             *
+ *                     BY ALESSANDRO COSSARD, JACQUES DESMARAIS                *
+ *                            AND ALESSANDRO ERBA                              *
+ *                                                                             *
+ *      PLEASE CITE: A. Cossard, J. K. Desmarais, S.Casassa, C. Gatti and      *
+ *            A. Erba, J. Phys. Chem. Lett., 12, 1862-1868 (2021)              *
+ *                                                                             *
+ *******************************************************************************
+
+CRYSTAL INFORMATION ON THE REFERENCE SYSTEM:
+
+ DIRECT LATTICE VECTOR COMPONENTS (BOHR)
+         9.08958    0.00000    0.00000
+         0.00000    9.08958    0.00000
+         0.00000    0.00000    7.04868
+
+ LATTICE PARAMETERS  (BOHR AND DEGREES) - PRIMITIVE CELL
+        A           B           C        ALPHA        BETA       GAMMA       VOLUME
+     9.08958     9.08958     7.04868    90.00000    90.00000    90.00000   582.36544
+ *******************************************************************************
+ N. OF ATOMS PER CELL        6  COULOMB OVERLAP TOL         (T1) 10** -6
+ NUMBER OF SHELLS           36  COULOMB PENETRATION TOL     (T2) 10** -6
+ NUMBER OF AO               84  EXCHANGE OVERLAP TOL        (T3) 10** -6
+ N. OF ELECTRONS PER CELL    44 EXCHANGE PSEUDO OVP (F(G))  (T4) 10** -6
+ CORE ELECTRONS PER CELL    12  EXCHANGE PSEUDO OVP (P(G))  (T5) 10**-12
+ N. OF SYMMETRY OPERATORS   16  POLE ORDER IN MONO ZONE                4
+ *******************************************************************************
+  ATOM  SHEL    X(AU)     Y(AU)     Z(AU)
+ *******************************************************************************
+    6 C    6     4.545     4.545     0.000
+    6 C    6     0.000     0.000     3.524
+    8 O    6     1.559     1.559     3.524
+    8 O    6    -1.559    -1.559     3.524
+    8 O    6    -2.986     2.986     0.000
+    8 O    6     2.986    -2.986     0.000
+ *******************************************************************************
+ DE(K)                  0.000E+00  CONVERGENCE ON EIGENVALUES   10**-20
+ WEIGHT OF F(I) IN F(I+1)     30%  CONVERGENCE ON ENERGY        10**- 6
+ TOTAL ENERGY     -3.76695695E+02  FERMI ENERGY              -3.716E-01
+ KIN. ENERGY       3.73723494E+02  VIR. COEFF.           1.04664322E+00
+ SHRINK. FACT.(MONKH.)    4  4  4  STARS FOR FOURIER EXP. OF E(K)     1
+ SHRINKING FACTOR (GILAT NET)   4  NUMBER OF K POINTS IN THE IBZ     18
+ CELL VOLUME (A.U.)         582.365N. OF SCF CYCLES                   7
+ ENERGY LEVEL SHIFTING    0.00000
+ *******************************************************************************
+
+ NEIGHBORS OF THE NON-EQUIVALENT ATOMS
+
+ N = NUMBER OF NEIGHBORS AT DISTANCE R
+    ATOM  N     R/ANG      R/AU   NEIGHBORS (ATOM LABELS AND CELL INDICES)
+
+   1 C    2     1.1666     2.2046   5 O    1 0 0   6 O    0 1 0
+   1 C    4     2.9106     5.5002   3 O    0 0 0   3 O    0 0-1   4 O    1 1 0
+                                    4 O    1 1-1
+   1 C    2     3.7300     7.0487   1 C    0 0-1   1 C    0 0 1
+   1 C    8     3.8790     7.3302   2 C    0 0 0   2 C    0 0-1   2 C    1 0 0
+                                    2 C    0 1 0   2 C    1 0-1   2 C    0 1-1
+                                    2 C    1 1 0   2 C    1 1-1
+   1 C    4     3.9082     7.3854   5 O    1 0-1   5 O    1 0 1   6 O    0 1-1
+                                    6 O    0 1 1
+   1 C    8     4.0506     7.6545   3 O    1 0 0   3 O    0 1 0   3 O    1 0-1
+                                    3 O    0 1-1   4 O    0 1 0   4 O    1 0 0
+                                    4 O    0 1-1   4 O    1 0-1
+   1 C    4     4.0696     7.6904   5 O    0 0 0   5 O    1 1 0   6 O    1 1 0
+                                    6 O    0 0 0
+
+   3 O    1     1.1666     2.2046   2 C    0 0 0
+   3 O    1     2.3332     4.4092   4 O    0 0 0
+   3 O    2     2.9106     5.5002   1 C    0 0 0   1 C    0 0 1
+   3 O    8     3.1357     5.9256   5 O    0 0 0   5 O    0 0 1   5 O    1 0 0
+                                    5 O    1 0 1   6 O    0 0 1   6 O    0 0 0
+                                    6 O    0 1 1   6 O    0 1 0
+   3 O    2     3.5649     6.7367   4 O    1 0 0   4 O    0 1 0
+   3 O    2     3.7300     7.0487   3 O    0 0-1   3 O    0 0 1
+   3 O    2     3.9082     7.3854   2 C    0 0-1   2 C    0 0 1
+
+
+
+
+ ************* T O P O L O G I C A L  A N A L I S Y S  O F  R H O *************
+
+
+ COMPUTATIONAL CONDITIONS :
+                           IAUTO                                     :     2
+                           ALGORITHM FOR CP SEARCH                   :    EF
+                           DETERMINATION OF BOND PATH ATTRACTORS     :     T
+                           MAX.NUM. OF N.R. OR EIG. FOL. STEPS       :     5
+                           NEIGHBORS OF EACH NON-EQUIVALENT ATOM     :     7
+                           PRINT N.RAPH OR E.FOL. OR PAR. EQ. SEARCH :     F
+                           EIG. FOL.: TYPE OF CPS SEARCHED FOR       :(3,-1)
+
+ SEARCH ALONG LINE: NON-EQUIV. ATOM      1 C -----     6 O (     0     1     0)
+
+ BOND L. PERC. STEP  2.5%
+
+ CP N.      1  NON-EQUIV. ATOM      1 C  ---      6 O (     0      1      0 )  DISTANCE(ANG)= 1.1666
+ *********
+
+ CP TYPE                        :  (3,-1)
+ COORD(AU)  (X  Y  Z)           :  4.0010E+00  5.0886E+00 -4.1764E-20
+ COORD FRACT. CONV. CELL        :  4.4017E-01 -4.4017E-01 -5.9250E-21
+ PROPERTIES (RHO,GRHO,LAP)      :  4.3587E-01  4.7016E-16 -7.8624E-02
+
+ SPECTRAL DECOMP. OF THE HESSIAN OF RHO
+
+ EIGENVALUES (L1 L2 L3)         : -1.0880E+00 -1.0861E+00  2.0954E+00
+ EIGENVECTORS                   :  0.0000E+00 -7.0711E-01  7.0711E-01
+                                   1.1374E-19 -7.0711E-01 -7.0711E-01
+                                   1.0000E+00  8.0426E-20  8.0426E-20
+
+ ELLIPTICITY                    :  1.7439E-03
+
+ CLUSTER OF ATOMS AROUND THE CP 
+ NEW  OLD   CELL  AT. NU.         COORD.(AU)             DISTANCE (ANG)
+     1       1       0     0     0    6        4.545   4.545   0.000          0.407
+     2       6       0     1     0    8        2.986   6.104   0.000          0.760
+     3       5       1     0     0    8        6.104   2.986   0.000          1.574
+     4       4       1     1    -1    8        7.531   7.531  -3.524          2.939
+     5       4       1     1     0    8        7.531   7.531   3.524          2.939
+     6       3       0     0    -1    8        1.559   1.559  -3.524          2.939
+     7       3       0     0     0    8        1.559   1.559   3.524          2.939
+
+ ******************************
+ SEARCH OF BOND PATH ATTRACTORS
+ ******************************
+
+ CP N.      2
+**********
+
+ ATTRACTOR CP TYPE              :  (3,-3)
+ COORD(AU)  (X  Y  Z)           :  4.5448E+00  4.5448E+00 -1.0199E-22
+ COORD FRACT. CONV. CELL        :  5.0000E-01  5.0000E-01 -1.4469E-23
+ PROPERTIES (RHO,GRHO,LAP)      :  1.1214E+02  1.3940E-13 -2.5821E+05
+ TRAJECTORY LENGTH(ANG)         :  4.0698E-01
+ INTEGRATION STEPS              :      43
+
+ CLUSTER OF ATOMS AROUND THE TERMINUS OF THE PATH 
+ NEW  OLD   CELL  AT. NU.         COORD.(AU)             DISTANCE (ANG)
+     1       1       0     0     0    6        4.545   4.545   0.000          0.000
+     2       6       0     1     0    8        2.986   6.104   0.000          1.167
+     3       5       1     0     0    8        6.104   2.986   0.000          1.167
+     4       4       1     1    -1    8        7.531   7.531  -3.524          2.911
+
+
+ CP N.      3
+**********
+
+ ATTRACTOR CP TYPE              :  (3,-3)
+ COORD(AU)  (X  Y  Z)           :  2.9859E+00  6.1036E+00 -1.3795E-24
+ COORD FRACT. CONV. CELL        :  3.2850E-01 -3.2850E-01 -1.9571E-25
+ PROPERTIES (RHO,GRHO,LAP)      :  2.7904E+02  7.0748E-11 -1.1637E+06
+ TRAJECTORY LENGTH(ANG)         :  7.5962E-01
+ INTEGRATION STEPS              :      54
+
+ CLUSTER OF ATOMS AROUND THE TERMINUS OF THE PATH 
+ NEW  OLD   CELL  AT. NU.         COORD.(AU)             DISTANCE (ANG)
+     1       6       0     1     0    8        2.986   6.104   0.000          0.000
+     2       1       0     0     0    6        4.545   4.545   0.000          1.167
+     3       5       1     0     0    8        6.104   2.986   0.000          2.333
+     4       2       0     1    -1    6        0.000   9.090  -3.524          2.911
+
+
+ BPL (ANG) ; RAB ; (BPL/RAB)    :  1.1666E+00  1.1666E+00  9.9999E-01
+
+
+ NUMBER OF UNIQUE CRI. POINT FOUND:     3
+
+
+        ********** C R I T I C A L  P O I N T S  F O U N D **********
+
+
+ CP N.  X(AU)   Y(AU)   Z(AU)   TYPE      RHO    LAPL   L1(V1) L2(V2) L3(V3) ELLIP
+
+ *******************************************************************************
+    1)  4.001   5.089  -0.000  (3,-1)    0.436  -0.079  -1.088  -1.086   2.095  0.002
+
+ ( C       1       0      0      0   0.769  AU)     0.000  -0.707   0.707
+ ( O       6       0      1      0   1.435  AU)     0.000  -0.707  -0.707
+                                                    1.000   0.000   0.000
+
+
+    2)  4.545   4.545  -0.000  (3,-3)  112.144-999.999-999.999-999.999-999.999
+                                                    0.000  -0.707   0.707
+                                                    0.000  -0.707  -0.707
+                                                    1.000   0.000   0.000
+
+
+    3)  2.986   6.104  -0.000  (3,-3)  279.043-999.999-999.999-999.999-999.999
+                                                    0.707   0.000   0.707
+                                                   -0.707   0.000   0.707
+                                                    0.000   1.000  -0.000
+
+
+ *******************************************************************************
+ TTTTTTTTTTTTTTTTTTTTTTTTTTTTTT TRHO        TELAPSE        5.85 TCPU        5.63
+ TTTTTTTTTTTTTTTTTTTTTTTTTTTTTT END         TELAPSE        5.85 TCPU        5.63
+ EEEEEEEEEE TERMINATION  DATE 21 01 2023 TIME 14:58:33.5
