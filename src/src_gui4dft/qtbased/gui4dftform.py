@@ -2394,7 +2394,7 @@ class MainForm(QMainWindow):
                     self.ui.high_symmetry_k_points.setItem(n, 0, QTableWidgetItem(str(tick)))
                     self.ui.high_symmetry_k_points.setItem(n, 1, QTableWidgetItem(label))
             elif file.endswith(".DAT"):
-                emax, emin, kmax, kmin, nspins = CRYSTAL.bands_parser(file)
+                emax, emin, kmax, kmin, nspins, ef = CRYSTAL.bands_parser(file)
             elif file.endswith(".dat.gnu"):
                 emax, emin, kmax, kmin, nspins = TQE.gnuplot_bands_reader(file)
 
@@ -2433,6 +2433,8 @@ class MainForm(QMainWindow):
 
         if os.path.exists(file):
             format = helpers.check_format(self.filename)
+            if format == "unknown":
+                format = helpers.check_format(file)
             updown = self.ui.bands_spin_up_down.isChecked()
 
             xticklabels, xticks = [], []
@@ -2441,7 +2443,7 @@ class MainForm(QMainWindow):
                 xticklabels.append(self.ui.high_symmetry_k_points.item(index, 1).text())
 
             if (format == "siesta_out") and (self.ui.bands_spin_up.isChecked() or updown):
-                bands, emaxf, eminf, kmesh = read_siesta_bands(file, True, kmax, kmin)
+                bands, emaxf, eminf, kmesh = read_siesta_bands(file, True)
                 b_mins = np.min(bands, 1)
                 b_maxs = np.max(bands, 1)
                 inds = np.zeros(len(bands), dtype=int)
@@ -2451,7 +2453,7 @@ class MainForm(QMainWindow):
                 self.ui.PyqtGraphWidget.plot([kmesh], bands[inds], [None], title, x_title, y_title, False)
 
             if (format == "siesta_out") and (self.ui.bands_spin_down.isChecked() or updown):
-                bands, emaxf, eminf, kmesh = read_siesta_bands(file, False, kmax, kmin)
+                bands, emaxf, eminf, kmesh = read_siesta_bands(file, False)
                 b_mins = np.min(bands, 1)
                 b_maxs = np.max(bands, 1)
                 inds = np.zeros(len(bands), dtype=int)
@@ -2463,6 +2465,23 @@ class MainForm(QMainWindow):
                 if self.ui.bands_spin_up_down.isChecked():
                     self.ui.PyqtGraphWidget.plot([kmesh], bands[inds], [None], title, x_title, y_title, False,
                                                  _style=Qt.DotLine)
+
+            if format == "crystal_bands":
+                print("crystal_bands")
+                bands, emaxf, eminf, kmesh = CRYSTAL.read_crystal_bands(file, True)
+                print("kmesh: ", kmesh)
+                print("emaxf, eminf: ", emaxf, eminf)
+                print("len(bands): ", len(bands))
+                print(bands)
+                b_mins = np.min(bands, 1)
+                b_maxs = np.max(bands, 1)
+                print("b_mins, b_maxs: ", b_mins, b_maxs)
+                inds = np.zeros(len(bands), dtype=int)
+                for i in range(len(bands)):
+                    if (b_mins[i] >= emin) and (b_mins[i] <= emax) or (b_maxs[i] >= emin) and (b_maxs[i] <= emax):
+                        inds[i] = i
+                self.ui.PyqtGraphWidget.plot([kmesh], bands[inds], [None], title, x_title, y_title, False)
+
 
             if (format == "QEPWout") and (self.ui.bands_spin_up.isChecked() or updown):
                 bands, emaxf, eminf, kmesh = self.read_qe_bands(file)  # , kmax, kmin)

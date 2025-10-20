@@ -3,6 +3,8 @@ import os
 import numpy as np
 from core_atomistic import helpers
 
+HARTREE_TO_EV = 27.2114
+
 
 def dos_from_file(filename, n=2, n_lines=0):
     energy = []
@@ -58,7 +60,7 @@ def dos_siesta_vert(filename, e_f=0):
         return dos
 
 
-def read_siesta_bands(file, is_check_bands_spin, k_max, k_min):
+def read_siesta_bands(file, is_check_bands_spin):
     f = open(file)
     e_fermi = float(f.readline())
     f.readline()

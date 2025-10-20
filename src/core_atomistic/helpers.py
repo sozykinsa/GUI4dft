@@ -306,6 +306,9 @@ def check_format(filename):
     if name.endswith(".ani"):
         return "SIESTAANI"
 
+    if name.endswith("band.dat"):
+        return "crystal_bands"
+
     if name.endswith(".xyz"):
         f = open(filename)
         f.readline()

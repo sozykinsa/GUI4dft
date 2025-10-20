@@ -10,32 +10,130 @@ from core_atomistic import helpers
 class CRYSTAL:
     @staticmethod
     def bands_parser(file):
-        f = open(file)
-        # NKPT    50 NBND     5 NSPIN     2
-        str1 = f.readline().split()
-        nspins = int(str1[6])
-        nkpt = int(str1[2])
-        nbnd = int(str1[4])
-        for j in range(0, 4):
-            str1 = f.readline()
-        for j in range(0, nspins):
-            for i in range(0, 21):
-                str1 = f.readline()
-            str1 = str1.split()
-            kmin, kmax = float(str1[2].replace(',', '')), float(str1[4].replace(',', ''))
+        with open(file, "r") as f:
+            # First line: NKPT, NBND, NSPIN
+            str1 = f.readline().split()
+            nkpt = int(str1[2])
+            nbnd = int(str1[4])
+            nspins = int(str1[6])
 
-            str1 = f.readline()
-            for i in range(0, nkpt):
-                kp = 0
-                while kp < nbnd:
-                    str1 = f.readline()
-                    kp += len(str1.split())
+            # Skip next 4 lines (NPANEL and k-path info)
+            for _ in range(4):
+                f.readline()
 
-            e_fermi = float(f.readline().split()[3])
-            emin = 1 - e_fermi
-            emax = 2 - e_fermi
-        f.close()
-        return emax, emin, kmax, kmin, nspins
+            # Skip spin headers and band data blocks
+            for _ in range(nspins):
+                for _ in range(21):  # header block for each spin
+                    f.readline()
+                for _ in range(nkpt):
+                    kp = 0
+                    while kp < nbnd:
+                        line = f.readline()
+                        # Protect against empty lines or EOF
+                        if not line:
+                            break
+                        kp += len(line.split())
+
+            # After reading all bands, search for Fermi energy at the end of file
+            efermi = None
+            # Move to the end and read backwards until "# EFERMI" line is found
+            with open(file, "r") as f2:
+                for line in reversed(f2.readlines()):
+                    if line.strip().startswith("# EFERMI"):
+                        efermi = float(line.split()[-1])
+                        break
+
+        if efermi is None:
+            raise ValueError("Could not find EFERMI line in the file")
+
+        # Convert Fermi energy from Hartree to eV
+        efermi_ev = efermi * 27.2114
+
+        # Set approximate limits (can be refined later)
+        emin, emax = -10.0, 10.0
+        kmin, kmax = 0.0, float(nkpt)
+
+        return emax, emin, kmax, kmin, nspins, efermi_ev
+
+
+    def read_crystal_bands(file_path, check_spin=True):
+        """
+        Reads a CRYSTAL BAND.DAT file and extracts the band structure.
+
+        Parameters:
+            file_path (str): Path to BAND.DAT file.
+            is_check_bands_spin (bool):
+                True  -> return spin-up (alpha) bands
+                False -> return spin-down (beta) bands
+
+        Returns:
+            bands (ndarray): Band energies (eV, shifted by Fermi level)
+            emaxf (float): Maximum energy (eV, relative to Fermi)
+            eminf (float): Minimum energy (eV, relative to Fermi)
+            kmesh (ndarray): K-point coordinates along the path
+        """
+
+        hartree_to_ev = 27.2114
+
+        with open(file_path, "r") as f:
+            lines = f.readlines()
+
+        # --- Read header ---
+        for line in lines:
+            if line.startswith("# NKPT"):
+                parts = line.split()
+                nkpt = int(parts[2])
+                nbnd = int(parts[4])
+                nspin = int(parts[6])
+                break
+
+        # --- Get Fermi energy (last occurrence) ---
+        efermi = None
+        for line in reversed(lines):
+            if "EFERMI" in line:
+                efermi = float(line.split()[-1]) * hartree_to_ev
+                break
+        if efermi is None:
+            raise ValueError("EFERMI not found in file")
+
+        # --- Extract data lines ---
+        data_lines = [
+            line for line in lines
+            if not (line.startswith("#") or line.startswith("@") or line.strip() == "")
+        ]
+
+        # Convert to numeric array
+        data = np.array([
+            [float(x.replace('E', 'e')) for x in line.split()]
+            for line in data_lines
+        ])
+
+        # Check that number of columns matches (1 for k + nbnd bands)
+        ncol = data.shape[1]
+        if ncol != nbnd + 1 and nspin == 2:
+            # For spin-polarized case, both spin channels are concatenated
+            half = len(data) // 2
+            data_up = data[:half]
+            data_dn = data[half:]
+            if is_check_bands_spin:
+                data = data_up
+            else:
+                data = data_dn
+        elif ncol != nbnd + 1:
+            raise ValueError(f"Unexpected number of columns: {ncol}")
+
+        # Separate k-mesh and band energies
+        kmesh = data[:, 0]
+        bands = data[:, 1:].T * hartree_to_ev  # (nbnd, nkpt)
+
+        # Shift relative to Fermi energy
+        bands -= efermi
+
+        # Compute energy limits
+        emaxf = np.max(bands)
+        eminf = np.min(bands)
+
+        return bands, emaxf, eminf, kmesh
 
 
 def model_0d_to_d12(model):

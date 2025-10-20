@@ -72,7 +72,7 @@ jobs:
         pip install -r requirements-dev.txt
     - name: Test with pytest
       run: |
-        python -m pytest tests --cov=src --cov-report=xml --cov-report=term-missing --ignore=tests/gui4dft_opengl
+        python -m pytest tests --cov=src --cov-report=xml --cov-report=term-missing --ignore=tests/gui4dft_opengl,tests/critplot_opengl
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v1
       with:

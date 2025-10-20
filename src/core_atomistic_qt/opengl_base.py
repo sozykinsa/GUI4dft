@@ -53,6 +53,7 @@ class GuiOpenGLBase(QOpenGLWidget):
         self.y_scene = 0
         self.camera_position = np.array([0.0, 0.0, -20.0])
         self.rotation_angles = np.zeros(3, dtype=float)
+        self.rotation_matrix = np.ones(3)
         self.color_of_bonds = (0, 0, 0)
         self.color_of_axes = (0, 0, 0)
         self.color_of_box = (0, 0, 0)
@@ -129,6 +130,7 @@ class GuiOpenGLBase(QOpenGLWidget):
         self.y_scene = the_object.y_scene
         self.camera_position = the_object.camera_position
         self.rotation_angles[:] = the_object.rotation_angles
+        self.rotation_matrix = the_object.rotation_matrix
         self.selected_atom = the_object.selected_atom
         self.prop = the_object.prop
         self.selected_fragment_mode = the_object.selected_fragment_mode
