@@ -19,7 +19,7 @@ class WIEN:
         f = open(f_name)
         f.readline()
         n = f.readline()
-        n = re.findall(r'\d+', n)[-1]
+        n = re.findall(r'\d+', n)[0]
         f.close()
         return int(n)
 
