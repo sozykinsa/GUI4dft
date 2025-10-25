@@ -582,8 +582,10 @@ class AtomicModel(object):
         return self.max_z() - self.min_z()
 
     def set_cluster(self, cluster, k):
+        """Set the cluster property for atoms."""
         for atom in cluster:
-            self.atoms[atom].cluster = k
+            self.atoms[atom].cluster = k # is it needed?
+            self.atoms[atom].properties["cluster"] = k
 
     def sort_atoms_by_type(self):
         for i in range(0, self.n_atoms()):
@@ -684,7 +686,7 @@ class AtomicModel(object):
         return clusters
 
     def find_bonds_exact(self):
-        """The method returns list of bonds of the molecule."""
+        """The method returns list of bonds of the model in PBC."""
         if self.bonds_per:
             return self.bonds_per
         for i in range(0, len(self.atoms)):
@@ -696,10 +698,76 @@ class AtomicModel(object):
                     self.bonds_per.append([t1, t2, length, self.atoms[i].let, i, self.atoms[j].let, j])
         return self.bonds_per
 
+    def find_bonds(self):
+        """
+        Finds and stores pairs of atom indices connected by chemical bonds.
+        The result is stored in self.bonds as a list of [i, j] pairs.
+        """
+        coords = self.get_positions()
+        elements = self.get_atomic_numbers()
+
+        unique_elements = np.unique(elements)
+        bond_thresholds = np.zeros((len(unique_elements), len(unique_elements)))
+
+        for i in range(len(unique_elements)):
+            t1 = int(unique_elements[i])
+            for j in range(len(unique_elements)):
+                t2 = int(unique_elements[j])
+                bond_thresholds[i, j] = 1.2 * self.mendeley.Bonds[int(t1)][int(t2)]
+
+        atom_indices = np.arange(len(elements), dtype=int)
+        element_trees, element_atom_lists = [], []
+        for element_idx, atomic_num in enumerate(unique_elements):
+            element_mask = elements == atomic_num
+            element_atom_lists.append(atom_indices[element_mask])
+            element_trees.append(scipy.spatial.cKDTree(coords[element_mask]))
+
+        first_atoms, second_atoms = [], []
+        for current_element, (current_tree, current_atoms) in enumerate(zip(element_trees, element_atom_lists)):
+            # Find bonds within same element
+            same_element_pairs = current_tree.query_pairs(r=bond_thresholds[current_element, current_element])
+            if len(same_element_pairs) > 0:
+                pair_indices = np.array(list(same_element_pairs), dtype=int).T
+                first_atoms.append(current_atoms[pair_indices[0]])
+                second_atoms.append(current_atoms[pair_indices[1]])
+
+            # Find bonds with different elements
+            next_element_start = current_element + 1
+            for other_element, (other_tree, other_atoms) in enumerate(
+                    zip(element_trees[next_element_start:], element_atom_lists[next_element_start:]),
+                    start=next_element_start):
+                max_bond_distance = bond_thresholds[current_element, other_element]
+                cross_pairs = other_tree.query_ball_tree(current_tree, r=max_bond_distance)
+                if np.fromiter((len(p) for p in cross_pairs), dtype=int).sum() > 0:
+                    source_indices = np.fromiter((i for j, matches in enumerate(cross_pairs) for i in matches),
+                                                 dtype=int)
+                    target_indices = np.fromiter((j for j, matches in enumerate(cross_pairs) for i in matches),
+                                                 dtype=int)
+
+                    first_atoms.append(current_atoms[source_indices])
+                    second_atoms.append(other_atoms[target_indices])
+
+        # Combine all found bonds
+        if len(first_atoms) > 0:
+            all_first = np.concatenate(first_atoms)
+            all_second = np.concatenate(second_atoms)
+        else:
+            all_first = np.zeros(0, dtype=int)
+            all_second = np.zeros(0, dtype=int)
+
+        self.bonds = []
+        for start_atom, end_atom in zip(all_first, all_second):
+            self.bonds.append([int(start_atom), int(end_atom)])
+
+        return self.bonds
+
     def find_bonds_fast(self):
         """The method returns list of bonds of the molecule."""
         if not (self.dynamic_bonds or len(self.bonds) == 0):
             return
+
+        self.find_bonds()
+        return self.bonds
 
         self.bonds = []
         for i in range(0, len(self.atoms)):

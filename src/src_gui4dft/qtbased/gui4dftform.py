@@ -1489,7 +1489,7 @@ class MainForm(QMainWindow):
     @staticmethod
     def get_color(cmap, minv, maxv, value, scale):
         if minv == maxv:
-            scale == "black"
+            scale = "black"
         if scale == "black":
             return QColor.fromRgb(0, 0, 0, 1).getRgbF()
         if scale == "Log":
@@ -1989,7 +1989,7 @@ class MainForm(QMainWindow):
         self.active_model_id = value
         self.ui.Form3Dand2DTabs.setCurrentIndex(0)
         self.ui.color_atoms_with_atom_type.setChecked(True)
-        self.ui.color_atoms_with_cluster_id.setEnabled(False)
+        # self.ui.color_atoms_with_cluster_id.setEnabled(False)
         view_atoms = self.ui.FormSettingsViewCheckShowAtoms.isChecked()
         view_atom_numbers = self.ui.FormSettingsViewCheckShowAtomNumber.isChecked()
         view_box = self.ui.FormSettingsViewCheckShowBox.isChecked()
