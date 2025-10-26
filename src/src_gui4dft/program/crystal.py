@@ -8,93 +8,261 @@ from core_atomistic import helpers
 
 
 class CRYSTAL:
+
     @staticmethod
     def bands_parser(file):
+        hartree_to_ev = 27.2114
         with open(file, "r") as f:
-            # First line: NKPT, NBND, NSPIN
-            str1 = f.readline().split()
-            nkpt = int(str1[2])
-            nbnd = int(str1[4])
-            nspins = int(str1[6])
+            lines = f.readlines()
 
-            # Skip next 4 lines (NPANEL and k-path info)
-            for _ in range(4):
-                f.readline()
+        # First line: NKPT, NBND, NSPIN
+        str1 = lines[0].split()
+        print(f"Debug - first line parts: {str1}")
 
-            # Skip spin headers and band data blocks
-            for _ in range(nspins):
-                for _ in range(21):  # header block for each spin
-                    f.readline()
-                for _ in range(nkpt):
-                    kp = 0
-                    while kp < nbnd:
-                        line = f.readline()
-                        # Protect against empty lines or EOF
-                        if not line:
+        # Find numerical values after labels
+        nkpt = nbnd = nspins = None
+        for i in range(len(str1)):
+            if str1[i] == 'NKPT' and i + 1 < len(str1):
+                nkpt = int(str1[i + 1])
+            elif str1[i] == 'NBND' and i + 1 < len(str1):
+                nbnd = int(str1[i + 1])
+            elif str1[i] == 'NSPIN' and i + 1 < len(str1):
+                nspins = int(str1[i + 1])
+
+        if nkpt is None or nbnd is None or nspins is None:
+            numbers = [int(x) for x in str1 if x.isdigit()]
+            if len(numbers) >= 3:
+                nkpt, nbnd, nspins = numbers[0], numbers[1], numbers[2]
+            else:
+                raise ValueError("Could not parse NKPT, NBND, NSPIN from first line")
+
+        # Extract ALL energy values and k-point coordinates from band data
+        all_energies = []
+        kpoints = []
+
+        # Find all band data lines (lines starting with numbers or negative numbers)
+        for line in lines:
+            line = line.strip()
+            if line and (line[0].isdigit() or (line[0] == '-' and len(line) > 1 and line[1].isdigit())):
+                parts = line.split()
+                if parts:  # Make sure line is not empty
+                    # First element is the k-point coordinate
+                    try:
+                        kcoord = float(parts[0].strip(','))
+                        kpoints.append(kcoord)
+                    except ValueError:
+                        continue
+
+                    # Parse all energy values (skip the first element)
+                    for part in parts[1:]:
+                        try:
+                            energy = float(part.strip(','))
+                            all_energies.append(energy)
+                        except ValueError:
+                            continue
+
+        if not all_energies:
+            raise ValueError("No band energy data found in file")
+
+        if not kpoints:
+            raise ValueError("No k-point coordinates found in file")
+
+        emin = min(all_energies)
+        emax = max(all_energies)
+        kmin = min(kpoints)
+        kmax = max(kpoints)
+
+        # Parse Fermi energy
+        efermi = None
+        for line in reversed(lines):
+            if line.strip().startswith("# EFERMI"):
+                parts = line.split()
+                for part in parts:
+                    try:
+                        cleaned_part = part.strip(',')
+                        efermi = float(cleaned_part)
+                        if abs(efermi) < 10.0:  # reasonable range for Fermi energy
                             break
-                        kp += len(line.split())
-
-            # After reading all bands, search for Fermi energy at the end of file
-            efermi = None
-            # Move to the end and read backwards until "# EFERMI" line is found
-            with open(file, "r") as f2:
-                for line in reversed(f2.readlines()):
-                    if line.strip().startswith("# EFERMI"):
-                        efermi = float(line.split()[-1])
-                        break
+                    except ValueError:
+                        continue
+                if efermi is not None:
+                    break
 
         if efermi is None:
-            raise ValueError("Could not find EFERMI line in the file")
+            raise ValueError("Could not find EFERMI value in the file")
 
-        # Convert Fermi energy from Hartree to eV
-        efermi_ev = efermi * 27.2114
+        # Convert from Hartree to eV
+        efermi_ev = efermi * hartree_to_ev
+        emin_ev = emin * hartree_to_ev
+        emax_ev = emax * hartree_to_ev
+        return emax_ev, emin_ev, kmax, kmin, nspins, efermi_ev
 
-        # Set approximate limits (can be refined later)
-        emin, emax = -10.0, 10.0
-        kmin, kmax = 0.0, float(nkpt)
+    @staticmethod
+    def read_bands_xlabels(file, k_max, k_min):
+        """
+        Parse high-symmetry point information from band structure file.
+        Returns data in SIESTA-compatible format.
 
-        return emax, emin, kmax, kmin, nspins, efermi_ev
+        Parameters:
+            file (str): Path to band structure file
+            k_max (float): Maximum k-point value (for filtering)
+            k_min (float): Minimum k-point value (for filtering)
 
+        Returns:
+            x_tick_labels (list): List of high-symmetry point labels
+            x_ticks (list): List of k-point coordinates for high-symmetry points
+        """
 
+        x_ticks = []
+        x_tick_labels = []
+
+        with open(file, "r") as f:
+            lines = f.readlines()
+
+        # Method 1: Look for high-symmetry point information in comment lines
+        for line in lines:
+            if line.startswith('#'):
+                parts = line.split()
+                # Look for lines with format like: "#      1   (0,0,0)/6"
+                if len(parts) >= 3 and parts[1].isdigit():
+                    kpoint_index = int(parts[1])
+                    # The k-label is usually in the 3rd or later position
+                    kpoint_label = ""
+                    for i in range(2, len(parts)):
+                        if '(' in parts[i] or '/' in parts[i]:
+                            kpoint_label = parts[i].strip('"')
+                            break
+
+                    if kpoint_label:
+                        # Convert label to SIESTA format (extract letter/symbol)
+                        letter = helpers.utf8_letter(kpoint_label)
+                        x_tick_labels.append(letter)
+                        # For now, we'll get the actual k-coordinate from data parsing
+                        x_ticks.append(kpoint_index)  # Temporary - will be replaced
+
+        # Method 2: Extract actual k-coordinates from data and match with labels
+        if x_tick_labels:
+            # Parse actual k-point coordinates from band data
+            k_coordinates = []
+            for line in lines:
+                line = line.strip()
+                if line and (line[0].isdigit() or (line[0] == '-' and len(line) > 1 and line[1].isdigit())):
+                    parts = line.split()
+                    if parts:
+                        try:
+                            kcoord = float(parts[0])
+                            k_coordinates.append(kcoord)
+                        except ValueError:
+                            continue
+
+            # Match high-symmetry point indices with actual k-coordinates
+            if len(k_coordinates) >= len(x_ticks):
+                # Use the k-coordinates at the specified indices
+                actual_x_ticks = []
+                for idx in x_ticks:
+                    if 0 <= idx - 1 < len(k_coordinates):  # Convert to 0-based index
+                        k_value = k_coordinates[idx - 1]
+                        # Filter by k-range (like SIESTA does)
+                        if (round(k_value, 6) >= k_min) and (round(k_value, 6) <= k_max + 1e-6):
+                            actual_x_ticks.append(k_value)
+                        else:
+                            # Remove the corresponding label if k-point is out of range
+                            label_idx = x_ticks.index(idx)
+                            x_tick_labels.pop(label_idx)
+                    else:
+                        # Remove the corresponding label if index is invalid
+                        label_idx = x_ticks.index(idx)
+                        x_tick_labels.pop(label_idx)
+
+                x_ticks = actual_x_ticks
+
+        # Method 3: If above methods didn't work, try XAXIS TICKLABEL approach
+        if not x_ticks:
+            current_tick_index = None
+            current_tick_value = None
+
+            for line in lines:
+                if line.startswith('@ XAXIS TICK '):
+                    parts = line.split()
+                    if len(parts) >= 4:
+                        try:
+                            current_tick_index = int(parts[2].replace(',', ''))
+                            current_tick_value = float(parts[3].replace(',', ''))
+                        except (ValueError, IndexError):
+                            continue
+
+                elif line.startswith('@ XAXIS TICKLABEL ') and current_tick_value is not None:
+                    parts = line.split()
+                    # Look for the label in quotes
+                    for i in range(len(parts)):
+                        if parts[i].startswith('"') or "'" in parts[i]:
+                            kpoint_label = parts[i].strip('"\'')
+                            letter = helpers.utf8_letter(kpoint_label)
+
+                            # Filter by k-range (like SIESTA)
+                            if (round(current_tick_value, 6) >= k_min) and (
+                                    round(current_tick_value, 6) <= k_max + 1e-6):
+                                x_ticks.append(current_tick_value)
+                                x_tick_labels.append(letter)
+
+                            current_tick_value = None
+                            break
+
+        # Ensure we have the same number of ticks and labels
+        min_length = min(len(x_ticks), len(x_tick_labels))
+        x_ticks = x_ticks[:min_length]
+        x_tick_labels = x_tick_labels[:min_length]
+        return x_tick_labels, x_ticks
+
+    @staticmethod
     def read_crystal_bands(file_path, check_spin=True):
         """
         Reads a CRYSTAL BAND.DAT file and extracts the band structure.
+        Returns data in the same format as SIESTA.
 
         Parameters:
             file_path (str): Path to BAND.DAT file.
-            is_check_bands_spin (bool):
+            check_spin (bool):
                 True  -> return spin-up (alpha) bands
                 False -> return spin-down (beta) bands
 
         Returns:
-            bands (ndarray): Band energies (eV, shifted by Fermi level)
-            emaxf (float): Maximum energy (eV, relative to Fermi)
-            eminf (float): Minimum energy (eV, relative to Fermi)
-            kmesh (ndarray): K-point coordinates along the path
+            bands (ndarray): Band energies (eV, shifted by Fermi level), shape (n_bands, n_kpoints)
+            e_max (float): Maximum energy (eV, relative to Fermi)
+            e_min (float): Minimum energy (eV, relative to Fermi)
+            k_mesh (ndarray): K-point coordinates along the path, shape (n_kpoints,)
         """
 
-        hartree_to_ev = 27.2114
+        # First, use bands_parser to get basic information
+        emax_ev, emin_ev, kmax, kmin, nspin, efermi_ev = CRYSTAL.bands_parser(file_path)
 
         with open(file_path, "r") as f:
             lines = f.readlines()
 
-        # --- Read header ---
+        # --- Extract NKPT and NBND from header ---
+        nkpt = nbnd = None
         for line in lines:
             if line.startswith("# NKPT"):
                 parts = line.split()
-                nkpt = int(parts[2])
-                nbnd = int(parts[4])
-                nspin = int(parts[6])
+                print(f"Debug - Header parts: {parts}")
+
+                # Parse using label-based approach
+                for i in range(len(parts)):
+                    if parts[i] == 'NKPT' and i + 1 < len(parts):
+                        nkpt = int(parts[i + 1])
+                    elif parts[i] == 'NBND' and i + 1 < len(parts):
+                        nbnd = int(parts[i + 1])
+
+                # Alternative: find all numbers in the line
+                if nkpt is None or nbnd is None:
+                    numbers = [int(x) for x in parts if x.isdigit()]
+                    if len(numbers) >= 2:
+                        nkpt, nbnd = numbers[0], numbers[1]
+
                 break
 
-        # --- Get Fermi energy (last occurrence) ---
-        efermi = None
-        for line in reversed(lines):
-            if "EFERMI" in line:
-                efermi = float(line.split()[-1]) * hartree_to_ev
-                break
-        if efermi is None:
-            raise ValueError("EFERMI not found in file")
+        if nkpt is None or nbnd is None:
+            raise ValueError(f"Could not parse NKPT and NBND from file header. nkpt={nkpt}, nbnd={nbnd}")
 
         # --- Extract data lines ---
         data_lines = [
@@ -108,32 +276,50 @@ class CRYSTAL:
             for line in data_lines
         ])
 
-        # Check that number of columns matches (1 for k + nbnd bands)
-        ncol = data.shape[1]
-        if ncol != nbnd + 1 and nspin == 2:
-            # For spin-polarized case, both spin channels are concatenated
-            half = len(data) // 2
-            data_up = data[:half]
-            data_dn = data[half:]
-            if is_check_bands_spin:
-                data = data_up
+        # Handle spin-polarized case - преобразуем к SIESTA-like формату
+        if nspin == 2:
+            # For spin-polarized case, data contains both spin channels sequentially
+            total_kpoints_in_file = data.shape[0]
+            if total_kpoints_in_file == 2 * nkpt:
+                # Standard case: spin-up followed by spin-down
+                data_up = data[:nkpt]  # First nkpt points - spin-up
+                data_dn = data[nkpt:2 * nkpt]  # Next nkpt points - spin-down
+
+                # Extract k-mesh (should be the same for both spins)
+                k_mesh = data_up[:, 0]  # Use spin-up k-points
+
+                # Extract bands and convert to SIESTA format: shape (n_bands * n_spins, n_kpoints)
+                bands_up = data_up[:, 1:].T  # shape: (nbnd, nkpt)
+                bands_dn = data_dn[:, 1:].T  # shape: (nbnd, nkpt)
+
+                # Combine like SIESTA: all spin-up bands first, then all spin-down bands
+                bands_combined = np.vstack([bands_up, bands_dn])  # shape: (2 * nbnd, nkpt)
+
+                # Select spin according to check_spin parameter (like SIESTA)
+                if check_spin:
+                    bands = bands_up  # shape: (nbnd, nkpt) - spin-up
+                else:
+                    bands = bands_dn  # shape: (nbnd, nkpt) - spin-down
+
             else:
-                data = data_dn
-        elif ncol != nbnd + 1:
-            raise ValueError(f"Unexpected number of columns: {ncol}")
+                raise ValueError(
+                    f"Unexpected data size for spin-polarized case: expected {2 * nkpt}, got {total_kpoints_in_file}")
 
-        # Separate k-mesh and band energies
-        kmesh = data[:, 0]
-        bands = data[:, 1:].T * hartree_to_ev  # (nbnd, nkpt)
+        else:
+            # Non-spin-polarized case
+            k_mesh = data[:, 0]
+            bands = data[:, 1:].T  # shape: (nbnd, nkpt)
 
-        # Shift relative to Fermi energy
-        bands -= efermi
+        # Convert bands to eV and shift relative to Fermi energy
+        bands_ev = bands * 27.2114  # Convert to eV
+        #bands_ev -= efermi_ev  # Shift to Fermi level
 
-        # Compute energy limits
-        emaxf = np.max(bands)
-        eminf = np.min(bands)
+        # Compute energy limits relative to Fermi level (like SIESTA)
+        e_min = np.min(bands_ev)
+        e_max = np.max(bands_ev)
 
-        return bands, emaxf, eminf, kmesh
+        # Return in SIESTA format: bands (n_bands, n_kpoints), e_max, e_min, k_mesh (n_kpoints,)
+        return bands_ev, e_max, e_min, k_mesh
 
 
 def model_0d_to_d12(model):

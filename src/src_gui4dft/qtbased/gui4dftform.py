@@ -2388,13 +2388,11 @@ class MainForm(QMainWindow):
             if file.endswith(".bands"):
                 emax, emin, kmax, kmin, nspins = TSIESTA.bands_parser(file)
                 xticklabels, xticks = TSIESTA.read_bands_xlabels(file, kmax, kmin)
-                for tick, label in zip(xticks, xticklabels):
-                    self.ui.high_symmetry_k_points.setRowCount(self.ui.high_symmetry_k_points.rowCount() + 1)
-                    n = self.ui.high_symmetry_k_points.rowCount() - 1
-                    self.ui.high_symmetry_k_points.setItem(n, 0, QTableWidgetItem(str(tick)))
-                    self.ui.high_symmetry_k_points.setItem(n, 1, QTableWidgetItem(label))
+                self.kpoints_to_form(xticklabels, xticks)
             elif file.endswith(".DAT"):
                 emax, emin, kmax, kmin, nspins, ef = CRYSTAL.bands_parser(file)
+                xticklabels, xticks = CRYSTAL.read_bands_xlabels(file, kmax, kmin)
+                self.kpoints_to_form(xticklabels, xticks)
             elif file.endswith(".dat.gnu"):
                 emax, emin, kmax, kmin, nspins = TQE.gnuplot_bands_reader(file)
 
@@ -2407,6 +2405,13 @@ class MainForm(QMainWindow):
             e_max_form = 2 if emax > 2 else emax
 
             self.bands_ready_to_plot(e_max_form, e_min_form, emax, emin, kmax, kmin)
+
+    def kpoints_to_form(self, xticklabels, xticks):
+        for tick, label in zip(xticks, xticklabels):
+            self.ui.high_symmetry_k_points.setRowCount(self.ui.high_symmetry_k_points.rowCount() + 1)
+            n = self.ui.high_symmetry_k_points.rowCount() - 1
+            self.ui.high_symmetry_k_points.setItem(n, 0, QTableWidgetItem(str(tick)))
+            self.ui.high_symmetry_k_points.setItem(n, 1, QTableWidgetItem(label))
 
     def bands_ready_to_plot(self, e_max_form, e_min_form, emax, emin, kmax, kmin):
         self.ui.spin_bands_xmin.setRange(kmin, kmax)
@@ -2433,6 +2438,7 @@ class MainForm(QMainWindow):
 
         if os.path.exists(file):
             format = helpers.check_format(self.filename)
+            print("file format: ", format)
             if format == "unknown":
                 format = helpers.check_format(file)
             updown = self.ui.bands_spin_up_down.isChecked()
@@ -2467,15 +2473,9 @@ class MainForm(QMainWindow):
                                                  _style=Qt.DotLine)
 
             if format == "crystal_bands":
-                print("crystal_bands")
                 bands, emaxf, eminf, kmesh = CRYSTAL.read_crystal_bands(file, True)
-                print("kmesh: ", kmesh)
-                print("emaxf, eminf: ", emaxf, eminf)
-                print("len(bands): ", len(bands))
-                print(bands)
                 b_mins = np.min(bands, 1)
                 b_maxs = np.max(bands, 1)
-                print("b_mins, b_maxs: ", b_mins, b_maxs)
                 inds = np.zeros(len(bands), dtype=int)
                 for i in range(len(bands)):
                     if (b_mins[i] >= emin) and (b_mins[i] <= emax) or (b_maxs[i] >= emin) and (b_maxs[i] <= emax):
