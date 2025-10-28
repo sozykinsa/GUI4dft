@@ -478,9 +478,7 @@ def structure_of_primitive_cell(f_name):
     f = open(f_name)
     start = 3
     str1 = f.readline()
-    vec1 = np.array([1.0, 0.0, 0.0], dtype=float)
-    vec2 = np.array([0.0, 1.0, 0.0], dtype=float)
-    vec3 = np.array([0.0, 0.0, 1.0], dtype=float)
+    vecs = np.ones((3, 3), dtype=float)
     while str1:
         f1 = str1.find("     ATOM             X(ANGSTROM)         Y(ANGSTROM)         Z(ANGSTROM)") >= 0
         f2 = str1.find("DIRECT LATTICE VECTORS CARTESIAN COMPONENTS (ANGSTROM)") >= 0
@@ -489,9 +487,9 @@ def structure_of_primitive_cell(f_name):
             start = 4
         if f2:
             f.readline()
-            vec1 = np.array(f.readline().split(), dtype=float)
-            vec2 = np.array(f.readline().split(), dtype=float)
-            vec3 = np.array(f.readline().split(), dtype=float)
+            vecs[0] = np.array(f.readline().split(), dtype=float)
+            vecs[1] = np.array(f.readline().split(), dtype=float)
+            vecs[2] = np.array(f.readline().split(), dtype=float)
             for i in range(6):
                 f.readline()
                 start = 3
@@ -508,7 +506,7 @@ def structure_of_primitive_cell(f_name):
                 model.add_atom(Atom([x, y, z, let, charge]))
                 str1 = helpers.spacedel(f.readline())
         if f2:
-            model.set_lat_vectors(vec1, vec2, vec3)
+            model.set_lat_vectors(vecs)
         if f1 or f2:
             models.append(model)
         str1 = f.readline()
