@@ -165,6 +165,7 @@ class MainForm(QMainWindow):
         self.ui.generate_trigonal_model.clicked.connect(self.create_trigonal)
         self.ui.generate_meta_gr_model.clicked.connect(self.create_meta_gr_model)
         self.ui.generate_3d_bulk.clicked.connect(self.generate_3d_bulk)
+        self.ui.remove_collision.clicked.connect(self.remove_collision)
 
         self.ui.get_k_points.clicked.connect(self.get_k_points)
         self.ui.get_k_path.clicked.connect(self.get_k_path)
@@ -249,6 +250,7 @@ class MainForm(QMainWindow):
         self.ui.changeFragment1StatusByY.clicked.connect(self.change_fragment1_status_by_y)
         self.ui.changeFragment1StatusByZ.clicked.connect(self.change_fragment1_status_by_z)
         self.ui.fragment1Clear.clicked.connect(self.fragment1_clear)
+        self.ui.fragment1Delete.clicked.connect(self.fragment1_delete)
 
         self.ui.show_property_text.clicked.connect(self.show_property)
 
@@ -599,12 +601,14 @@ class MainForm(QMainWindow):
             self.ui.changeFragment1StatusByY.setEnabled(True)
             self.ui.changeFragment1StatusByZ.setEnabled(True)
             self.ui.fragment1Clear.setEnabled(True)
+            self.ui.fragment1Delete.setEnabled(True)
         else:
             self.ui.openGLWidget.set_selected_fragment_mode(None, self.ui.ActivateFragmentSelectionTransp.value())
             self.ui.changeFragment1StatusByX.setEnabled(False)
             self.ui.changeFragment1StatusByY.setEnabled(False)
             self.ui.changeFragment1StatusByZ.setEnabled(False)
             self.ui.fragment1Clear.setEnabled(False)
+            self.ui.fragment1Delete.setEnabled(False)
 
     def add_cell_param(self):
         """Add cell parameter."""
@@ -975,6 +979,17 @@ class MainForm(QMainWindow):
         for at in self.ui.openGLWidget.main_model.atoms:
             at.fragment1 = False
         self.fragment1_post_actions()
+
+    def fragment1_delete(self):
+        n = len(self.ui.openGLWidget.main_model.atoms)
+        for i in range(n):
+            if self.ui.openGLWidget.main_model.atoms[n - i -1].fragment1:
+                self.ui.openGLWidget.main_model.atoms.pop(n - i -1)
+        self.ui.openGLWidget.main_model.bonds.clear()
+        self.ui.openGLWidget.main_model.find_bonds()
+
+        self.fragment1_post_actions()
+
 
     def fragment1_post_actions(self):
         self.ui.openGLWidget.atoms_of_selected_fragment_to_form()
@@ -3447,6 +3462,22 @@ class MainForm(QMainWindow):
         self.models.append(model)
         self.plot_model(-1)
         self.fill_gui(model_type + "-model")
+
+    def remove_collision(self):
+        old_model = self.ui.openGLWidget.get_model()
+        model = AtomicModel()
+        model.lat_vectors = old_model.lat_vectors
+        for i in range(len(old_model.atoms)):
+            atom = old_model[i]
+            if atom.fragment1:
+                model.add_atom(atom, min_dist=0.1)
+        for i in range(len(old_model.atoms)):
+            atom = old_model[i]
+            if not atom.fragment1:
+                model.add_atom(atom, min_dist=1.3)
+        self.models.append(model)
+        self.plot_model(-1)
+        self.fill_gui("new model")
 
     def generate_3d_bulk(self):
         """ASE bulk interface"""

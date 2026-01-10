@@ -45,7 +45,7 @@ class ProjectFile(object):
                 if row.find("%atoms") >= 0:
                     number_of_atoms = int(f.readline())
                     model = AtomicModel.atoms_from_xyz_structure(number_of_atoms, f)
-                    model.set_lat_vectors(lat_vectors[0], lat_vectors[1], lat_vectors[2])
+                    model.set_lat_vectors(lat_vectors)
                 row = f.readline()
             f.close()
         return [model]
