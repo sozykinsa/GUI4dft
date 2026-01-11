@@ -26,9 +26,9 @@ from PySide6.QtWidgets import (QAbstractItemView, QAbstractScrollArea, QAbstract
     QTextBrowser, QToolBar, QToolBox, QTreeWidget,
     QTreeWidgetItem, QVBoxLayout, QWidget)
 
-from guiopengl import GuiOpenGL
-from pyqtgraphwidget import PyqtGraphWidget
-from pyqtgraphwidgetimage import PyqtGraphWidgetImage
+from src_gui4dft.qtbased.guiopengl import GuiOpenGL
+from core_atomistic_qt.qt_graph import PyqtGraphWidget
+from core_atomistic_qt.qt_image import PyqtGraphWidgetImage
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
