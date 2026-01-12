@@ -230,12 +230,23 @@ class AtomicModel(object):
         return 180 * angle / math.pi
 
     def get_angle_beta(self):
-        a = norm(self.lat_vector1)
-        b = norm(self.lat_vector3)
-        ab = self.lat_vector1[0] * self.lat_vector3[0] + self.lat_vector1[1] * self.lat_vector3[1] + \
-            self.lat_vector1[2] * self.lat_vector3[2]
-        angle = math.acos(ab / (a * b))
-        return 180 * angle / math.pi
+        # a = norm(self.lat_vector1)
+        # b = norm(self.lat_vector3)
+        # ab = self.lat_vector1[0] * self.lat_vector3[0] + self.lat_vector1[1] * self.lat_vector3[1] + \
+        #     self.lat_vector1[2] * self.lat_vector3[2]
+        # angle = math.acos(ab / (a * b))
+        # return 180 * angle / math.pi
+
+        # Нормализация векторов и вычисление угла
+        norm_v1 = np.linalg.norm(self.lat_vectors[0])
+        norm_v3 = np.linalg.norm(self.lat_vectors[2])
+        cos_angle = np.dot(self.lat_vectors[0], self.lat_vectors[2]) / (norm_v1 * norm_v3)
+
+        # Обеспечение, что значение в пределах [-1, 1] для acos
+        cos_angle = np.clip(cos_angle, -1.0, 1.0)
+
+        angle = math.acos(cos_angle)
+        return math.degrees(angle)
 
     def get_angle_gamma(self):
         a = norm(self.lat_vector2)

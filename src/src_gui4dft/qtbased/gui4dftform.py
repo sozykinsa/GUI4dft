@@ -987,6 +987,8 @@ class MainForm(QMainWindow):
                 self.ui.openGLWidget.main_model.atoms.pop(n - i -1)
         self.ui.openGLWidget.main_model.bonds.clear()
         self.ui.openGLWidget.main_model.find_bonds()
+        self.models.append(self.ui.openGLWidget.main_model)
+        self.model_to_screen(-1)
 
         self.fragment1_post_actions()
 
