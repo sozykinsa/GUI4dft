@@ -2463,7 +2463,8 @@ class MainForm(QMainWindow):
             xticklabels, xticks = [], []
             for index in range(self.ui.high_symmetry_k_points.rowCount()):
                 xticks.append(float(self.ui.high_symmetry_k_points.item(index, 0).text()))
-                xticklabels.append(self.ui.high_symmetry_k_points.item(index, 1).text())
+                let = helpers.utf8_letter(self.ui.high_symmetry_k_points.item(index, 1).text())
+                xticklabels.append(let)
 
             if (format == "siesta_out") and (self.ui.bands_spin_up.isChecked() or updown):
                 bands, emaxf, eminf, kmesh = read_siesta_bands(file, True)
