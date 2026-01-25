@@ -3627,6 +3627,19 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_29.addWidget(self.dos_efermy_show)
 
+        self.horizontalSpacer_162 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+
+        self.horizontalLayout_29.addItem(self.horizontalSpacer_162)
+
+        self.dos_vertical = QCheckBox(self.frame_34)
+        self.dos_vertical.setObjectName(u"dos_vertical")
+
+        self.horizontalLayout_29.addWidget(self.dos_vertical)
+
+        self.horizontalSpacer_163 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+
+        self.horizontalLayout_29.addItem(self.horizontalSpacer_163)
+
 
         self.verticalLayout_9.addWidget(self.frame_34)
 
@@ -7501,9 +7514,10 @@ class Ui_MainWindow(object):
         self.FormActionsLabelBANDSgap.setText("")
         self.tabWidget_5.setTabText(self.tabWidget_5.indexOf(self.tab_18), QCoreApplication.translate("MainWindow", u"Band structure", None))
         self.dos_efermy_show.setText(QCoreApplication.translate("MainWindow", u"Show Fermi level", None))
+        self.dos_vertical.setText(QCoreApplication.translate("MainWindow", u"Vertically", None))
         self.plot_two_spins_dos.setText(QCoreApplication.translate("MainWindow", u"Plot Up and Down spin", None))
         self.invert_spin_dos.setText(QCoreApplication.translate("MainWindow", u"Invert Down", None))
-        self.FormActionsButtonAddDOSFile.setText(QCoreApplication.translate("MainWindow", u"Add .out or DOSCAR file", None))
+        self.FormActionsButtonAddDOSFile.setText(QCoreApplication.translate("MainWindow", u"Add .out, DOSCAR or DOSS.DAT file", None))
         self.FormActionsButtonClearDOS.setText(QCoreApplication.translate("MainWindow", u"Clear", None))
         self.groupBox_46.setTitle(QCoreApplication.translate("MainWindow", u"Plot", None))
         self.label_116.setText(QCoreApplication.translate("MainWindow", u"Title", None))

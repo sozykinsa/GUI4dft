@@ -282,6 +282,7 @@ class VASP:
             my_file.close()
             e_fermy = float(str1.split()[3])
             return e_fermy
+        return None
 
     @staticmethod
     def vasp_dos(filename):
@@ -295,3 +296,4 @@ class VASP:
         if os.path.exists(filename):
             spin_up, spin_down, energy = dos_from_file(filename, 2, nlines)
             return np.array(spin_up), np.array(spin_down), np.array(energy)
+        return None

@@ -6630,6 +6630,39 @@
                  </property>
                 </widget>
                </item>
+               <item>
+                <spacer name="horizontalSpacer_162">
+                 <property name="orientation">
+                  <enum>Qt::Orientation::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+               <item>
+                <widget class="QCheckBox" name="dos_vertical">
+                 <property name="text">
+                  <string>Vertically</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <spacer name="horizontalSpacer_163">
+                 <property name="orientation">
+                  <enum>Qt::Orientation::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
               </layout>
              </widget>
             </item>
@@ -6722,7 +6755,7 @@
                <item>
                 <widget class="QPushButton" name="FormActionsButtonAddDOSFile">
                  <property name="text">
-                  <string>Add .out or DOSCAR file</string>
+                  <string>Add .out, DOSCAR or DOSS.DAT file</string>
                  </property>
                 </widget>
                </item>

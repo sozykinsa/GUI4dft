@@ -56,6 +56,7 @@ from src_gui4dft.program.fdfdata import TFDFFile
 from src_gui4dft.utils.calculators import Calculators as Calculator
 from src_gui4dft.utils.calculators import gaps
 from src_gui4dft.utils.electronic_prop_reader import read_siesta_bands, dos_from_file, siesta_homo_lumo
+from src_gui4dft.utils.electronic_prop_reader import dos_from_crystal_file
 from src_gui4dft.ui.about import Ui_DialogAbout as Ui_about
 
 if sys.platform.startswith('win'):
@@ -2536,6 +2537,7 @@ class MainForm(QMainWindow):
         return bands, emaxf, eminf, kmesh
 
     def plot_dos(self):
+        is_vertical = self.ui.dos_vertical.isChecked()
         self.ui.PyqtGraphWidget.set_xticks(None)
         self.ui.Form3Dand2DTabs.setCurrentIndex(1)
 
@@ -2558,10 +2560,13 @@ class MainForm(QMainWindow):
             if os.path.exists(path):
                 if path.endswith("DOSCAR"):
                     spin_up, spin_down, energy = VASP.vasp_dos(path)
+                elif path.endswith("DOSS.DAT"):
+                    spin_up, spin_down, energy = dos_from_crystal_file(path)
                 else:
                     spin_up, spin_down, energy = dos_from_file(path)
 
-                energy -= path_efermy_list[index][1]
+                if not path.endswith("DOSS.DAT"):
+                    energy -= path_efermy_list[index][1]
                 if is_invert_spin_down:
                     spin_down *= -1
                 x.append(energy)
@@ -2579,7 +2584,10 @@ class MainForm(QMainWindow):
         self.ui.PyqtGraphWidget.clear()
         self.ui.PyqtGraphWidget.add_legend()
         self.ui.PyqtGraphWidget.enable_auto_range()
-        self.ui.PyqtGraphWidget.plot(x, y, labels, title, x_title, y_title)
+        if not is_vertical:
+            self.ui.PyqtGraphWidget.plot(x, y, labels, title, x_title, y_title)
+        else:
+            self.ui.PyqtGraphWidget.plot(y, x, labels, title, y_title, x_title)
 
         if is_fermi_level_show:
             self.ui.PyqtGraphWidget.add_line(0, 90, 2, Qt.DashLine)

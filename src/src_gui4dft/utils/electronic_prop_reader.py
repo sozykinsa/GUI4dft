@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 import os
+import re
 import numpy as np
 from core_atomistic import helpers
 
-HARTREE_TO_EV = 27.2114
+# Conversion factor: 1 Hartree = 27.21138602 eV (according to CODATA)
+HARTREE_TO_EV = 27.21138602
 
 
 def dos_from_file(filename, n=2, n_lines=0):
@@ -25,6 +27,77 @@ def dos_from_file(filename, n=2, n_lines=0):
             while str_dos != '':
                 str_dos = read_row_of_dos_file(dos_file, energy, n, spin_down, spin_up, str_dos)
     return np.array(spin_up), np.array(spin_down), np.array(energy)
+
+
+def dos_from_crystal_file(filename):
+    """
+    Reads the DOS data from a Crystal DOSS.DAT file.
+    Assumes NSPIN=2 (spin-polarized): first block for spin-up (positive DOS),
+    second block for spin-down (negative DOS, which we invert to positive).
+    Returns lists: spin_up, spin_down, energy (in Hartree, relative to E_FERMI).
+    """
+    spin_up = []
+    spin_down = []
+    energy = []
+
+    with open(filename, 'r') as f:
+        line = f.readline().strip().split()
+        nlines = int(line[2])
+        NPROJ = int(line[4])
+        nspin = int(line[6])
+
+        # Read first block: nlines lines of E DOS_up (positive)
+        # The loop will automatically skip intervening # and @ lines
+        for _ in range(nlines + 10):  # +10 to account for header skips (safe upper bound)
+            line = f.readline().strip()
+            if len(spin_up) >= nlines:
+                break
+            if line and not line.startswith('#') and not line.startswith('@'):
+                parts = line.split()
+                e = float(parts[0])
+                dos_up = float(parts[1])
+                energy.append(e)
+                spin_up.append(dos_up)
+
+        if nspin == 2:
+            # Skip # EFERMI line
+            f.readline()
+            # Skip & separator unconditionally
+            # f.readline()
+
+            # Read second block: nlines lines of E DOS_down (negative, invert sign)
+            for _ in range(nlines + 5):  # +5 for any extra skips
+                line = f.readline().strip()
+                if len(spin_down) >= nlines:
+                    break
+                if line and not line.startswith('#') and line != '&':
+                    parts = line.split()
+                    # e = float(parts[0])  # Matches energy from first block, no need to append
+                    dos_down = -float(parts[1])  # Invert to make positive, like VASP
+                    spin_down.append(dos_down)
+        else:
+            # For nspin=1, no second block to read
+            pass
+
+        # Skip final # EFERMI line if present (only for nspin=2)
+        if nspin == 2:
+            try:
+                f.readline()
+            except:
+                pass
+
+    if nspin == 1:
+        # For non-spin-polarized, return total DOS as spin_up, empty spin_down
+        spin_down = [0.0] * len(spin_up)
+
+    # Validation
+    if len(spin_up) != nlines:
+        raise ValueError(f"Expected {nlines} points for spin-up, but read {len(spin_up)}")
+
+    if nspin == 2 and len(spin_down) != nlines:
+        raise ValueError(f"Expected {nlines} points for spin-down, but read {len(spin_down)}")
+
+    return np.array(spin_up), np.array(spin_down), np.array(energy) * HARTREE_TO_EV
 
 
 def read_row_of_dos_file(dos_file, energy, n, spin_down, spin_up, str_dos):
@@ -58,6 +131,32 @@ def dos_siesta_vert(filename, e_f=0):
             dos.append([float(line1[1]), round(float(line1[0]) - e_f, 5)])
             str_dos = dos_file.readline()
         return dos
+    return None
+
+
+def fermi_energy_from_crystal_dos(file_path):
+    """
+        Extracts the Fermi energy from the DOSS.DAT file specified by the path.
+        Assumes the line with the energy has the format '# EFERMI (HARTREE) <value>'.
+        If there are multiple lines (for spin-polarized calculation), returns the first one found.
+        Returns the value in electronvolts (eV).
+        """
+    try:
+        with open(file_path, 'r') as f:
+            content = f.read()
+    except FileNotFoundError:
+        raise FileNotFoundError(f"File not found: {file_path}")
+    except Exception as e:
+        raise ValueError(f"Error reading file: {e}")
+
+    pattern = r'# EFERMI \(HARTREE\)\s*([-+]?\d+\.?\d*[eE]?-?\d*)'
+    match = re.search(pattern, content)
+    if match:
+        fermi_hartree = float(match.group(1))
+        fermi_ev = fermi_hartree * HARTREE_TO_EV
+        return fermi_ev
+    else:
+        raise ValueError("Fermi energy not found in the file.")
 
 
 def read_siesta_bands(file, is_check_bands_spin):

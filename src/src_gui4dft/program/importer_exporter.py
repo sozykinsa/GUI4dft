@@ -8,7 +8,7 @@ from core_atomistic.project_file import ProjectFile
 from src_gui4dft.program.fdfdata import TFDFFile
 from src_gui4dft.program.siesta import TSIESTA
 from src_gui4dft.program.firefly import atomic_model_to_firefly_inp
-from src_gui4dft.program.crystal import structure_of_primitive_cell, structure_opt_step, optimisatioion_steps
+from src_gui4dft.program.crystal import structure_of_primitive_cell, structure_opt_step, optimisatioion_steps, CRYSTAL
 from src_gui4dft.program.chemdraw import model_from_ct
 from src_gui4dft.program.qe import atoms_from_pwout
 from src_gui4dft.program.qe import energy_tot as qe_energy_tot
@@ -20,6 +20,7 @@ from src_gui4dft.program.vasp import VASP
 from src_gui4dft.program.wien import WIEN
 from src_gui4dft.program.gaussiancube import GaussianCube
 from src_gui4dft.program.xsf import XSF
+from src_gui4dft.utils.electronic_prop_reader import fermi_energy_from_crystal_dos
 
 
 class ImporterExporter(object):
@@ -145,6 +146,9 @@ class ImporterExporter(object):
         """Check DOS file for fdf/out filename."""
         if filename.endswith("DOSCAR"):
             return filename, VASP.fermi_energy_from_doscar(filename)
+
+        if filename.endswith("DOSS.DAT"):
+            return filename, fermi_energy_from_crystal_dos(filename)
 
         system_label = TSIESTA.system_label(filename)
         file = os.path.dirname(filename) + "/" + str(system_label) + ".DOS"

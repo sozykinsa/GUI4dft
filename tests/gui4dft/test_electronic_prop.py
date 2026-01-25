@@ -1,4 +1,5 @@
 from src_gui4dft.utils.electronic_prop_reader import read_siesta_bands, dos_from_file, dos_siesta_vert, siesta_homo_lumo
+from src_gui4dft.utils.electronic_prop_reader import fermi_energy_from_crystal_dos
 from src_gui4dft.program.vasp import VASP
 from src_gui4dft.program.siesta import TSIESTA
 
@@ -13,6 +14,12 @@ def test_dos_from_file(tests_path):
     f_name = str(tests_path / 'ref_data' / 'vasp' / 'vasp_cartesian' / "DOSCAR")
     spin_up, spin_down, energy = VASP.vasp_dos(f_name)
     assert len(energy) == 301
+
+
+def test_crystal_efermi(tests_path):
+    f_name = str(tests_path / 'ref_data' / 'crystal' / "DOSS.DAT")
+    energy = fermi_energy_from_crystal_dos(f_name)
+    assert energy == -3.7870085924033994
 
 
 def test_dos_siesta_vert(tests_path):
@@ -42,9 +49,9 @@ def test_pdos(tests_path):
 def test_bands(tests_path):
     f_name = str(tests_path / 'ref_data' / 'swcnt(8,0)' / "siesta.bands")
 
-    kmin, kmax = 0.0, 0.39
+    # kmin, kmax = 0.0, 0.39
     is_check_bands_spin = True
-    bands, emaxf, eminf, kmesh = read_siesta_bands(f_name, is_check_bands_spin, kmax, kmin)
+    bands, emaxf, eminf, kmesh = read_siesta_bands(f_name, is_check_bands_spin)
     assert len(kmesh) == 100
 
     homo, lumo = siesta_homo_lumo(bands, emaxf, eminf)
