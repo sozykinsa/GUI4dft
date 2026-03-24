@@ -1,8 +1,8 @@
 from pathlib import Path
+import sys
+sys.path.append("./src")
 from core_atomistic.atomic_model import AtomicModel
 from core_atomistic.periodic_table import TPeriodTable
-
-
 import pytest
 
 

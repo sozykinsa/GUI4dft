@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 # Python 3
+import sys
+sys.path.append("./src")
+
 from typing import List
 import copy
 import math

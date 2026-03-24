@@ -1,4 +1,6 @@
 from pathlib import Path
+import sys
+sys.path.append("./src")
 from core_atomistic.periodic_table import TPeriodTable
 
 import pytest

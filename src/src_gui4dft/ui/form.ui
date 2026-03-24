@@ -3690,8 +3690,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>364</width>
-                 <height>494</height>
+                 <width>379</width>
+                 <height>603</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -4135,6 +4135,210 @@
                 </item>
                </layout>
               </widget>
+              <widget class="QWidget" name="page_9">
+               <property name="geometry">
+                <rect>
+                 <x>0</x>
+                 <y>0</y>
+                 <width>379</width>
+                 <height>603</height>
+                </rect>
+               </property>
+               <attribute name="label">
+                <string>Add multiple atoms</string>
+               </attribute>
+               <layout class="QVBoxLayout" name="verticalLayout_111">
+                <item>
+                 <widget class="QGroupBox" name="groupBox_73">
+                  <property name="title">
+                   <string>Random positions</string>
+                  </property>
+                  <layout class="QVBoxLayout" name="verticalLayout_110">
+                   <item>
+                    <widget class="QFrame" name="frame_190">
+                     <property name="frameShape">
+                      <enum>QFrame::Shape::StyledPanel</enum>
+                     </property>
+                     <property name="frameShadow">
+                      <enum>QFrame::Shadow::Raised</enum>
+                     </property>
+                     <layout class="QHBoxLayout" name="horizontalLayout_214">
+                      <item>
+                       <widget class="QLabel" name="label_7">
+                        <property name="text">
+                         <string>Atom (i.e. 1 for H)</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QSpinBox" name="add_atom_charge">
+                        <property name="minimum">
+                         <number>1</number>
+                        </property>
+                        <property name="maximum">
+                         <number>200</number>
+                        </property>
+                       </widget>
+                      </item>
+                     </layout>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QFrame" name="frame_191">
+                     <property name="frameShape">
+                      <enum>QFrame::Shape::StyledPanel</enum>
+                     </property>
+                     <property name="frameShadow">
+                      <enum>QFrame::Shadow::Raised</enum>
+                     </property>
+                     <layout class="QHBoxLayout" name="horizontalLayout_215">
+                      <item>
+                       <widget class="QLabel" name="label_8">
+                        <property name="text">
+                         <string>Atom number</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QSpinBox" name="add_atom_number">
+                        <property name="minimum">
+                         <number>1</number>
+                        </property>
+                        <property name="maximum">
+                         <number>300</number>
+                        </property>
+                       </widget>
+                      </item>
+                     </layout>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QFrame" name="frame_193">
+                     <property name="frameShape">
+                      <enum>QFrame::Shape::StyledPanel</enum>
+                     </property>
+                     <property name="frameShadow">
+                      <enum>QFrame::Shadow::Raised</enum>
+                     </property>
+                     <layout class="QHBoxLayout" name="horizontalLayout_217">
+                      <item>
+                       <widget class="QLabel" name="label_77">
+                        <property name="text">
+                         <string>Min. distance</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QDoubleSpinBox" name="add_atom_min_d">
+                        <property name="minimum">
+                         <double>0.500000000000000</double>
+                        </property>
+                        <property name="singleStep">
+                         <double>0.100000000000000</double>
+                        </property>
+                        <property name="value">
+                         <double>1.500000000000000</double>
+                        </property>
+                       </widget>
+                      </item>
+                     </layout>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QFrame" name="frame_194">
+                     <property name="frameShape">
+                      <enum>QFrame::Shape::StyledPanel</enum>
+                     </property>
+                     <property name="frameShadow">
+                      <enum>QFrame::Shadow::Raised</enum>
+                     </property>
+                     <layout class="QHBoxLayout" name="horizontalLayout_218">
+                      <item>
+                       <widget class="QLabel" name="add_atom_attemp">
+                        <property name="text">
+                         <string>Attempts</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QSpinBox" name="add_atom_attem">
+                        <property name="minimum">
+                         <number>1</number>
+                        </property>
+                        <property name="maximum">
+                         <number>300</number>
+                        </property>
+                        <property name="value">
+                         <number>20</number>
+                        </property>
+                       </widget>
+                      </item>
+                     </layout>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QFrame" name="frame_192">
+                     <property name="frameShape">
+                      <enum>QFrame::Shape::StyledPanel</enum>
+                     </property>
+                     <property name="frameShadow">
+                      <enum>QFrame::Shadow::Raised</enum>
+                     </property>
+                     <layout class="QHBoxLayout" name="horizontalLayout_216">
+                      <item>
+                       <spacer name="horizontalSpacer_164">
+                        <property name="orientation">
+                         <enum>Qt::Orientation::Horizontal</enum>
+                        </property>
+                        <property name="sizeHint" stdset="0">
+                         <size>
+                          <width>114</width>
+                          <height>20</height>
+                         </size>
+                        </property>
+                       </spacer>
+                      </item>
+                      <item>
+                       <widget class="QPushButton" name="add_atoms_random">
+                        <property name="text">
+                         <string>Add atoms</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <spacer name="horizontalSpacer_165">
+                        <property name="orientation">
+                         <enum>Qt::Orientation::Horizontal</enum>
+                        </property>
+                        <property name="sizeHint" stdset="0">
+                         <size>
+                          <width>114</width>
+                          <height>20</height>
+                         </size>
+                        </property>
+                       </spacer>
+                      </item>
+                     </layout>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="verticalSpacer_3">
+                  <property name="orientation">
+                   <enum>Qt::Orientation::Vertical</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>20</width>
+                    <height>300</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+               </layout>
+              </widget>
               <widget class="QWidget" name="page">
                <property name="geometry">
                 <rect>
@@ -4508,29 +4712,6 @@
                  </spacer>
                 </item>
                </layout>
-              </widget>
-              <widget class="QWidget" name="page_9">
-               <property name="geometry">
-                <rect>
-                 <x>0</x>
-                 <y>0</y>
-                 <width>100</width>
-                 <height>30</height>
-                </rect>
-               </property>
-               <attribute name="label">
-                <string>Сhange type of atoms</string>
-               </attribute>
-               <widget class="QComboBox" name="FormModelComboModels_2">
-                <property name="geometry">
-                 <rect>
-                  <x>50</x>
-                  <y>10</y>
-                  <width>61</width>
-                  <height>22</height>
-                 </rect>
-                </property>
-               </widget>
               </widget>
               <widget class="QWidget" name="page_11">
                <property name="geometry">

@@ -60,9 +60,9 @@ def test_bands(tests_path):
 
     f_name = str(tests_path / 'ref_data' / 'swcnt(8,0)spin_polarized' / "siesta.bands")
 
-    kmin, kmax = 0.0, 0.39
+    # kmin, kmax = 0.0, 0.39
     is_check_bands_spin = True
-    bands, emaxf, eminf, kmesh = read_siesta_bands(f_name, is_check_bands_spin, kmax, kmin)
+    bands, emaxf, eminf, kmesh = read_siesta_bands(f_name, is_check_bands_spin) # , kmax, kmin)
     assert len(kmesh) == 100
 
     homo, lumo = siesta_homo_lumo(bands, emaxf, eminf)

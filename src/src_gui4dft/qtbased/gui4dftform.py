@@ -7,6 +7,7 @@ except Exception as e:
     pass
 import math
 import sys
+import random
 from pathlib import Path
 from copy import deepcopy
 from operator import itemgetter
@@ -167,6 +168,8 @@ class MainForm(QMainWindow):
         self.ui.generate_meta_gr_model.clicked.connect(self.create_meta_gr_model)
         self.ui.generate_3d_bulk.clicked.connect(self.generate_3d_bulk)
         self.ui.remove_collision.clicked.connect(self.remove_collision)
+
+        self.ui.add_atoms_random.clicked.connect(self.add_atoms_random)
 
         self.ui.get_k_points.clicked.connect(self.get_k_points)
         self.ui.get_k_path.clicked.connect(self.get_k_path)
@@ -3538,6 +3541,32 @@ class MainForm(QMainWindow):
         self.models.append(model)
         self.plot_model(-1)
         self.fill_gui(name)
+
+    def add_atoms_random(self):
+        if len(self.models) > 0:
+            attemps = self.ui.add_atom_attem.value()
+            min_dist = self.ui.add_atom_min_d.value()
+            n_atoms_add = self.ui.add_atom_number.value()
+            charge = self.ui.add_atom_charge.value()
+
+            model = AtomicModel(self.active_model)
+
+            for i in range(attemps):
+                print("Attempt " + str(i + 1) + "/" + str(attemps))
+                model1 = AtomicModel(model)
+                model1.lat_vectors = self.active_model.lat_vectors
+                k = 0
+                while (model1.n_atoms() < model.n_atoms() + n_atoms_add) and k < 100 * n_atoms_add:
+                    x = random.uniform(-model1.lat_vector1[0]/2, model1.lat_vector1[0]/2)
+                    y = random.uniform(-model1.lat_vector2[1]/2, model1.lat_vector2[1]/2)
+                    z = random.uniform(-model1.lat_vector3[2]/2, model1.lat_vector3[2]/2)
+                    let = model1.mendeley.get_let(charge)
+                    new_atom = Atom([x,y,z, let, charge])
+                    model1.add_atom(new_atom, min_dist)
+                    k += 1
+                self.add_model_and_show(model1)
+        else:
+            print("No model to add atoms")
 
     def create_swnt(self):
         tube_type = 0
