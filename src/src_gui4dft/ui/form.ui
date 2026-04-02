@@ -814,7 +814,7 @@
                  <x>0</x>
                  <y>0</y>
                  <width>379</width>
-                 <height>573</height>
+                 <height>543</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -2572,7 +2572,7 @@
                  <x>0</x>
                  <y>0</y>
                  <width>395</width>
-                 <height>494</height>
+                 <height>531</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -3022,7 +3022,7 @@
                <property name="geometry">
                 <rect>
                  <x>0</x>
-                 <y>0</y>
+                 <y>-101</y>
                  <width>395</width>
                  <height>632</height>
                 </rect>
@@ -3662,6 +3662,228 @@
                 </item>
                </layout>
               </widget>
+              <widget class="QWidget" name="page_2">
+               <attribute name="label">
+                <string>Nudged Elastic Band</string>
+               </attribute>
+               <layout class="QVBoxLayout" name="verticalLayout_114">
+                <item>
+                 <widget class="QGroupBox" name="groupBox_77">
+                  <property name="enabled">
+                   <bool>true</bool>
+                  </property>
+                  <property name="title">
+                   <string>Files</string>
+                  </property>
+                  <layout class="QVBoxLayout" name="verticalLayout_113">
+                   <item>
+                    <widget class="QFrame" name="frame_196">
+                     <property name="enabled">
+                      <bool>true</bool>
+                     </property>
+                     <property name="frameShape">
+                      <enum>QFrame::Shape::NoFrame</enum>
+                     </property>
+                     <property name="frameShadow">
+                      <enum>QFrame::Shadow::Raised</enum>
+                     </property>
+                     <layout class="QHBoxLayout" name="horizontalLayout_222">
+                      <item>
+                       <widget class="QLabel" name="label_144">
+                        <property name="enabled">
+                         <bool>true</bool>
+                        </property>
+                        <property name="text">
+                         <string>POSCAR (IS)</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QLineEdit" name="neb_poscar_is">
+                        <property name="readOnly">
+                         <bool>true</bool>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QPushButton" name="neb_poscar_is_select">
+                        <property name="text">
+                         <string/>
+                        </property>
+                       </widget>
+                      </item>
+                     </layout>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QFrame" name="frame_197">
+                     <property name="enabled">
+                      <bool>true</bool>
+                     </property>
+                     <property name="frameShape">
+                      <enum>QFrame::Shape::NoFrame</enum>
+                     </property>
+                     <property name="frameShadow">
+                      <enum>QFrame::Shadow::Raised</enum>
+                     </property>
+                     <layout class="QHBoxLayout" name="horizontalLayout_223">
+                      <item>
+                       <widget class="QLabel" name="label_145">
+                        <property name="enabled">
+                         <bool>true</bool>
+                        </property>
+                        <property name="text">
+                         <string>POSCAR (FS)</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QLineEdit" name="neb_poscar_fs">
+                        <property name="readOnly">
+                         <bool>true</bool>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QPushButton" name="neb_poscar_fs_select">
+                        <property name="text">
+                         <string/>
+                        </property>
+                       </widget>
+                      </item>
+                     </layout>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QGroupBox" name="groupBox_74">
+                  <property name="enabled">
+                   <bool>true</bool>
+                  </property>
+                  <property name="title">
+                   <string>Parameters</string>
+                  </property>
+                  <layout class="QVBoxLayout" name="verticalLayout_112">
+                   <item>
+                    <widget class="QFrame" name="frame_195">
+                     <property name="frameShape">
+                      <enum>QFrame::Shape::NoFrame</enum>
+                     </property>
+                     <property name="frameShadow">
+                      <enum>QFrame::Shadow::Raised</enum>
+                     </property>
+                     <layout class="QHBoxLayout" name="horizontalLayout_219">
+                      <item>
+                       <widget class="QLabel" name="label_110">
+                        <property name="text">
+                         <string>Number of images</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QSpinBox" name="neb_n_images">
+                        <property name="value">
+                         <number>5</number>
+                        </property>
+                       </widget>
+                      </item>
+                     </layout>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QFrame" name="frame_199">
+                     <property name="frameShape">
+                      <enum>QFrame::Shape::NoFrame</enum>
+                     </property>
+                     <property name="frameShadow">
+                      <enum>QFrame::Shadow::Raised</enum>
+                     </property>
+                     <layout class="QHBoxLayout" name="horizontalLayout_220">
+                      <item>
+                       <widget class="QLabel" name="label_123">
+                        <property name="text">
+                         <string>Moving atom index</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QSpinBox" name="moving_atom_index">
+                        <property name="maximum">
+                         <number>999</number>
+                        </property>
+                        <property name="value">
+                         <number>0</number>
+                        </property>
+                       </widget>
+                      </item>
+                     </layout>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QFrame" name="frame_198">
+                  <property name="frameShape">
+                   <enum>QFrame::Shape::NoFrame</enum>
+                  </property>
+                  <property name="frameShadow">
+                   <enum>QFrame::Shadow::Raised</enum>
+                  </property>
+                  <layout class="QHBoxLayout" name="horizontalLayout_224">
+                   <item>
+                    <spacer name="horizontalSpacer_168">
+                     <property name="orientation">
+                      <enum>Qt::Orientation::Horizontal</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>106</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="neb_create">
+                     <property name="text">
+                      <string>Create</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <spacer name="horizontalSpacer_169">
+                     <property name="orientation">
+                      <enum>Qt::Orientation::Horizontal</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>106</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="verticalSpacer_23">
+                  <property name="orientation">
+                   <enum>Qt::Orientation::Vertical</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>20</width>
+                    <height>212</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+               </layout>
+              </widget>
              </widget>
             </item>
            </layout>
@@ -3690,8 +3912,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>379</width>
-                 <height>603</height>
+                 <width>364</width>
+                 <height>494</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -4140,8 +4362,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>379</width>
-                 <height>603</height>
+                 <width>233</width>
+                 <height>300</height>
                 </rect>
                </property>
                <attribute name="label">

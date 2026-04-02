@@ -274,6 +274,11 @@ class MainForm(QMainWindow):
         self.ui.FormActionsPreButSelectRightElectrode.clicked.connect(self.add_right_electrode_file)
         self.ui.FormActionsPreButCreateModelWithElectrodes.clicked.connect(self.create_model_with_electrodes)
 
+        # NEB
+        self.ui.neb_poscar_is_select.clicked.connect(self.neb_poscar_is_select)
+        self.ui.neb_poscar_fs_select.clicked.connect(self.neb_poscar_fs_select)
+        self.ui.neb_create.clicked.connect(self.create_neb)
+
         self.ui.FormActionsButtonAddDOSFile.clicked.connect(self.add_dos_file)
         self.ui.FormActionsButtonPlotDOS.clicked.connect(self.plot_dos)
         self.ui.FormActionsButtonClearDOS.clicked.connect(self.clear_dos)
@@ -1078,6 +1083,120 @@ class MainForm(QMainWindow):
             self.fill_gui("SWNT-model")
         except Exception as e:
             self.show_error(e)
+
+    def neb_poscar_is_select(self):
+        f_name = self.get_file_name_from_open_dialog("All files (*)")
+        if os.path.exists(f_name):
+            self.work_dir = os.path.dirname(f_name)
+            self.save_active_folder()
+            self.ui.neb_poscar_is.setText(f_name)
+
+    def neb_poscar_fs_select(self):
+        f_name = self.get_file_name_from_open_dialog("All files (*)")
+        if os.path.exists(f_name):
+            self.work_dir = os.path.dirname(f_name)
+            self.save_active_folder()
+            self.ui.neb_poscar_fs.setText(f_name)
+
+    def create_neb_images(self, model_is, model_fs, moving_atom_index, num_images):
+        """
+        Create intermediate configurations for NEB
+
+        Args:
+            models_is: initial POSCAR
+            models_fs: final POSCAR
+            moving_atom_index: index of the atom to move (0-based)
+            num_images: number of intermediate points
+        """
+        # Check that the number of atoms matches
+        if len(model_is.atoms) != len(model_fs.atoms):
+            raise ValueError("Initial and final configurations have different numbers of atoms")
+
+        # Check that the atom index is within range
+        total_atoms = len(model_is.atoms)
+        if moving_atom_index >= total_atoms:
+            raise ValueError(f"Atom index {moving_atom_index} exceeds total number of atoms {total_atoms}")
+
+        # Check that atom types match
+        if np.all(model_is.get_atomic_numbers() != model_fs.get_atomic_numbers()):
+            print("Warning: atom types in initial and final configurations differ")
+
+        # Coordinates of initial and final configurations
+        start_coords = model_is.get_positions()
+        end_coords = model_fs.get_positions()
+
+        # Create directories for intermediate images
+        images = []
+
+        for i in range(num_images + 2):  # +2 for initial and final points
+            if i == 0:
+                # Initial point
+                coords = model_is
+                dir_name = self.work_dir + "/00"
+                poscar_file = "POSCAR"
+            elif i == num_images + 1:
+                # Final point
+                coords = model_fs
+                dir_name = self.work_dir + "/" + f"{num_images + 1:02d}"
+                poscar_file = "POSCAR"
+            else:
+                # Intermediate points
+                fraction = (1.0 * i) / (num_images + 1)
+                coords = deepcopy(model_is)
+
+                # Interpolate only the coordinates of the moving atom
+                coords.atoms[moving_atom_index].xyz = (model_is.atoms[moving_atom_index].xyz + (
+                            model_fs.atoms[moving_atom_index].xyz - model_is.atoms[moving_atom_index].xyz) * fraction)
+
+                print(fraction)
+                print(coords.atoms[moving_atom_index].xyz)
+                dir_name = self.work_dir + "/" + f"{i:02d}"
+                poscar_file = "POSCAR"
+
+            images.append((dir_name, coords, poscar_file))
+        return images
+
+    def create_neb(self):
+        models_is, fdf_data1 = ImporterExporter.import_from_file(self.ui.neb_poscar_is.text())
+        models_fs, fdf_data2 = ImporterExporter.import_from_file(self.ui.neb_poscar_fs.text())
+        num_images = self.ui.neb_n_images.value()
+        moving_atom = self.ui.moving_atom_index.value()
+
+        try:
+            print(f"Creating NEB images...")
+            print(f"Moving atom: {moving_atom}")
+            print(f"Number of intermediate points: {num_images}")
+
+            # Create images
+            images = self.create_neb_images(models_is[0], models_fs[0], moving_atom, num_images)
+
+            self.models = []
+
+            # Create directories and files
+            for dir_name, image_data, poscar_file in images:
+                # Create directory
+                os.makedirs(dir_name, exist_ok=True)
+
+                # Write POSCAR file
+                poscar_path = os.path.join(dir_name, poscar_file)
+                ImporterExporter.export_to_file(image_data, poscar_path)
+                image_data.convert_from_direct_to_cart()
+                self.models.append(image_data)
+                self.plot_last_model()
+
+                print(f"Created directory {dir_name}/ with file {poscar_file}")
+
+            print(f"\nSuccessfully created {len(images)} configurations for NEB calculation")
+            print("Directory structure:")
+            for i in range(num_images + 2):
+                print(f"  {i:02d}/POSCAR")
+
+        except ValueError as e:
+            print(f"Error: {e}")
+            sys.exit(1)
+        except Exception as e:
+            print(f"Unexpected error: {e}")
+            sys.exit(1)
 
     def colors_of_atoms(self):
         return self.periodic_table.get_all_colors()

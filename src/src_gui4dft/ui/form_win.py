@@ -514,7 +514,7 @@ class Ui_MainWindow(object):
         self.toolBox.setObjectName(u"toolBox")
         self.page_3 = QWidget()
         self.page_3.setObjectName(u"page_3")
-        self.page_3.setGeometry(QRect(0, 0, 379, 573))
+        self.page_3.setGeometry(QRect(0, 0, 379, 543))
         self.verticalLayout_86 = QVBoxLayout(self.page_3)
         self.verticalLayout_86.setObjectName(u"verticalLayout_86")
         self.groupBox_35 = QGroupBox(self.page_3)
@@ -1442,7 +1442,7 @@ class Ui_MainWindow(object):
         self.toolBox.addItem(self.page_5, u"3D (bulk)")
         self.page_6 = QWidget()
         self.page_6.setObjectName(u"page_6")
-        self.page_6.setGeometry(QRect(0, 0, 395, 494))
+        self.page_6.setGeometry(QRect(0, 0, 395, 531))
         self.verticalLayout_93 = QVBoxLayout(self.page_6)
         self.verticalLayout_93.setObjectName(u"verticalLayout_93")
         self.groupBox_40 = QGroupBox(self.page_6)
@@ -1709,7 +1709,7 @@ class Ui_MainWindow(object):
         self.page_22 = QWidget()
         self.page_22.setObjectName(u"page_22")
         self.page_22.setEnabled(True)
-        self.page_22.setGeometry(QRect(0, 0, 395, 632))
+        self.page_22.setGeometry(QRect(0, -101, 395, 632))
         self.verticalLayout_32 = QVBoxLayout(self.page_22)
         self.verticalLayout_32.setObjectName(u"verticalLayout_32")
         self.groupBox_13 = QGroupBox(self.page_22)
@@ -2089,6 +2089,148 @@ class Ui_MainWindow(object):
         self.verticalLayout_32.addItem(self.verticalSpacer_2)
 
         self.toolBox.addItem(self.page_22, u"Model with electrodes")
+        self.page_2 = QWidget()
+        self.page_2.setObjectName(u"page_2")
+        self.verticalLayout_114 = QVBoxLayout(self.page_2)
+        self.verticalLayout_114.setObjectName(u"verticalLayout_114")
+        self.groupBox_77 = QGroupBox(self.page_2)
+        self.groupBox_77.setObjectName(u"groupBox_77")
+        self.groupBox_77.setEnabled(True)
+        self.verticalLayout_113 = QVBoxLayout(self.groupBox_77)
+        self.verticalLayout_113.setObjectName(u"verticalLayout_113")
+        self.frame_196 = QFrame(self.groupBox_77)
+        self.frame_196.setObjectName(u"frame_196")
+        self.frame_196.setEnabled(True)
+        self.frame_196.setFrameShape(QFrame.Shape.NoFrame)
+        self.frame_196.setFrameShadow(QFrame.Shadow.Raised)
+        self.horizontalLayout_222 = QHBoxLayout(self.frame_196)
+        self.horizontalLayout_222.setObjectName(u"horizontalLayout_222")
+        self.label_144 = QLabel(self.frame_196)
+        self.label_144.setObjectName(u"label_144")
+        self.label_144.setEnabled(True)
+
+        self.horizontalLayout_222.addWidget(self.label_144)
+
+        self.neb_poscar_is = QLineEdit(self.frame_196)
+        self.neb_poscar_is.setObjectName(u"neb_poscar_is")
+        self.neb_poscar_is.setReadOnly(True)
+
+        self.horizontalLayout_222.addWidget(self.neb_poscar_is)
+
+        self.neb_poscar_is_select = QPushButton(self.frame_196)
+        self.neb_poscar_is_select.setObjectName(u"neb_poscar_is_select")
+
+        self.horizontalLayout_222.addWidget(self.neb_poscar_is_select)
+
+
+        self.verticalLayout_113.addWidget(self.frame_196)
+
+        self.frame_197 = QFrame(self.groupBox_77)
+        self.frame_197.setObjectName(u"frame_197")
+        self.frame_197.setEnabled(True)
+        self.frame_197.setFrameShape(QFrame.Shape.NoFrame)
+        self.frame_197.setFrameShadow(QFrame.Shadow.Raised)
+        self.horizontalLayout_223 = QHBoxLayout(self.frame_197)
+        self.horizontalLayout_223.setObjectName(u"horizontalLayout_223")
+        self.label_145 = QLabel(self.frame_197)
+        self.label_145.setObjectName(u"label_145")
+        self.label_145.setEnabled(True)
+
+        self.horizontalLayout_223.addWidget(self.label_145)
+
+        self.neb_poscar_fs = QLineEdit(self.frame_197)
+        self.neb_poscar_fs.setObjectName(u"neb_poscar_fs")
+        self.neb_poscar_fs.setReadOnly(True)
+
+        self.horizontalLayout_223.addWidget(self.neb_poscar_fs)
+
+        self.neb_poscar_fs_select = QPushButton(self.frame_197)
+        self.neb_poscar_fs_select.setObjectName(u"neb_poscar_fs_select")
+
+        self.horizontalLayout_223.addWidget(self.neb_poscar_fs_select)
+
+
+        self.verticalLayout_113.addWidget(self.frame_197)
+
+
+        self.verticalLayout_114.addWidget(self.groupBox_77)
+
+        self.groupBox_74 = QGroupBox(self.page_2)
+        self.groupBox_74.setObjectName(u"groupBox_74")
+        self.groupBox_74.setEnabled(True)
+        self.verticalLayout_112 = QVBoxLayout(self.groupBox_74)
+        self.verticalLayout_112.setObjectName(u"verticalLayout_112")
+        self.frame_195 = QFrame(self.groupBox_74)
+        self.frame_195.setObjectName(u"frame_195")
+        self.frame_195.setFrameShape(QFrame.Shape.NoFrame)
+        self.frame_195.setFrameShadow(QFrame.Shadow.Raised)
+        self.horizontalLayout_219 = QHBoxLayout(self.frame_195)
+        self.horizontalLayout_219.setObjectName(u"horizontalLayout_219")
+        self.label_110 = QLabel(self.frame_195)
+        self.label_110.setObjectName(u"label_110")
+
+        self.horizontalLayout_219.addWidget(self.label_110)
+
+        self.neb_n_images = QSpinBox(self.frame_195)
+        self.neb_n_images.setObjectName(u"neb_n_images")
+        self.neb_n_images.setValue(5)
+
+        self.horizontalLayout_219.addWidget(self.neb_n_images)
+
+
+        self.verticalLayout_112.addWidget(self.frame_195)
+
+        self.frame_199 = QFrame(self.groupBox_74)
+        self.frame_199.setObjectName(u"frame_199")
+        self.frame_199.setFrameShape(QFrame.Shape.NoFrame)
+        self.frame_199.setFrameShadow(QFrame.Shadow.Raised)
+        self.horizontalLayout_220 = QHBoxLayout(self.frame_199)
+        self.horizontalLayout_220.setObjectName(u"horizontalLayout_220")
+        self.label_123 = QLabel(self.frame_199)
+        self.label_123.setObjectName(u"label_123")
+
+        self.horizontalLayout_220.addWidget(self.label_123)
+
+        self.moving_atom_index = QSpinBox(self.frame_199)
+        self.moving_atom_index.setObjectName(u"moving_atom_index")
+        self.moving_atom_index.setMaximum(999)
+        self.moving_atom_index.setValue(0)
+
+        self.horizontalLayout_220.addWidget(self.moving_atom_index)
+
+
+        self.verticalLayout_112.addWidget(self.frame_199)
+
+
+        self.verticalLayout_114.addWidget(self.groupBox_74)
+
+        self.frame_198 = QFrame(self.page_2)
+        self.frame_198.setObjectName(u"frame_198")
+        self.frame_198.setFrameShape(QFrame.Shape.NoFrame)
+        self.frame_198.setFrameShadow(QFrame.Shadow.Raised)
+        self.horizontalLayout_224 = QHBoxLayout(self.frame_198)
+        self.horizontalLayout_224.setObjectName(u"horizontalLayout_224")
+        self.horizontalSpacer_168 = QSpacerItem(106, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+
+        self.horizontalLayout_224.addItem(self.horizontalSpacer_168)
+
+        self.neb_create = QPushButton(self.frame_198)
+        self.neb_create.setObjectName(u"neb_create")
+
+        self.horizontalLayout_224.addWidget(self.neb_create)
+
+        self.horizontalSpacer_169 = QSpacerItem(106, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+
+        self.horizontalLayout_224.addItem(self.horizontalSpacer_169)
+
+
+        self.verticalLayout_114.addWidget(self.frame_198)
+
+        self.verticalSpacer_23 = QSpacerItem(20, 212, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
+
+        self.verticalLayout_114.addItem(self.verticalSpacer_23)
+
+        self.toolBox.addItem(self.page_2, u"Nudged Elastic Band")
 
         self.verticalLayout_17.addWidget(self.toolBox)
 
@@ -2107,7 +2249,7 @@ class Ui_MainWindow(object):
         self.toolBox_6.setSizePolicy(sizePolicy2)
         self.page_29 = QWidget()
         self.page_29.setObjectName(u"page_29")
-        self.page_29.setGeometry(QRect(0, 0, 379, 603))
+        self.page_29.setGeometry(QRect(0, 0, 364, 494))
         self.verticalLayout_10 = QVBoxLayout(self.page_29)
         self.verticalLayout_10.setObjectName(u"verticalLayout_10")
         self.groupBox_50 = QGroupBox(self.page_29)
@@ -2342,7 +2484,7 @@ class Ui_MainWindow(object):
         self.toolBox_6.addItem(self.page_29, u"Add or Modify Single (selected) atom")
         self.page_9 = QWidget()
         self.page_9.setObjectName(u"page_9")
-        self.page_9.setGeometry(QRect(0, 0, 379, 603))
+        self.page_9.setGeometry(QRect(0, 0, 233, 300))
         self.verticalLayout_111 = QVBoxLayout(self.page_9)
         self.verticalLayout_111.setObjectName(u"verticalLayout_111")
         self.groupBox_73 = QGroupBox(self.page_9)
@@ -7520,6 +7662,16 @@ class Ui_MainWindow(object):
         self.label_42.setText(QCoreApplication.translate("MainWindow", u"Distance to scat. region", None))
         self.FormActionsPreButCreateModelWithElectrodes.setText(QCoreApplication.translate("MainWindow", u"Create", None))
         self.toolBox.setItemText(self.toolBox.indexOf(self.page_22), QCoreApplication.translate("MainWindow", u"Model with electrodes", None))
+        self.groupBox_77.setTitle(QCoreApplication.translate("MainWindow", u"Files", None))
+        self.label_144.setText(QCoreApplication.translate("MainWindow", u"POSCAR (IS)", None))
+        self.neb_poscar_is_select.setText("")
+        self.label_145.setText(QCoreApplication.translate("MainWindow", u"POSCAR (FS)", None))
+        self.neb_poscar_fs_select.setText("")
+        self.groupBox_74.setTitle(QCoreApplication.translate("MainWindow", u"Parameters", None))
+        self.label_110.setText(QCoreApplication.translate("MainWindow", u"Number of images", None))
+        self.label_123.setText(QCoreApplication.translate("MainWindow", u"Moving atom index", None))
+        self.neb_create.setText(QCoreApplication.translate("MainWindow", u"Create", None))
+        self.toolBox.setItemText(self.toolBox.indexOf(self.page_2), QCoreApplication.translate("MainWindow", u"Nudged Elastic Band", None))
         self.tabWidget_3.setTabText(self.tabWidget_3.indexOf(self.tab_5), QCoreApplication.translate("MainWindow", u"Create", None))
         self.groupBox_50.setTitle(QCoreApplication.translate("MainWindow", u"Element", None))
         self.groupBox_51.setTitle(QCoreApplication.translate("MainWindow", u"Coordinates", None))
