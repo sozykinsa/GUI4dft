@@ -433,6 +433,8 @@ class MainForm(QMainWindow):
         model_meta_gr_type.appendRow(QStandardItem("PTI"))
         model_meta_gr_type.appendRow(QStandardItem("TOC"))
         model_meta_gr_type.appendRow(QStandardItem("tpdh-graphene"))
+        model_meta_gr_type.appendRow(QStandardItem("m-SiC"))
+        model_meta_gr_type.appendRow(QStandardItem("op-SiC"))
         self.ui.model_meta_gr_type.setModel(model_meta_gr_type)
 
         bi_element_type_tube = QStandardItemModel()

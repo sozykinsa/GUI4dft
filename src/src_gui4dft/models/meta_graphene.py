@@ -34,6 +34,12 @@ class MetaGraphene(AtomicModel):
         if model_type == "TOC":
             f_name = str(Path(__file__).parent / "cells" / 'toc.fdf')
 
+        if model_type == "m-SiC":
+            f_name = str(Path(__file__).parent / "cells" / 'm-SiC.fdf')
+
+        if model_type == "op-SiC":
+            f_name = str(Path(__file__).parent / "cells" / 'op-SiC.fdf')
+
         basis, fdf = ImporterExporter.import_from_file(f_name, fl='all', prop=False)
         basis = basis[0]
 
