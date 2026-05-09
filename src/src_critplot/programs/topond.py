@@ -51,7 +51,7 @@ class TopondModelCP(AtomicModelCP):
                 while row and (row.find("CP N.") < 0):
                     row = file1.readline()
                 if (not row) or (row.find("CP N.  X") >= 0):
-                    return
+                    break  # Changed from 'return' to 'break' to check table later
                 title = row.split("CP N.")[1].split()[0]
                 n_brackets = row.count("(")
                 row = row.replace("(", "")
@@ -71,37 +71,6 @@ class TopondModelCP(AtomicModelCP):
                 data = helpers.spacedel(data1[1])
 
                 if data == "(3,-1)":
-                    """
-                    variant # 1
-                    CP N.      8  NON-EQUIV. ATOM      3 C  ---    199 H (     1      1      0 )  DISTANCE(ANG)= 1.0859
-                    *********
-
-                    CP TYPE                        :  (3,-1)
-                    COORD(AU)  (X  Y  Z)           :  1.8343E+00  7.5829E+00  2.5685E+01
-                    COORD FRACT. CONV. CELL        :  3.5525E-02  1.4686E-01  4.9744E-01
-                    PROPERTIES (RHO,GRHO,LAP)      :  2.7486E-01  1.2022E-15 -8.2652E-01
-                    KINETIC ENERGY DENSITIES (G,K) :  3.7054E-02  2.4369E-01
-                    VIRIAL DENSITY                 : -2.8074E-01
-                    ELF(PAA)                       :  9.8781E-01
-
-                    variant # 2                
-                    CP N.      3
-                    *********
-
-                    CP TYPE                        :  (3,-1)
-                    COORD(AU)  (X  Y  Z)           : -2.5571E-16 -4.5448E+00 -4.5448E+00
-                    COORD FRACT. CONV. CELL        : -2.8133E-17  5.0000E-01  5.0000E-01
-                    PROPERTIES (RHO,GRHO,LAP)      :  1.6510E-03  2.5625E-19  8.5997E-03   
-
-                    variant # 3
-                    CP N.      1  NON-EQUIV. ATOM      1 SI ---      2 O      DISTANCE (ANG)     1.687
-                    *********
-
-                    CP TYPE                        :  (3,-1)
-                    COORD(AU)  (X  Y  Z)           :  1.9421E+00 -2.4949E-01  9.4204E+00
-                    PROPERTIES (RHO,GRHO,LAP)      :  1.2029E-01  7.3282E-16  7.1917E-01                            
-                    """
-                    # print("bcp (3,-1) ----->")
                     text = "Type : (3,-1)\n"
                     cp_type = "(3,-1)"
                     title = "b" + title
@@ -109,18 +78,6 @@ class TopondModelCP(AtomicModelCP):
                     cp, row = self.parse_cp_point(file1, let, cp_type, text, title)
                     self.add_assotiated_atom_from_row(cp, row1)
                 elif data == "(3,-3)":
-                    """
-                    CP N.      9
-                    **********
-
-                    ATTRACTOR CP TYPE              :  (3,-3)
-                    COORD(AU)  (X  Y  Z)           :  2.2737E+00  7.4470E+00  2.6232E+01
-                    COORD FRACT. CONV. CELL        :  4.4035E-02  1.4423E-01 -4.9195E-01
-                    PROPERTIES (RHO,GRHO,LAP)      :  4.3196E-01  3.5396E-14 -2.1931E+01
-                    TRAJECTORY LENGTH(ANG)         :  3.7842E-01
-                    INTEGRATION STEPS              :      21
-                    """
-                    # print("nucleus (3,-3) ----->")
                     text = "Type : (3,-3)\n"
                     cp_type = "(3,-3)"
                     title = "A" + title
@@ -128,20 +85,6 @@ class TopondModelCP(AtomicModelCP):
                     cp, row = self.parse_cp_point(file1, let, cp_type, text, title)
                     self.add_critical_point(cp)
                 elif data == "(3,+1)":
-                    """ CP TYPE                        :  (3,+1) """
-                    """
-                    CP N.      7  NON-EQUIV. ATOM      2 O  ---     31 O (     0      0      0 )  DISTANCE(ANG)= 2.3736
-                    *********
-
-                    CP TYPE                        :  (3,+1)
-                    COORD(AU)  (X  Y  Z)           : -1.7694E+00  1.7694E+00 -2.4047E+01
-                    COORD FRACT. CONV. CELL        : -3.4268E-02  3.4268E-02 -4.6573E-01
-                    PROPERTIES (RHO,GRHO,LAP)      :  2.7570E-02  1.4387E-16  1.3993E-01
-                    KINETIC ENERGY DENSITIES (G,K) :  3.4069E-02 -9.1500E-04
-                    VIRIAL DENSITY                 : -3.3154E-02
-                    ELF(PAA)                       :  4.3030E-02
-                    """
-                    # print("ring (3,+1) ----->")
                     text = "Type : (3,+1)\n"
                     cp_type = "(3,+1)"
                     title = "r" + title
@@ -149,8 +92,6 @@ class TopondModelCP(AtomicModelCP):
                     cp, row = self.parse_cp_point(file1, let, cp_type, text, title)
                     self.add_assotiated_atom_from_row(cp, row1)
                 elif data == "(3,+3)":
-                    """ CP TYPE                        :  (3,+3) """
-                    # print("cage (3,+3) ----->")
                     text = "Type : (3,+3)\n"
                     cp_type = "(3,+3)"
                     title = "c" + title
@@ -158,7 +99,6 @@ class TopondModelCP(AtomicModelCP):
                     cp, row = self.parse_cp_point(file1, let, cp_type, text, title)
                     self.add_critical_point(cp)
                 elif data == "DEGENE":
-                    """ CP TYPE                        :  DEGENE """
                     text = "Type : DEGENE\n"
                     cp_type = "DEGENE"
                     title = "d" + title
@@ -241,6 +181,33 @@ class TopondModelCP(AtomicModelCP):
                             for j in range(4):
                                 file1.readline()
                     row = ""
+
+            # If no CPs were found, try parsing the table format at the end of file
+            if len(self.cps) == 0:
+                file1.seek(0)
+                content = file1.read()
+                # Find the table section
+                table_start = content.find("CP N.  X(AU)   Y(AU)   Z(AU)   TYPE")
+                if table_start != -1:
+                    lines = content[table_start:].split('\n')
+                    for line in lines[2:]:  # Skip header and separator
+                        if line.strip() and not line.startswith('*'):
+                            parts = line.split()
+                            if len(parts) >= 11 and parts[0].replace(')', '').isdigit():
+                                cp_num = int(parts[0].replace(')', ''))
+                                x = float(parts[1])
+                                y = float(parts[2])
+                                z = float(parts[3])
+                                cp_type = parts[4]
+                                rho = float(parts[5])
+                                lapl = float(parts[6])
+
+                                cp = CriticalPoint([np.array([x, y, z]) * 0.52917720859, "cp", cp_type])
+                                cp.set_property("title", f"cp{cp_num}")
+                                cp.set_property("rho", rho)
+                                cp.set_property("lap", lapl)
+                                cp.set_property("text", f"Type : {cp_type}\nrho : {rho}\nlap : {lapl}")
+                                self.add_critical_point(cp)
 
             for cp in self.cps:
                 ind1 = cp.get_property("atom1")

@@ -272,6 +272,7 @@ def utf8_letter(let):
 
 def check_format(filename):
     """Check file format"""
+    print(filename)
     if not os.path.exists(filename):
         return "unknown"
 

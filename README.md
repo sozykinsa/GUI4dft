@@ -22,6 +22,7 @@ export QT_API=pyside6 (in linux) and QT_API=pyqt5 (in Windows)
 Some operating systems may require additional packages to be installed:
 
 Ubuntu 22.04: sudo apt-get install -y libxcb-cursor-dev
+Simply Linux: sudo apt-get install libxcbutil-cursor-devel
 
 
 ## Explanations for the versions of the program

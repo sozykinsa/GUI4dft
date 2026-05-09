@@ -4,7 +4,7 @@ import pytest
 
 
 def test_topond_model_cp_constructor(tests_path):
-    f_name = str(tests_path / 'ref_data' / 'topond' / "topond-I.outp")
+    f_name = str(tests_path / '..' / 'ref_data' / 'topond' / "topond-I.outp")
     model = TopondModelCP(f_name, True)
     n = model.n_atoms()
     assert n == 9
@@ -22,7 +22,7 @@ def test_topond_model_cp_constructor(tests_path):
 
 
 def test_critical_points(tests_path):
-    f_name = str(tests_path / 'ref_data' / 'topond' / "topond-I.outp")
+    f_name = str(tests_path / '..' / 'ref_data' / 'topond' / "topond-I.outp")
     model = TopondModelCP(f_name, True)
     assert len(model.cps) == 7
     assert model.cps[3].get_property("cp_bp_len") == 4.279603412116594
