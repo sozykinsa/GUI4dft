@@ -2169,7 +2169,7 @@ class MainForm(QMainWindow):
                 value = float(self.ui.IsosurfaceColorsTable.item(i, 0).text())
                 verts, faces, normals = self.volumeric_data.isosurface(value)
                 transp = float(self.ui.IsosurfaceColorsTable.cellWidget(i, 1).text())
-                if __name__ != 'src_gui4dft.qtbased.mainform':
+                if __name__ != 'src_gui4dft.qtbased.gui4dftform':
                     color = self.get_color(color_map, minv, maxv, value, color_scale)
                 else:
                     if self.is_scaled_colors_for_surface:
