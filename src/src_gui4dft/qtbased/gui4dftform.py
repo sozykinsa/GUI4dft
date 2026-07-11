@@ -2720,24 +2720,34 @@ class MainForm(QMainWindow):
         model = self.active_model
         pos = model.get_positions()
         fragment1 = self.ui.openGLWidget.main_model.get_fragment_selected()
+        fr_model = model.sub_model(fragment1)
+        cm = fr_model.center_mass()
+        pos -= cm
         mulliken = model.get_atoms_property("charge Mulliken")
         voronoi = model.get_atoms_property("charge Voronoi")
         hirshfeld = model.get_atoms_property("charge Hirshfeld")
 
         d = np.zeros(3, dtype=float)
+        q_mulliken = 0
         for q, r, f in zip(mulliken, pos, fragment1):
             d += self.delta_dipole(f, q, r)
+            q_mulliken += q
         text += "Mulliken\nElectric dipole (Debye) = {0:9.5f}  {1:9.5f}  {2:9.5f}".format(*d/0.20822678)
 
         d = np.zeros(3, dtype=float)
+        q_voronoi = 0
         for q, r, f in zip(voronoi, pos, fragment1):
             d += self.delta_dipole(f, q, r)
+            q_voronoi += q
         text += "\nVoronoi\nElectric dipole (Debye) = {0:9.5f}  {1:9.5f}  {2:9.5f}".format(*d/0.20822678)
 
         d = np.zeros(3, dtype=float)
+        q_hirshfeld = 0
         for q, r, f in zip(hirshfeld, pos, fragment1):
             d += self.delta_dipole(f, q, r)
+            q_hirshfeld += q
         text += "\nHirshfeld\nElectric dipole (Debye) = {0:9.5f}  {1:9.5f}  {2:9.5f}".format(*d/0.20822678)
+        text += "\nCharges of fragment:\nMulliken: {0:9.5f}".format(q_mulliken) + "\nVoronoi: {0:9.5f}".format(q_voronoi) + "\nHirshfeld: {0:9.5f}".format(q_hirshfeld)
 
         self.ui.dipole_output.setText(text)
 
