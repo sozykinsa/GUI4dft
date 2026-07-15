@@ -13,6 +13,10 @@ To run the program, type (in the <gui4dft path>/src)
 
 python3 gui4dft.py
 
+The current version of gui4dft includes the CritPlot module. To launch it, run
+
+python3 critplot.py
+
 ## Problems with Install?
 
 You have to set the variable QT_API:
@@ -39,7 +43,7 @@ v1.4 - Pyside6. Added support for exporting structural data to input files VASP,
 
 v1.5 - Pyside6 for Linux and PyQt5 for Windows.
 
-v2.0 - Next release with CritPlot functionality.
+v2.0 - Current release with CritPlot functionality.
 
 The master branch contains more or less stable 1.x version functions.
 
